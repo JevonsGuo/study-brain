@@ -1,0 +1,15 @@
+{
+  "name": "sharon-study",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm:dev:front\" \"npm:dev:server\"",
+    "dev:front": "npm run dev --prefix sharon-study-app",
+    "dev:server": "npm run dev --prefix server",
+    "build": "npm run build --prefix sharon-study-app",
+    "start": "npm start --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
