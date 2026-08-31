@@ -90,6 +90,7 @@ function initTables() {
   `)
 
   migrateWords()
+  migrateKnowledgePoints()
   initDailyConfig()
 }
 
@@ -109,6 +110,16 @@ function migrateWords() {
   }
   if (!columns.includes('next_review')) {
     db.exec("ALTER TABLE words ADD COLUMN next_review TEXT NOT NULL DEFAULT ''")
+  }
+}
+
+function migrateKnowledgePoints() {
+  const columns = db.prepare("PRAGMA table_info(knowledge_points)").all().map(c => c.name)
+  if (!columns.includes('visual_desc')) {
+    db.exec("ALTER TABLE knowledge_points ADD COLUMN visual_desc TEXT NOT NULL DEFAULT ''")
+  }
+  if (!columns.includes('video_url')) {
+    db.exec("ALTER TABLE knowledge_points ADD COLUMN video_url TEXT NOT NULL DEFAULT ''")
   }
 }
 

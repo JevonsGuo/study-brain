@@ -3,6 +3,8 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../utils/api'
 import { ElMessage } from 'element-plus'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 
 interface KnowledgePoint {
   id: number
@@ -12,6 +14,8 @@ interface KnowledgePoint {
   content: string
   key_formulas: string
   tips: string
+  visual_desc: string
+  video_url: string
   sort_order: number
 }
 
@@ -135,14 +139,14 @@ const toggleManage = () => {
   }
 }
 
-const newPoint = ref({ subject: '', chapter: '', title: '', content: '', key_formulas: '', tips: '' })
+const newPoint = ref({ subject: '', chapter: '', title: '', content: '', key_formulas: '', tips: '', visual_desc: '', video_url: '' })
 
 const addPoint = async () => {
   if (!newPoint.value.title) return
   try {
     newPoint.value.subject = subject.value
     await api.post('/knowledge', newPoint.value)
-    newPoint.value = { subject: '', chapter: '', title: '', content: '', key_formulas: '', tips: '' }
+    newPoint.value = { subject: '', chapter: '', title: '', content: '', key_formulas: '', tips: '', visual_desc: '', video_url: '' }
     addDialogVisible.value = false
     await fetchChapters()
     await fetchPoints()
@@ -153,7 +157,7 @@ const addPoint = async () => {
 }
 
 const editingPoint = ref<KnowledgePoint | null>(null)
-const editForm = ref({ chapter: '', title: '', content: '', key_formulas: '', tips: '' })
+const editForm = ref({ chapter: '', title: '', content: '', key_formulas: '', tips: '', visual_desc: '', video_url: '' })
 
 const openEdit = (point: KnowledgePoint) => {
   editingPoint.value = point
@@ -163,6 +167,8 @@ const openEdit = (point: KnowledgePoint) => {
     content: point.content,
     key_formulas: point.key_formulas,
     tips: point.tips,
+    visual_desc: point.visual_desc || '',
+    video_url: point.video_url || '',
   }
   editDialogVisible.value = true
 }
@@ -194,6 +200,34 @@ const removePoint = async (id: number) => {
 
 const chapterPointCount = (chapter: string) => {
   return points.value.filter(p => p.chapter === chapter).length
+}
+
+const getBilibiliEmbedUrl = (url: string): string => {
+  const bvMatch = url.match(/\/(BV[\w]+)/)
+  if (bvMatch) return `https://player.bilibili.com/player.html?bvid=${bvMatch[1]}&autoplay=0`
+  const avMatch = url.match(/\/av(\d+)/)
+  if (avMatch) return `https://player.bilibili.com/player.html?aid=${avMatch[1]}&autoplay=0`
+  return ''
+}
+
+const renderFormulas = (text: string): string => {
+  if (!text) return ''
+  let result = text.replace(/\n/g, '<br/>')
+  result = result.replace(/\$\$([\s\S]*?)\$\$/g, (_, formula) => {
+    try {
+      return katex.renderToString(formula.trim(), { displayMode: true, throwOnError: false })
+    } catch {
+      return `$$${formula}$$`
+    }
+  })
+  result = result.replace(/\$([^\$]+?)\$/g, (_, formula) => {
+    try {
+      return katex.renderToString(formula.trim(), { displayMode: false, throwOnError: false })
+    } catch {
+      return `$${formula}$`
+    }
+  })
+  return result
 }
 
 watch(subject, () => {
@@ -290,9 +324,19 @@ onMounted(() => {
             {{ p.key_formulas.split('\n')[0] }}{{ p.key_formulas.split('\n').length > 1 ? ' ...' : '' }}
           </div>
           <div class="point-footer">
-            <div v-if="p.tips && !manageMode" class="has-tips">
-              <el-icon size="12"><Warning /></el-icon>
-              含易错提醒
+            <div class="point-tags">
+              <div v-if="p.tips && !manageMode" class="has-tips">
+                <el-icon size="12"><Warning /></el-icon>
+                含易错提醒
+              </div>
+              <div v-if="p.visual_desc && !manageMode" class="has-visual">
+                <el-icon size="12"><Picture /></el-icon>
+                图解
+              </div>
+              <div v-if="p.video_url && !manageMode" class="has-video">
+                <el-icon size="12"><VideoPlay /></el-icon>
+                视频
+              </div>
             </div>
             <div v-if="manageMode" class="manage-actions">
               <el-button size="small" type="primary" text @click.stop="openEdit(p)" :icon="'Edit'">编辑</el-button>
@@ -305,31 +349,60 @@ onMounted(() => {
 
     <div v-else class="point-detail-view">
       <el-button text @click="goBack" :icon="'ArrowLeft'" class="detail-back">返回列表</el-button>
-      <div class="detail-card">
-        <div class="detail-header">
-          <h3>{{ selectedPoint.title }}</h3>
-          <el-tag>{{ selectedPoint.chapter }}</el-tag>
+      <div class="detail-layout">
+        <div class="detail-content-col">
+          <div class="detail-card">
+            <div class="detail-header">
+              <h3>{{ selectedPoint.title }}</h3>
+              <el-tag>{{ selectedPoint.chapter }}</el-tag>
+            </div>
+
+            <div v-if="selectedPoint.content" class="detail-section">
+              <h4>📝 核心内容</h4>
+              <div class="detail-content" v-html="selectedPoint.content.replace(/\n/g, '<br/>')"></div>
+            </div>
+
+            <div v-if="selectedPoint.key_formulas" class="detail-section formulas-section">
+              <h4>📊 关键公式</h4>
+              <div class="formulas-box" v-html="renderFormulas(selectedPoint.key_formulas)"></div>
+            </div>
+
+            <div v-if="selectedPoint.visual_desc" class="detail-section visual-section">
+              <h4>🖼️ 图解助记</h4>
+              <div class="visual-box" v-html="renderFormulas(selectedPoint.visual_desc)"></div>
+            </div>
+
+            <div v-if="selectedPoint.tips" class="detail-section tips-section">
+              <h4>⚠️ 易错提醒</h4>
+              <div class="tips-box" v-html="selectedPoint.tips.replace(/\n/g, '<br/>')"></div>
+            </div>
+          </div>
         </div>
 
-        <div v-if="selectedPoint.content" class="detail-section">
-          <h4>📝 核心内容</h4>
-          <div class="detail-content" v-html="selectedPoint.content.replace(/\n/g, '<br/>')"></div>
-        </div>
-
-        <div v-if="selectedPoint.key_formulas" class="detail-section formulas-section">
-          <h4>📊 关键公式</h4>
-          <div class="formulas-box" v-html="selectedPoint.key_formulas.replace(/\n/g, '<br/>')"></div>
-        </div>
-
-        <div v-if="selectedPoint.tips" class="detail-section tips-section">
-          <h4>⚠️ 易错提醒</h4>
-          <div class="tips-box" v-html="selectedPoint.tips.replace(/\n/g, '<br/>')"></div>
+        <div v-if="selectedPoint.video_url && getBilibiliEmbedUrl(selectedPoint.video_url)" class="detail-video-col">
+          <div class="video-card">
+            <h4>🎬 视频讲解</h4>
+            <div class="video-wrapper">
+              <iframe
+                :src="getBilibiliEmbedUrl(selectedPoint.video_url)"
+                scrolling="no"
+                border="0"
+                frameborder="no"
+                framespacing="0"
+                allowfullscreen
+                class="bilibili-player"
+              ></iframe>
+            </div>
+            <a :href="selectedPoint.video_url" target="_blank" rel="noopener" class="video-link">
+              在B站打开 →
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    <el-dialog v-model="addDialogVisible" title="添加知识点" width="600px" destroy-on-close>
-      <el-form @submit.prevent="addPoint" label-width="90px">
+    <el-dialog v-model="addDialogVisible" title="添加知识点" width="650px" destroy-on-close>
+      <el-form @submit.prevent="addPoint" label-width="100px">
         <el-form-item label="章节">
           <el-select v-model="newPoint.chapter" filterable allow-create placeholder="选择或输入章节">
             <el-option v-for="ch in sortedChapters" :key="ch" :label="ch" :value="ch" />
@@ -344,8 +417,14 @@ onMounted(() => {
         <el-form-item label="关键公式">
           <el-input v-model="newPoint.key_formulas" type="textarea" :rows="3" placeholder="重要公式、定理" />
         </el-form-item>
+        <el-form-item label="图解助记">
+          <el-input v-model="newPoint.visual_desc" type="textarea" :rows="3" placeholder="图形说明、动态演示描述、便于理解的内容" />
+        </el-form-item>
         <el-form-item label="易错提醒">
           <el-input v-model="newPoint.tips" type="textarea" :rows="3" placeholder="常见易错点" />
+        </el-form-item>
+        <el-form-item label="B站视频">
+          <el-input v-model="newPoint.video_url" placeholder="粘贴B站视频链接，如 https://www.bilibili.com/video/BV..." />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -354,8 +433,8 @@ onMounted(() => {
       </template>
     </el-dialog>
 
-    <el-dialog v-model="editDialogVisible" title="编辑知识点" width="600px" destroy-on-close>
-      <el-form @submit.prevent="saveEdit" label-width="90px">
+    <el-dialog v-model="editDialogVisible" title="编辑知识点" width="650px" destroy-on-close>
+      <el-form @submit.prevent="saveEdit" label-width="100px">
         <el-form-item label="章节">
           <el-select v-model="editForm.chapter" filterable allow-create placeholder="选择或输入章节">
             <el-option v-for="ch in sortedChapters" :key="ch" :label="ch" :value="ch" />
@@ -370,8 +449,14 @@ onMounted(() => {
         <el-form-item label="关键公式">
           <el-input v-model="editForm.key_formulas" type="textarea" :rows="3" placeholder="重要公式、定理" />
         </el-form-item>
+        <el-form-item label="图解助记">
+          <el-input v-model="editForm.visual_desc" type="textarea" :rows="3" placeholder="图形说明、动态演示描述、便于理解的内容" />
+        </el-form-item>
         <el-form-item label="易错提醒">
           <el-input v-model="editForm.tips" type="textarea" :rows="3" placeholder="常见易错点" />
+        </el-form-item>
+        <el-form-item label="B站视频">
+          <el-input v-model="editForm.video_url" placeholder="粘贴B站视频链接，如 https://www.bilibili.com/video/BV..." />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -587,7 +672,24 @@ onMounted(() => {
 }
 
 .point-detail-view {
-  max-width: 900px;
+}
+
+.detail-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.detail-content-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-video-col {
+  flex: 1;
+  min-width: 0;
+  position: sticky;
+  top: 20px;
 }
 
 .detail-back {
@@ -644,6 +746,10 @@ onMounted(() => {
   color: #303133;
 }
 
+.formulas-box :deep(.katex-display) {
+  margin: 12px 0;
+}
+
 .tips-box {
   background: #fef0f0;
   border: 1px solid #fde2e2;
@@ -652,5 +758,79 @@ onMounted(() => {
   font-size: 14px;
   line-height: 2;
   color: #f56c6c;
+}
+
+.point-tags {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.has-visual {
+  font-size: 12px;
+  color: #67c23a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.has-video {
+  font-size: 12px;
+  color: #409eff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.visual-box {
+  background: #f0f9eb;
+  border: 1px solid #e1f3d8;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 2;
+  color: #67c23a;
+}
+
+.video-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.video-card h4 {
+  font-size: 15px;
+  color: #606266;
+  margin: 0 0 12px;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.bilibili-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #409eff;
+  text-decoration: none;
+}
+
+.video-link:hover {
+  text-decoration: underline;
 }
 </style>

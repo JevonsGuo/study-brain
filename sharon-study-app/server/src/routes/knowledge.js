@@ -40,12 +40,12 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-  const { subject, chapter, title, content, key_formulas, tips, sort_order } = req.body
+  const { subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
   if (!subject || !title) return res.status(400).json({ error: 'subject, title are required' })
   const db = getDb()
   const result = db.prepare(
-    'INSERT INTO knowledge_points (subject, chapter, title, content, key_formulas, tips, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).run(subject, chapter || '', title, content || '', key_formulas || '', tips || '', sort_order || 0)
+    'INSERT INTO knowledge_points (subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(subject, chapter || '', title, content || '', key_formulas || '', tips || '', visual_desc || '', video_url || '', sort_order || 0)
   const row = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(result.lastInsertRowid)
   res.json(row)
 })
@@ -54,10 +54,10 @@ router.put('/:id', (req, res) => {
   const db = getDb()
   const row = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(req.params.id)
   if (!row) return res.status(404).json({ error: 'not found' })
-  const { subject, chapter, title, content, key_formulas, tips, sort_order } = req.body
+  const { subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
   db.prepare(
-    'UPDATE knowledge_points SET subject = ?, chapter = ?, title = ?, content = ?, key_formulas = ?, tips = ?, sort_order = ? WHERE id = ?'
-  ).run(subject || row.subject, chapter ?? row.chapter, title || row.title, content ?? row.content, key_formulas ?? row.key_formulas, tips ?? row.tips, sort_order ?? row.sort_order, req.params.id)
+    'UPDATE knowledge_points SET subject = ?, chapter = ?, title = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ? WHERE id = ?'
+  ).run(subject || row.subject, chapter ?? row.chapter, title || row.title, content ?? row.content, key_formulas ?? row.key_formulas, tips ?? row.tips, visual_desc ?? row.visual_desc, video_url ?? row.video_url, sort_order ?? row.sort_order, req.params.id)
   const updated = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(req.params.id)
   res.json(updated)
 })
