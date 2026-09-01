@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { api } from '../../utils/api'
 import { ElMessage } from 'element-plus'
+import { subjectEmojis } from '../../utils/subjects'
 
 interface PlanItem {
   id: number
@@ -38,11 +39,6 @@ const subjectColors: Record<string, string> = {
   '语文': '#909399', '数学': '#6366f1', '英语': '#52c41a',
   '物理': '#e6a23c', '化学': '#f56c6c', '生物': '#85ce61',
   '历史': '#c45656', '地理': '#2d8cf0', '政治': '#ed4014',
-}
-
-const subjectEmojis: Record<string, string> = {
-  '语文': '📖', '数学': '📐', '英语': '🔤', '物理': '⚡',
-  '化学': '🧪', '生物': '🧬', '历史': '🏛️', '地理': '🌍', '政治': '📜',
 }
 
 const subjectLightBg: Record<string, string> = {

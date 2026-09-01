@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { api } from '../../utils/api'
 import { ElMessage } from 'element-plus'
+import { subjectEmojis, defaultSubjects } from '../../utils/subjects'
 
 interface WrongItem {
   id: number
@@ -16,7 +17,7 @@ const loading = ref(false)
 const newItem = ref({ subject: '', question: '', reason: '' })
 const filterSubject = ref('')
 
-const subjects = ['数学', '英语', '物理', '化学', '生物', '语文', '历史', '地理', '政治']
+const subjects = defaultSubjects
 
 const filteredItems = computed(() => {
   if (!filterSubject.value) return wrongItems.value
@@ -67,7 +68,7 @@ onMounted(fetchWrongItems)
       <el-form :inline="true" @submit.prevent="addWrongItem">
         <el-form-item label="科目">
           <el-select v-model="newItem.subject" placeholder="选择科目" style="width: 120px">
-            <el-option v-for="s in subjects" :key="s" :label="s" :value="s" />
+            <el-option v-for="s in subjects" :key="s" :label="`${subjectEmojis[s] || '📚'} ${s}`" :value="s" />
           </el-select>
         </el-form-item>
         <el-form-item label="题目">

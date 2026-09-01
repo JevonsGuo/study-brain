@@ -5,6 +5,7 @@ import { api } from '../../utils/api'
 import { ElMessage } from 'element-plus'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
+import { subjectEmojis } from '../../utils/subjects'
 
 interface KnowledgePoint {
   id: number
@@ -55,11 +56,6 @@ const addDialogVisible = ref(false)
 const editDialogVisible = ref(false)
 const searchQuery = ref('')
 const manageMode = ref(false)
-
-const subjectEmojis: Record<string, string> = {
-  '数学': '📐', '英语': '🔤', '物理': '⚡', '化学': '🧪',
-  '生物': '🧬', '语文': '📖', '历史': '🏛️', '地理': '🌍', '政治': '📜',
-}
 
 const currentEmoji = computed(() => subjectEmojis[subject.value] || '📚')
 

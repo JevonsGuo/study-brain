@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { api } from '../../utils/api'
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
+import { subjectEmojis } from '../../utils/subjects'
 
 interface Grade {
   id: number
@@ -95,11 +96,6 @@ const subjectGradients: Record<string, string> = {
   '历史': 'linear-gradient(135deg, #c2c2c2 0%, #f5f5f5 100%)',
   '地理': 'linear-gradient(135deg, #79bbff 0%, #ecf5ff 100%)',
   '政治': 'linear-gradient(135deg, #f89898 0%, #fef0f0 100%)',
-}
-
-const subjectEmojis: Record<string, string> = {
-  '语文': '📖', '数学': '📐', '英语': '🔤', '物理': '⚡',
-  '化学': '🧪', '生物': '🧬', '历史': '🏛️', '地理': '🌍', '政治': '📜',
 }
 
 const fetchGrades = async () => {
@@ -394,7 +390,7 @@ window.addEventListener('resize', () => {
       <el-form @submit.prevent="addGrade" label-width="80px">
         <el-form-item label="科目" required>
           <el-select v-model="newGrade.subject" placeholder="选择科目" filterable allow-create>
-            <el-option v-for="s in subjects" :key="s" :label="s" :value="s" />
+            <el-option v-for="s in subjects" :key="s" :label="`${subjectEmojis[s] || '📚'} ${s}`" :value="s" />
           </el-select>
         </el-form-item>
         <el-form-item label="考试" required>
