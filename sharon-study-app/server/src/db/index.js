@@ -114,6 +114,17 @@ function initTables() {
       name TEXT NOT NULL UNIQUE,
       applied_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
+
+    CREATE TABLE IF NOT EXISTS learning_resources (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subject TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'video',
+      name TEXT NOT NULL,
+      desc TEXT NOT NULL DEFAULT '',
+      url TEXT NOT NULL,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    );
   `)
 
   initDailyConfig()
@@ -144,6 +155,13 @@ const MIGRATIONS = [
       const columns = db.prepare("PRAGMA table_info(knowledge_points)").all().map(c => c.name)
       if (!columns.includes('visual_desc')) db.exec("ALTER TABLE knowledge_points ADD COLUMN visual_desc TEXT NOT NULL DEFAULT ''")
       if (!columns.includes('video_url')) db.exec("ALTER TABLE knowledge_points ADD COLUMN video_url TEXT NOT NULL DEFAULT ''")
+    }
+  },
+  {
+    name: '003_study_plans_add_estimated_minutes',
+    up: () => {
+      const columns = db.prepare("PRAGMA table_info(study_plans)").all().map(c => c.name)
+      if (!columns.includes('estimated_minutes')) db.exec('ALTER TABLE study_plans ADD COLUMN estimated_minutes INTEGER NOT NULL DEFAULT 0')
     }
   }
 ]

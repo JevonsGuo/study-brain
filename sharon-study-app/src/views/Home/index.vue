@@ -1,8 +1,40 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { api } from '../../utils/api'
+
+interface WeatherData {
+  temp: number
+  tempMax: number
+  tempMin: number
+  weatherCode: number
+  windSpeed: number
+  humidity: number
+}
+
+interface DayStats {
+  total: number
+  done: number
+}
 
 const currentTime = ref(new Date())
 const greeting = ref('')
+const todayWeather = ref<WeatherData | null>(null)
+const tomorrowWeather = ref<WeatherData | null>(null)
+const weatherLoading = ref(true)
+const todayStats = ref<DayStats>({ total: 0, done: 0 })
+
+const gaokaoDate = new Date('2027-06-07')
+const gaokaoDays = computed(() => {
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const diff = gaokaoDate.getTime() - now.getTime()
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+})
+
+const progressPct = computed(() => {
+  if (todayStats.value.total === 0) return 0
+  return Math.round((todayStats.value.done / todayStats.value.total) * 100)
+})
 
 const modules = [
   { title: '知识库', desc: '各学科核心知识点', icon: 'Reading', color: '#13c2c2', path: '/knowledge' },
@@ -31,10 +63,78 @@ const formatTime = (date: Date) => {
   return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 
+const weatherDesc = (code: number): string => {
+  if (code === 0) return '晴'
+  if (code <= 3) return '多云'
+  if (code <= 48) return '雾'
+  if (code <= 57) return '毛毛雨'
+  if (code <= 67) return '雨'
+  if (code <= 77) return '雪'
+  if (code <= 82) return '阵雨'
+  if (code <= 86) return '阵雪'
+  if (code <= 99) return '雷阵雨'
+  return '多云'
+}
+
+const weatherIcon = (code: number): string => {
+  if (code === 0) return '☀️'
+  if (code <= 3) return '⛅'
+  if (code <= 48) return '🌫️'
+  if (code <= 57) return '🌧️'
+  if (code <= 67) return '🌧️'
+  if (code <= 77) return '❄️'
+  if (code <= 82) return '🌦️'
+  if (code <= 86) return '🌨️'
+  if (code <= 99) return '⛈️'
+  return '⛅'
+}
+
+const fetchWeather = async () => {
+  weatherLoading.value = true
+  try {
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&daily=temperature_2m_max,temperature_2m_min,weathercode&current=temperature_2m,relative_humidity_2m,weathercode,wind_speed_10m&timezone=Asia/Shanghai&forecast_days=2')
+    const data = await res.json()
+    todayWeather.value = {
+      temp: Math.round(data.current.temperature_2m),
+      tempMax: Math.round(data.daily.temperature_2m_max[0]),
+      tempMin: Math.round(data.daily.temperature_2m_min[0]),
+      weatherCode: data.current.weathercode,
+      windSpeed: Math.round(data.current.wind_speed_10m),
+      humidity: data.current.relative_humidity_2m,
+    }
+    tomorrowWeather.value = {
+      temp: Math.round(data.daily.temperature_2m_max[1]),
+      tempMax: Math.round(data.daily.temperature_2m_max[1]),
+      tempMin: Math.round(data.daily.temperature_2m_min[1]),
+      weatherCode: data.daily.weathercode[1],
+      windSpeed: 0,
+      humidity: 0,
+    }
+  } catch {
+    todayWeather.value = null
+    tomorrowWeather.value = null
+  } finally {
+    weatherLoading.value = false
+  }
+}
+
+const fetchTodayStats = async () => {
+  try {
+    const today = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`
+    const plans = await api.get('/study-plans')
+    const todayPlans = (plans as { date: string; done: boolean }[]).filter(p => p.date === today)
+    todayStats.value = { total: todayPlans.length, done: todayPlans.filter(p => p.done).length }
+  } catch {
+    todayStats.value = { total: 0, done: 0 }
+  }
+}
+
 let timer: ReturnType<typeof setInterval>
 
 onMounted(() => {
   updateGreeting()
+  fetchWeather()
+  fetchTodayStats()
   timer = setInterval(() => {
     currentTime.value = new Date()
     updateGreeting()
@@ -49,10 +149,55 @@ onUnmounted(() => {
 <template>
   <div class="home-page">
     <div class="welcome-section">
-      <div class="welcome-text">
-        <h1>{{ greeting }}</h1>
-        <p class="date-text">{{ formatDate(currentTime) }}</p>
-        <p class="time-text">{{ formatTime(currentTime) }}</p>
+      <div class="welcome-top">
+        <div class="welcome-text">
+          <h1>{{ greeting }}</h1>
+          <p class="date-text">{{ formatDate(currentTime) }}</p>
+          <p class="time-text">{{ formatTime(currentTime) }}</p>
+        </div>
+        <div class="info-cards">
+          <div class="weather-card" v-if="todayWeather">
+            <div class="weather-main">
+              <span class="weather-icon-big">{{ weatherIcon(todayWeather.weatherCode) }}</span>
+              <div class="weather-detail">
+                <div class="weather-temp">{{ todayWeather.temp }}°C</div>
+                <div class="weather-desc">{{ weatherDesc(todayWeather.weatherCode) }}</div>
+              </div>
+            </div>
+            <div class="weather-extra">
+              <span>{{ todayWeather.tempMin }}°/{{ todayWeather.tempMax }}°</span>
+              <span>💧{{ todayWeather.humidity }}%</span>
+            </div>
+            <div class="weather-tomorrow" v-if="tomorrowWeather">
+              <span class="tmr-label">明日</span>
+              <span>{{ weatherIcon(tomorrowWeather.weatherCode) }}</span>
+              <span>{{ weatherDesc(tomorrowWeather.weatherCode) }}</span>
+              <span>{{ tomorrowWeather.tempMin }}°/{{ tomorrowWeather.tempMax }}°</span>
+            </div>
+          </div>
+          <div class="weather-card loading" v-else-if="weatherLoading">
+            <span class="loading-text">加载天气...</span>
+          </div>
+
+          <div class="gaokao-card">
+            <div class="gaokao-num">{{ gaokaoDays }}</div>
+            <div class="gaokao-label">距高考（天）</div>
+          </div>
+
+          <div class="progress-card" v-if="todayStats.total > 0">
+            <div class="progress-ring">
+              <svg viewBox="0 0 40 40">
+                <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4" />
+                <circle cx="20" cy="20" r="16" fill="none" stroke="#fff" stroke-width="4"
+                  :stroke-dasharray="`${progressPct * 1.005} ${101 - progressPct * 1.005}`"
+                  stroke-linecap="round"
+                  transform="rotate(-90 20 20)" />
+              </svg>
+              <span class="ring-text">{{ progressPct }}%</span>
+            </div>
+            <div class="progress-label">今日完成 {{ todayStats.done }}/{{ todayStats.total }}</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -71,71 +216,126 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.home-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+.home-page { max-width: 1200px; margin: 0 auto; }
 
 .welcome-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  padding: 40px;
+  border-radius: 16px;
+  padding: 32px 36px;
   margin-bottom: 24px;
   color: #fff;
 }
 
-.welcome-text h1 {
-  font-size: 28px;
-  margin: 0 0 8px;
+.welcome-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
 }
 
-.date-text {
-  font-size: 16px;
-  opacity: 0.85;
-  margin: 4px 0;
+.welcome-text h1 { font-size: 26px; margin: 0 0 6px; }
+.date-text { font-size: 14px; opacity: 0.8; margin: 4px 0; }
+.time-text { font-size: 36px; font-weight: 300; margin: 6px 0 0; font-variant-numeric: tabular-nums; letter-spacing: 2px; }
+
+.info-cards {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
-.time-text {
-  font-size: 36px;
-  font-weight: 300;
-  margin: 8px 0 0;
-  font-variant-numeric: tabular-nums;
+.weather-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 12px 16px;
+  min-width: 160px;
 }
 
-.module-cards {
-  margin-top: 0;
-}
-
-.module-card {
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: transform 0.3s;
-  text-align: center;
-}
-
-.module-card:hover {
-  transform: translateY(-4px);
-}
-
-.module-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+.weather-card.loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
-  color: #fff;
 }
 
-.module-card h3 {
-  margin: 0 0 8px;
-  font-size: 18px;
+.loading-text { font-size: 13px; opacity: 0.7; }
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
-.module-card p {
-  color: #999;
-  font-size: 14px;
-  margin: 0;
+.weather-icon-big { font-size: 32px; line-height: 1; }
+
+.weather-detail { display: flex; flex-direction: column; }
+.weather-temp { font-size: 20px; font-weight: 700; line-height: 1.2; }
+.weather-desc { font-size: 12px; opacity: 0.8; }
+
+.weather-extra {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 6px;
 }
+
+.weather-tomorrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.tmr-label { opacity: 0.6; }
+
+.gaokao-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.gaokao-num { font-size: 28px; font-weight: 800; line-height: 1.2; }
+.gaokao-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+.progress-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.progress-ring {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 4px;
+}
+
+.progress-ring svg { width: 100%; height: 100%; transform: rotate(-0deg); }
+
+.ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.progress-label { font-size: 11px; opacity: 0.7; }
+
+.module-cards { margin-top: 0; }
+.module-card { margin-bottom: 20px; cursor: pointer; transition: transform 0.3s; text-align: center; }
+.module-card:hover { transform: translateY(-4px); }
+.module-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #fff; }
+.module-card h3 { margin: 0 0 8px; font-size: 18px; }
+.module-card p { color: #999; font-size: 14px; margin: 0; }
 </style>

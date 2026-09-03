@@ -59,6 +59,103 @@ const manageMode = ref(false)
 
 const currentEmoji = computed(() => subjectEmojis[subject.value] || '📚')
 
+interface LearningResource {
+  id: number
+  subject: string
+  category: string
+  name: string
+  desc: string
+  url: string
+  sort_order: number
+}
+
+const resources = ref<LearningResource[]>([])
+const resourceManageMode = ref(false)
+const resourceDialogVisible = ref(false)
+const resourceDialogTitle = ref('添加学习资源')
+const editingResource = ref<LearningResource | null>(null)
+const resourceForm = ref({ category: 'video', name: '', desc: '', url: '' })
+
+const categoryOptions = [
+  { value: 'video', label: '🎬 视频课程' },
+  { value: 'practice', label: '📝 在线刷题' },
+  { value: 'tool', label: '🔧 学习工具' },
+]
+
+const categoryLabel: Record<string, string> = { video: '🎬 视频课程', practice: '📝 在线刷题', tool: '🔧 学习工具' }
+
+const groupedResources = computed(() => {
+  const groups: { category: string; label: string; items: LearningResource[] }[] = []
+  const map = new Map<string, LearningResource[]>()
+  for (const r of resources.value) {
+    const list = map.get(r.category)
+    if (list) list.push(r)
+    else map.set(r.category, [r])
+  }
+  const order = ['video', 'practice', 'tool']
+  for (const cat of order) {
+    const items = map.get(cat)
+    if (items && items.length) {
+      groups.push({ category: cat, label: categoryLabel[cat] || cat, items })
+    }
+  }
+  return groups
+})
+
+const fetchResources = async () => {
+  try {
+    resources.value = await api.get(`/learning-resources?subject=${encodeURIComponent(subject.value)}`)
+  } catch {
+    // silent
+  }
+}
+
+const openAddResource = () => {
+  editingResource.value = null
+  resourceDialogTitle.value = '添加学习资源'
+  resourceForm.value = { category: 'video', name: '', desc: '', url: '' }
+  resourceDialogVisible.value = true
+}
+
+const openEditResource = (r: LearningResource) => {
+  editingResource.value = r
+  resourceDialogTitle.value = '编辑学习资源'
+  resourceForm.value = { category: r.category, name: r.name, desc: r.desc, url: r.url }
+  resourceDialogVisible.value = true
+}
+
+const saveResource = async () => {
+  if (!resourceForm.value.name || !resourceForm.value.url) return
+  try {
+    if (editingResource.value) {
+      await api.put(`/learning-resources/${editingResource.value.id}`, {
+        subject: subject.value,
+        ...resourceForm.value,
+      })
+    } else {
+      await api.post('/learning-resources', {
+        subject: subject.value,
+        ...resourceForm.value,
+      })
+    }
+    resourceDialogVisible.value = false
+    await fetchResources()
+    ElMessage.success(editingResource.value ? '修改成功' : '添加成功')
+  } catch {
+    ElMessage.error('操作失败')
+  }
+}
+
+const removeResource = async (id: number) => {
+  try {
+    await api.del(`/learning-resources/${id}`)
+    await fetchResources()
+    ElMessage.success('已删除')
+  } catch {
+    ElMessage.error('删除失败')
+  }
+}
+
 const sortedChapters = computed(() => {
   return [...chapters.value].sort((a, b) => extractChapterNum(a) - extractChapterNum(b))
 })
@@ -230,13 +327,16 @@ watch(subject, () => {
   activeChapter.value = ''
   selectedPoint.value = null
   manageMode.value = false
+  resourceManageMode.value = false
   fetchChapters()
   fetchPoints()
+  fetchResources()
 })
 
 onMounted(() => {
   fetchChapters()
   fetchPoints()
+  fetchResources()
 })
 </script>
 
@@ -296,6 +396,42 @@ onMounted(() => {
         >
           <span class="chapter-name">{{ ch }}</span>
           <span class="chapter-count">{{ chapterPointCount(ch) }}</span>
+        </div>
+
+        <div v-if="groupedResources.length > 0 || resourceManageMode" class="resources-section">
+          <div class="resources-header">
+            <span class="resources-title">📚 学习资源</span>
+            <div v-if="resourceManageMode" class="resources-manage-bar">
+              <el-button size="small" type="primary" :icon="'Plus'" @click="openAddResource">添加</el-button>
+            </div>
+          </div>
+          <div v-if="!resourceManageMode" class="resources-toggle" @click="resourceManageMode = true">
+            <el-icon size="12"><Setting /></el-icon> 管理
+          </div>
+          <div v-else class="resources-toggle" @click="resourceManageMode = false">
+            退出管理
+          </div>
+          <div v-for="group in groupedResources" :key="group.category" class="resource-group">
+            <div class="resource-group-label">{{ group.label }}</div>
+            <div v-for="r in group.items" :key="r.id" class="resource-item" :class="{ 'resource-item-manage': resourceManageMode }">
+              <a v-if="!resourceManageMode" :href="r.url" target="_blank" rel="noopener" class="resource-link">
+                <span class="resource-name">{{ r.name }}</span>
+                <span class="resource-desc">{{ r.desc }}</span>
+              </a>
+              <div v-else class="resource-info">
+                <span class="resource-name">{{ r.name }}</span>
+                <span class="resource-desc">{{ r.desc }}</span>
+              </div>
+              <div v-if="resourceManageMode" class="resource-actions">
+                <el-button size="small" type="primary" link @click="openEditResource(r)">编辑</el-button>
+                <el-popconfirm title="确定删除此资源？" @confirm="removeResource(r.id)">
+                  <template #reference>
+                    <el-button size="small" type="danger" link>删除</el-button>
+                  </template>
+                </el-popconfirm>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -460,6 +596,29 @@ onMounted(() => {
         <el-button type="primary" @click="saveEdit">保存</el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="resourceDialogVisible" :title="resourceDialogTitle" width="500px">
+      <el-form @submit.prevent="saveResource" label-width="80px">
+        <el-form-item label="分类">
+          <el-select v-model="resourceForm.category">
+            <el-option v-for="opt in categoryOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="名称" required>
+          <el-input v-model="resourceForm.name" placeholder="如：一数、组卷网、GeoGebra" />
+        </el-form-item>
+        <el-form-item label="简介">
+          <el-input v-model="resourceForm.desc" placeholder="简短描述此资源" />
+        </el-form-item>
+        <el-form-item label="链接" required>
+          <el-input v-model="resourceForm.url" placeholder="https://..." />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="resourceDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveResource">{{ editingResource ? '保存' : '添加' }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -583,6 +742,113 @@ onMounted(() => {
 .chapter-item.active .chapter-count {
   background: #d9ecff;
   color: #409eff;
+}
+
+.resources-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #ebeef5;
+}
+
+.resources-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 4px;
+}
+
+.resources-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #303133;
+}
+
+.resources-manage-bar {
+  display: flex;
+  gap: 4px;
+}
+
+.resources-toggle {
+  font-size: 11px;
+  color: #909399;
+  cursor: pointer;
+  padding: 2px 16px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transition: color 0.15s;
+}
+
+.resources-toggle:hover {
+  color: #409eff;
+}
+
+.resource-group {
+  margin-bottom: 8px;
+}
+
+.resource-group-label {
+  font-size: 11px;
+  color: #909399;
+  padding: 2px 16px;
+  margin-bottom: 2px;
+}
+
+.resource-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.resource-item-manage {
+  padding: 6px 12px;
+  border: 1px dashed #e4e7ed;
+  border-radius: 6px;
+  margin: 0 4px 4px;
+}
+
+.resource-link {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 16px;
+  text-decoration: none;
+  transition: background 0.15s;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+.resource-link:hover {
+  background: #f5f7fa;
+}
+
+.resource-info {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.resource-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 2px 4px;
+}
+
+.resource-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #409eff;
+  line-height: 1.4;
+}
+
+.resource-desc {
+  font-size: 10px;
+  color: #b0b5bd;
+  line-height: 1.3;
 }
 
 .points-area {

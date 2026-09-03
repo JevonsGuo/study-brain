@@ -17,7 +17,7 @@ interface Grade {
 const grades = ref<Grade[]>([])
 const loading = ref(false)
 const newGrade = ref({ subject: '', exam: '', score: 0, full_score: 150, date: '' })
-const subjects = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治']
+const subjects = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治', '其他']
 const activeTab = ref('overview')
 const showAddDialog = ref(false)
 const showSubjectDialog = ref(false)

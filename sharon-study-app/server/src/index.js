@@ -14,6 +14,7 @@ import wrongItemsRouter from './routes/wrong-items.js'
 import wordsRouter from './routes/words.js'
 import gradesRouter from './routes/grades.js'
 import knowledgeRouter from './routes/knowledge.js'
+import learningResourcesRouter from './routes/learning-resources.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -26,6 +27,7 @@ app.use('/api/wrong-items', wrongItemsRouter)
 app.use('/api/words', wordsRouter)
 app.use('/api/grades', gradesRouter)
 app.use('/api/knowledge', knowledgeRouter)
+app.use('/api/learning-resources', learningResourcesRouter)
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
