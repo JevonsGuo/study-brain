@@ -9,18 +9,23 @@ ENV_FILE="$APP_DIR/.env.production"
 echo "=== Sharon Study Deploy ==="
 
 cd "$REPO_DIR"
-echo "[1/5] Git pull..."
+echo "[1/6] Git pull..."
 git pull
 
-echo "[2/5] Install server dependencies..."
+echo "[2/6] Install frontend dependencies..."
+cd "$APP_DIR"
+npm install --cache /tmp/npm-cache
+
+echo "[3/6] Build frontend..."
+npm run build
+
+echo "[4/6] Install server dependencies..."
 cd "$SERVER_DIR"
 npm install --omit=dev --cache /tmp/npm-cache
+npx npm-install-scripts approve better-sqlite3 2>/dev/null || true
+npm rebuild better-sqlite3
 
-echo "[3/5] Build frontend..."
-cd "$APP_DIR"
-npm run build --cache /tmp/npm-cache
-
-echo "[4/5] Ensure data directory..."
+echo "[5/6] Ensure data directory..."
 mkdir -p /data/sharon-study/backups
 
 if [ ! -f "$ENV_FILE" ]; then
@@ -32,7 +37,7 @@ NODE_ENV=production
 EOF
 fi
 
-echo "[5/5] Restart service..."
+echo "[6/6] Restart service..."
 if command -v pm2 &> /dev/null; then
   pm2 restart sharon-study || pm2 start "$SERVER_DIR/src/index.js" --name sharon-study
   pm2 save
