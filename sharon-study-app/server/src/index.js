@@ -41,6 +41,6 @@ app.get('/{*path}', (req, res) => {
 
 getDb()
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
   console.log(`Sharon Study running at http://localhost:${PORT} [${process.env.NODE_ENV || 'development'}]`)
 })
