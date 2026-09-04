@@ -10,8 +10,9 @@ echo "=== Sharon Study Deploy ==="
 
 cd "$REPO_DIR"
 echo "[1/8] Git pull..."
-git checkout -- sharon-study-app/data/ 2>/dev/null || true
-git pull
+git checkout -- sharon-study-app/data/ sharon-study-app/server/package.json 2>/dev/null || true
+git fetch origin
+git reset --hard origin/master
 
 echo "[2/8] Install frontend dependencies..."
 cd "$APP_DIR"
