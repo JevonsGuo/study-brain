@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
   const db = getDb()
   const cat = category || 'video'
   const order = sort_order || 0
-  const result = db.prepare('INSERT INTO learning_resources (subject, category, name, desc, url, sort_order) VALUES (?, ?, ?, ?, ?, ?)').run(subject, cat, name, desc || '', url, order)
+  const result = db.prepare("INSERT INTO learning_resources (subject, category, name, desc, url, sort_order, origin, user_modified) VALUES (?, ?, ?, ?, ?, ?, 'user', 1)").run(subject, cat, name, desc || '', url, order)
   const row = db.prepare('SELECT * FROM learning_resources WHERE id = ?').get(result.lastInsertRowid)
   res.json(row)
 })
@@ -31,7 +31,7 @@ router.put('/:id', (req, res) => {
   const row = db.prepare('SELECT * FROM learning_resources WHERE id = ?').get(req.params.id)
   if (!row) return res.status(404).json({ error: 'not found' })
   const { subject, category, name, desc, url, sort_order } = req.body
-  db.prepare('UPDATE learning_resources SET subject = ?, category = ?, name = ?, desc = ?, url = ?, sort_order = ? WHERE id = ?').run(
+  db.prepare('UPDATE learning_resources SET subject = ?, category = ?, name = ?, desc = ?, url = ?, sort_order = ?, user_modified = 1 WHERE id = ?').run(
     subject || row.subject,
     category || row.category,
     name || row.name,

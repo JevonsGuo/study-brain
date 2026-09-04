@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
   if (!subject || !title) return res.status(400).json({ error: 'subject, title are required' })
   const db = getDb()
   const result = db.prepare(
-    'INSERT INTO knowledge_points (subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    "INSERT INTO knowledge_points (subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order, origin, user_modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'user', 1)"
   ).run(subject, chapter || '', title, content || '', key_formulas || '', tips || '', visual_desc || '', video_url || '', sort_order || 0)
   const row = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(result.lastInsertRowid)
   res.json(row)
@@ -56,7 +56,7 @@ router.put('/:id', (req, res) => {
   if (!row) return res.status(404).json({ error: 'not found' })
   const { subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
   db.prepare(
-    'UPDATE knowledge_points SET subject = ?, chapter = ?, title = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ? WHERE id = ?'
+    'UPDATE knowledge_points SET subject = ?, chapter = ?, title = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ?, user_modified = 1 WHERE id = ?'
   ).run(subject || row.subject, chapter ?? row.chapter, title || row.title, content ?? row.content, key_formulas ?? row.key_formulas, tips ?? row.tips, visual_desc ?? row.visual_desc, video_url ?? row.video_url, sort_order ?? row.sort_order, req.params.id)
   const updated = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(req.params.id)
   res.json(updated)

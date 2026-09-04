@@ -1,5 +1,10 @@
 const API_BASE = process.argv[2] || 'http://localhost:3000/api'
 
+if (!/^(https?:\/\/)?(localhost|127\.0\.0\.1)/.test(API_BASE)) {
+  console.error('已阻止：此脚本仅用于本地开发环境灌入测试成绩数据，禁止指向非本地地址。')
+  process.exit(1)
+}
+
 const examData = [
   { subject: '语文', exam: '月考一', score: 110, full_score: 150, date: '2025-09-20' },
   { subject: '语文', exam: '月考二', score: 108, full_score: 150, date: '2025-10-18' },

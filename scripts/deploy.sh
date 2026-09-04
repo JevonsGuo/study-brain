@@ -9,27 +9,28 @@ ENV_FILE="$APP_DIR/.env.production"
 echo "=== Sharon Study Deploy ==="
 
 cd "$REPO_DIR"
-echo "[1/6] Git pull..."
+echo "[1/8] Git pull..."
+git checkout -- sharon-study-app/data/ 2>/dev/null || true
 git pull
 
-echo "[2/6] Install frontend dependencies..."
+echo "[2/8] Install frontend dependencies..."
 cd "$APP_DIR"
 npm install --cache /tmp/npm-cache
 
-echo "[3/6] Build frontend..."
+echo "[3/8] Build frontend..."
 npm run build
 
-echo "[4/6] Install server dependencies..."
+echo "[4/8] Install server dependencies..."
 cd "$SERVER_DIR"
 npm install --omit=dev --cache /tmp/npm-cache
 npx npm-install-scripts approve better-sqlite3 2>/dev/null || true
 npm rebuild better-sqlite3
 
-echo "[5/6] Ensure data directory..."
+echo "[5/8] Ensure data directory and env..."
 mkdir -p /data/sharon-study/backups
 
 if [ ! -f "$ENV_FILE" ]; then
-  echo "[WARN] .env.production not found, creating default..."
+  echo "  [WARN] .env.production not found, creating default..."
   cat > "$ENV_FILE" << 'EOF'
 DB_PATH=/data/sharon-study/production.db
 PORT=3000
@@ -37,7 +38,24 @@ NODE_ENV=production
 EOF
 fi
 
-echo "[6/6] Restart service..."
+DB_PATH=$(grep '^DB_PATH=' "$ENV_FILE" | cut -d= -f2)
+
+echo "[6/8] Backup database..."
+if [ -n "$DB_PATH" ] && [ -f "$DB_PATH" ]; then
+  STAMP=$(date +%Y%m%d-%H%M%S)
+  BACKUP_FILE="/data/sharon-study/backups/pre-deploy-$STAMP.db"
+  (cd "$SERVER_DIR" && node -e "
+    const db = require('better-sqlite3')(process.argv[1])
+    db.backup(process.argv[2]).then(() => { console.log('  Backup -> ' + process.argv[2]); process.exit(0) }).catch(e => { console.error('  Backup failed:', e.message); process.exit(1) })
+  " "$DB_PATH" "$BACKUP_FILE")
+else
+  echo "  Database not found (first deploy?), skip backup"
+fi
+
+echo "[7/8] Sync content data..."
+(cd "$REPO_DIR" && NODE_ENV=production node scripts/sync-content.mjs)
+
+echo "[8/8] Restart service..."
 if command -v pm2 &> /dev/null; then
   pm2 restart sharon-study || pm2 start "$SERVER_DIR/src/index.js" --name sharon-study
   pm2 save

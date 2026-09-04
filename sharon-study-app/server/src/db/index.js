@@ -67,6 +67,8 @@ function initTables() {
       next_review TEXT NOT NULL DEFAULT '',
       review_count INTEGER NOT NULL DEFAULT 0,
       last_review TEXT NOT NULL DEFAULT '',
+      origin TEXT NOT NULL DEFAULT 'seed',
+      user_modified INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
@@ -106,6 +108,8 @@ function initTables() {
       visual_desc TEXT NOT NULL DEFAULT '',
       video_url TEXT NOT NULL DEFAULT '',
       sort_order INTEGER NOT NULL DEFAULT 0,
+      origin TEXT NOT NULL DEFAULT 'seed',
+      user_modified INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
@@ -123,6 +127,8 @@ function initTables() {
       desc TEXT NOT NULL DEFAULT '',
       url TEXT NOT NULL,
       sort_order INTEGER NOT NULL DEFAULT 0,
+      origin TEXT NOT NULL DEFAULT 'seed',
+      user_modified INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
   `)
@@ -162,6 +168,53 @@ const MIGRATIONS = [
     up: () => {
       const columns = db.prepare("PRAGMA table_info(study_plans)").all().map(c => c.name)
       if (!columns.includes('estimated_minutes')) db.exec('ALTER TABLE study_plans ADD COLUMN estimated_minutes INTEGER NOT NULL DEFAULT 0')
+    }
+  },
+  {
+    name: '004_content_provenance',
+    up: () => {
+      const addColumn = (table, column, ddl) => {
+        const columns = db.prepare(`PRAGMA table_info(${table})`).all().map(c => c.name)
+        if (!columns.includes(column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${ddl}`)
+      }
+      addColumn('words', 'origin', "TEXT NOT NULL DEFAULT 'seed'")
+      addColumn('words', 'user_modified', 'INTEGER NOT NULL DEFAULT 0')
+      addColumn('knowledge_points', 'origin', "TEXT NOT NULL DEFAULT 'seed'")
+      addColumn('knowledge_points', 'user_modified', 'INTEGER NOT NULL DEFAULT 0')
+      addColumn('learning_resources', 'origin', "TEXT NOT NULL DEFAULT 'seed'")
+      addColumn('learning_resources', 'user_modified', 'INTEGER NOT NULL DEFAULT 0')
+
+      const dedup = db.transaction(() => {
+        const dupWords = db.prepare('SELECT word FROM words GROUP BY word HAVING COUNT(*) > 1').all()
+        const keeperWord = db.prepare('SELECT id FROM words WHERE word = ? ORDER BY review_count DESC, mastery_level DESC, last_review DESC, id ASC LIMIT 1')
+        const otherWords = db.prepare('SELECT id FROM words WHERE word = ? AND id != ?')
+        const repointRecord = db.prepare('UPDATE study_records SET word_id = ? WHERE word_id = ?')
+        const deleteWord = db.prepare('DELETE FROM words WHERE id = ?')
+        for (const { word } of dupWords) {
+          const keeperId = keeperWord.get(word).id
+          for (const { id } of otherWords.all(word, keeperId)) {
+            repointRecord.run(keeperId, id)
+            deleteWord.run(id)
+          }
+        }
+
+        const dupKnowledge = db.prepare('SELECT subject, title FROM knowledge_points GROUP BY subject, title HAVING COUNT(*) > 1').all()
+        const deleteKnowledge = db.prepare('DELETE FROM knowledge_points WHERE subject = ? AND title = ? AND id != (SELECT MIN(id) FROM knowledge_points WHERE subject = ? AND title = ?)')
+        for (const d of dupKnowledge) {
+          deleteKnowledge.run(d.subject, d.title, d.subject, d.title)
+        }
+
+        const dupResources = db.prepare('SELECT subject, url FROM learning_resources GROUP BY subject, url HAVING COUNT(*) > 1').all()
+        const deleteResource = db.prepare('DELETE FROM learning_resources WHERE subject = ? AND url = ? AND id != (SELECT MIN(id) FROM learning_resources WHERE subject = ? AND url = ?)')
+        for (const d of dupResources) {
+          deleteResource.run(d.subject, d.url, d.subject, d.url)
+        }
+      })
+      dedup()
+
+      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_words_word ON words(word)')
+      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_subject_title ON knowledge_points(subject, title)')
+      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_learning_resources_subject_url ON learning_resources(subject, url)')
     }
   }
 ]

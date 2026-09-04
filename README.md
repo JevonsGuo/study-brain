@@ -27,17 +27,17 @@ sharon-study/
 │   ├── .env.example          # 环境变量模板（入git）
 │   ├── .env.local            # 本地开发环境（不入git）
 │   └── .env.production       # 生产环境（不入git）
+├── content/                  # 内容数据（入git，随版本发布）
+│   ├── words.json            # 单词字典（763词）
+│   ├── knowledge.json        # 知识库内容（34个知识点）
+│   └── learning-resources.json # 学习资源（25条）
 ├── scripts/
-│   ├── deploy.sh             # 服务器部署脚本
+│   ├── deploy.sh             # 服务器部署脚本（备份+内容同步+重启）
 │   ├── publish.sh            # 本地一键发布脚本
-│   ├── seed-words.js         # 词汇种子数据
-│   ├── seed-examples.js      # 例句种子数据
-│   ├── seed-math.js          # 数学知识种子数据
-│   ├── seed-grades.js        # 成绩种子数据
-│   ├── seed-plans.js         # 学习计划种子数据
-│   └── restore-db.js         # 从SQL文件恢复数据库
-└── data/
-    └── sharon-study-dump.sql # SQL文本导出（跨机器同步用）
+│   ├── sync-content.mjs      # content/ -> 数据库 幂等内容同步
+│   ├── export-content.mjs    # 数据库 -> content/ 内容导出（一次性/特殊场景）
+│   ├── reset-production.sh   # 生产库重置（备份->清空->重建->灌内容）
+│   └── seed-grades.js        # 测试成绩数据（仅限本地开发）
 ```
 
 ## 功能模块
@@ -104,7 +104,7 @@ cp .env.example .env.production  # 生产环境，修改DB_PATH为绝对路径
 
 ## 版本号
 
-版本号定义在 `sharon-study-app/package.json` 的 `version` 字段，当前版本：**0.1.0**
+版本号定义在 `sharon-study-app/package.json` 的 `version` 字段，当前版本：**1.0.1**
 
 每次发布前更新版本号。
 
@@ -137,16 +137,19 @@ npm run dev
 
 浏览器访问 **http://localhost:5173**，前端 API 请求会自动代理到后端 3000 端口。
 
-### 种子数据
+### 内容数据与测试数据
+
+内容数据（单词字典/知识库/学习资源）统一放在 `content/*.json`，随 git 版本管理。数据库文件（`sharon-study-app/data/`）不入git，**全新克隆后先执行一次下面的 sync-content**（自动建库+建表+灌入内容），直接启动服务只会得到空库：
 
 ```bash
-cd sharon-study-app
-node scripts/seed-words.js      # 763个高考词汇
-node scripts/seed-examples.js   # 678个例句
-node scripts/seed-math.js       # 34个数学知识点
-node scripts/seed-grades.js     # 45条成绩记录
-node scripts/seed-plans.js      # 过去30天随机计划
+# 本地开发库灌入内容（幂等，重复执行无副作用）
+node scripts/sync-content.mjs
+
+# 灌入测试成绩数据（仅限本地，脚本会拒绝指向非本地地址）
+node scripts/seed-grades.js
 ```
+
+更新内容的流程：修改 `content/*.json` -> commit -> 发布（deploy.sh 自动执行 sync-content）。
 
 ## 生产部署 (Ubuntu)
 
@@ -196,7 +199,7 @@ pm2 startup
 
 该脚本自动完成：
 1. Git commit + push
-2. SSH 到服务器执行 `deploy.sh`（git pull + npm install + build + restart）
+2. SSH 到服务器执行 `deploy.sh`（git pull + npm install + build + 备份数据库 + 内容同步 + restart）
 
 ### 服务器手动部署
 
@@ -205,43 +208,47 @@ cd /opt/sharon-study
 bash scripts/deploy.sh
 ```
 
-## 数据管理
+## 数据管理策略
 
-### 数据库文件位置
+数据按"能否重建"分为两类，维护方式完全不同：
 
-| 环境 | 路径 |
-|------|------|
-| 开发 | `sharon-study-app/data/test.db` |
-| 生产 | `/data/sharon-study/production.db` |
+| 类别 | 包含内容 | 来源 | 维护方式 |
+|------|---------|------|---------|
+| **内容数据**（可重建） | 单词字典、知识库、学习资源 | `content/*.json`（入git） | 改 JSON -> 发布，`sync-content.mjs` 幂等灌入 |
+| **用户数据**（不可重建） | 学习计划、错题、成绩、背诵进度、用户对内容条目的修改 | 用户在页面上的操作 | 只存在于生产库，靠备份保护 |
+
+### 归属标记
+
+三张内容表（words / knowledge_points / learning_resources）每行带两个标记：
+
+- `origin`：`seed`（来自 content/）或 `user`（用户在页面创建）
+- `user_modified`：用户在页面编辑过则为 1，内容同步永远跳过这些行
+
+内容同步只更新内容字段，不碰背诵进度（mastery_level / next_review 等），因此更新字典不会影响学习进度。
 
 ### 数据备份
 
-```bash
-# SQL文本备份（推荐，可diff可入git）
-sqlite3 /data/sharon-study/production.db .dump > /data/sharon-study/backups/$(date +%Y-%m-%d).sql
+deploy.sh 每次发布前自动备份到 `/data/sharon-study/backups/pre-deploy-<时间戳>.db`。
 
-# 文件备份
-cp /data/sharon-study/production.db /data/sharon-study/backups/$(date +%Y-%m-%d).db
-```
-
-### 跨机器数据同步
-
-使用 SQL 文本导出（不入 git 的 .db 文件）：
+生产服务器建议配置每日定时备份（crontab）：
 
 ```bash
-# 导出
-sqlite3 data/test.db .dump > data/sharon-study-dump.sql
-
-# 在新机器恢复
-node scripts/restore-db.js
+# 每天凌晨3点备份（.backup 方式对 WAL 模式安全）
+0 3 * * * cd /opt/sharon-study/sharon-study-app/server && node -e "require('better-sqlite3')('/data/sharon-study/production.db').backup('/data/sharon-study/backups/daily-' + new Date().toISOString().slice(0,10) + '.db').then(()=>process.exit(0))"
 ```
 
-### 定时备份 (Ubuntu crontab)
+备份应定期复制到另一台机器，防止单机故障。
+
+### 生产库重置（一次性）
+
+1.0.0 的生产库是从测试库拷贝的，包含测试数据。1.0.1 发布后在服务器上执行一次：
 
 ```bash
-# 每天凌晨3点备份
-0 3 * * * sqlite3 /data/sharon-study/production.db .dump > /data/sharon-study/backups/$(date +\%Y-\%m-\%d).sql
+cd /opt/sharon-study
+bash scripts/reset-production.sh --confirm
 ```
+
+脚本会：备份 -> 停服 -> 删库 -> 重建表结构 -> 从 content/ 灌入内容 -> 重启。执行后生产库为干净的初始态（内容数据齐全，用户数据为空）。
 
 ## 目录规划 (Ubuntu 服务器)
 

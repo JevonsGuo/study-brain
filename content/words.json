@@ -1,0 +1,5343 @@
+[
+  {
+    "word": "abandon",
+    "phonetic": "/əˈbændən/",
+    "meaning": "v. 放弃；遗弃",
+    "example_en": "He abandoned his old car and bought a new one.",
+    "example_cn": "他丢弃了旧车，买了一辆新的。"
+  },
+  {
+    "word": "abnormal",
+    "phonetic": "/æbˈnɔːrml/",
+    "meaning": "adj. 异常的",
+    "example_en": "The abnormal weather worried the farmers.",
+    "example_cn": "异常的天气让农民们担忧。"
+  },
+  {
+    "word": "abolish",
+    "phonetic": "/əˈbɒlɪʃ/",
+    "meaning": "v. 废除；废止",
+    "example_en": "The government decided to abolish the outdated law.",
+    "example_cn": "政府决定废除过时的法律。"
+  },
+  {
+    "word": "absent",
+    "phonetic": "/ˈæbsənt/",
+    "meaning": "adj. 缺席的；不在的",
+    "example_en": "She was absent from school due to illness.",
+    "example_cn": "她因病没去上学。"
+  },
+  {
+    "word": "absolute",
+    "phonetic": "/ˈæbsəluːt/",
+    "meaning": "adj. 绝对的；完全的",
+    "example_en": "I have absolute confidence in her ability.",
+    "example_cn": "我对她的能力有绝对的信心。"
+  },
+  {
+    "word": "absorb",
+    "phonetic": "/əbˈzɔːrb/",
+    "meaning": "v. 吸收；使全神贯注",
+    "example_en": "Plants absorb water through their roots.",
+    "example_cn": "植物通过根部吸收水分。"
+  },
+  {
+    "word": "abstract",
+    "phonetic": "/ˈæbstrækt/",
+    "meaning": "adj. 抽象的 n. 摘要",
+    "example_en": "The concept is too abstract for young children.",
+    "example_cn": "这个概念对幼儿来说太抽象了。"
+  },
+  {
+    "word": "abundant",
+    "phonetic": "/əˈbʌndənt/",
+    "meaning": "adj. 丰富的；充裕的",
+    "example_en": "The region has abundant natural resources.",
+    "example_cn": "该地区有丰富的自然资源。"
+  },
+  {
+    "word": "abuse",
+    "phonetic": "/əˈbjuːz/",
+    "meaning": "v./n. 滥用；虐待",
+    "example_en": "He was charged with abusing his power.",
+    "example_cn": "他被指控滥用职权。"
+  },
+  {
+    "word": "accelerate",
+    "phonetic": "/əkˈseləreɪt/",
+    "meaning": "v. 加速",
+    "example_en": "The driver accelerated to pass the truck.",
+    "example_cn": "司机加速超过了卡车。"
+  },
+  {
+    "word": "access",
+    "phonetic": "/ˈækses/",
+    "meaning": "n. 通道；进入 v. 存取",
+    "example_en": "Students have free access to the library.",
+    "example_cn": "学生可以免费使用图书馆。"
+  },
+  {
+    "word": "accommodate",
+    "phonetic": "/əˈkɒmədeɪt/",
+    "meaning": "v. 容纳；提供住宿",
+    "example_en": "The hotel can accommodate up to 500 guests.",
+    "example_cn": "这家酒店最多可容纳500位客人。"
+  },
+  {
+    "word": "accompany",
+    "phonetic": "/əˈkʌmpəni/",
+    "meaning": "v. 陪伴；伴随",
+    "example_en": "Her mother accompanied her to the airport.",
+    "example_cn": "她母亲陪她去了机场。"
+  },
+  {
+    "word": "accomplish",
+    "phonetic": "/əˈkɒmplɪʃ/",
+    "meaning": "v. 完成；实现",
+    "example_en": "She accomplished all her goals for the year.",
+    "example_cn": "她完成了年度所有目标。"
+  },
+  {
+    "word": "account",
+    "phonetic": "/əˈkaʊnt/",
+    "meaning": "n. 账户；描述 v. 解释",
+    "example_en": "He opened a savings account at the bank.",
+    "example_cn": "他在银行开了一个储蓄账户。"
+  },
+  {
+    "word": "accumulate",
+    "phonetic": "/əˈkjuːmjəleɪt/",
+    "meaning": "v. 积累；堆积",
+    "example_en": "Dust tends to accumulate on surfaces over time.",
+    "example_cn": "灰尘会随时间在表面积累。"
+  },
+  {
+    "word": "accurate",
+    "phonetic": "/ˈækjərət/",
+    "meaning": "adj. 精确的；准确的",
+    "example_en": "The weather forecast was not very accurate.",
+    "example_cn": "天气预报不太准确。"
+  },
+  {
+    "word": "accuse",
+    "phonetic": "/əˈkjuːz/",
+    "meaning": "v. 控告；指责",
+    "example_en": "She accused him of stealing her wallet.",
+    "example_cn": "她指控他偷了她的钱包。"
+  },
+  {
+    "word": "achieve",
+    "phonetic": "/əˈtʃiːv/",
+    "meaning": "v. 达到；实现",
+    "example_en": "He worked hard to achieve his dream.",
+    "example_cn": "他努力工作以实现梦想。"
+  },
+  {
+    "word": "acknowledge",
+    "phonetic": "/əkˈnɒlɪdʒ/",
+    "meaning": "v. 承认；感谢",
+    "example_en": "She acknowledged that she had made a mistake.",
+    "example_cn": "她承认自己犯了个错误。"
+  },
+  {
+    "word": "acquire",
+    "phonetic": "/əˈkwaɪər/",
+    "meaning": "v. 获得；学到",
+    "example_en": "She acquired a taste for classical music.",
+    "example_cn": "她逐渐喜欢上了古典音乐。"
+  },
+  {
+    "word": "adapt",
+    "phonetic": "/əˈdæpt/",
+    "meaning": "v. 适应；改编",
+    "example_en": "Animals must adapt to changing environments.",
+    "example_cn": "动物必须适应不断变化的环境。"
+  },
+  {
+    "word": "adequate",
+    "phonetic": "/ˈædɪkwət/",
+    "meaning": "adj. 充足的；适当的",
+    "example_en": "Make sure you get adequate sleep before the exam.",
+    "example_cn": "确保考试前有充足的睡眠。"
+  },
+  {
+    "word": "adjust",
+    "phonetic": "/əˈdʒʌst/",
+    "meaning": "v. 调整；适应",
+    "example_en": "You need to adjust the settings to improve the quality.",
+    "example_cn": "你需要调整设置来提高质量。"
+  },
+  {
+    "word": "admire",
+    "phonetic": "/ədˈmaɪər/",
+    "meaning": "v. 钦佩；羡慕",
+    "example_en": "I really admire her courage and determination.",
+    "example_cn": "我非常钦佩她的勇气和决心。"
+  },
+  {
+    "word": "admit",
+    "phonetic": "/ədˈmɪt/",
+    "meaning": "v. 承认；准许进入",
+    "example_en": "He admitted that he was wrong about the issue.",
+    "example_cn": "他承认在这个问题上他错了。"
+  },
+  {
+    "word": "adopt",
+    "phonetic": "/əˈdɒpt/",
+    "meaning": "v. 采纳；收养",
+    "example_en": "The couple decided to adopt a child.",
+    "example_cn": "这对夫妇决定收养一个孩子。"
+  },
+  {
+    "word": "advance",
+    "phonetic": "/ədˈvɑːns/",
+    "meaning": "v./n. 前进；进步",
+    "example_en": "Technology has advanced rapidly in recent years.",
+    "example_cn": "近年来技术发展迅速。"
+  },
+  {
+    "word": "advantage",
+    "phonetic": "/ədˈvɑːntɪdʒ/",
+    "meaning": "n. 优势；有利条件",
+    "example_en": "Being bilingual gives you an advantage in job hunting.",
+    "example_cn": "掌握双语在求职中是一个优势。"
+  },
+  {
+    "word": "advertise",
+    "phonetic": "/ˈædvətaɪz/",
+    "meaning": "v. 做广告；宣传",
+    "example_en": "They advertised the product on social media.",
+    "example_cn": "他们在社交媒体上为产品做广告。"
+  },
+  {
+    "word": "advocate",
+    "phonetic": "/ˈædvəkeɪt/",
+    "meaning": "v. 提倡；拥护",
+    "example_en": "She advocates for equal rights for all people.",
+    "example_cn": "她倡导所有人享有平等权利。"
+  },
+  {
+    "word": "affect",
+    "phonetic": "/əˈfekt/",
+    "meaning": "v. 影响；感动",
+    "example_en": "The bad weather affected the crops significantly.",
+    "example_cn": "恶劣的天气严重影响了庄稼。"
+  },
+  {
+    "word": "afford",
+    "phonetic": "/əˈfɔːrd/",
+    "meaning": "v. 负担得起；提供",
+    "example_en": "I cannot afford to buy such an expensive car.",
+    "example_cn": "我买不起这么贵的车。"
+  },
+  {
+    "word": "aggressive",
+    "phonetic": "/əˈɡresɪv/",
+    "meaning": "adj. 侵略的；好斗的",
+    "example_en": "His aggressive behavior scared the other children.",
+    "example_cn": "他好斗的行为吓到了其他孩子。"
+  },
+  {
+    "word": "allocate",
+    "phonetic": "/ˈæləkeɪt/",
+    "meaning": "v. 分配；拨出",
+    "example_en": "The government allocated funds for education.",
+    "example_cn": "政府拨出了教育经费。"
+  },
+  {
+    "word": "allowance",
+    "phonetic": "/əˈlaʊəns/",
+    "meaning": "n. 津贴；零用钱",
+    "example_en": "She gives her children a weekly allowance.",
+    "example_cn": "她每周给孩子们零用钱。"
+  },
+  {
+    "word": "alter",
+    "phonetic": "/ˈɔːltər/",
+    "meaning": "v. 改变；修改",
+    "example_en": "We had to alter our plans due to the rain.",
+    "example_cn": "因为下雨，我们不得不改变计划。"
+  },
+  {
+    "word": "alternative",
+    "phonetic": "/ɔːlˈtɜːrnətɪv/",
+    "meaning": "adj. 替代的 n. 选择",
+    "example_en": "We need to find an alternative solution.",
+    "example_cn": "我们需要找到一个替代方案。"
+  },
+  {
+    "word": "ambition",
+    "phonetic": "/æmˈbɪʃn/",
+    "meaning": "n. 雄心；抱负",
+    "example_en": "Her ambition is to become a doctor.",
+    "example_cn": "她的志向是成为一名医生。"
+  },
+  {
+    "word": "amuse",
+    "phonetic": "/əˈmjuːz/",
+    "meaning": "v. 使娱乐；逗乐",
+    "example_en": "The clown amused the children with funny tricks.",
+    "example_cn": "小丑用滑稽的戏法逗乐了孩子们。"
+  },
+  {
+    "word": "analyze",
+    "phonetic": "/ˈænəlaɪz/",
+    "meaning": "v. 分析",
+    "example_en": "Scientists analyze the data to find patterns.",
+    "example_cn": "科学家分析数据以发现规律。"
+  },
+  {
+    "word": "announce",
+    "phonetic": "/əˈnaʊns/",
+    "meaning": "v. 宣布；通知",
+    "example_en": "The principal announced the exam results.",
+    "example_cn": "校长宣布了考试结果。"
+  },
+  {
+    "word": "annual",
+    "phonetic": "/ˈænjuəl/",
+    "meaning": "adj. 每年的 n. 年刊",
+    "example_en": "The annual report shows a significant profit increase.",
+    "example_cn": "年度报告显示利润大幅增长。"
+  },
+  {
+    "word": "anticipate",
+    "phonetic": "/ænˈtɪsɪpeɪt/",
+    "meaning": "v. 预期；期望",
+    "example_en": "We anticipate that sales will increase next quarter.",
+    "example_cn": "我们预期下季度销售额将增长。"
+  },
+  {
+    "word": "anxiety",
+    "phonetic": "/æŋˈzaɪəti/",
+    "meaning": "n. 焦虑；担忧",
+    "example_en": "She felt great anxiety before the interview.",
+    "example_cn": "面试前她感到非常焦虑。"
+  },
+  {
+    "word": "appeal",
+    "phonetic": "/əˈpiːl/",
+    "meaning": "v. 呼吁；上诉 n. 吸引力",
+    "example_en": "The idea of working abroad appealed to her.",
+    "example_cn": "去国外工作的想法对她有吸引力。"
+  },
+  {
+    "word": "appetite",
+    "phonetic": "/ˈæpɪtaɪt/",
+    "meaning": "n. 食欲；欲望",
+    "example_en": "Exercise can improve your appetite.",
+    "example_cn": "运动可以增进食欲。"
+  },
+  {
+    "word": "appliance",
+    "phonetic": "/əˈplaɪəns/",
+    "meaning": "n. 器具；设备",
+    "example_en": "Modern kitchen appliances save a lot of time.",
+    "example_cn": "现代厨房电器节省了很多时间。"
+  },
+  {
+    "word": "application",
+    "phonetic": "/ˌæplɪˈkeɪʃn/",
+    "meaning": "n. 申请；应用",
+    "example_en": "He submitted his application to three universities.",
+    "example_cn": "他向三所大学提交了申请。"
+  },
+  {
+    "word": "appoint",
+    "phonetic": "/əˈpɔɪnt/",
+    "meaning": "v. 任命；约定",
+    "example_en": "The manager appointed her as team leader.",
+    "example_cn": "经理任命她为团队负责人。"
+  },
+  {
+    "word": "appreciate",
+    "phonetic": "/əˈpriːʃieɪt/",
+    "meaning": "v. 欣赏；感激",
+    "example_en": "I really appreciate your help with this project.",
+    "example_cn": "我非常感谢你在这个项目上的帮助。"
+  },
+  {
+    "word": "approach",
+    "phonetic": "/əˈprəʊtʃ/",
+    "meaning": "v. 接近 n. 方法",
+    "example_en": "We need a new approach to solve this problem.",
+    "example_cn": "我们需要一种新方法来解决这个问题。"
+  },
+  {
+    "word": "appropriate",
+    "phonetic": "/əˈprəʊpriət/",
+    "meaning": "adj. 适当的；恰当的",
+    "example_en": "Casual clothes are not appropriate for a formal dinner.",
+    "example_cn": "休闲装不适合正式晚宴。"
+  },
+  {
+    "word": "approve",
+    "phonetic": "/əˈpruːv/",
+    "meaning": "v. 批准；赞成",
+    "example_en": "The committee approved the new budget plan.",
+    "example_cn": "委员会批准了新的预算方案。"
+  },
+  {
+    "word": "arise",
+    "phonetic": "/əˈraɪz/",
+    "meaning": "v. 出现；产生",
+    "example_en": "New problems arose during the construction.",
+    "example_cn": "施工过程中出现了新问题。"
+  },
+  {
+    "word": "arrange",
+    "phonetic": "/əˈreɪndʒ/",
+    "meaning": "v. 安排；整理",
+    "example_en": "She arranged the flowers in a beautiful vase.",
+    "example_cn": "她把花插在一个漂亮的花瓶里。"
+  },
+  {
+    "word": "artificial",
+    "phonetic": "/ˌɑːtɪˈfɪʃl/",
+    "meaning": "adj. 人工的；虚假的",
+    "example_en": "Artificial intelligence is changing our daily lives.",
+    "example_cn": "人工智能正在改变我们的日常生活。"
+  },
+  {
+    "word": "assess",
+    "phonetic": "/əˈses/",
+    "meaning": "v. 评估；评定",
+    "example_en": "Teachers assess students through various methods.",
+    "example_cn": "老师通过各种方法评估学生。"
+  },
+  {
+    "word": "assign",
+    "phonetic": "/əˈsaɪn/",
+    "meaning": "v. 分配；指派",
+    "example_en": "The teacher assigned homework for the weekend.",
+    "example_cn": "老师布置了周末作业。"
+  },
+  {
+    "word": "assist",
+    "phonetic": "/əˈsɪst/",
+    "meaning": "v. 帮助；协助",
+    "example_en": "The nurse assisted the doctor during the operation.",
+    "example_cn": "护士在手术期间协助医生。"
+  },
+  {
+    "word": "associate",
+    "phonetic": "/əˈsəʊʃieɪt/",
+    "meaning": "v. 联系；联想",
+    "example_en": "People often associate wealth with happiness.",
+    "example_cn": "人们常把财富和幸福联系在一起。"
+  },
+  {
+    "word": "assume",
+    "phonetic": "/əˈsjuːm/",
+    "meaning": "v. 假定；承担",
+    "example_en": "Don't assume that everyone agrees with you.",
+    "example_cn": "不要以为每个人都同意你的观点。"
+  },
+  {
+    "word": "assure",
+    "phonetic": "/əˈʃʊər/",
+    "meaning": "v. 保证；使确信",
+    "example_en": "I assure you that everything will be fine.",
+    "example_cn": "我向你保证一切都会好的。"
+  },
+  {
+    "word": "atmosphere",
+    "phonetic": "/ˈætməsfɪər/",
+    "meaning": "n. 大气层；氛围",
+    "example_en": "The restaurant has a warm and friendly atmosphere.",
+    "example_cn": "这家餐厅氛围温馨友好。"
+  },
+  {
+    "word": "attach",
+    "phonetic": "/əˈtætʃ/",
+    "meaning": "v. 附上；依恋",
+    "example_en": "Please attach your resume to the email.",
+    "example_cn": "请将简历附在邮件中。"
+  },
+  {
+    "word": "attain",
+    "phonetic": "/əˈteɪn/",
+    "meaning": "v. 达到；获得",
+    "example_en": "She attained her goal of winning the championship.",
+    "example_cn": "她实现了赢得冠军的目标。"
+  },
+  {
+    "word": "attempt",
+    "phonetic": "/əˈtempt/",
+    "meaning": "v./n. 尝试；企图",
+    "example_en": "He attempted to climb the mountain alone.",
+    "example_cn": "他试图独自攀登那座山。"
+  },
+  {
+    "word": "attitude",
+    "phonetic": "/ˈætɪtjuːd/",
+    "meaning": "n. 态度；看法",
+    "example_en": "A positive attitude can change your life.",
+    "example_cn": "积极的态度可以改变你的生活。"
+  },
+  {
+    "word": "attract",
+    "phonetic": "/əˈtrækt/",
+    "meaning": "v. 吸引",
+    "example_en": "The beautiful scenery attracts many tourists.",
+    "example_cn": "美丽的风景吸引了许多游客。"
+  },
+  {
+    "word": "authority",
+    "phonetic": "/ɔːˈθɒrəti/",
+    "meaning": "n. 权威；当局",
+    "example_en": "The local authority decided to build a new park.",
+    "example_cn": "地方当局决定建造一个新公园。"
+  },
+  {
+    "word": "automatic",
+    "phonetic": "/ˌɔːtəˈmætɪk/",
+    "meaning": "adj. 自动的",
+    "example_en": "The doors in the supermarket are automatic.",
+    "example_cn": "超市的门是自动的。"
+  },
+  {
+    "word": "available",
+    "phonetic": "/əˈveɪləbl/",
+    "meaning": "adj. 可用的；可得到的",
+    "example_en": "Is this book available in the library?",
+    "example_cn": "图书馆里有这本书吗？"
+  },
+  {
+    "word": "average",
+    "phonetic": "/ˈævərɪdʒ/",
+    "meaning": "adj. 平均的 n. 平均数",
+    "example_en": "The average temperature in summer is 30°C.",
+    "example_cn": "夏季平均气温是30度。"
+  },
+  {
+    "word": "avoid",
+    "phonetic": "/əˈvɔɪd/",
+    "meaning": "v. 避免；回避",
+    "example_en": "You should avoid eating too much junk food.",
+    "example_cn": "你应该避免吃太多垃圾食品。"
+  },
+  {
+    "word": "aware",
+    "phonetic": "/əˈweər/",
+    "meaning": "adj. 意识到的",
+    "example_en": "Are you aware of the risks involved?",
+    "example_cn": "你意识到其中涉及的风险了吗？"
+  },
+  {
+    "word": "balance",
+    "phonetic": "/ˈbæləns/",
+    "meaning": "n. 平衡 v. 使平衡",
+    "example_en": "It is important to maintain a work-life balance.",
+    "example_cn": "保持工作与生活的平衡很重要。"
+  },
+  {
+    "word": "barrier",
+    "phonetic": "/ˈbæriər/",
+    "meaning": "n. 障碍；屏障",
+    "example_en": "Language can be a barrier to communication.",
+    "example_cn": "语言可能成为沟通的障碍。"
+  },
+  {
+    "word": "behalf",
+    "phonetic": "/bɪˈhɑːf/",
+    "meaning": "n. 利益；代表",
+    "example_en": "I am writing on behalf of my mother.",
+    "example_cn": "我代表我母亲写信。"
+  },
+  {
+    "word": "behave",
+    "phonetic": "/bɪˈheɪv/",
+    "meaning": "v. 表现；行为",
+    "example_en": "Children should learn how to behave in public.",
+    "example_cn": "孩子应该学会在公共场合的行为规范。"
+  },
+  {
+    "word": "benefit",
+    "phonetic": "/ˈbenɪfɪt/",
+    "meaning": "n. 利益 v. 有益于",
+    "example_en": "Regular exercise benefits both body and mind.",
+    "example_cn": "规律的运动对身心都有益。"
+  },
+  {
+    "word": "beyond",
+    "phonetic": "/bɪˈjɒnd/",
+    "meaning": "prep. 超越；在…之外",
+    "example_en": "The view was beautiful beyond description.",
+    "example_cn": "景色美得无法描述。"
+  },
+  {
+    "word": "blame",
+    "phonetic": "/bleɪm/",
+    "meaning": "v. 责备 n. 过失",
+    "example_en": "Don't blame others for your own mistakes.",
+    "example_cn": "不要把自己的错误归咎于他人。"
+  },
+  {
+    "word": "boom",
+    "phonetic": "/buːm/",
+    "meaning": "n./v. 繁荣；激增",
+    "example_en": "The tourism industry experienced a boom last year.",
+    "example_cn": "去年旅游业经历了繁荣。"
+  },
+  {
+    "word": "boost",
+    "phonetic": "/buːst/",
+    "meaning": "v. 促进；增加",
+    "example_en": "The good news boosted everyone's confidence.",
+    "example_cn": "好消息增强了大家的信心。"
+  },
+  {
+    "word": "boundary",
+    "phonetic": "/ˈbaʊndri/",
+    "meaning": "n. 边界；界限",
+    "example_en": "The river forms the boundary between the two countries.",
+    "example_cn": "这条河构成了两国的边界。"
+  },
+  {
+    "word": "breakthrough",
+    "phonetic": "/ˈbreɪkθruː/",
+    "meaning": "n. 突破",
+    "example_en": "Scientists made a breakthrough in cancer research.",
+    "example_cn": "科学家在癌症研究上取得了突破。"
+  },
+  {
+    "word": "brief",
+    "phonetic": "/briːf/",
+    "meaning": "adj. 简短的 v. 汇报",
+    "example_en": "The meeting was brief but productive.",
+    "example_cn": "会议简短但富有成效。"
+  },
+  {
+    "word": "brilliant",
+    "phonetic": "/ˈbrɪliənt/",
+    "meaning": "adj. 杰出的；辉煌的",
+    "example_en": "She came up with a brilliant idea for the project.",
+    "example_cn": "她为项目想出了一个绝妙的主意。"
+  },
+  {
+    "word": "burden",
+    "phonetic": "/ˈbɜːrdn/",
+    "meaning": "n. 负担 v. 使负重",
+    "example_en": "The debt was a heavy burden on the family.",
+    "example_cn": "债务是这个家庭的沉重负担。"
+  },
+  {
+    "word": "calculate",
+    "phonetic": "/ˈkælkjuleɪt/",
+    "meaning": "v. 计算",
+    "example_en": "We need to calculate the total cost of the trip.",
+    "example_cn": "我们需要计算旅行的总费用。"
+  },
+  {
+    "word": "campaign",
+    "phonetic": "/kæmˈpeɪn/",
+    "meaning": "n. 运动；战役",
+    "example_en": "They launched a campaign against smoking.",
+    "example_cn": "他们发起了一场禁烟运动。"
+  },
+  {
+    "word": "candidate",
+    "phonetic": "/ˈkændɪdət/",
+    "meaning": "n. 候选人",
+    "example_en": "There are three candidates for the position.",
+    "example_cn": "这个职位有三个候选人。"
+  },
+  {
+    "word": "capable",
+    "phonetic": "/ˈkeɪpəbl/",
+    "meaning": "adj. 有能力的",
+    "example_en": "She is capable of handling difficult situations.",
+    "example_cn": "她有能力处理困难局面。"
+  },
+  {
+    "word": "capacity",
+    "phonetic": "/kəˈpæsəti/",
+    "meaning": "n. 容量；能力",
+    "example_en": "The stadium has a capacity of 50,000 people.",
+    "example_cn": "体育场可容纳5万人。"
+  },
+  {
+    "word": "capture",
+    "phonetic": "/ˈkæptʃər/",
+    "meaning": "v. 捕获；夺取",
+    "example_en": "The photo captured the beauty of the sunset.",
+    "example_cn": "照片捕捉到了日落的美。"
+  },
+  {
+    "word": "career",
+    "phonetic": "/kəˈrɪər/",
+    "meaning": "n. 职业；事业",
+    "example_en": "She chose a career in medicine.",
+    "example_cn": "她选择了医学事业。"
+  },
+  {
+    "word": "casual",
+    "phonetic": "/ˈkæʒuəl/",
+    "meaning": "adj. 随意的；非正式的",
+    "example_en": "He wore casual clothes to the party.",
+    "example_cn": "他穿着休闲装去参加派对。"
+  },
+  {
+    "word": "category",
+    "phonetic": "/ˈkætəɡəri/",
+    "meaning": "n. 类别；种类",
+    "example_en": "The books are divided into several categories.",
+    "example_cn": "书被分成几个类别。"
+  },
+  {
+    "word": "cautious",
+    "phonetic": "/ˈkɔːʃəs/",
+    "meaning": "adj. 谨慎的",
+    "example_en": "Be cautious when driving in heavy rain.",
+    "example_cn": "暴雨中开车要谨慎。"
+  },
+  {
+    "word": "cease",
+    "phonetic": "/siːs/",
+    "meaning": "v. 停止；终止",
+    "example_en": "The factory ceased production last month.",
+    "example_cn": "工厂上个月停止了生产。"
+  },
+  {
+    "word": "challenge",
+    "phonetic": "/ˈtʃælɪndʒ/",
+    "meaning": "n./v. 挑战",
+    "example_en": "Learning a new language is a great challenge.",
+    "example_cn": "学习一门新语言是一个巨大的挑战。"
+  },
+  {
+    "word": "champion",
+    "phonetic": "/ˈtʃæmpiən/",
+    "meaning": "n. 冠军；拥护者",
+    "example_en": "She became the national champion in swimming.",
+    "example_cn": "她成为了全国游泳冠军。"
+  },
+  {
+    "word": "characteristic",
+    "phonetic": "/ˌkærəktəˈrɪstɪk/",
+    "meaning": "n. 特征 adj. 特有的",
+    "example_en": "Patience is a characteristic of good teachers.",
+    "example_cn": "耐心是好老师的特征。"
+  },
+  {
+    "word": "circumstance",
+    "phonetic": "/ˈsɜːrkəmstəns/",
+    "meaning": "n. 环境；情况",
+    "example_en": "Under no circumstance should you give up.",
+    "example_cn": "在任何情况下你都不应放弃。"
+  },
+  {
+    "word": "civilization",
+    "phonetic": "/ˌsɪvəlaɪˈzeɪʃn/",
+    "meaning": "n. 文明",
+    "example_en": "Ancient civilization made great contributions to humanity.",
+    "example_cn": "古代文明对人类做出了巨大贡献。"
+  },
+  {
+    "word": "classify",
+    "phonetic": "/ˈklæsɪfaɪ/",
+    "meaning": "v. 分类",
+    "example_en": "Scientists classify animals into different groups.",
+    "example_cn": "科学家将动物分为不同的类群。"
+  },
+  {
+    "word": "climate",
+    "phonetic": "/ˈklaɪmət/",
+    "meaning": "n. 气候",
+    "example_en": "The climate in this area is warm and humid.",
+    "example_cn": "这个地区的气候温暖潮湿。"
+  },
+  {
+    "word": "coincidence",
+    "phonetic": "/kəʊˈɪnsɪdəns/",
+    "meaning": "n. 巧合",
+    "example_en": "It was a coincidence that we met at the airport.",
+    "example_cn": "我们在机场相遇真是巧合。"
+  },
+  {
+    "word": "collapse",
+    "phonetic": "/kəˈlæps/",
+    "meaning": "v./n. 倒塌；崩溃",
+    "example_en": "The old building collapsed during the earthquake.",
+    "example_cn": "地震中旧建筑倒塌了。"
+  },
+  {
+    "word": "colleague",
+    "phonetic": "/ˈkɒliːɡ/",
+    "meaning": "n. 同事",
+    "example_en": "My colleague helped me finish the report.",
+    "example_cn": "我的同事帮我完成了报告。"
+  },
+  {
+    "word": "combination",
+    "phonetic": "/ˌkɒmbɪˈneɪʃn/",
+    "meaning": "n. 结合；组合",
+    "example_en": "Success is a combination of hard work and luck.",
+    "example_cn": "成功是努力和运气的结合。"
+  },
+  {
+    "word": "command",
+    "phonetic": "/kəˈmɑːnd/",
+    "meaning": "v./n. 命令；掌握",
+    "example_en": "The officer commanded the soldiers to march forward.",
+    "example_cn": "军官命令士兵向前行进。"
+  },
+  {
+    "word": "comment",
+    "phonetic": "/ˈkɒment/",
+    "meaning": "n./v. 评论",
+    "example_en": "The teacher made a comment on my essay.",
+    "example_cn": "老师对我的文章做了评论。"
+  },
+  {
+    "word": "commit",
+    "phonetic": "/kəˈmɪt/",
+    "meaning": "v. 犯(罪)；承诺",
+    "example_en": "He committed himself to improving the community.",
+    "example_cn": "他致力于改善社区。"
+  },
+  {
+    "word": "communicate",
+    "phonetic": "/kəˈmjuːnɪkeɪt/",
+    "meaning": "v. 交流；传达",
+    "example_en": "We communicate mainly through email.",
+    "example_cn": "我们主要通过电子邮件沟通。"
+  },
+  {
+    "word": "community",
+    "phonetic": "/kəˈmjuːnəti/",
+    "meaning": "n. 社区；团体",
+    "example_en": "The local community organized a charity event.",
+    "example_cn": "当地社区组织了一场慈善活动。"
+  },
+  {
+    "word": "companion",
+    "phonetic": "/kəmˈpæniən/",
+    "meaning": "n. 同伴；伙伴",
+    "example_en": "A dog is a faithful companion.",
+    "example_cn": "狗是忠实的伙伴。"
+  },
+  {
+    "word": "compare",
+    "phonetic": "/kəmˈpeər/",
+    "meaning": "v. 比较；对比",
+    "example_en": "Compare the two options before making a decision.",
+    "example_cn": "做决定前比较一下两个选项。"
+  },
+  {
+    "word": "compel",
+    "phonetic": "/kəmˈpel/",
+    "meaning": "v. 强迫；迫使",
+    "example_en": "The evidence compelled him to confess.",
+    "example_cn": "证据迫使他招供。"
+  },
+  {
+    "word": "compensate",
+    "phonetic": "/ˈkɒmpenseɪt/",
+    "meaning": "v. 补偿；赔偿",
+    "example_en": "The company compensated her for the loss.",
+    "example_cn": "公司赔偿了她的损失。"
+  },
+  {
+    "word": "compete",
+    "phonetic": "/kəmˈpiːt/",
+    "meaning": "v. 竞争；比赛",
+    "example_en": "Students compete for scholarships every year.",
+    "example_cn": "学生们每年竞争奖学金。"
+  },
+  {
+    "word": "competent",
+    "phonetic": "/ˈkɒmpɪtənt/",
+    "meaning": "adj. 有能力的；胜任的",
+    "example_en": "She is a competent manager who gets things done.",
+    "example_cn": "她是一位能干的管理者，能完成任务。"
+  },
+  {
+    "word": "complaint",
+    "phonetic": "/kəmˈpleɪnt/",
+    "meaning": "n. 投诉；抱怨",
+    "example_en": "He filed a complaint about the poor service.",
+    "example_cn": "他投诉了糟糕的服务。"
+  },
+  {
+    "word": "complex",
+    "phonetic": "/ˈkɒmpleks/",
+    "meaning": "adj. 复杂的 n. 综合体",
+    "example_en": "The math problem was too complex for me to solve.",
+    "example_cn": "这道数学题太复杂了，我解不出来。"
+  },
+  {
+    "word": "component",
+    "phonetic": "/kəmˈpəʊnənt/",
+    "meaning": "n. 成分；组件",
+    "example_en": "Each component of the machine must be checked.",
+    "example_cn": "机器的每个部件都必须检查。"
+  },
+  {
+    "word": "compose",
+    "phonetic": "/kəmˈpəʊz/",
+    "meaning": "v. 组成；创作",
+    "example_en": "She composed a beautiful piece of music.",
+    "example_cn": "她创作了一首优美的乐曲。"
+  },
+  {
+    "word": "comprehension",
+    "phonetic": "/ˌkɒmprɪˈhenʃn/",
+    "meaning": "n. 理解；理解力",
+    "example_en": "Reading comprehension is an important skill.",
+    "example_cn": "阅读理解是一项重要的技能。"
+  },
+  {
+    "word": "compromise",
+    "phonetic": "/ˈkɒmprəmaɪz/",
+    "meaning": "n./v. 妥协",
+    "example_en": "Both sides agreed to compromise on the issue.",
+    "example_cn": "双方同意在这个问题上妥协。"
+  },
+  {
+    "word": "concentrate",
+    "phonetic": "/ˈkɒnsntreɪt/",
+    "meaning": "v. 集中；专心",
+    "example_en": "It's hard to concentrate in a noisy room.",
+    "example_cn": "在嘈杂的房间里很难集中注意力。"
+  },
+  {
+    "word": "concept",
+    "phonetic": "/ˈkɒnsept/",
+    "meaning": "n. 概念；观念",
+    "example_en": "The concept of democracy varies across cultures.",
+    "example_cn": "民主的概念在不同文化中有所不同。"
+  },
+  {
+    "word": "concern",
+    "phonetic": "/kənˈsɜːrn/",
+    "meaning": "v. 涉及 n. 关心；忧虑",
+    "example_en": "Environmental protection is a major concern today.",
+    "example_cn": "环境保护是当今的一个主要关切。"
+  },
+  {
+    "word": "conclude",
+    "phonetic": "/kənˈkluːd/",
+    "meaning": "v. 得出结论；结束",
+    "example_en": "We concluded that the experiment was successful.",
+    "example_cn": "我们得出结论，实验是成功的。"
+  },
+  {
+    "word": "concrete",
+    "phonetic": "/ˈkɒŋkriːt/",
+    "meaning": "adj. 具体的 n. 混凝土",
+    "example_en": "We need concrete evidence to support the claim.",
+    "example_cn": "我们需要具体证据来支持这一说法。"
+  },
+  {
+    "word": "conduct",
+    "phonetic": "/kənˈdʌkt/",
+    "meaning": "v. 实施；指挥 n. 行为",
+    "example_en": "The professor will conduct the research project.",
+    "example_cn": "教授将负责这个研究项目。"
+  },
+  {
+    "word": "conference",
+    "phonetic": "/ˈkɒnfərəns/",
+    "meaning": "n. 会议",
+    "example_en": "She attended an international conference in Paris.",
+    "example_cn": "她参加了在巴黎举行的国际会议。"
+  },
+  {
+    "word": "confidence",
+    "phonetic": "/ˈkɒnfɪdəns/",
+    "meaning": "n. 信心；自信",
+    "example_en": "Practice builds confidence in public speaking.",
+    "example_cn": "练习能建立公开演讲的信心。"
+  },
+  {
+    "word": "confirm",
+    "phonetic": "/kənˈfɜːrm/",
+    "meaning": "v. 证实；确认",
+    "example_en": "Please confirm your reservation by email.",
+    "example_cn": "请通过电子邮件确认您的预订。"
+  },
+  {
+    "word": "conflict",
+    "phonetic": "/ˈkɒnflɪkt/",
+    "meaning": "n. 冲突；矛盾",
+    "example_en": "The conflict between the two countries lasted for years.",
+    "example_cn": "两国之间的冲突持续了多年。"
+  },
+  {
+    "word": "confuse",
+    "phonetic": "/kənˈfjuːz/",
+    "meaning": "v. 使困惑；混淆",
+    "example_en": "The similar names often confuse new students.",
+    "example_cn": "相似的名字经常让新学生混淆。"
+  },
+  {
+    "word": "congratulate",
+    "phonetic": "/kənˈɡrætʃuleɪt/",
+    "meaning": "v. 祝贺",
+    "example_en": "I want to congratulate you on your achievement.",
+    "example_cn": "我想祝贺你的成就。"
+  },
+  {
+    "word": "connect",
+    "phonetic": "/kəˈnekt/",
+    "meaning": "v. 连接；联系",
+    "example_en": "The bridge connects the two islands.",
+    "example_cn": "这座桥连接了两个岛屿。"
+  },
+  {
+    "word": "conscience",
+    "phonetic": "/ˈkɒnʃəns/",
+    "meaning": "n. 良心；道德感",
+    "example_en": "He had a guilty conscience after lying to his friend.",
+    "example_cn": "对朋友撒谎后他良心不安。"
+  },
+  {
+    "word": "conscious",
+    "phonetic": "/ˈkɒnʃəs/",
+    "meaning": "adj. 意识到的；有意的",
+    "example_en": "She was conscious of being watched by others.",
+    "example_cn": "她意识到有人在注视她。"
+  },
+  {
+    "word": "consequence",
+    "phonetic": "/ˈkɒnsɪkwəns/",
+    "meaning": "n. 结果；后果",
+    "example_en": "You must accept the consequences of your actions.",
+    "example_cn": "你必须接受自己行为的后果。"
+  },
+  {
+    "word": "conservation",
+    "phonetic": "/ˌkɒnsərˈveɪʃn/",
+    "meaning": "n. 保护；保存",
+    "example_en": "Wildlife conservation is essential for biodiversity.",
+    "example_cn": "野生动物保护对生物多样性至关重要。"
+  },
+  {
+    "word": "conservative",
+    "phonetic": "/kənˈsɜːrvətɪv/",
+    "meaning": "adj. 保守的 n. 保守派",
+    "example_en": "He holds conservative views on education.",
+    "example_cn": "他对教育持保守观点。"
+  },
+  {
+    "word": "consider",
+    "phonetic": "/kənˈsɪdər/",
+    "meaning": "v. 考虑；认为",
+    "example_en": "Please consider all the options before deciding.",
+    "example_cn": "请在决定前考虑所有选项。"
+  },
+  {
+    "word": "consist",
+    "phonetic": "/kənˈsɪst/",
+    "meaning": "v. 由…组成；在于",
+    "example_en": "The team consists of 12 players.",
+    "example_cn": "这个队伍由12名队员组成。"
+  },
+  {
+    "word": "constant",
+    "phonetic": "/ˈkɒnstənt/",
+    "meaning": "adj. 不断的；恒定的",
+    "example_en": "The constant noise made it hard to sleep.",
+    "example_cn": "持续的噪音让人难以入睡。"
+  },
+  {
+    "word": "constitute",
+    "phonetic": "/ˈkɒnstɪtjuːt/",
+    "meaning": "v. 构成；组成",
+    "example_en": "Women constitute over half of the population.",
+    "example_cn": "女性占人口的一半以上。"
+  },
+  {
+    "word": "construct",
+    "phonetic": "/kənˈstrʌkt/",
+    "meaning": "v. 建造；构建",
+    "example_en": "They plan to construct a new highway next year.",
+    "example_cn": "他们计划明年修建一条新高速公路。"
+  },
+  {
+    "word": "consult",
+    "phonetic": "/kənˈsʌlt/",
+    "meaning": "v. 咨询；查阅",
+    "example_en": "You should consult a doctor about your symptoms.",
+    "example_cn": "你应该咨询医生你的症状。"
+  },
+  {
+    "word": "consume",
+    "phonetic": "/kənˈsjuːm/",
+    "meaning": "v. 消耗；消费",
+    "example_en": "Americans consume a lot of fast food.",
+    "example_cn": "美国人消费大量快餐。"
+  },
+  {
+    "word": "contact",
+    "phonetic": "/ˈkɒntækt/",
+    "meaning": "n./v. 接触；联系",
+    "example_en": "Please contact us if you have any questions.",
+    "example_cn": "如有问题请联系我们。"
+  },
+  {
+    "word": "contain",
+    "phonetic": "/kənˈteɪn/",
+    "meaning": "v. 包含；容纳",
+    "example_en": "The box contains old letters and photographs.",
+    "example_cn": "盒子里装着旧信件和照片。"
+  },
+  {
+    "word": "contemporary",
+    "phonetic": "/kənˈtempəreri/",
+    "meaning": "adj. 当代的 n. 同代人",
+    "example_en": "Contemporary art often challenges traditional ideas.",
+    "example_cn": "当代艺术经常挑战传统观念。"
+  },
+  {
+    "word": "content",
+    "phonetic": "/ˈkɒntent/",
+    "meaning": "n. 内容 adj. 满足的",
+    "example_en": "He was content with his simple life.",
+    "example_cn": "他对简单的生活感到满足。"
+  },
+  {
+    "word": "context",
+    "phonetic": "/ˈkɒntekst/",
+    "meaning": "n. 上下文；背景",
+    "example_en": "The meaning of a word depends on its context.",
+    "example_cn": "词义取决于上下文。"
+  },
+  {
+    "word": "continue",
+    "phonetic": "/kənˈtɪnjuː/",
+    "meaning": "v. 继续；延续",
+    "example_en": "She decided to continue her studies abroad.",
+    "example_cn": "她决定继续在国外学习。"
+  },
+  {
+    "word": "contradict",
+    "phonetic": "/ˌkɒntrəˈdɪkt/",
+    "meaning": "v. 反驳；矛盾",
+    "example_en": "His actions contradict his words.",
+    "example_cn": "他的行为与他的话相矛盾。"
+  },
+  {
+    "word": "contrary",
+    "phonetic": "/ˈkɒntrəri/",
+    "meaning": "adj. 相反的 n. 反面",
+    "example_en": "Contrary to expectations, the project was a success.",
+    "example_cn": "与预期相反，项目取得了成功。"
+  },
+  {
+    "word": "contribute",
+    "phonetic": "/kənˈtrɪbjuːt/",
+    "meaning": "v. 贡献；捐献",
+    "example_en": "Everyone should contribute to protecting the environment.",
+    "example_cn": "每个人都应为保护环境做出贡献。"
+  },
+  {
+    "word": "controversial",
+    "phonetic": "/ˌkɒntrəˈvɜːrʃl/",
+    "meaning": "adj. 有争议的",
+    "example_en": "The new policy proved highly controversial.",
+    "example_cn": "新政策引起了很大争议。"
+  },
+  {
+    "word": "convenience",
+    "phonetic": "/kənˈviːniəns/",
+    "meaning": "n. 便利；方便",
+    "example_en": "Online shopping offers great convenience.",
+    "example_cn": "网上购物提供了极大的便利。"
+  },
+  {
+    "word": "conventional",
+    "phonetic": "/kənˈvenʃənl/",
+    "meaning": "adj. 传统的；常规的",
+    "example_en": "He has conventional views on marriage.",
+    "example_cn": "他对婚姻持传统观点。"
+  },
+  {
+    "word": "convince",
+    "phonetic": "/kənˈvɪns/",
+    "meaning": "v. 使确信；说服",
+    "example_en": "She convinced me to change my mind.",
+    "example_cn": "她说服我改变了主意。"
+  },
+  {
+    "word": "cooperate",
+    "phonetic": "/kəʊˈɒpəreɪt/",
+    "meaning": "v. 合作；协作",
+    "example_en": "The two companies agreed to cooperate on the project.",
+    "example_cn": "两家公司同意在项目上合作。"
+  },
+  {
+    "word": "correspond",
+    "phonetic": "/ˌkɒrɪˈspɒnd/",
+    "meaning": "v. 相符；通信",
+    "example_en": "His story does not correspond with the facts.",
+    "example_cn": "他的说法与事实不符。"
+  },
+  {
+    "word": "corrupt",
+    "phonetic": "/kəˈrʌpt/",
+    "meaning": "adj. 腐败的 v. 使堕落",
+    "example_en": "The corrupt official was arrested last week.",
+    "example_cn": "腐败的官员上周被捕了。"
+  },
+  {
+    "word": "council",
+    "phonetic": "/ˈkaʊnsl/",
+    "meaning": "n. 委员会；议会",
+    "example_en": "The city council approved the new development plan.",
+    "example_cn": "市议会批准了新的发展计划。"
+  },
+  {
+    "word": "courage",
+    "phonetic": "/ˈkʌrɪdʒ/",
+    "meaning": "n. 勇气；胆量",
+    "example_en": "It takes courage to stand up for what is right.",
+    "example_cn": "坚持正义需要勇气。"
+  },
+  {
+    "word": "crash",
+    "phonetic": "/kræʃ/",
+    "meaning": "v./n. 碰撞；崩溃",
+    "example_en": "The stock market crashed in 2008.",
+    "example_cn": "股市在2008年崩盘了。"
+  },
+  {
+    "word": "creative",
+    "phonetic": "/kriˈeɪtɪv/",
+    "meaning": "adj. 创造性的",
+    "example_en": "Creative thinking is highly valued in modern society.",
+    "example_cn": "创造性思维在现代社会非常受重视。"
+  },
+  {
+    "word": "crisis",
+    "phonetic": "/ˈkraɪsɪs/",
+    "meaning": "n. 危机",
+    "example_en": "The country is facing an economic crisis.",
+    "example_cn": "这个国家正面临经济危机。"
+  },
+  {
+    "word": "criterion",
+    "phonetic": "/kraɪˈtɪəriən/",
+    "meaning": "n. 标准；准则",
+    "example_en": "What criteria do you use to judge a good book?",
+    "example_cn": "你用什么标准评判一本好书？"
+  },
+  {
+    "word": "crucial",
+    "phonetic": "/ˈkruːʃl/",
+    "meaning": "adj. 关键的；决定性的",
+    "example_en": "Time management is crucial for exam preparation.",
+    "example_cn": "时间管理对备考至关重要。"
+  },
+  {
+    "word": "cultivate",
+    "phonetic": "/ˈkʌltɪveɪt/",
+    "meaning": "v. 培养；耕作",
+    "example_en": "Schools should cultivate students' creativity.",
+    "example_cn": "学校应该培养学生的创造力。"
+  },
+  {
+    "word": "curiosity",
+    "phonetic": "/ˌkjʊəriˈɒsəti/",
+    "meaning": "n. 好奇心",
+    "example_en": "Children have a natural curiosity about the world.",
+    "example_cn": "孩子对世界有天然的好奇心。"
+  },
+  {
+    "word": "currency",
+    "phonetic": "/ˈkʌrənsi/",
+    "meaning": "n. 货币；通货",
+    "example_en": "The euro is the common currency of many European countries.",
+    "example_cn": "欧元是许多欧洲国家的共同货币。"
+  },
+  {
+    "word": "current",
+    "phonetic": "/ˈkʌrənt/",
+    "meaning": "adj. 当前的 n. 水流；电流",
+    "example_en": "The current situation requires immediate action.",
+    "example_cn": "当前形势需要立即采取行动。"
+  },
+  {
+    "word": "curriculum",
+    "phonetic": "/kəˈrɪkjələm/",
+    "meaning": "n. 课程",
+    "example_en": "The school updated its curriculum this year.",
+    "example_cn": "学校今年更新了课程设置。"
+  },
+  {
+    "word": "custom",
+    "phonetic": "/ˈkʌstəm/",
+    "meaning": "n. 习俗；风俗",
+    "example_en": "It is a Chinese custom to give red envelopes at weddings.",
+    "example_cn": "婚礼送红包是中国的习俗。"
+  },
+  {
+    "word": "deadline",
+    "phonetic": "/ˈdedlaɪn/",
+    "meaning": "n. 截止日期",
+    "example_en": "The deadline for the project is next Friday.",
+    "example_cn": "项目的截止日期是下周五。"
+  },
+  {
+    "word": "debate",
+    "phonetic": "/dɪˈbeɪt/",
+    "meaning": "n./v. 辩论；争论",
+    "example_en": "They debated the issue for over two hours.",
+    "example_cn": "他们就此问题辩论了两个多小时。"
+  },
+  {
+    "word": "decade",
+    "phonetic": "/ˈdekeɪd/",
+    "meaning": "n. 十年",
+    "example_en": "Technology has changed dramatically over the past decade.",
+    "example_cn": "过去十年技术发生了巨大变化。"
+  },
+  {
+    "word": "declare",
+    "phonetic": "/dɪˈkleər/",
+    "meaning": "v. 宣布；声明",
+    "example_en": "The president declared a state of emergency.",
+    "example_cn": "总统宣布进入紧急状态。"
+  },
+  {
+    "word": "decline",
+    "phonetic": "/dɪˈklaɪn/",
+    "meaning": "v. 下降；拒绝",
+    "example_en": "Sales declined sharply during the winter months.",
+    "example_cn": "冬季几个月销售额急剧下降。"
+  },
+  {
+    "word": "decorate",
+    "phonetic": "/ˈdekəreɪt/",
+    "meaning": "v. 装饰",
+    "example_en": "They decorated the room with flowers and balloons.",
+    "example_cn": "他们用花和气球装饰了房间。"
+  },
+  {
+    "word": "decrease",
+    "phonetic": "/dɪˈkriːs/",
+    "meaning": "v./n. 减少",
+    "example_en": "The population of the village has decreased over the years.",
+    "example_cn": "这些年来村庄的人口减少了。"
+  },
+  {
+    "word": "dedicate",
+    "phonetic": "/ˈdedɪkeɪt/",
+    "meaning": "v. 致力于；奉献",
+    "example_en": "She dedicated her life to helping the poor.",
+    "example_cn": "她将一生奉献给帮助穷人。"
+  },
+  {
+    "word": "defeat",
+    "phonetic": "/dɪˈfiːt/",
+    "meaning": "v./n. 击败；失败",
+    "example_en": "The team was defeated in the final match.",
+    "example_cn": "队伍在决赛中被击败了。"
+  },
+  {
+    "word": "defend",
+    "phonetic": "/dɪˈfend/",
+    "meaning": "v. 防御；辩护",
+    "example_en": "The lawyer defended his client passionately.",
+    "example_cn": "律师慷慨地为当事人辩护。"
+  },
+  {
+    "word": "define",
+    "phonetic": "/dɪˈfaɪn/",
+    "meaning": "v. 定义；界定",
+    "example_en": "How do you define success?",
+    "example_cn": "你如何定义成功？"
+  },
+  {
+    "word": "definite",
+    "phonetic": "/ˈdefɪnət/",
+    "meaning": "adj. 明确的；确定的",
+    "example_en": "We need a definite answer by tomorrow.",
+    "example_cn": "我们明天之前需要一个明确的答复。"
+  },
+  {
+    "word": "delay",
+    "phonetic": "/dɪˈleɪ/",
+    "meaning": "v./n. 推迟；延误",
+    "example_en": "The flight was delayed due to bad weather.",
+    "example_cn": "航班因恶劣天气延误了。"
+  },
+  {
+    "word": "deliberate",
+    "phonetic": "/dɪˈlɪbərət/",
+    "meaning": "adj. 故意的 v. 仔细考虑",
+    "example_en": "It was a deliberate attempt to mislead the public.",
+    "example_cn": "这是故意误导公众的企图。"
+  },
+  {
+    "word": "delicate",
+    "phonetic": "/ˈdelɪkət/",
+    "meaning": "adj. 精美的；微妙的",
+    "example_en": "Be careful with the delicate glass vase.",
+    "example_cn": "小心那个易碎的玻璃花瓶。"
+  },
+  {
+    "word": "deliver",
+    "phonetic": "/dɪˈlɪvər/",
+    "meaning": "v. 递送；发表",
+    "example_en": "The postman delivers mail every morning.",
+    "example_cn": "邮递员每天早上送信。"
+  },
+  {
+    "word": "demand",
+    "phonetic": "/dɪˈmɑːnd/",
+    "meaning": "v./n. 要求；需求",
+    "example_en": "There is a high demand for skilled workers.",
+    "example_cn": "对技术工人的需求很高。"
+  },
+  {
+    "word": "demonstrate",
+    "phonetic": "/ˈdemənstreɪt/",
+    "meaning": "v. 证明；演示",
+    "example_en": "The experiment demonstrated the effects of gravity.",
+    "example_cn": "实验演示了重力的效果。"
+  },
+  {
+    "word": "deny",
+    "phonetic": "/dɪˈnaɪ/",
+    "meaning": "v. 否认；拒绝",
+    "example_en": "He denied having broken the window.",
+    "example_cn": "他否认打破了窗户。"
+  },
+  {
+    "word": "depart",
+    "phonetic": "/dɪˈpɑːrt/",
+    "meaning": "v. 出发；离开",
+    "example_en": "The train departs at 8 a.m. sharp.",
+    "example_cn": "火车早上8点整出发。"
+  },
+  {
+    "word": "depend",
+    "phonetic": "/dɪˈpend/",
+    "meaning": "v. 依赖；取决于",
+    "example_en": "Success depends on hard work and persistence.",
+    "example_cn": "成功取决于努力和坚持。"
+  },
+  {
+    "word": "deposit",
+    "phonetic": "/dɪˈpɒzɪt/",
+    "meaning": "n. 存款 v. 存放",
+    "example_en": "You need to deposit 500 yuan to open the account.",
+    "example_cn": "开户需要存入500元。"
+  },
+  {
+    "word": "depress",
+    "phonetic": "/dɪˈpres/",
+    "meaning": "v. 使沮丧；使萧条",
+    "example_en": "The gloomy weather depressed her spirits.",
+    "example_cn": "阴沉的天气使她心情沮丧。"
+  },
+  {
+    "word": "derive",
+    "phonetic": "/dɪˈraɪv/",
+    "meaning": "v. 源于；获得",
+    "example_en": "The word \"television\" derives from Greek and Latin.",
+    "example_cn": "\"television\"一词源于希腊语和拉丁语。"
+  },
+  {
+    "word": "describe",
+    "phonetic": "/dɪˈskraɪb/",
+    "meaning": "v. 描述；描写",
+    "example_en": "Can you describe what happened that night?",
+    "example_cn": "你能描述那天晚上发生了什么吗？"
+  },
+  {
+    "word": "deserve",
+    "phonetic": "/dɪˈzɜːrv/",
+    "meaning": "v. 值得；应受",
+    "example_en": "You deserve a reward for your hard work.",
+    "example_cn": "你的努力值得奖励。"
+  },
+  {
+    "word": "design",
+    "phonetic": "/dɪˈzaɪn/",
+    "meaning": "v./n. 设计",
+    "example_en": "She designed a beautiful wedding dress.",
+    "example_cn": "她设计了一件漂亮的婚纱。"
+  },
+  {
+    "word": "desperate",
+    "phonetic": "/ˈdespərət/",
+    "meaning": "adj. 绝望的；拼命的",
+    "example_en": "The refugees were in desperate need of food and water.",
+    "example_cn": "难民急需食物和水。"
+  },
+  {
+    "word": "destination",
+    "phonetic": "/ˌdestɪˈneɪʃn/",
+    "meaning": "n. 目的地",
+    "example_en": "Our destination is a small village in the mountains.",
+    "example_cn": "我们的目的地是山里的一个小村庄。"
+  },
+  {
+    "word": "destroy",
+    "phonetic": "/dɪˈstrɔɪ/",
+    "meaning": "v. 破坏；毁灭",
+    "example_en": "The fire destroyed the entire building.",
+    "example_cn": "大火摧毁了整栋建筑。"
+  },
+  {
+    "word": "determine",
+    "phonetic": "/dɪˈtɜːrmɪn/",
+    "meaning": "v. 决定；确定",
+    "example_en": "She was determined to succeed no matter what.",
+    "example_cn": "她下定决心无论如何都要成功。"
+  },
+  {
+    "word": "develop",
+    "phonetic": "/dɪˈveləp/",
+    "meaning": "v. 发展；开发",
+    "example_en": "The company plans to develop a new product line.",
+    "example_cn": "公司计划开发一条新产品线。"
+  },
+  {
+    "word": "device",
+    "phonetic": "/dɪˈvaɪs/",
+    "meaning": "n. 设备；装置",
+    "example_en": "This electronic device can detect radiation.",
+    "example_cn": "这个电子设备可以检测辐射。"
+  },
+  {
+    "word": "devote",
+    "phonetic": "/dɪˈvəʊt/",
+    "meaning": "v. 奉献；致力于",
+    "example_en": "He devoted all his time to the research.",
+    "example_cn": "他把所有时间都投入到了研究中。"
+  },
+  {
+    "word": "diagnose",
+    "phonetic": "/ˈdaɪəɡnəʊz/",
+    "meaning": "v. 诊断",
+    "example_en": "The doctor diagnosed him with diabetes.",
+    "example_cn": "医生诊断他患有糖尿病。"
+  },
+  {
+    "word": "dictate",
+    "phonetic": "/dɪkˈteɪt/",
+    "meaning": "v. 口述；命令",
+    "example_en": "The teacher dictated a passage for the students to write.",
+    "example_cn": "老师口述了一段让学生写下来。"
+  },
+  {
+    "word": "differ",
+    "phonetic": "/ˈdɪfər/",
+    "meaning": "v. 不同；有区别",
+    "example_en": "Opinions differ on how to solve the problem.",
+    "example_cn": "关于如何解决这个问题，意见不一。"
+  },
+  {
+    "word": "digest",
+    "phonetic": "/daɪˈdʒest/",
+    "meaning": "v. 消化；领悟",
+    "example_en": "Some foods are difficult to digest.",
+    "example_cn": "有些食物很难消化。"
+  },
+  {
+    "word": "dilemma",
+    "phonetic": "/dɪˈlemə/",
+    "meaning": "n. 困境；两难",
+    "example_en": "She faced the dilemma of choosing between career and family.",
+    "example_cn": "她面临事业和家庭之间的两难选择。"
+  },
+  {
+    "word": "dimension",
+    "phonetic": "/daɪˈmenʃn/",
+    "meaning": "n. 维度；方面",
+    "example_en": "The painting adds a new dimension to the room.",
+    "example_cn": "这幅画为房间增添了新的维度。"
+  },
+  {
+    "word": "diminish",
+    "phonetic": "/dɪˈmɪnɪʃ/",
+    "meaning": "v. 减少；缩小",
+    "example_en": "His influence in the company has diminished.",
+    "example_cn": "他在公司的影响力减弱了。"
+  },
+  {
+    "word": "discipline",
+    "phonetic": "/ˈdɪsəplɪn/",
+    "meaning": "n. 纪律；学科",
+    "example_en": "Self-discipline is key to academic success.",
+    "example_cn": "自律是学业成功的关键。"
+  },
+  {
+    "word": "discount",
+    "phonetic": "/ˈdɪskaʊnt/",
+    "meaning": "n. 折扣",
+    "example_en": "The store offers a 20% discount on all items.",
+    "example_cn": "商店所有商品打八折。"
+  },
+  {
+    "word": "discover",
+    "phonetic": "/dɪˈskʌvər/",
+    "meaning": "v. 发现",
+    "example_en": "Columbus discovered America in 1492.",
+    "example_cn": "哥伦布于1492年发现了美洲。"
+  },
+  {
+    "word": "discrimination",
+    "phonetic": "/dɪˌskrɪmɪˈneɪʃn/",
+    "meaning": "n. 歧视；辨别力",
+    "example_en": "Racial discrimination is illegal in many countries.",
+    "example_cn": "种族歧视在许多国家是违法的。"
+  },
+  {
+    "word": "disguise",
+    "phonetic": "/dɪsˈɡaɪz/",
+    "meaning": "v./n. 伪装；假扮",
+    "example_en": "He disguised himself as a waiter at the party.",
+    "example_cn": "他在派对上乔装成服务员。"
+  },
+  {
+    "word": "dismiss",
+    "phonetic": "/dɪsˈmɪs/",
+    "meaning": "v. 解雇；驳回",
+    "example_en": "The judge dismissed the case for lack of evidence.",
+    "example_cn": "法官因证据不足驳回了案件。"
+  },
+  {
+    "word": "display",
+    "phonetic": "/dɪˈspleɪ/",
+    "meaning": "v./n. 展示；陈列",
+    "example_en": "The museum displays ancient Egyptian artifacts.",
+    "example_cn": "博物馆展出了古埃及文物。"
+  },
+  {
+    "word": "dispose",
+    "phonetic": "/dɪˈspəʊz/",
+    "meaning": "v. 处理；安排",
+    "example_en": "Please dispose of your litter properly.",
+    "example_cn": "请妥善处理垃圾。"
+  },
+  {
+    "word": "dispute",
+    "phonetic": "/dɪˈspjuːt/",
+    "meaning": "n./v. 争论；纠纷",
+    "example_en": "The border dispute lasted for decades.",
+    "example_cn": "边界争端持续了数十年。"
+  },
+  {
+    "word": "distinct",
+    "phonetic": "/dɪˈstɪŋkt/",
+    "meaning": "adj. 明显的；独特的",
+    "example_en": "There is a distinct difference between the two styles.",
+    "example_cn": "两种风格之间有明显的区别。"
+  },
+  {
+    "word": "distinguish",
+    "phonetic": "/dɪˈstɪŋɡwɪʃ/",
+    "meaning": "v. 区分；辨别",
+    "example_en": "Can you distinguish the two species of birds?",
+    "example_cn": "你能区分这两种鸟吗？"
+  },
+  {
+    "word": "distribute",
+    "phonetic": "/dɪˈstrɪbjuːt/",
+    "meaning": "v. 分配；分发",
+    "example_en": "The organization distributes food to the homeless.",
+    "example_cn": "该组织向无家可归者分发食物。"
+  },
+  {
+    "word": "disturb",
+    "phonetic": "/dɪˈstɜːrb/",
+    "meaning": "v. 打扰；扰乱",
+    "example_en": "Please do not disturb me while I am studying.",
+    "example_cn": "我学习时请不要打扰我。"
+  },
+  {
+    "word": "diverse",
+    "phonetic": "/daɪˈvɜːrs/",
+    "meaning": "adj. 多样的；不同的",
+    "example_en": "London is a culturally diverse city.",
+    "example_cn": "伦敦是一个文化多元的城市。"
+  },
+  {
+    "word": "divorce",
+    "phonetic": "/dɪˈvɔːrs/",
+    "meaning": "n./v. 离婚",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "domestic",
+    "phonetic": "/dəˈmestɪk/",
+    "meaning": "adj. 国内的；家庭的",
+    "example_en": "Domestic flights are cheaper than international ones.",
+    "example_cn": "国内航班比国际航班便宜。"
+  },
+  {
+    "word": "dominant",
+    "phonetic": "/ˈdɒmɪnənt/",
+    "meaning": "adj. 占主导地位的",
+    "example_en": "English is the dominant language in international business.",
+    "example_cn": "英语是国际商务中的主导语言。"
+  },
+  {
+    "word": "dominate",
+    "phonetic": "/ˈdɒmɪneɪt/",
+    "meaning": "v. 支配；控制",
+    "example_en": "A few large companies dominate the market.",
+    "example_cn": "几家大公司主导着市场。"
+  },
+  {
+    "word": "donate",
+    "phonetic": "/dəʊˈneɪt/",
+    "meaning": "v. 捐赠",
+    "example_en": "She donated money to the children's hospital.",
+    "example_cn": "她向儿童医院捐了款。"
+  },
+  {
+    "word": "dramatic",
+    "phonetic": "/drəˈmætɪk/",
+    "meaning": "adj. 戏剧性的；巨大的",
+    "example_en": "There was a dramatic improvement in her grades.",
+    "example_cn": "她的成绩有了显著提高。"
+  },
+  {
+    "word": "durable",
+    "phonetic": "/ˈdjʊərəbl/",
+    "meaning": "adj. 耐用的；持久的",
+    "example_en": "These shoes are durable and comfortable.",
+    "example_cn": "这双鞋耐穿又舒适。"
+  },
+  {
+    "word": "dynamic",
+    "phonetic": "/daɪˈnæmɪk/",
+    "meaning": "adj. 动态的；充满活力的",
+    "example_en": "She is a dynamic and creative leader.",
+    "example_cn": "她是一位充满活力和创造力的领导者。"
+  },
+  {
+    "word": "eager",
+    "phonetic": "/ˈiːɡər/",
+    "meaning": "adj. 渴望的；热切的",
+    "example_en": "The students were eager to learn new things.",
+    "example_cn": "学生们渴望学习新知识。"
+  },
+  {
+    "word": "economy",
+    "phonetic": "/ɪˈkɒnəmi/",
+    "meaning": "n. 经济",
+    "example_en": "The economy is recovering from the recession.",
+    "example_cn": "经济正从衰退中复苏。"
+  },
+  {
+    "word": "edit",
+    "phonetic": "/ˈedɪt/",
+    "meaning": "v. 编辑",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "effect",
+    "phonetic": "/ɪˈfekt/",
+    "meaning": "n. 效果；影响",
+    "example_en": "The medicine had an immediate effect.",
+    "example_cn": "药物立即起了效果。"
+  },
+  {
+    "word": "efficient",
+    "phonetic": "/ɪˈfɪʃnt/",
+    "meaning": "adj. 高效的",
+    "example_en": "The new system is much more efficient.",
+    "example_cn": "新系统效率高得多。"
+  },
+  {
+    "word": "elaborate",
+    "phonetic": "/ɪˈlæbərət/",
+    "meaning": "adj. 精心的 v. 详细说明",
+    "example_en": "Could you elaborate on your proposal?",
+    "example_cn": "你能详细说明你的提议吗？"
+  },
+  {
+    "word": "elect",
+    "phonetic": "/ɪˈlekt/",
+    "meaning": "v. 选举；选择",
+    "example_en": "The people elect their representatives every four years.",
+    "example_cn": "人民每四年选举一次代表。"
+  },
+  {
+    "word": "elegant",
+    "phonetic": "/ˈelɪɡənt/",
+    "meaning": "adj. 优雅的",
+    "example_en": "She wore an elegant dress to the ceremony.",
+    "example_cn": "她穿了一件优雅的裙子出席典礼。"
+  },
+  {
+    "word": "element",
+    "phonetic": "/ˈelɪmənt/",
+    "meaning": "n. 元素；要素",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "eliminate",
+    "phonetic": "/ɪˈlɪmɪneɪt/",
+    "meaning": "v. 消除；淘汰",
+    "example_en": "We must eliminate all sources of pollution.",
+    "example_cn": "我们必须消除一切污染源。"
+  },
+  {
+    "word": "embrace",
+    "phonetic": "/ɪmˈbreɪs/",
+    "meaning": "v. 拥抱；接受",
+    "example_en": "We should embrace change rather than fear it.",
+    "example_cn": "我们应该拥抱变化而不是害怕它。"
+  },
+  {
+    "word": "emerge",
+    "phonetic": "/ɪˈmɜːrdʒ/",
+    "meaning": "v. 出现；浮现",
+    "example_en": "New details emerged during the investigation.",
+    "example_cn": "调查过程中出现了新的细节。"
+  },
+  {
+    "word": "emotion",
+    "phonetic": "/ɪˈməʊʃn/",
+    "meaning": "n. 情感；情绪",
+    "example_en": "She showed no emotion when she heard the news.",
+    "example_cn": "她听到消息时没有表现出任何情绪。"
+  },
+  {
+    "word": "emphasize",
+    "phonetic": "/ˈemfəsaɪz/",
+    "meaning": "v. 强调",
+    "example_en": "The teacher emphasized the importance of reading.",
+    "example_cn": "老师强调了阅读的重要性。"
+  },
+  {
+    "word": "employ",
+    "phonetic": "/ɪmˈplɔɪ/",
+    "meaning": "v. 雇佣；使用",
+    "example_en": "The factory employs over 200 workers.",
+    "example_cn": "这家工厂雇佣了200多名工人。"
+  },
+  {
+    "word": "enable",
+    "phonetic": "/ɪˈneɪbl/",
+    "meaning": "v. 使能够",
+    "example_en": "Technology enables us to work from home.",
+    "example_cn": "技术使我们能够在家工作。"
+  },
+  {
+    "word": "encounter",
+    "phonetic": "/ɪnˈkaʊntər/",
+    "meaning": "v./n. 遭遇；邂逅",
+    "example_en": "I encountered an old friend at the mall.",
+    "example_cn": "我在商场偶遇了一位老朋友。"
+  },
+  {
+    "word": "encourage",
+    "phonetic": "/ɪnˈkʌrɪdʒ/",
+    "meaning": "v. 鼓励",
+    "example_en": "Parents should encourage their children to read.",
+    "example_cn": "父母应该鼓励孩子阅读。"
+  },
+  {
+    "word": "endure",
+    "phonetic": "/ɪnˈdjʊər/",
+    "meaning": "v. 忍受；持久",
+    "example_en": "She endured years of hardship before succeeding.",
+    "example_cn": "她忍受了多年的艰辛才取得成功。"
+  },
+  {
+    "word": "engage",
+    "phonetic": "/ɪnˈɡeɪdʒ/",
+    "meaning": "v. 从事；吸引",
+    "example_en": "The speaker engaged the audience with interesting stories.",
+    "example_cn": "演讲者用有趣的故事吸引了听众。"
+  },
+  {
+    "word": "enhance",
+    "phonetic": "/ɪnˈhɑːns/",
+    "meaning": "v. 增强；提高",
+    "example_en": "Good lighting can enhance the beauty of a room.",
+    "example_cn": "良好的灯光可以提升房间的美感。"
+  },
+  {
+    "word": "enormous",
+    "phonetic": "/ɪˈnɔːrməs/",
+    "meaning": "adj. 巨大的",
+    "example_en": "The project required an enormous amount of money.",
+    "example_cn": "项目需要巨额资金。"
+  },
+  {
+    "word": "ensure",
+    "phonetic": "/ɪnˈʃʊər/",
+    "meaning": "v. 确保",
+    "example_en": "Please ensure that all doors are locked before leaving.",
+    "example_cn": "离开前请确保所有门都锁好了。"
+  },
+  {
+    "word": "enterprise",
+    "phonetic": "/ˈentəpraɪz/",
+    "meaning": "n. 企业；事业",
+    "example_en": "Starting a new enterprise requires courage and planning.",
+    "example_cn": "创办新企业需要勇气和规划。"
+  },
+  {
+    "word": "enthusiasm",
+    "phonetic": "/ɪnˈθjuːziæzəm/",
+    "meaning": "n. 热情；热忱",
+    "example_en": "Her enthusiasm for learning is inspiring.",
+    "example_cn": "她对学习的热情令人鼓舞。"
+  },
+  {
+    "word": "entire",
+    "phonetic": "/ɪnˈtaɪər/",
+    "meaning": "adj. 全部的；整个的",
+    "example_en": "The entire school attended the ceremony.",
+    "example_cn": "全校师生都参加了典礼。"
+  },
+  {
+    "word": "entry",
+    "phonetic": "/ˈentri/",
+    "meaning": "n. 进入；入口；条目",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "environment",
+    "phonetic": "/ɪnˈvaɪrənmənt/",
+    "meaning": "n. 环境",
+    "example_en": "We must protect the environment for future generations.",
+    "example_cn": "我们必须为后代保护环境。"
+  },
+  {
+    "word": "episode",
+    "phonetic": "/ˈepɪsəʊd/",
+    "meaning": "n. 一集；一段经历",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "equality",
+    "phonetic": "/ɪˈkwɒləti/",
+    "meaning": "n. 平等",
+    "example_en": "Gender equality is a fundamental human right.",
+    "example_cn": "性别平等是一项基本人权。"
+  },
+  {
+    "word": "equip",
+    "phonetic": "/ɪˈkwɪp/",
+    "meaning": "v. 装备；配备",
+    "example_en": "The school equipped the lab with modern instruments.",
+    "example_cn": "学校为实验室配备了现代仪器。"
+  },
+  {
+    "word": "equivalent",
+    "phonetic": "/ɪˈkwɪvələnt/",
+    "meaning": "adj. 等价的 n. 等价物",
+    "example_en": "One dollar is roughly equivalent to seven yuan.",
+    "example_cn": "一美元大约等于七元。"
+  },
+  {
+    "word": "escape",
+    "phonetic": "/ɪˈskeɪp/",
+    "meaning": "v./n. 逃跑；逃脱",
+    "example_en": "The prisoner tried to escape from the jail.",
+    "example_cn": "囚犯试图越狱。"
+  },
+  {
+    "word": "essential",
+    "phonetic": "/ɪˈsenʃl/",
+    "meaning": "adj. 必要的；本质的",
+    "example_en": "Water is essential for all living things.",
+    "example_cn": "水对所有生物都是必不可少的。"
+  },
+  {
+    "word": "establish",
+    "phonetic": "/ɪˈstæblɪʃ/",
+    "meaning": "v. 建立；确立",
+    "example_en": "The school was established in 1950.",
+    "example_cn": "这所学校建于1950年。"
+  },
+  {
+    "word": "estimate",
+    "phonetic": "/ˈestɪmeɪt/",
+    "meaning": "v./n. 估计",
+    "example_en": "They estimate the cost at around 10,000 yuan.",
+    "example_cn": "他们估计费用大约一万元。"
+  },
+  {
+    "word": "evaluate",
+    "phonetic": "/ɪˈvæljueɪt/",
+    "meaning": "v. 评估；评价",
+    "example_en": "Teachers evaluate students through exams and projects.",
+    "example_cn": "老师通过考试和项目评估学生。"
+  },
+  {
+    "word": "evidence",
+    "phonetic": "/ˈevɪdəns/",
+    "meaning": "n. 证据",
+    "example_en": "There is no evidence to support this claim.",
+    "example_cn": "没有证据支持这一说法。"
+  },
+  {
+    "word": "evident",
+    "phonetic": "/ˈevɪdənt/",
+    "meaning": "adj. 明显的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "evolution",
+    "phonetic": "/ˌiːvəˈluːʃn/",
+    "meaning": "n. 进化；演变",
+    "example_en": "The evolution of technology has transformed our lives.",
+    "example_cn": "技术的进化改变了我们的生活。"
+  },
+  {
+    "word": "exaggerate",
+    "phonetic": "/ɪɡˈzædʒəreɪt/",
+    "meaning": "v. 夸张；夸大",
+    "example_en": "Don't exaggerate the difficulty of the task.",
+    "example_cn": "不要夸大任务的难度。"
+  },
+  {
+    "word": "examine",
+    "phonetic": "/ɪɡˈzæmɪn/",
+    "meaning": "v. 检查；考试",
+    "example_en": "The doctor examined the patient carefully.",
+    "example_cn": "医生仔细检查了病人。"
+  },
+  {
+    "word": "exceed",
+    "phonetic": "/ɪkˈsiːd/",
+    "meaning": "v. 超过；超出",
+    "example_en": "The results exceeded our expectations.",
+    "example_cn": "结果超出了我们的预期。"
+  },
+  {
+    "word": "exception",
+    "phonetic": "/ɪkˈsepʃn/",
+    "meaning": "n. 例外",
+    "example_en": "Everyone must follow the rules without exception.",
+    "example_cn": "每个人都必须遵守规则，没有例外。"
+  },
+  {
+    "word": "exchange",
+    "phonetic": "/ɪksˈtʃeɪndʒ/",
+    "meaning": "v./n. 交换；兑换",
+    "example_en": "They exchanged phone numbers after the meeting.",
+    "example_cn": "会后他们交换了电话号码。"
+  },
+  {
+    "word": "exclaim",
+    "phonetic": "/ɪkˈskleɪm/",
+    "meaning": "v. 惊叫；呼喊",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "exclude",
+    "phonetic": "/ɪkˈskluːd/",
+    "meaning": "v. 排除；排斥",
+    "example_en": "The price excludes tax and delivery charges.",
+    "example_cn": "价格不含税和运费。"
+  },
+  {
+    "word": "execute",
+    "phonetic": "/ˈeksɪkjuːt/",
+    "meaning": "v. 执行；处决",
+    "example_en": "The manager executed the plan perfectly.",
+    "example_cn": "经理完美地执行了计划。"
+  },
+  {
+    "word": "exhibit",
+    "phonetic": "/ɪɡˈzɪbɪt/",
+    "meaning": "v. 展览 n. 展品",
+    "example_en": "The gallery exhibits works by local artists.",
+    "example_cn": "画廊展出当地艺术家的作品。"
+  },
+  {
+    "word": "exist",
+    "phonetic": "/ɪɡˈzɪst/",
+    "meaning": "v. 存在",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "expand",
+    "phonetic": "/ɪkˈspænd/",
+    "meaning": "v. 扩展；膨胀",
+    "example_en": "The company plans to expand into new markets.",
+    "example_cn": "公司计划拓展新市场。"
+  },
+  {
+    "word": "expect",
+    "phonetic": "/ɪkˈspekt/",
+    "meaning": "v. 期望；预期",
+    "example_en": "We expect the project to be completed by March.",
+    "example_cn": "我们预计项目将在三月完成。"
+  },
+  {
+    "word": "expedition",
+    "phonetic": "/ˌekspəˈdɪʃn/",
+    "meaning": "n. 远征；探险",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "expense",
+    "phonetic": "/ɪkˈspens/",
+    "meaning": "n. 费用；开支",
+    "example_en": "Travel expenses will be covered by the company.",
+    "example_cn": "差旅费将由公司承担。"
+  },
+  {
+    "word": "experiment",
+    "phonetic": "/ɪkˈsperɪmənt/",
+    "meaning": "n. 实验",
+    "example_en": "The students conducted a chemistry experiment.",
+    "example_cn": "学生们做了一个化学实验。"
+  },
+  {
+    "word": "expert",
+    "phonetic": "/ˈekspɜːrt/",
+    "meaning": "n. 专家",
+    "example_en": "She is an expert in child psychology.",
+    "example_cn": "她是儿童心理学专家。"
+  },
+  {
+    "word": "exploit",
+    "phonetic": "/ɪkˈsplɔɪt/",
+    "meaning": "v. 开发；利用",
+    "example_en": "We should not exploit natural resources recklessly.",
+    "example_cn": "我们不应肆意开采自然资源。"
+  },
+  {
+    "word": "explore",
+    "phonetic": "/ɪkˈsplɔːr/",
+    "meaning": "v. 探索；探究",
+    "example_en": "Scientists explore the depths of the ocean.",
+    "example_cn": "科学家探索海洋深处。"
+  },
+  {
+    "word": "expose",
+    "phonetic": "/ɪkˈspəʊz/",
+    "meaning": "v. 暴露；揭露",
+    "example_en": "The report exposed the corruption in the system.",
+    "example_cn": "报道揭露了体制中的腐败。"
+  },
+  {
+    "word": "extension",
+    "phonetic": "/ɪkˈstenʃn/",
+    "meaning": "n. 延伸；扩展",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "extent",
+    "phonetic": "/ɪkˈstent/",
+    "meaning": "n. 程度；范围",
+    "example_en": "To what extent do you agree with the statement?",
+    "example_cn": "你在多大程度上同意这个说法？"
+  },
+  {
+    "word": "external",
+    "phonetic": "/ɪkˈstɜːrnl/",
+    "meaning": "adj. 外部的；外界的",
+    "example_en": "The external walls of the building need painting.",
+    "example_cn": "建筑的外墙需要粉刷。"
+  },
+  {
+    "word": "extinct",
+    "phonetic": "/ɪkˈstɪŋkt/",
+    "meaning": "adj. 灭绝的",
+    "example_en": "Many species have become extinct due to human activities.",
+    "example_cn": "许多物种因人类活动而灭绝。"
+  },
+  {
+    "word": "extraordinary",
+    "phonetic": "/ɪkˈstrɔːrdnri/",
+    "meaning": "adj. 非凡的；特别的",
+    "example_en": "She has an extraordinary talent for music.",
+    "example_cn": "她有非凡的音乐天赋。"
+  },
+  {
+    "word": "extreme",
+    "phonetic": "/ɪkˈstriːm/",
+    "meaning": "adj. 极端的 n. 极端",
+    "example_en": "Extreme weather events are becoming more frequent.",
+    "example_cn": "极端天气事件正变得越来越频繁。"
+  },
+  {
+    "word": "facility",
+    "phonetic": "/fəˈsɪləti/",
+    "meaning": "n. 设施；设备",
+    "example_en": "The hotel has excellent sports facilities.",
+    "example_cn": "酒店有出色的运动设施。"
+  },
+  {
+    "word": "failure",
+    "phonetic": "/ˈfeɪljər/",
+    "meaning": "n. 失败；故障",
+    "example_en": "Failure is the mother of success.",
+    "example_cn": "失败是成功之母。"
+  },
+  {
+    "word": "faithful",
+    "phonetic": "/ˈfeɪθfl/",
+    "meaning": "adj. 忠实的；忠诚的",
+    "example_en": "He has been a faithful friend for many years.",
+    "example_cn": "多年来他一直是一个忠实的朋友。"
+  },
+  {
+    "word": "familiar",
+    "phonetic": "/fəˈmɪliər/",
+    "meaning": "adj. 熟悉的",
+    "example_en": "This song sounds very familiar to me.",
+    "example_cn": "这首歌听起来很熟悉。"
+  },
+  {
+    "word": "fantastic",
+    "phonetic": "/fænˈtæstɪk/",
+    "meaning": "adj. 极好的；奇异的",
+    "example_en": "The view from the top was absolutely fantastic.",
+    "example_cn": "顶部的景色绝对棒极了。"
+  },
+  {
+    "word": "fascinate",
+    "phonetic": "/ˈfæsɪneɪt/",
+    "meaning": "v. 使着迷",
+    "example_en": "Space exploration continues to fascinate people.",
+    "example_cn": "太空探索继续令人们着迷。"
+  },
+  {
+    "word": "fate",
+    "phonetic": "/feɪt/",
+    "meaning": "n. 命运",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "feature",
+    "phonetic": "/ˈfiːtʃər/",
+    "meaning": "n. 特征；特色",
+    "example_en": "The phone has many new features.",
+    "example_cn": "这款手机有很多新功能。"
+  },
+  {
+    "word": "fellow",
+    "phonetic": "/ˈfeləʊ/",
+    "meaning": "n. 家伙；同伴",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "fiction",
+    "phonetic": "/ˈfɪkʃn/",
+    "meaning": "n. 小说；虚构",
+    "example_en": "Her latest novel is a work of fiction.",
+    "example_cn": "她最新的小说是一部虚构作品。"
+  },
+  {
+    "word": "figure",
+    "phonetic": "/ˈfɪɡər/",
+    "meaning": "n. 数字；人物 v. 理解",
+    "example_en": "I can't figure out how to solve this problem.",
+    "example_cn": "我想不出如何解决这个问题。"
+  },
+  {
+    "word": "finance",
+    "phonetic": "/ˈfaɪnæns/",
+    "meaning": "n. 财政；金融",
+    "example_en": "She studied finance at university.",
+    "example_cn": "她在大学学习金融。"
+  },
+  {
+    "word": "flexible",
+    "phonetic": "/ˈfleksəbl/",
+    "meaning": "adj. 灵活的；可弯曲的",
+    "example_en": "We need a more flexible work schedule.",
+    "example_cn": "我们需要更灵活的工作时间表。"
+  },
+  {
+    "word": "fluent",
+    "phonetic": "/ˈfluːənt/",
+    "meaning": "adj. 流利的",
+    "example_en": "She is fluent in both English and French.",
+    "example_cn": "她英语和法语都很流利。"
+  },
+  {
+    "word": "forbid",
+    "phonetic": "/fərˈbɪd/",
+    "meaning": "v. 禁止",
+    "example_en": "Parents should forbid children from playing with fire.",
+    "example_cn": "父母应禁止孩子玩火。"
+  },
+  {
+    "word": "forecast",
+    "phonetic": "/ˈfɔːrkɑːst/",
+    "meaning": "v./n. 预测；预报",
+    "example_en": "The weather forecast predicts rain tomorrow.",
+    "example_cn": "天气预报预测明天有雨。"
+  },
+  {
+    "word": "forgive",
+    "phonetic": "/fərˈɡɪv/",
+    "meaning": "v. 原谅；宽恕",
+    "example_en": "It's hard to forgive someone who hurt you deeply.",
+    "example_cn": "原谅深深伤害过你的人很难。"
+  },
+  {
+    "word": "formal",
+    "phonetic": "/ˈfɔːrml/",
+    "meaning": "adj. 正式的；形式的",
+    "example_en": "You should wear formal clothes to the interview.",
+    "example_cn": "面试时应该穿正装。"
+  },
+  {
+    "word": "former",
+    "phonetic": "/ˈfɔːrmər/",
+    "meaning": "adj. 前者的 n. 前者",
+    "example_en": "The former president gave a speech yesterday.",
+    "example_cn": "前总统昨天发表了演讲。"
+  },
+  {
+    "word": "formula",
+    "phonetic": "/ˈfɔːrmjələ/",
+    "meaning": "n. 公式；配方",
+    "example_en": "There is no magic formula for success.",
+    "example_cn": "成功没有神奇的公式。"
+  },
+  {
+    "word": "fortune",
+    "phonetic": "/ˈfɔːrtʃuːn/",
+    "meaning": "n. 运气；财富",
+    "example_en": "He made a fortune in the tech industry.",
+    "example_cn": "他在科技行业发了财。"
+  },
+  {
+    "word": "foundation",
+    "phonetic": "/faʊnˈdeɪʃn/",
+    "meaning": "n. 基础；基金会",
+    "example_en": "A good education is the foundation of a successful career.",
+    "example_cn": "良好的教育是成功事业的基础。"
+  },
+  {
+    "word": "fraction",
+    "phonetic": "/ˈfrækʃn/",
+    "meaning": "n. 分数；小部分",
+    "example_en": "Only a fraction of the students passed the exam.",
+    "example_cn": "只有一小部分学生通过了考试。"
+  },
+  {
+    "word": "fragment",
+    "phonetic": "/ˈfræɡmənt/",
+    "meaning": "n. 碎片；片段",
+    "example_en": "I only heard fragments of the conversation.",
+    "example_cn": "我只听到了对话的片段。"
+  },
+  {
+    "word": "framework",
+    "phonetic": "/ˈfreɪmwɜːrk/",
+    "meaning": "n. 框架；体制",
+    "example_en": "The government established a legal framework for data protection.",
+    "example_cn": "政府建立了数据保护的法律框架。"
+  },
+  {
+    "word": "frequency",
+    "phonetic": "/ˈfriːkwənsi/",
+    "meaning": "n. 频率；频繁",
+    "example_en": "The frequency of earthquakes has increased.",
+    "example_cn": "地震的频率增加了。"
+  },
+  {
+    "word": "friction",
+    "phonetic": "/ˈfrɪkʃn/",
+    "meaning": "n. 摩擦；冲突",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "frontier",
+    "phonetic": "/ˈfrʌntɪər/",
+    "meaning": "n. 边界；前沿",
+    "example_en": "Space is the new frontier for human exploration.",
+    "example_cn": "太空是人类探索的新前沿。"
+  },
+  {
+    "word": "frustrate",
+    "phonetic": "/frʌˈstreɪt/",
+    "meaning": "v. 使沮丧；挫败",
+    "example_en": "The delay frustrated all the passengers.",
+    "example_cn": "延误让所有乘客感到沮丧。"
+  },
+  {
+    "word": "fulfill",
+    "phonetic": "/fʊlˈfɪl/",
+    "meaning": "v. 实现；履行",
+    "example_en": "He worked hard to fulfill his promise.",
+    "example_cn": "他努力兑现自己的承诺。"
+  },
+  {
+    "word": "function",
+    "phonetic": "/ˈfʌŋkʃn/",
+    "meaning": "n. 功能 v. 运作",
+    "example_en": "The main function of the heart is to pump blood.",
+    "example_cn": "心脏的主要功能是泵血。"
+  },
+  {
+    "word": "fundamental",
+    "phonetic": "/ˌfʌndəˈmentl/",
+    "meaning": "adj. 基本的；根本的",
+    "example_en": "Freedom of speech is a fundamental right.",
+    "example_cn": "言论自由是一项基本权利。"
+  },
+  {
+    "word": "furnish",
+    "phonetic": "/ˈfɜːrnɪʃ/",
+    "meaning": "v. 装修；提供",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "gallery",
+    "phonetic": "/ˈɡæləri/",
+    "meaning": "n. 画廊；走廊",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "gap",
+    "phonetic": "/ɡæp/",
+    "meaning": "n. 差距；缺口",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "gather",
+    "phonetic": "/ˈɡæðər/",
+    "meaning": "v. 聚集；收集",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "generate",
+    "phonetic": "/ˈdʒenəreɪt/",
+    "meaning": "v. 产生；发电",
+    "example_en": "Solar panels generate electricity from sunlight.",
+    "example_cn": "太阳能电池板利用阳光发电。"
+  },
+  {
+    "word": "generous",
+    "phonetic": "/ˈdʒenərəs/",
+    "meaning": "adj. 慷慨的；大量的",
+    "example_en": "She is very generous with her time and money.",
+    "example_cn": "她在时间和金钱上非常慷慨。"
+  },
+  {
+    "word": "genuine",
+    "phonetic": "/ˈdʒenjuɪn/",
+    "meaning": "adj. 真正的；真诚的",
+    "example_en": "Is this painting genuine or a copy?",
+    "example_cn": "这幅画是真迹还是临摹品？"
+  },
+  {
+    "word": "gesture",
+    "phonetic": "/ˈdʒestʃər/",
+    "meaning": "n. 手势；姿态",
+    "example_en": "He made a gesture of apology to the crowd.",
+    "example_cn": "他向人群做了一个道歉的手势。"
+  },
+  {
+    "word": "global",
+    "phonetic": "/ˈɡləʊbl/",
+    "meaning": "adj. 全球的",
+    "example_en": "Global warming is a serious threat to the planet.",
+    "example_cn": "全球变暖是对地球的严重威胁。"
+  },
+  {
+    "word": "gloomy",
+    "phonetic": "/ˈɡluːmi/",
+    "meaning": "adj. 阴暗的；沮丧的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "govern",
+    "phonetic": "/ˈɡʌvərn/",
+    "meaning": "v. 统治；管理",
+    "example_en": "The country is governed by a democratic system.",
+    "example_cn": "这个国家由民主制度治理。"
+  },
+  {
+    "word": "gradual",
+    "phonetic": "/ˈɡrædʒuəl/",
+    "meaning": "adj. 逐渐的",
+    "example_en": "There has been a gradual improvement in the economy.",
+    "example_cn": "经济在逐步好转。"
+  },
+  {
+    "word": "grant",
+    "phonetic": "/ɡrɑːnt/",
+    "meaning": "v. 授予；同意 n. 拨款",
+    "example_en": "The university granted her a full scholarship.",
+    "example_cn": "大学授予她全额奖学金。"
+  },
+  {
+    "word": "guarantee",
+    "phonetic": "/ˌɡærənˈtiː/",
+    "meaning": "v./n. 保证；担保",
+    "example_en": "We guarantee delivery within 24 hours.",
+    "example_cn": "我们保证24小时内送达。"
+  },
+  {
+    "word": "guilty",
+    "phonetic": "/ˈɡɪlti/",
+    "meaning": "adj. 有罪的；内疚的",
+    "example_en": "The jury found him guilty of the crime.",
+    "example_cn": "陪审团裁定他有罪。"
+  },
+  {
+    "word": "harmony",
+    "phonetic": "/ˈhɑːrməni/",
+    "meaning": "n. 和谐；协调",
+    "example_en": "They lived together in perfect harmony.",
+    "example_cn": "他们完美和谐地生活在一起。"
+  },
+  {
+    "word": "harvest",
+    "phonetic": "/ˈhɑːrvɪst/",
+    "meaning": "n./v. 收获；收割",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "hesitate",
+    "phonetic": "/ˈhezɪteɪt/",
+    "meaning": "v. 犹豫；踌躇",
+    "example_en": "Don't hesitate to ask if you need help.",
+    "example_cn": "如果需要帮助，不要犹豫。"
+  },
+  {
+    "word": "highlight",
+    "phonetic": "/ˈhaɪlaɪt/",
+    "meaning": "v. 强调 n. 亮点",
+    "example_en": "The report highlights the need for better education.",
+    "example_cn": "报告强调了改善教育的必要性。"
+  },
+  {
+    "word": "hinder",
+    "phonetic": "/ˈhɪndər/",
+    "meaning": "v. 阻碍；妨碍",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "horizon",
+    "phonetic": "/həˈraɪzn/",
+    "meaning": "n. 地平线；视野",
+    "example_en": "The sun slowly sank below the horizon.",
+    "example_cn": "太阳慢慢沉入地平线以下。"
+  },
+  {
+    "word": "hostile",
+    "phonetic": "/ˈhɒstaɪl/",
+    "meaning": "adj. 敌意的；不友好的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "humble",
+    "phonetic": "/ˈhʌmbl/",
+    "meaning": "adj. 谦虚的；卑微的",
+    "example_en": "Despite his fame, he remained humble.",
+    "example_cn": "尽管出名，他仍然保持谦逊。"
+  },
+  {
+    "word": "identical",
+    "phonetic": "/aɪˈdentɪkl/",
+    "meaning": "adj. 完全相同的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "identify",
+    "phonetic": "/aɪˈdentɪfaɪ/",
+    "meaning": "v. 识别；确认",
+    "example_en": "Can you identify the suspect from the photo?",
+    "example_cn": "你能从照片中认出嫌疑人吗？"
+  },
+  {
+    "word": "ignorance",
+    "phonetic": "/ˈɪɡnərəns/",
+    "meaning": "n. 无知；愚昧",
+    "example_en": "Ignorance of the law is no excuse.",
+    "example_cn": "不懂法律不是借口。"
+  },
+  {
+    "word": "illustrate",
+    "phonetic": "/ˈɪləstreɪt/",
+    "meaning": "v. 说明；图解",
+    "example_en": "The teacher illustrated the concept with an example.",
+    "example_cn": "老师用一个例子来说明这个概念。"
+  },
+  {
+    "word": "imaginary",
+    "phonetic": "/ɪˈmædʒɪnəri/",
+    "meaning": "adj. 想象的；虚构的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "immediate",
+    "phonetic": "/ɪˈmiːdiət/",
+    "meaning": "adj. 立即的；直接的",
+    "example_en": "We need an immediate response to the crisis.",
+    "example_cn": "我们需要对危机做出立即回应。"
+  },
+  {
+    "word": "immigrate",
+    "phonetic": "/ˈɪmɪɡreɪt/",
+    "meaning": "v. 移民",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "impact",
+    "phonetic": "/ˈɪmpækt/",
+    "meaning": "n./v. 影响；冲击",
+    "example_en": "Climate change has a huge impact on wildlife.",
+    "example_cn": "气候变化对野生动物有巨大影响。"
+  },
+  {
+    "word": "implement",
+    "phonetic": "/ˈɪmplɪment/",
+    "meaning": "v. 实施 n. 工具",
+    "example_en": "The school will implement the new policy next term.",
+    "example_cn": "学校下学期将实施新政策。"
+  },
+  {
+    "word": "imply",
+    "phonetic": "/ɪmˈplaɪ/",
+    "meaning": "v. 暗示；意味着",
+    "example_en": "Are you implying that I am wrong?",
+    "example_cn": "你是在暗示我错了吗？"
+  },
+  {
+    "word": "impose",
+    "phonetic": "/ɪmˈpəʊz/",
+    "meaning": "v. 强加；征收",
+    "example_en": "The government imposed a tax on imported goods.",
+    "example_cn": "政府对进口商品征收关税。"
+  },
+  {
+    "word": "impress",
+    "phonetic": "/ɪmˈpres/",
+    "meaning": "v. 给…留下深刻印象",
+    "example_en": "Her performance impressed the judges.",
+    "example_cn": "她的表现给评委留下了深刻印象。"
+  },
+  {
+    "word": "impulse",
+    "phonetic": "/ˈɪmpʌls/",
+    "meaning": "n. 冲动；脉冲",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "incident",
+    "phonetic": "/ˈɪnsɪdənt/",
+    "meaning": "n. 事件；事变",
+    "example_en": "There was a strange incident at the school yesterday.",
+    "example_cn": "昨天学校发生了一件怪事。"
+  },
+  {
+    "word": "incredible",
+    "phonetic": "/ɪnˈkredəbl/",
+    "meaning": "adj. 难以置信的",
+    "example_en": "The view from the mountain was incredible.",
+    "example_cn": "从山上看到的景色令人难以置信。"
+  },
+  {
+    "word": "independence",
+    "phonetic": "/ˌɪndɪˈpendəns/",
+    "meaning": "n. 独立",
+    "example_en": "The country gained independence in 1945.",
+    "example_cn": "这个国家在1945年获得了独立。"
+  },
+  {
+    "word": "indicate",
+    "phonetic": "/ˈɪndɪkeɪt/",
+    "meaning": "v. 表明；指出",
+    "example_en": "Research indicates that exercise improves mental health.",
+    "example_cn": "研究表明运动改善心理健康。"
+  },
+  {
+    "word": "individual",
+    "phonetic": "/ˌɪndɪˈvɪdʒuəl/",
+    "meaning": "adj. 个人的 n. 个人",
+    "example_en": "Each individual has the right to education.",
+    "example_cn": "每个人都有受教育的权利。"
+  },
+  {
+    "word": "inevitable",
+    "phonetic": "/ɪnˈevɪtəbl/",
+    "meaning": "adj. 不可避免的",
+    "example_en": "Change is inevitable in a growing society.",
+    "example_cn": "在一个发展的社会中，变化是不可避免的。"
+  },
+  {
+    "word": "influence",
+    "phonetic": "/ˈɪnfluəns/",
+    "meaning": "n./v. 影响",
+    "example_en": "Parents have a great influence on their children.",
+    "example_cn": "父母对孩子有很大的影响。"
+  },
+  {
+    "word": "inform",
+    "phonetic": "/ɪnˈfɔːrm/",
+    "meaning": "v. 通知；告知",
+    "example_en": "Please inform us of any changes in your schedule.",
+    "example_cn": "请告知我们你日程的任何变化。"
+  },
+  {
+    "word": "ingredient",
+    "phonetic": "/ɪnˈɡriːdiənt/",
+    "meaning": "n. 成分；要素",
+    "example_en": "Fresh ingredients are essential for good cooking.",
+    "example_cn": "新鲜的食材对好的烹饪至关重要。"
+  },
+  {
+    "word": "initial",
+    "phonetic": "/ɪˈnɪʃl/",
+    "meaning": "adj. 最初的 n. 首字母",
+    "example_en": "My initial reaction was surprise.",
+    "example_cn": "我的最初反应是惊讶。"
+  },
+  {
+    "word": "initiative",
+    "phonetic": "/ɪˈnɪʃətɪv/",
+    "meaning": "n. 主动性；倡议",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "innocent",
+    "phonetic": "/ˈɪnəsnt/",
+    "meaning": "adj. 无辜的；天真的",
+    "example_en": "The court declared him innocent of all charges.",
+    "example_cn": "法庭宣布他所有指控都不成立。"
+  },
+  {
+    "word": "innovation",
+    "phonetic": "/ˌɪnəˈveɪʃn/",
+    "meaning": "n. 创新",
+    "example_en": "Innovation is the key to business growth.",
+    "example_cn": "创新是业务增长的关键。"
+  },
+  {
+    "word": "inquire",
+    "phonetic": "/ɪnˈkwaɪər/",
+    "meaning": "v. 询问；调查",
+    "example_en": "I would like to inquire about the job opening.",
+    "example_cn": "我想询问关于职位空缺的信息。"
+  },
+  {
+    "word": "insert",
+    "phonetic": "/ɪnˈsɜːrt/",
+    "meaning": "v. 插入；嵌入",
+    "example_en": "Please insert your card into the machine.",
+    "example_cn": "请将卡片插入机器。"
+  },
+  {
+    "word": "insight",
+    "phonetic": "/ˈɪnsaɪt/",
+    "meaning": "n. 洞察力；见解",
+    "example_en": "The book provides insight into Chinese culture.",
+    "example_cn": "这本书让人深入了解中国文化。"
+  },
+  {
+    "word": "insist",
+    "phonetic": "/ɪnˈsɪst/",
+    "meaning": "v. 坚持；坚决要求",
+    "example_en": "She insisted on paying for the meal.",
+    "example_cn": "她坚持要付饭钱。"
+  },
+  {
+    "word": "inspect",
+    "phonetic": "/ɪnˈspekt/",
+    "meaning": "v. 检查；视察",
+    "example_en": "Health inspectors check restaurants regularly.",
+    "example_cn": "卫生检查员定期检查餐厅。"
+  },
+  {
+    "word": "inspire",
+    "phonetic": "/ɪnˈspaɪər/",
+    "meaning": "v. 激励；启发",
+    "example_en": "Great leaders inspire others to achieve their potential.",
+    "example_cn": "伟大的领导者激励他人发挥潜力。"
+  },
+  {
+    "word": "install",
+    "phonetic": "/ɪnˈstɔːl/",
+    "meaning": "v. 安装",
+    "example_en": "We need to install a new air conditioner.",
+    "example_cn": "我们需要安装一台新空调。"
+  },
+  {
+    "word": "instance",
+    "phonetic": "/ˈɪnstəns/",
+    "meaning": "n. 例子；实例",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "instinct",
+    "phonetic": "/ˈɪnstɪŋkt/",
+    "meaning": "n. 本能；直觉",
+    "example_en": "Birds have an instinct to migrate in winter.",
+    "example_cn": "鸟类有冬天迁徙的本能。"
+  },
+  {
+    "word": "institute",
+    "phonetic": "/ˈɪnstɪtjuːt/",
+    "meaning": "n. 学院；研究所",
+    "example_en": "She works at a research institute.",
+    "example_cn": "她在一家研究所工作。"
+  },
+  {
+    "word": "instruct",
+    "phonetic": "/ɪnˈstrʌkt/",
+    "meaning": "v. 指导；指示",
+    "example_en": "The manual instructs users on how to assemble the product.",
+    "example_cn": "手册指导用户如何组装产品。"
+  },
+  {
+    "word": "insure",
+    "phonetic": "/ɪnˈʃʊər/",
+    "meaning": "v. 保险；确保",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "integrate",
+    "phonetic": "/ˈɪntɪɡreɪt/",
+    "meaning": "v. 整合；融入",
+    "example_en": "The school aims to integrate technology into teaching.",
+    "example_cn": "学校旨在将技术融入教学。"
+  },
+  {
+    "word": "intellectual",
+    "phonetic": "/ˌɪntəˈlektʃuəl/",
+    "meaning": "adj. 智力的 n. 知识分子",
+    "example_en": "Intellectual property should be protected by law.",
+    "example_cn": "知识产权应受法律保护。"
+  },
+  {
+    "word": "intelligent",
+    "phonetic": "/ɪnˈtelɪdʒənt/",
+    "meaning": "adj. 聪明的",
+    "example_en": "Dolphins are highly intelligent animals.",
+    "example_cn": "海豚是高度智慧的动物。"
+  },
+  {
+    "word": "intend",
+    "phonetic": "/ɪnˈtend/",
+    "meaning": "v. 打算；想要",
+    "example_en": "I intend to finish the report by Friday.",
+    "example_cn": "我打算在周五前完成报告。"
+  },
+  {
+    "word": "intense",
+    "phonetic": "/ɪnˈtens/",
+    "meaning": "adj. 强烈的；紧张的",
+    "example_en": "The competition for the scholarship was intense.",
+    "example_cn": "奖学金的竞争非常激烈。"
+  },
+  {
+    "word": "intention",
+    "phonetic": "/ɪnˈtenʃn/",
+    "meaning": "n. 意图；目的",
+    "example_en": "She had no intention of hurting anyone.",
+    "example_cn": "她没有伤害任何人的意图。"
+  },
+  {
+    "word": "interact",
+    "phonetic": "/ˌɪntərˈækt/",
+    "meaning": "v. 互动；交流",
+    "example_en": "Children learn by interacting with their environment.",
+    "example_cn": "孩子通过与环境的互动来学习。"
+  },
+  {
+    "word": "interfere",
+    "phonetic": "/ˌɪntərˈfɪər/",
+    "meaning": "v. 干涉；妨碍",
+    "example_en": "Don't interfere in other people's affairs.",
+    "example_cn": "不要干涉别人的事。"
+  },
+  {
+    "word": "interpret",
+    "phonetic": "/ɪnˈtɜːrprɪt/",
+    "meaning": "v. 解释；口译",
+    "example_en": "How you interpret the data depends on your perspective.",
+    "example_cn": "你如何解读数据取决于你的视角。"
+  },
+  {
+    "word": "interrupt",
+    "phonetic": "/ˌɪntəˈrʌpt/",
+    "meaning": "v. 打断；中断",
+    "example_en": "Please don't interrupt me while I'm speaking.",
+    "example_cn": "我说话时请不要打断我。"
+  },
+  {
+    "word": "interval",
+    "phonetic": "/ˈɪntərvl/",
+    "meaning": "n. 间隔；间歇",
+    "example_en": "There is a 15-minute interval between the two acts.",
+    "example_cn": "两幕之间有15分钟的间隔。"
+  },
+  {
+    "word": "intimate",
+    "phonetic": "/ˈɪntɪmət/",
+    "meaning": "adj. 亲密的 n. 知己",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "invade",
+    "phonetic": "/ɪnˈveɪd/",
+    "meaning": "v. 入侵；侵略",
+    "example_en": "No country has the right to invade another.",
+    "example_cn": "任何国家都无权入侵他国。"
+  },
+  {
+    "word": "invest",
+    "phonetic": "/ɪnˈvest/",
+    "meaning": "v. 投资",
+    "example_en": "Many people invest in the stock market.",
+    "example_cn": "许多人投资股市。"
+  },
+  {
+    "word": "investigate",
+    "phonetic": "/ɪnˈvestɪɡeɪt/",
+    "meaning": "v. 调查；研究",
+    "example_en": "Police are investigating the cause of the fire.",
+    "example_cn": "警方正在调查火灾原因。"
+  },
+  {
+    "word": "invisible",
+    "phonetic": "/ɪnˈvɪzəbl/",
+    "meaning": "adj. 看不见的",
+    "example_en": "Germs are invisible to the naked eye.",
+    "example_cn": "细菌肉眼不可见。"
+  },
+  {
+    "word": "involve",
+    "phonetic": "/ɪnˈvɒlv/",
+    "meaning": "v. 涉及；包含",
+    "example_en": "The project involves a lot of research work.",
+    "example_cn": "这个项目涉及大量研究工作。"
+  },
+  {
+    "word": "isolate",
+    "phonetic": "/ˈaɪsəleɪt/",
+    "meaning": "v. 隔离；孤立",
+    "example_en": "The patient was isolated to prevent the spread of disease.",
+    "example_cn": "病人被隔离以防止疾病传播。"
+  },
+  {
+    "word": "issue",
+    "phonetic": "/ˈɪʃuː/",
+    "meaning": "n. 问题；发行 v. 发布",
+    "example_en": "Environmental issues need urgent attention.",
+    "example_cn": "环境问题需要紧急关注。"
+  },
+  {
+    "word": "justify",
+    "phonetic": "/ˈdʒʌstɪfaɪ/",
+    "meaning": "v. 证明…正当；为…辩护",
+    "example_en": "How can you justify such behaviour?",
+    "example_cn": "你如何为这种行为辩护？"
+  },
+  {
+    "word": "keen",
+    "phonetic": "/kiːn/",
+    "meaning": "adj. 渴望的；敏锐的",
+    "example_en": "She is keen on learning new languages.",
+    "example_cn": "她热衷于学习新语言。"
+  },
+  {
+    "word": "labor",
+    "phonetic": "/ˈleɪbər/",
+    "meaning": "n. 劳动；劳工",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "launch",
+    "phonetic": "/lɔːntʃ/",
+    "meaning": "v. 发射；发起 n. 发射",
+    "example_en": "The company will launch a new product next month.",
+    "example_cn": "公司下月将推出新产品。"
+  },
+  {
+    "word": "layer",
+    "phonetic": "/ˈleɪər/",
+    "meaning": "n. 层；阶层",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "lean",
+    "phonetic": "/liːn/",
+    "meaning": "v. 倾斜；倚靠 adj. 瘦的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "legal",
+    "phonetic": "/ˈliːɡl/",
+    "meaning": "adj. 合法的；法律的",
+    "example_en": "Is it legal to park here?",
+    "example_cn": "在这里停车合法吗？"
+  },
+  {
+    "word": "legend",
+    "phonetic": "/ˈledʒənd/",
+    "meaning": "n. 传说；传奇",
+    "example_en": "The legend of Robin Hood is well known in England.",
+    "example_cn": "罗宾汉的传说在英国广为人知。"
+  },
+  {
+    "word": "legitimate",
+    "phonetic": "/lɪˈdʒɪtɪmət/",
+    "meaning": "adj. 合法的；正当的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "leisure",
+    "phonetic": "/ˈleʒər/",
+    "meaning": "n. 休闲；空闲",
+    "example_en": "He enjoys reading in his leisure time.",
+    "example_cn": "他喜欢在闲暇时间读书。"
+  },
+  {
+    "word": "liable",
+    "phonetic": "/ˈlaɪəbl/",
+    "meaning": "adj. 有责任的；易于…的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "liberal",
+    "phonetic": "/ˈlɪbərəl/",
+    "meaning": "adj. 自由的；开明的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "liberty",
+    "phonetic": "/ˈlɪbəti/",
+    "meaning": "n. 自由",
+    "example_en": "The statue represents liberty and freedom.",
+    "example_cn": "这座雕像代表自由与解放。"
+  },
+  {
+    "word": "likewise",
+    "phonetic": "/ˈlaɪkwaɪz/",
+    "meaning": "adv. 同样地",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "limitation",
+    "phonetic": "/ˌlɪmɪˈteɪʃn/",
+    "meaning": "n. 限制；局限",
+    "example_en": "The system has some limitations that need to be addressed.",
+    "example_cn": "系统有一些需要解决的限制。"
+  },
+  {
+    "word": "link",
+    "phonetic": "/lɪŋk/",
+    "meaning": "v./n. 连接；联系",
+    "example_en": "Studies show a link between diet and health.",
+    "example_cn": "研究表明饮食与健康之间有关联。"
+  },
+  {
+    "word": "literacy",
+    "phonetic": "/ˈlɪtərəsi/",
+    "meaning": "n. 读写能力",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "locate",
+    "phonetic": "/ləʊˈkeɪt/",
+    "meaning": "v. 定位；位于",
+    "example_en": "Can you locate the hotel on the map?",
+    "example_cn": "你能在地图上找到酒店的位置吗？"
+  },
+  {
+    "word": "logical",
+    "phonetic": "/ˈlɒdʒɪkl/",
+    "meaning": "adj. 逻辑的；合理的",
+    "example_en": "Your argument is not very logical.",
+    "example_cn": "你的论点不太合乎逻辑。"
+  },
+  {
+    "word": "loose",
+    "phonetic": "/luːs/",
+    "meaning": "adj. 松的；宽松的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "luxury",
+    "phonetic": "/ˈlʌkʃəri/",
+    "meaning": "n. 奢侈；奢华",
+    "example_en": "A vacation abroad is a luxury for many families.",
+    "example_cn": "出国度假对许多家庭来说是奢侈。"
+  },
+  {
+    "word": "maintain",
+    "phonetic": "/meɪnˈteɪn/",
+    "meaning": "v. 维持；保养",
+    "example_en": "It is important to maintain a healthy lifestyle.",
+    "example_cn": "保持健康的生活方式很重要。"
+  },
+  {
+    "word": "majority",
+    "phonetic": "/məˈdʒɒrəti/",
+    "meaning": "n. 多数；大多数",
+    "example_en": "The majority of students passed the exam.",
+    "example_cn": "大多数学生通过了考试。"
+  },
+  {
+    "word": "manage",
+    "phonetic": "/ˈmænɪdʒ/",
+    "meaning": "v. 管理；设法",
+    "example_en": "She manages a team of 20 people.",
+    "example_cn": "她管理着一个20人的团队。"
+  },
+  {
+    "word": "manner",
+    "phonetic": "/ˈmænər/",
+    "meaning": "n. 方式；礼貌",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "manufacture",
+    "phonetic": "/ˌmænjuˈfæktʃər/",
+    "meaning": "v./n. 制造；生产",
+    "example_en": "The company manufactures electronic components.",
+    "example_cn": "公司生产电子元件。"
+  },
+  {
+    "word": "margin",
+    "phonetic": "/ˈmɑːrdʒɪn/",
+    "meaning": "n. 边缘；利润",
+    "example_en": "We won the election by a narrow margin.",
+    "example_cn": "我们以微弱优势赢得了选举。"
+  },
+  {
+    "word": "mass",
+    "phonetic": "/mæs/",
+    "meaning": "n. 质量；大量",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "mature",
+    "phonetic": "/məˈtʃʊər/",
+    "meaning": "adj. 成熟的",
+    "example_en": "She is very mature for her age.",
+    "example_cn": "以她的年龄来说，她非常成熟。"
+  },
+  {
+    "word": "maximum",
+    "phonetic": "/ˈmæksɪməm/",
+    "meaning": "n./adj. 最大值(的)",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "measure",
+    "phonetic": "/ˈmeʒər/",
+    "meaning": "v. 测量 n. 措施",
+    "example_en": "We must take measures to reduce pollution.",
+    "example_cn": "我们必须采取措施减少污染。"
+  },
+  {
+    "word": "mechanism",
+    "phonetic": "/ˈmekənɪzəm/",
+    "meaning": "n. 机制；机构",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "medium",
+    "phonetic": "/ˈmiːdiəm/",
+    "meaning": "n. 媒体；媒介",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "mental",
+    "phonetic": "/ˈmentl/",
+    "meaning": "adj. 精神的；心理的",
+    "example_en": "Mental health is just as important as physical health.",
+    "example_cn": "心理健康和身体健康同样重要。"
+  },
+  {
+    "word": "merchant",
+    "phonetic": "/ˈmɜːrtʃənt/",
+    "meaning": "n. 商人",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "mercy",
+    "phonetic": "/ˈmɜːrsi/",
+    "meaning": "n. 仁慈；怜悯",
+    "example_en": "The prisoners begged for mercy.",
+    "example_cn": "囚犯们乞求宽恕。"
+  },
+  {
+    "word": "mere",
+    "phonetic": "/mɪər/",
+    "meaning": "adj. 仅仅的；纯粹的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "merit",
+    "phonetic": "/ˈmerɪt/",
+    "meaning": "n. 优点；功绩",
+    "example_en": "The proposal has some merit worth considering.",
+    "example_cn": "这个提议有一些值得考虑的优点。"
+  },
+  {
+    "word": "method",
+    "phonetic": "/ˈmeθəd/",
+    "meaning": "n. 方法",
+    "example_en": "This teaching method is very effective.",
+    "example_cn": "这种教学方法非常有效。"
+  },
+  {
+    "word": "mild",
+    "phonetic": "/maɪld/",
+    "meaning": "adj. 温和的；轻微的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "minimum",
+    "phonetic": "/ˈmɪnɪməm/",
+    "meaning": "n./adj. 最小值(的)",
+    "example_en": "The minimum age for voting is 18.",
+    "example_cn": "投票的最低年龄是18岁。"
+  },
+  {
+    "word": "ministry",
+    "phonetic": "/ˈmɪnɪstri/",
+    "meaning": "n. 部门； ministry",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "minor",
+    "phonetic": "/ˈmaɪnər/",
+    "meaning": "adj. 次要的；较小的",
+    "example_en": "He suffered only minor injuries in the accident.",
+    "example_cn": "他在事故中只受了轻伤。"
+  },
+  {
+    "word": "miracle",
+    "phonetic": "/ˈmɪrəkl/",
+    "meaning": "n. 奇迹",
+    "example_en": "It was a miracle that nobody was hurt.",
+    "example_cn": "没有人受伤真是个奇迹。"
+  },
+  {
+    "word": "miserable",
+    "phonetic": "/ˈmɪzərəbl/",
+    "meaning": "adj. 悲惨的；痛苦的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "mislead",
+    "phonetic": "/mɪsˈliːd/",
+    "meaning": "v. 误导",
+    "example_en": "The advertisement was designed to mislead consumers.",
+    "example_cn": "广告旨在误导消费者。"
+  },
+  {
+    "word": "mission",
+    "phonetic": "/ˈmɪʃn/",
+    "meaning": "n. 使命；任务",
+    "example_en": "Her mission is to help poor children get education.",
+    "example_cn": "她的使命是帮助贫困儿童获得教育。"
+  },
+  {
+    "word": "moderate",
+    "phonetic": "/ˈmɒdərət/",
+    "meaning": "adj. 适度的；温和的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "modify",
+    "phonetic": "/ˈmɒdɪfaɪ/",
+    "meaning": "v. 修改；调整",
+    "example_en": "We need to modify the design to meet safety standards.",
+    "example_cn": "我们需要修改设计以符合安全标准。"
+  },
+  {
+    "word": "monitor",
+    "phonetic": "/ˈmɒnɪtər/",
+    "meaning": "v. 监控 n. 显示器",
+    "example_en": "The teacher monitors the students' progress closely.",
+    "example_cn": "老师密切监控学生的进步。"
+  },
+  {
+    "word": "moral",
+    "phonetic": "/ˈmɒrəl/",
+    "meaning": "adj. 道德的 n. 寓意",
+    "example_en": "The story has a clear moral lesson.",
+    "example_cn": "这个故事有一个明确的道德教训。"
+  },
+  {
+    "word": "motion",
+    "phonetic": "/ˈməʊʃn/",
+    "meaning": "n. 运动；动议",
+    "example_en": "He made a motion to adjourn the meeting.",
+    "example_cn": "他提议休会。"
+  },
+  {
+    "word": "motivate",
+    "phonetic": "/ˈməʊtɪveɪt/",
+    "meaning": "v. 激励；激发",
+    "example_en": "A good teacher knows how to motivate students.",
+    "example_cn": "好老师知道如何激励学生。"
+  },
+  {
+    "word": "motive",
+    "phonetic": "/ˈməʊtɪv/",
+    "meaning": "n. 动机；目的",
+    "example_en": "The police are trying to find the motive for the crime.",
+    "example_cn": "警方正试图找到犯罪动机。"
+  },
+  {
+    "word": "multiple",
+    "phonetic": "/ˈmʌltɪpl/",
+    "meaning": "adj. 多重的；多个的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "mutual",
+    "phonetic": "/ˈmjuːtʃuəl/",
+    "meaning": "adj. 相互的；共同的",
+    "example_en": "Mutual respect is the foundation of a good relationship.",
+    "example_cn": "相互尊重是良好关系的基础。"
+  },
+  {
+    "word": "narrow",
+    "phonetic": "/ˈnærəʊ/",
+    "meaning": "adj. 狭窄的 v. 变窄",
+    "example_en": "The road was too narrow for two cars to pass.",
+    "example_cn": "路太窄了，两辆车过不去。"
+  },
+  {
+    "word": "navigate",
+    "phonetic": "/ˈnævɪɡeɪt/",
+    "meaning": "v. 导航；航行",
+    "example_en": "It's easy to navigate the website.",
+    "example_cn": "浏览这个网站很容易。"
+  },
+  {
+    "word": "negative",
+    "phonetic": "/ˈneɡətɪv/",
+    "meaning": "adj. 消极的；否定的",
+    "example_en": "He has a negative attitude toward change.",
+    "example_cn": "他对改变持消极态度。"
+  },
+  {
+    "word": "neglect",
+    "phonetic": "/nɪˈɡlekt/",
+    "meaning": "v./n. 忽视；疏忽",
+    "example_en": "Don't neglect your health while working hard.",
+    "example_cn": "努力工作的同时不要忽视健康。"
+  },
+  {
+    "word": "negotiate",
+    "phonetic": "/nɪˈɡəʊʃieɪt/",
+    "meaning": "v. 谈判；协商",
+    "example_en": "The two sides agreed to negotiate a peace deal.",
+    "example_cn": "双方同意谈判和平协议。"
+  },
+  {
+    "word": "neutral",
+    "phonetic": "/ˈnjuːtrəl/",
+    "meaning": "adj. 中立的",
+    "example_en": "Switzerland remained neutral during the war.",
+    "example_cn": "瑞士在战争期间保持中立。"
+  },
+  {
+    "word": "noble",
+    "phonetic": "/ˈnəʊbl/",
+    "meaning": "adj. 高尚的；贵族的",
+    "example_en": "He had a noble character and was respected by all.",
+    "example_cn": "他品格高尚，受到所有人的尊敬。"
+  },
+  {
+    "word": "normal",
+    "phonetic": "/ˈnɔːrml/",
+    "meaning": "adj. 正常的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "notion",
+    "phonetic": "/ˈnəʊʃn/",
+    "meaning": "n. 概念；观念",
+    "example_en": "She rejected the notion that money brings happiness.",
+    "example_cn": "她拒绝接受金钱带来幸福的观念。"
+  },
+  {
+    "word": "nuclear",
+    "phonetic": "/ˈnjuːkliər/",
+    "meaning": "adj. 核的；原子能的",
+    "example_en": "Nuclear energy is a controversial topic.",
+    "example_cn": "核能是一个有争议的话题。"
+  },
+  {
+    "word": "numerous",
+    "phonetic": "/ˈnjuːmərəs/",
+    "meaning": "adj. 许多的",
+    "example_en": "There are numerous reasons for the failure.",
+    "example_cn": "失败有诸多原因。"
+  },
+  {
+    "word": "nutrition",
+    "phonetic": "/njuːˈtrɪʃn/",
+    "meaning": "n. 营养",
+    "example_en": "Good nutrition is important for growing children.",
+    "example_cn": "良好的营养对成长中的孩子很重要。"
+  },
+  {
+    "word": "objection",
+    "phonetic": "/əbˈdʒekʃn/",
+    "meaning": "n. 反对；异议",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "objective",
+    "phonetic": "/əbˈdʒektɪv/",
+    "meaning": "adj. 客观的 n. 目标",
+    "example_en": "A journalist should report news in an objective way.",
+    "example_cn": "记者应以客观的方式报道新闻。"
+  },
+  {
+    "word": "oblige",
+    "phonetic": "/əˈblaɪdʒ/",
+    "meaning": "v. 迫使；帮忙",
+    "example_en": "The law obliges citizens to pay taxes.",
+    "example_cn": "法律要求公民纳税。"
+  },
+  {
+    "word": "observe",
+    "phonetic": "/əbˈzɜːrv/",
+    "meaning": "v. 观察；遵守",
+    "example_en": "Scientists observe animals in their natural habitats.",
+    "example_cn": "科学家在自然栖息地观察动物。"
+  },
+  {
+    "word": "obtain",
+    "phonetic": "/əbˈteɪn/",
+    "meaning": "v. 获得",
+    "example_en": "She obtained a scholarship to study abroad.",
+    "example_cn": "她获得了出国留学的奖学金。"
+  },
+  {
+    "word": "obvious",
+    "phonetic": "/ˈɒbviəs/",
+    "meaning": "adj. 明显的",
+    "example_en": "It is obvious that he is not telling the truth.",
+    "example_cn": "很明显他没有说实话。"
+  },
+  {
+    "word": "occasion",
+    "phonetic": "/əˈkeɪʒn/",
+    "meaning": "n. 场合；时机",
+    "example_en": "He wears a suit only on special occasions.",
+    "example_cn": "他只在特殊场合穿西装。"
+  },
+  {
+    "word": "occupy",
+    "phonetic": "/ˈɒkjupaɪ/",
+    "meaning": "v. 占据；使忙碌",
+    "example_en": "Reading occupies most of my free time.",
+    "example_cn": "阅读占了我大部分空闲时间。"
+  },
+  {
+    "word": "occur",
+    "phonetic": "/əˈkɜːr/",
+    "meaning": "v. 发生；出现",
+    "example_en": "The accident occurred at around 8 p.m.",
+    "example_cn": "事故大约发生在晚上8点。"
+  },
+  {
+    "word": "offend",
+    "phonetic": "/əˈfend/",
+    "meaning": "v. 冒犯；犯罪",
+    "example_en": "I didn't mean to offend anyone with my words.",
+    "example_cn": "我并非有意用言语冒犯任何人。"
+  },
+  {
+    "word": "official",
+    "phonetic": "/əˈfɪʃl/",
+    "meaning": "adj. 官方的 n. 官员",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "operate",
+    "phonetic": "/ˈɒpəreɪt/",
+    "meaning": "v. 操作；运营",
+    "example_en": "The machine operates very efficiently.",
+    "example_cn": "机器运行效率很高。"
+  },
+  {
+    "word": "opinion",
+    "phonetic": "/əˈpɪnjən/",
+    "meaning": "n. 观点；看法",
+    "example_en": "In my opinion, this is the best solution.",
+    "example_cn": "在我看来，这是最好的解决方案。"
+  },
+  {
+    "word": "opponent",
+    "phonetic": "/əˈpəʊnənt/",
+    "meaning": "n. 对手；反对者",
+    "example_en": "She defeated her opponent in the debate.",
+    "example_cn": "她在辩论中击败了对手。"
+  },
+  {
+    "word": "opportunity",
+    "phonetic": "/ˌɒpərˈtjuːnəti/",
+    "meaning": "n. 机会",
+    "example_en": "This is a great opportunity to learn new skills.",
+    "example_cn": "这是学习新技能的好机会。"
+  },
+  {
+    "word": "oppose",
+    "phonetic": "/əˈpəʊz/",
+    "meaning": "v. 反对；对抗",
+    "example_en": "Many citizens oppose the new law.",
+    "example_cn": "许多市民反对新法律。"
+  },
+  {
+    "word": "option",
+    "phonetic": "/ˈɒpʃn/",
+    "meaning": "n. 选择；选项",
+    "example_en": "We have several options to choose from.",
+    "example_cn": "我们有几个选项可以选择。"
+  },
+  {
+    "word": "oral",
+    "phonetic": "/ˈɔːrəl/",
+    "meaning": "adj. 口头的",
+    "example_en": "The exam includes both written and oral parts.",
+    "example_cn": "考试包括笔试和口试两部分。"
+  },
+  {
+    "word": "origin",
+    "phonetic": "/ˈɒrɪdʒɪn/",
+    "meaning": "n. 起源；出身",
+    "example_en": "The origin of the universe remains a mystery.",
+    "example_cn": "宇宙的起源仍然是一个谜。"
+  },
+  {
+    "word": "original",
+    "phonetic": "/əˈrɪdʒɪnl/",
+    "meaning": "adj. 原始的；独创的",
+    "example_en": "The original painting is kept in the museum.",
+    "example_cn": "原作保存在博物馆中。"
+  },
+  {
+    "word": "outcome",
+    "phonetic": "/ˈaʊtkʌm/",
+    "meaning": "n. 结果",
+    "example_en": "The outcome of the election surprised everyone.",
+    "example_cn": "选举结果令所有人意外。"
+  },
+  {
+    "word": "outline",
+    "phonetic": "/ˈaʊtlaɪn/",
+    "meaning": "n. 大纲 v. 概述",
+    "example_en": "The teacher gave us an outline of the course.",
+    "example_cn": "老师给我们讲了课程大纲。"
+  },
+  {
+    "word": "output",
+    "phonetic": "/ˈaʊtpʊt/",
+    "meaning": "n. 产量；输出",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "overcome",
+    "phonetic": "/ˌəʊvərˈkʌm/",
+    "meaning": "v. 克服",
+    "example_en": "She overcame many difficulties to achieve success.",
+    "example_cn": "她克服了许多困难才取得成功。"
+  },
+  {
+    "word": "overlook",
+    "phonetic": "/ˌəʊvərˈlʊk/",
+    "meaning": "v. 忽视；俯瞰",
+    "example_en": "The room overlooks the beautiful garden.",
+    "example_cn": "房间俯瞰着美丽的花园。"
+  },
+  {
+    "word": "overwhelm",
+    "phonetic": "/ˌəʊvərˈwelm/",
+    "meaning": "v. 压倒；淹没",
+    "example_en": "The news overwhelmed her with joy.",
+    "example_cn": "这个消息让她喜不自胜。"
+  },
+  {
+    "word": "owe",
+    "phonetic": "/əʊ/",
+    "meaning": "v. 欠；归功于",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "pace",
+    "phonetic": "/peɪs/",
+    "meaning": "n. 步伐；速度",
+    "example_en": "He walked at a fast pace to catch the bus.",
+    "example_cn": "他快步走去赶公交车。"
+  },
+  {
+    "word": "parallel",
+    "phonetic": "/ˈpærəlel/",
+    "meaning": "adj. 平行的 n. 平行线",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "participate",
+    "phonetic": "/pɑːrˈtɪsɪpeɪt/",
+    "meaning": "v. 参与；参加",
+    "example_en": "All students are encouraged to participate in the activity.",
+    "example_cn": "鼓励所有学生参加活动。"
+  },
+  {
+    "word": "particular",
+    "phonetic": "/pərˈtɪkjələr/",
+    "meaning": "adj. 特定的；挑剔的",
+    "example_en": "Is there a particular book you are looking for?",
+    "example_cn": "你在找一本特定的书吗？"
+  },
+  {
+    "word": "passion",
+    "phonetic": "/ˈpæʃn/",
+    "meaning": "n. 热情；激情",
+    "example_en": "She has a passion for music and dance.",
+    "example_cn": "她对音乐和舞蹈有热情。"
+  },
+  {
+    "word": "passive",
+    "phonetic": "/ˈpæsɪv/",
+    "meaning": "adj. 被动的",
+    "example_en": "He took a passive role in the discussion.",
+    "example_cn": "他在讨论中处于被动角色。"
+  },
+  {
+    "word": "patience",
+    "phonetic": "/ˈpeɪʃns/",
+    "meaning": "n. 耐心",
+    "example_en": "Teaching young children requires great patience.",
+    "example_cn": "教小孩需要很大的耐心。"
+  },
+  {
+    "word": "pattern",
+    "phonetic": "/ˈpætn/",
+    "meaning": "n. 模式；图案",
+    "example_en": "The fabric has a beautiful floral pattern.",
+    "example_cn": "面料有漂亮的花卉图案。"
+  },
+  {
+    "word": "penalty",
+    "phonetic": "/ˈpenəlti/",
+    "meaning": "n. 处罚；罚款",
+    "example_en": "The penalty for late payment is 5% of the bill.",
+    "example_cn": "逾期付款的罚金是账单的5%。"
+  },
+  {
+    "word": "perceive",
+    "phonetic": "/pərˈsiːv/",
+    "meaning": "v. 察觉；理解",
+    "example_en": "She perceived a change in his attitude.",
+    "example_cn": "她察觉到他的态度有变化。"
+  },
+  {
+    "word": "percentage",
+    "phonetic": "/pərˈsentɪdʒ/",
+    "meaning": "n. 百分比",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "perform",
+    "phonetic": "/pərˈfɔːrm/",
+    "meaning": "v. 执行；表演",
+    "example_en": "The band will perform at the concert tonight.",
+    "example_cn": "乐队今晚将在音乐会上演出。"
+  },
+  {
+    "word": "permanent",
+    "phonetic": "/ˈpɜːrmənənt/",
+    "meaning": "adj. 永久的",
+    "example_en": "She is looking for a permanent job.",
+    "example_cn": "她在找一份永久性工作。"
+  },
+  {
+    "word": "permit",
+    "phonetic": "/pərˈmɪt/",
+    "meaning": "v. 允许 n. 许可证",
+    "example_en": "You are not permitted to smoke here.",
+    "example_cn": "此处不允许吸烟。"
+  },
+  {
+    "word": "persist",
+    "phonetic": "/pərˈsɪst/",
+    "meaning": "v. 坚持；持续",
+    "example_en": "If you persist, you will eventually succeed.",
+    "example_cn": "如果你坚持，终将成功。"
+  },
+  {
+    "word": "perspective",
+    "phonetic": "/pərˈspektɪv/",
+    "meaning": "n. 角度；视角",
+    "example_en": "Try to see things from a different perspective.",
+    "example_cn": "试着从不同的角度看待事物。"
+  },
+  {
+    "word": "persuade",
+    "phonetic": "/pərˈsweɪd/",
+    "meaning": "v. 说服；劝服",
+    "example_en": "She persuaded her parents to let her go camping.",
+    "example_cn": "她说服了父母让她去露营。"
+  },
+  {
+    "word": "phenomenon",
+    "phonetic": "/fɪˈnɒmɪnən/",
+    "meaning": "n. 现象",
+    "example_en": "Global warming is a well-known phenomenon.",
+    "example_cn": "全球变暖是一个众所周知的现象。"
+  },
+  {
+    "word": "philosophy",
+    "phonetic": "/fɪˈlɒsəfi/",
+    "meaning": "n. 哲学",
+    "example_en": "He studied philosophy at Oxford University.",
+    "example_cn": "他在牛津大学学习哲学。"
+  },
+  {
+    "word": "physical",
+    "phonetic": "/ˈfɪzɪkl/",
+    "meaning": "adj. 身体的；物理的",
+    "example_en": "Regular physical exercise keeps you healthy.",
+    "example_cn": "规律的体育锻炼让你保持健康。"
+  },
+  {
+    "word": "pledge",
+    "phonetic": "/pledʒ/",
+    "meaning": "n./v. 保证；誓言",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "plot",
+    "phonetic": "/plɒt/",
+    "meaning": "n. 情节；阴谋 v. 绘制",
+    "example_en": "The plot of the novel is very exciting.",
+    "example_cn": "小说的情节非常精彩。"
+  },
+  {
+    "word": "poison",
+    "phonetic": "/ˈpɔɪzn/",
+    "meaning": "n. 毒药 v. 毒害",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "policy",
+    "phonetic": "/ˈpɒləsi/",
+    "meaning": "n. 政策；保险单",
+    "example_en": "The company has a strict no-smoking policy.",
+    "example_cn": "公司有严格的禁烟政策。"
+  },
+  {
+    "word": "polish",
+    "phonetic": "/ˈpɒlɪʃ/",
+    "meaning": "v. 擦亮；润色",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "possess",
+    "phonetic": "/pəˈzes/",
+    "meaning": "v. 拥有；具有",
+    "example_en": "He possesses a remarkable memory.",
+    "example_cn": "他拥有非凡的记忆力。"
+  },
+  {
+    "word": "postpone",
+    "phonetic": "/pəʊstˈpəʊn/",
+    "meaning": "v. 推迟；延期",
+    "example_en": "The meeting has been postponed until next week.",
+    "example_cn": "会议推迟到了下周。"
+  },
+  {
+    "word": "potential",
+    "phonetic": "/pəˈtenʃl/",
+    "meaning": "adj. 潜在的 n. 潜力",
+    "example_en": "Every student has the potential to succeed.",
+    "example_cn": "每个学生都有成功的潜力。"
+  },
+  {
+    "word": "poverty",
+    "phonetic": "/ˈpɒvəti/",
+    "meaning": "n. 贫穷",
+    "example_en": "The government is trying to reduce poverty.",
+    "example_cn": "政府正在努力减少贫困。"
+  },
+  {
+    "word": "practise",
+    "phonetic": "/ˈpræktɪs/",
+    "meaning": "v. 练习；实践",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "praise",
+    "phonetic": "/preɪz/",
+    "meaning": "v./n. 赞扬",
+    "example_en": "The teacher praised the student for his effort.",
+    "example_cn": "老师表扬了学生的努力。"
+  },
+  {
+    "word": "precede",
+    "phonetic": "/prɪˈsiːd/",
+    "meaning": "v. 在…之前；先于",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "precious",
+    "phonetic": "/ˈpreʃəs/",
+    "meaning": "adj. 珍贵的",
+    "example_en": "Time is the most precious resource we have.",
+    "example_cn": "时间是我们拥有的最珍贵的资源。"
+  },
+  {
+    "word": "precise",
+    "phonetic": "/prɪˈsaɪs/",
+    "meaning": "adj. 精确的",
+    "example_en": "The instructions must be precise and clear.",
+    "example_cn": "指示必须精确且清楚。"
+  },
+  {
+    "word": "predict",
+    "phonetic": "/prɪˈdɪkt/",
+    "meaning": "v. 预测",
+    "example_en": "It is difficult to predict the outcome of the election.",
+    "example_cn": "很难预测选举结果。"
+  },
+  {
+    "word": "prejudice",
+    "phonetic": "/ˈpredʒʊdɪs/",
+    "meaning": "n. 偏见",
+    "example_en": "We must fight against racial prejudice.",
+    "example_cn": "我们必须反对种族偏见。"
+  },
+  {
+    "word": "preparation",
+    "phonetic": "/ˌprepəˈreɪʃn/",
+    "meaning": "n. 准备",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "preserve",
+    "phonetic": "/prɪˈzɜːrv/",
+    "meaning": "v. 保存；保护",
+    "example_en": "We should preserve our cultural heritage.",
+    "example_cn": "我们应该保护我们的文化遗产。"
+  },
+  {
+    "word": "pretend",
+    "phonetic": "/prɪˈtend/",
+    "meaning": "v. 假装",
+    "example_en": "He pretended not to hear the question.",
+    "example_cn": "他假装没听到问题。"
+  },
+  {
+    "word": "previous",
+    "phonetic": "/ˈpriːviəs/",
+    "meaning": "adj. 先前的",
+    "example_en": "She had no previous experience in teaching.",
+    "example_cn": "她以前没有教学经验。"
+  },
+  {
+    "word": "primarily",
+    "phonetic": "/praɪˈmerəli/",
+    "meaning": "adv. 主要地",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "primary",
+    "phonetic": "/ˈpraɪməri/",
+    "meaning": "adj. 主要的；初级的",
+    "example_en": "The primary reason for his success is hard work.",
+    "example_cn": "他成功的主要原因是努力。"
+  },
+  {
+    "word": "principle",
+    "phonetic": "/ˈprɪnsəpl/",
+    "meaning": "n. 原则；原理",
+    "example_en": "He refused to compromise on matters of principle.",
+    "example_cn": "他拒绝在原则问题上妥协。"
+  },
+  {
+    "word": "privilege",
+    "phonetic": "/ˈprɪvəlɪdʒ/",
+    "meaning": "n. 特权",
+    "example_en": "Education should be a right, not a privilege.",
+    "example_cn": "教育应该是一种权利，而非特权。"
+  },
+  {
+    "word": "proceed",
+    "phonetic": "/prəˈsiːd/",
+    "meaning": "v. 继续进行",
+    "example_en": "Please proceed with your presentation.",
+    "example_cn": "请继续你的演示。"
+  },
+  {
+    "word": "process",
+    "phonetic": "/ˈprəʊses/",
+    "meaning": "n. 过程 v. 处理",
+    "example_en": "Learning is a gradual process.",
+    "example_cn": "学习是一个渐进的过程。"
+  },
+  {
+    "word": "profession",
+    "phonetic": "/prəˈfeʃn/",
+    "meaning": "n. 职业",
+    "example_en": "Teaching is a noble profession.",
+    "example_cn": "教学是一种高尚的职业。"
+  },
+  {
+    "word": "profile",
+    "phonetic": "/ˈprəʊfaɪl/",
+    "meaning": "n. 简介；侧面",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "prohibit",
+    "phonetic": "/prəˈhɪbɪt/",
+    "meaning": "v. 禁止",
+    "example_en": "The law prohibits the sale of alcohol to minors.",
+    "example_cn": "法律禁止向未成年人出售酒精。"
+  },
+  {
+    "word": "project",
+    "phonetic": "/ˈprɒdʒekt/",
+    "meaning": "n. 项目 v. 投射",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "promote",
+    "phonetic": "/prəˈməʊt/",
+    "meaning": "v. 促进；晋升",
+    "example_en": "The campaign promotes healthy eating habits.",
+    "example_cn": "活动倡导健康的饮食习惯。"
+  },
+  {
+    "word": "prompt",
+    "phonetic": "/prɒmpt/",
+    "meaning": "adj. 迅速的 v. 促使",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "proportion",
+    "phonetic": "/prəˈpɔːrʃn/",
+    "meaning": "n. 比例；部分",
+    "example_en": "A large proportion of the population lives in cities.",
+    "example_cn": "很大一部分人口居住在城市。"
+  },
+  {
+    "word": "propose",
+    "phonetic": "/prəˈpəʊz/",
+    "meaning": "v. 提议；求婚",
+    "example_en": "He proposed a new plan for the project.",
+    "example_cn": "他为项目提出了一个新计划。"
+  },
+  {
+    "word": "prospect",
+    "phonetic": "/ˈprɒspekt/",
+    "meaning": "n. 前景；展望",
+    "example_en": "The prospect of living abroad excites her.",
+    "example_cn": "在国外生活的前景令她兴奋。"
+  },
+  {
+    "word": "prosperity",
+    "phonetic": "/prɒˈsperəti/",
+    "meaning": "n. 繁荣",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "protest",
+    "phonetic": "/prəˈtest/",
+    "meaning": "v./n. 抗议",
+    "example_en": "Citizens protested against the new policy.",
+    "example_cn": "市民抗议新政策。"
+  },
+  {
+    "word": "prove",
+    "phonetic": "/pruːv/",
+    "meaning": "v. 证明",
+    "example_en": "The test results prove that the drug is effective.",
+    "example_cn": "测试结果证明药物有效。"
+  },
+  {
+    "word": "provision",
+    "phonetic": "/prəˈvɪʒn/",
+    "meaning": "n. 供应；规定",
+    "example_en": "The provision of public services is the government's duty.",
+    "example_cn": "提供公共服务是政府的职责。"
+  },
+  {
+    "word": "psychology",
+    "phonetic": "/saɪˈkɒlədʒi/",
+    "meaning": "n. 心理学",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "publish",
+    "phonetic": "/ˈpʌblɪʃ/",
+    "meaning": "v. 出版；发表",
+    "example_en": "She published her first novel at the age of 25.",
+    "example_cn": "她在25岁时出版了第一部小说。"
+  },
+  {
+    "word": "purchase",
+    "phonetic": "/ˈpɜːrtʃəs/",
+    "meaning": "v./n. 购买",
+    "example_en": "You can purchase tickets online.",
+    "example_cn": "你可以在网上购票。"
+  },
+  {
+    "word": "pursue",
+    "phonetic": "/pərˈsjuː/",
+    "meaning": "v. 追求；追赶",
+    "example_en": "She decided to pursue a career in medicine.",
+    "example_cn": "她决定从事医学事业。"
+  },
+  {
+    "word": "qualify",
+    "phonetic": "/ˈkwɒlɪfaɪ/",
+    "meaning": "v. 使合格；有资格",
+    "example_en": "She qualified as a doctor last year.",
+    "example_cn": "她去年取得了医生资格。"
+  },
+  {
+    "word": "quantity",
+    "phonetic": "/ˈkwɒntəti/",
+    "meaning": "n. 数量",
+    "example_en": "We need a large quantity of raw materials.",
+    "example_cn": "我们需要大量原材料。"
+  },
+  {
+    "word": "quit",
+    "phonetic": "/kwɪt/",
+    "meaning": "v. 放弃；退出",
+    "example_en": "He quit smoking last year.",
+    "example_cn": "他去年戒烟了。"
+  },
+  {
+    "word": "quote",
+    "phonetic": "/kwəʊt/",
+    "meaning": "v. 引用 n. 引言",
+    "example_en": "She quoted a famous line from the poem.",
+    "example_cn": "她引用了诗中著名的一句。"
+  },
+  {
+    "word": "random",
+    "phonetic": "/ˈrændəm/",
+    "meaning": "adj. 随机的",
+    "example_en": "The sample was selected at random.",
+    "example_cn": "样本是随机选取的。"
+  },
+  {
+    "word": "range",
+    "phonetic": "/reɪndʒ/",
+    "meaning": "n. 范围 v. 变动",
+    "example_en": "The temperature ranges from 10 to 30 degrees.",
+    "example_cn": "温度在10到30度之间。"
+  },
+  {
+    "word": "rank",
+    "phonetic": "/ræŋk/",
+    "meaning": "n. 等级 v. 排列",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "rapid",
+    "phonetic": "/ˈræpɪd/",
+    "meaning": "adj. 快速的",
+    "example_en": "The city has seen rapid growth in recent years.",
+    "example_cn": "这座城市近年来发展迅速。"
+  },
+  {
+    "word": "ratio",
+    "phonetic": "/ˈreɪʃiəʊ/",
+    "meaning": "n. 比率",
+    "example_en": "The ratio of teachers to students is 1:20.",
+    "example_cn": "师生比例是1:20。"
+  },
+  {
+    "word": "react",
+    "phonetic": "/riˈækt/",
+    "meaning": "v. 反应",
+    "example_en": "How did she react to the news?",
+    "example_cn": "她对这则消息有何反应？"
+  },
+  {
+    "word": "realistic",
+    "phonetic": "/ˌriːəˈlɪstɪk/",
+    "meaning": "adj. 现实的",
+    "example_en": "We need a realistic plan to achieve our goals.",
+    "example_cn": "我们需要一个现实的计划来实现目标。"
+  },
+  {
+    "word": "recession",
+    "phonetic": "/rɪˈseʃn/",
+    "meaning": "n. 衰退",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "recognize",
+    "phonetic": "/ˈrekəɡnaɪz/",
+    "meaning": "v. 认出；承认",
+    "example_en": "I didn't recognize her with her new hairstyle.",
+    "example_cn": "她换了新发型我没认出来。"
+  },
+  {
+    "word": "recommend",
+    "phonetic": "/ˌrekəˈmend/",
+    "meaning": "v. 推荐；建议",
+    "example_en": "I recommend this book to anyone interested in history.",
+    "example_cn": "我向对历史感兴趣的人推荐这本书。"
+  },
+  {
+    "word": "recover",
+    "phonetic": "/rɪˈkʌvər/",
+    "meaning": "v. 恢复",
+    "example_en": "It took her a long time to recover from the illness.",
+    "example_cn": "她花了很长时间才从疾病中恢复。"
+  },
+  {
+    "word": "reduction",
+    "phonetic": "/rɪˈdʌkʃn/",
+    "meaning": "n. 减少",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "refer",
+    "phonetic": "/rɪˈfɜːr/",
+    "meaning": "v. 提到；参考",
+    "example_en": "Please refer to the manual for more details.",
+    "example_cn": "更多细节请参阅手册。"
+  },
+  {
+    "word": "reflect",
+    "phonetic": "/rɪˈflekt/",
+    "meaning": "v. 反映；反射",
+    "example_en": "The results reflect the students' hard work.",
+    "example_cn": "成绩反映了学生的努力。"
+  },
+  {
+    "word": "reform",
+    "phonetic": "/rɪˈfɔːrm/",
+    "meaning": "v./n. 改革",
+    "example_en": "The government promised to reform the education system.",
+    "example_cn": "政府承诺改革教育体制。"
+  },
+  {
+    "word": "refresh",
+    "phonetic": "/rɪˈfreʃ/",
+    "meaning": "v. 使恢复；刷新",
+    "example_en": "A good night's sleep will refresh you.",
+    "example_cn": "一夜好眠会让你精神焕发。"
+  },
+  {
+    "word": "refuse",
+    "phonetic": "/rɪˈfjuːz/",
+    "meaning": "v. 拒绝",
+    "example_en": "She refused to accept the offer.",
+    "example_cn": "她拒绝接受这个提议。"
+  },
+  {
+    "word": "regard",
+    "phonetic": "/rɪˈɡɑːrd/",
+    "meaning": "v. 看待 n. 尊重",
+    "example_en": "I regard him as one of my best friends.",
+    "example_cn": "我把他视为最好的朋友之一。"
+  },
+  {
+    "word": "register",
+    "phonetic": "/ˈredʒɪstər/",
+    "meaning": "v. 注册 n. 登记簿",
+    "example_en": "You must register before you can use the service.",
+    "example_cn": "使用服务前必须注册。"
+  },
+  {
+    "word": "regulate",
+    "phonetic": "/ˈreɡjuleɪt/",
+    "meaning": "v. 管理；调节",
+    "example_en": "The government regulates the banking industry.",
+    "example_cn": "政府监管银行业。"
+  },
+  {
+    "word": "reinforce",
+    "phonetic": "/ˌriːɪnˈfɔːrs/",
+    "meaning": "v. 加强；增援",
+    "example_en": "The evidence reinforces the theory.",
+    "example_cn": "证据强化了这个理论。"
+  },
+  {
+    "word": "reject",
+    "phonetic": "/rɪˈdʒekt/",
+    "meaning": "v. 拒绝；排斥",
+    "example_en": "The committee rejected the proposal.",
+    "example_cn": "委员会拒绝了提议。"
+  },
+  {
+    "word": "relate",
+    "phonetic": "/rɪˈleɪt/",
+    "meaning": "v. 联系；叙述",
+    "example_en": "I can relate to what you are going through.",
+    "example_cn": "我能理解你的经历。"
+  },
+  {
+    "word": "relative",
+    "phonetic": "/ˈrelətɪv/",
+    "meaning": "n. 亲属 adj. 相对的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "release",
+    "phonetic": "/rɪˈliːs/",
+    "meaning": "v./n. 释放；发布",
+    "example_en": "The band will release a new album next month.",
+    "example_cn": "乐队下月将发行新专辑。"
+  },
+  {
+    "word": "relevant",
+    "phonetic": "/ˈreləvənt/",
+    "meaning": "adj. 相关的",
+    "example_en": "Please keep your comments relevant to the topic.",
+    "example_cn": "请使你的评论与话题相关。"
+  },
+  {
+    "word": "reliable",
+    "phonetic": "/rɪˈlaɪəbl/",
+    "meaning": "adj. 可靠的",
+    "example_en": "He is a reliable and trustworthy person.",
+    "example_cn": "他是一个可靠且值得信赖的人。"
+  },
+  {
+    "word": "relief",
+    "phonetic": "/rɪˈliːf/",
+    "meaning": "n. 减轻；救济",
+    "example_en": "The medicine brought relief from the pain.",
+    "example_cn": "药物缓解了疼痛。"
+  },
+  {
+    "word": "reluctant",
+    "phonetic": "/rɪˈlʌktənt/",
+    "meaning": "adj. 不情愿的",
+    "example_en": "He was reluctant to admit his mistake.",
+    "example_cn": "他不愿承认自己的错误。"
+  },
+  {
+    "word": "rely",
+    "phonetic": "/rɪˈlaɪ/",
+    "meaning": "v. 依赖；依靠",
+    "example_en": "You can rely on me to help you.",
+    "example_cn": "你可以依靠我来帮你。"
+  },
+  {
+    "word": "remain",
+    "phonetic": "/rɪˈmeɪn/",
+    "meaning": "v. 保持；剩余",
+    "example_en": "Much work remains to be done.",
+    "example_cn": "还有很多工作要做。"
+  },
+  {
+    "word": "remark",
+    "phonetic": "/rɪˈmɑːrk/",
+    "meaning": "v./n. 评论；言辞",
+    "example_en": "He made a remark about her new dress.",
+    "example_cn": "他对她的新裙子发表了评论。"
+  },
+  {
+    "word": "remedy",
+    "phonetic": "/ˈremədi/",
+    "meaning": "n. 补救办法 v. 纠正",
+    "example_en": "There is no simple remedy for this problem.",
+    "example_cn": "这个问题没有简单的补救办法。"
+  },
+  {
+    "word": "remote",
+    "phonetic": "/rɪˈməʊt/",
+    "meaning": "adj. 偏远的；遥远的",
+    "example_en": "They live in a remote village in the mountains.",
+    "example_cn": "他们住在山里的一个偏远村庄。"
+  },
+  {
+    "word": "render",
+    "phonetic": "/ˈrendər/",
+    "meaning": "v. 使成为；给予",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "renew",
+    "phonetic": "/rɪˈnjuː/",
+    "meaning": "v. 更新；续期",
+    "example_en": "You need to renew your passport before it expires.",
+    "example_cn": "你需要在护照到期前续签。"
+  },
+  {
+    "word": "represent",
+    "phonetic": "/ˌreprɪˈzent/",
+    "meaning": "v. 代表；表示",
+    "example_en": "The dove represents peace.",
+    "example_cn": "鸽子代表和平。"
+  },
+  {
+    "word": "reproduce",
+    "phonetic": "/ˌriːprəˈdjuːs/",
+    "meaning": "v. 复制；繁殖",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "reputation",
+    "phonetic": "/ˌrepjuˈteɪʃn/",
+    "meaning": "n. 名声；声誉",
+    "example_en": "The restaurant has a good reputation for quality food.",
+    "example_cn": "这家餐厅以优质食物享有好名声。"
+  },
+  {
+    "word": "require",
+    "phonetic": "/rɪˈkwaɪər/",
+    "meaning": "v. 要求；需要",
+    "example_en": "The job requires excellent communication skills.",
+    "example_cn": "这份工作需要出色的沟通能力。"
+  },
+  {
+    "word": "resemble",
+    "phonetic": "/rɪˈzembl/",
+    "meaning": "v. 类似；像",
+    "example_en": "She strongly resembles her mother.",
+    "example_cn": "她长得非常像她母亲。"
+  },
+  {
+    "word": "reserve",
+    "phonetic": "/rɪˈzɜːrv/",
+    "meaning": "v. 预订 n. 储备",
+    "example_en": "I'd like to reserve a table for two.",
+    "example_cn": "我想预订一张两人桌。"
+  },
+  {
+    "word": "resident",
+    "phonetic": "/ˈrezɪdənt/",
+    "meaning": "n. 居民",
+    "example_en": "Local residents opposed the construction plan.",
+    "example_cn": "当地居民反对建设计划。"
+  },
+  {
+    "word": "resign",
+    "phonetic": "/rɪˈzaɪn/",
+    "meaning": "v. 辞职",
+    "example_en": "He resigned from his position last month.",
+    "example_cn": "他上个月辞去了职务。"
+  },
+  {
+    "word": "resist",
+    "phonetic": "/rɪˈzɪst/",
+    "meaning": "v. 抵抗；抵制",
+    "example_en": "She couldn't resist the temptation of chocolate.",
+    "example_cn": "她无法抗拒巧克力的诱惑。"
+  },
+  {
+    "word": "resolve",
+    "phonetic": "/rɪˈzɒlv/",
+    "meaning": "v. 解决；决心",
+    "example_en": "We must resolve this issue as soon as possible.",
+    "example_cn": "我们必须尽快解决这个问题。"
+  },
+  {
+    "word": "resource",
+    "phonetic": "/rɪˈzɔːrs/",
+    "meaning": "n. 资源",
+    "example_en": "The library is a valuable resource for students.",
+    "example_cn": "图书馆对学生来说是宝贵的资源。"
+  },
+  {
+    "word": "respond",
+    "phonetic": "/rɪˈspɒnd/",
+    "meaning": "v. 回应；反应",
+    "example_en": "He didn't respond to my email.",
+    "example_cn": "他没有回复我的邮件。"
+  },
+  {
+    "word": "restore",
+    "phonetic": "/rɪˈstɔːr/",
+    "meaning": "v. 恢复；修复",
+    "example_en": "They are working to restore the old painting.",
+    "example_cn": "他们正在修复那幅旧画。"
+  },
+  {
+    "word": "restrict",
+    "phonetic": "/rɪˈstrɪkt/",
+    "meaning": "v. 限制",
+    "example_en": "Access to the area is restricted to authorized personnel.",
+    "example_cn": "该区域仅限授权人员进入。"
+  },
+  {
+    "word": "retain",
+    "phonetic": "/rɪˈteɪn/",
+    "meaning": "v. 保留；保持",
+    "example_en": "It's important to retain what you have learned.",
+    "example_cn": "记住学过的东西很重要。"
+  },
+  {
+    "word": "retire",
+    "phonetic": "/rɪˈtaɪər/",
+    "meaning": "v. 退休",
+    "example_en": "He plans to retire at the age of 60.",
+    "example_cn": "他计划60岁退休。"
+  },
+  {
+    "word": "reveal",
+    "phonetic": "/rɪˈviːl/",
+    "meaning": "v. 揭露；显示",
+    "example_en": "The investigation revealed some surprising facts.",
+    "example_cn": "调查揭示了一些令人惊讶的事实。"
+  },
+  {
+    "word": "revenue",
+    "phonetic": "/ˈrevənjuː/",
+    "meaning": "n. 收入；税收",
+    "example_en": "The company's revenue increased by 15% this year.",
+    "example_cn": "公司今年的收入增长了15%。"
+  },
+  {
+    "word": "reverse",
+    "phonetic": "/rɪˈvɜːrs/",
+    "meaning": "v. 颠倒 adj. 相反的",
+    "example_en": "The court reversed the earlier decision.",
+    "example_cn": "法庭推翻了先前的决定。"
+  },
+  {
+    "word": "revise",
+    "phonetic": "/rɪˈvaɪz/",
+    "meaning": "v. 修改；复习",
+    "example_en": "She stayed up late revising for the exam.",
+    "example_cn": "她熬夜复习考试。"
+  },
+  {
+    "word": "revolution",
+    "phonetic": "/ˌrevəˈluːʃn/",
+    "meaning": "n. 革命",
+    "example_en": "The Industrial Revolution changed the world forever.",
+    "example_cn": "工业革命永远改变了世界。"
+  },
+  {
+    "word": "reward",
+    "phonetic": "/rɪˈwɔːrd/",
+    "meaning": "n. 报酬 v. 奖赏",
+    "example_en": "A reward was offered for information about the crime.",
+    "example_cn": "提供了有关犯罪的线索将获得奖励。"
+  },
+  {
+    "word": "risk",
+    "phonetic": "/rɪsk/",
+    "meaning": "n. 风险 v. 冒险",
+    "example_en": "You must weigh the risks before making a decision.",
+    "example_cn": "做决定前你必须权衡风险。"
+  },
+  {
+    "word": "routine",
+    "phonetic": "/ruːˈtiːn/",
+    "meaning": "n. 常规 adj. 日常的",
+    "example_en": "Exercise should be part of your daily routine.",
+    "example_cn": "锻炼应该成为日常惯例的一部分。"
+  },
+  {
+    "word": "sacrifice",
+    "phonetic": "/ˈsækrɪfaɪs/",
+    "meaning": "v./n. 牺牲",
+    "example_en": "Parents often sacrifice their own needs for their children.",
+    "example_cn": "父母常常为孩子牺牲自己的需求。"
+  },
+  {
+    "word": "salary",
+    "phonetic": "/ˈsæləri/",
+    "meaning": "n. 薪水",
+    "example_en": "Her monthly salary is around 10,000 yuan.",
+    "example_cn": "她月薪大约一万元。"
+  },
+  {
+    "word": "sample",
+    "phonetic": "/ˈsɑːrmpl/",
+    "meaning": "n. 样品 v. 采样",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "satisfy",
+    "phonetic": "/ˈsætɪsfaɪ/",
+    "meaning": "v. 满足；使满意",
+    "example_en": "The meal failed to satisfy his hunger.",
+    "example_cn": "这顿饭没能满足他的饥饿。"
+  },
+  {
+    "word": "scale",
+    "phonetic": "/skeɪl/",
+    "meaning": "n. 规模；刻度",
+    "example_en": "The company operates on a global scale.",
+    "example_cn": "公司在全球范围内运营。"
+  },
+  {
+    "word": "scandal",
+    "phonetic": "/ˈskændl/",
+    "meaning": "n. 丑闻",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "scatter",
+    "phonetic": "/ˈskætər/",
+    "meaning": "v. 散开；撒播",
+    "example_en": "The explosion scattered debris over a wide area.",
+    "example_cn": "爆炸将碎片散落到很大的区域。"
+  },
+  {
+    "word": "schedule",
+    "phonetic": "/ˈʃedjuːl/",
+    "meaning": "n. 时间表 v. 安排",
+    "example_en": "The project is ahead of schedule.",
+    "example_cn": "项目进度超前了。"
+  },
+  {
+    "word": "scheme",
+    "phonetic": "/skiːm/",
+    "meaning": "n. 计划；方案",
+    "example_en": "The government introduced a new pension scheme.",
+    "example_cn": "政府推出了一项新的养老金方案。"
+  },
+  {
+    "word": "scholarship",
+    "phonetic": "/ˈskɒləʃɪp/",
+    "meaning": "n. 奖学金",
+    "example_en": "She won a scholarship to study at Harvard.",
+    "example_cn": "她获得了哈佛大学的奖学金。"
+  },
+  {
+    "word": "scope",
+    "phonetic": "/skəʊp/",
+    "meaning": "n. 范围；机会",
+    "example_en": "The scope of the research is quite broad.",
+    "example_cn": "研究的范围相当广。"
+  },
+  {
+    "word": "secure",
+    "phonetic": "/sɪˈkjʊər/",
+    "meaning": "adj. 安全的 v. 获得",
+    "example_en": "Make sure all doors and windows are secure before leaving.",
+    "example_cn": "离开前确保门窗都关好。"
+  },
+  {
+    "word": "separate",
+    "phonetic": "/ˈsepəreɪt/",
+    "meaning": "v. 分离 adj. 单独的",
+    "example_en": "Please separate the white clothes from the colored ones.",
+    "example_cn": "请把白色衣服和有色的分开。"
+  },
+  {
+    "word": "sequence",
+    "phonetic": "/ˈsiːkwəns/",
+    "meaning": "n. 顺序；序列",
+    "example_en": "The events happened in a particular sequence.",
+    "example_cn": "事件按特定顺序发生。"
+  },
+  {
+    "word": "session",
+    "phonetic": "/ˈseʃn/",
+    "meaning": "n. 会议；一段时间",
+    "example_en": "The training session lasts for three hours.",
+    "example_cn": "培训课程持续三个小时。"
+  },
+  {
+    "word": "settle",
+    "phonetic": "/ˈsetl/",
+    "meaning": "v. 解决；定居",
+    "example_en": "They settled in Shanghai after getting married.",
+    "example_cn": "他们结婚后定居上海。"
+  },
+  {
+    "word": "severe",
+    "phonetic": "/sɪˈvɪər/",
+    "meaning": "adj. 严重的；严厉的",
+    "example_en": "The patient is in severe pain.",
+    "example_cn": "病人疼痛剧烈。"
+  },
+  {
+    "word": "shelter",
+    "phonetic": "/ˈʃeltər/",
+    "meaning": "n. 避难所 v. 庇护",
+    "example_en": "The hikers found shelter from the rain under a tree.",
+    "example_cn": "徒步者在树下找到避雨处。"
+  },
+  {
+    "word": "shift",
+    "phonetic": "/ʃɪft/",
+    "meaning": "v. 转移 n. 轮班",
+    "example_en": "Public opinion has shifted on this issue.",
+    "example_cn": "公众对这个问题的看法已经转变。"
+  },
+  {
+    "word": "shortage",
+    "phonetic": "/ˈʃɔːrtɪdʒ/",
+    "meaning": "n. 短缺",
+    "example_en": "There is a shortage of fresh water in the region.",
+    "example_cn": "该地区缺乏淡水。"
+  },
+  {
+    "word": "signal",
+    "phonetic": "/ˈsɪɡnl/",
+    "meaning": "n. 信号 v. 发信号",
+    "example_en": "The traffic signal turned red.",
+    "example_cn": "交通信号灯变红了。"
+  },
+  {
+    "word": "significant",
+    "phonetic": "/sɪɡˈnɪfɪkənt/",
+    "meaning": "adj. 重要的；显著的",
+    "example_en": "There has been a significant improvement in air quality.",
+    "example_cn": "空气质量有了显著改善。"
+  },
+  {
+    "word": "simplify",
+    "phonetic": "/ˈsɪmplɪfaɪ/",
+    "meaning": "v. 简化",
+    "example_en": "Let me simplify the problem for you.",
+    "example_cn": "让我为你简化这个问题。"
+  },
+  {
+    "word": "simulate",
+    "phonetic": "/ˈsɪmjuleɪt/",
+    "meaning": "v. 模拟",
+    "example_en": "The training program simulates real-life situations.",
+    "example_cn": "培训项目模拟真实生活情境。"
+  },
+  {
+    "word": "situation",
+    "phonetic": "/ˌsɪtʃuˈeɪʃn/",
+    "meaning": "n. 情况；处境",
+    "example_en": "The current economic situation is improving.",
+    "example_cn": "目前的经济形势正在好转。"
+  },
+  {
+    "word": "slight",
+    "phonetic": "/slaɪt/",
+    "meaning": "adj. 轻微的",
+    "example_en": "There was a slight change in the temperature.",
+    "example_cn": "温度有轻微变化。"
+  },
+  {
+    "word": "slim",
+    "phonetic": "/slɪm/",
+    "meaning": "adj. 苗条的；微小的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "solution",
+    "phonetic": "/səˈluːʃn/",
+    "meaning": "n. 解决方案；溶液",
+    "example_en": "We need to find a solution to the problem.",
+    "example_cn": "我们需要找到问题的解决方案。"
+  },
+  {
+    "word": "sophisticated",
+    "phonetic": "/səˈfɪstɪkeɪtɪd/",
+    "meaning": "adj. 复杂的；精密的",
+    "example_en": "The system is highly sophisticated.",
+    "example_cn": "这个系统非常精密。"
+  },
+  {
+    "word": "source",
+    "phonetic": "/sɔːrs/",
+    "meaning": "n. 来源",
+    "example_en": "The river has its source in the mountains.",
+    "example_cn": "这条河发源于山区。"
+  },
+  {
+    "word": "specific",
+    "phonetic": "/spəˈsɪfɪk/",
+    "meaning": "adj. 具体的；特定的",
+    "example_en": "Can you be more specific about the requirements?",
+    "example_cn": "你能更具体地说明要求吗？"
+  },
+  {
+    "word": "sponsor",
+    "phonetic": "/ˈspɒnsər/",
+    "meaning": "n. 赞助者 v. 赞助",
+    "example_en": "The event is sponsored by a major bank.",
+    "example_cn": "活动由一家大银行赞助。"
+  },
+  {
+    "word": "stable",
+    "phonetic": "/ˈsteɪbl/",
+    "meaning": "adj. 稳定的",
+    "example_en": "The patient's condition is now stable.",
+    "example_cn": "病人的情况现在稳定了。"
+  },
+  {
+    "word": "standard",
+    "phonetic": "/ˈstændərd/",
+    "meaning": "n. 标准 adj. 标准的",
+    "example_en": "The hotel meets international standards.",
+    "example_cn": "酒店达到国际标准。"
+  },
+  {
+    "word": "statement",
+    "phonetic": "/ˈsteɪtmənt/",
+    "meaning": "n. 声明；陈述",
+    "example_en": "The CEO made a public statement about the merger.",
+    "example_cn": "CEO就合并发表了公开声明。"
+  },
+  {
+    "word": "status",
+    "phonetic": "/ˈsteɪtəs/",
+    "meaning": "n. 地位；状态",
+    "example_en": "What is the current status of the project?",
+    "example_cn": "项目目前的状态是什么？"
+  },
+  {
+    "word": "steady",
+    "phonetic": "/ˈstedi/",
+    "meaning": "adj. 稳定的；平稳的",
+    "example_en": "The economy shows steady growth.",
+    "example_cn": "经济呈现稳定增长。"
+  },
+  {
+    "word": "stimulate",
+    "phonetic": "/ˈstɪmjuleɪt/",
+    "meaning": "v. 刺激；激励",
+    "example_en": "The government aims to stimulate economic growth.",
+    "example_cn": "政府旨在刺激经济增长。"
+  },
+  {
+    "word": "strategy",
+    "phonetic": "/ˈstrætədʒi/",
+    "meaning": "n. 策略；战略",
+    "example_en": "We need a new marketing strategy.",
+    "example_cn": "我们需要一个新的营销策略。"
+  },
+  {
+    "word": "strength",
+    "phonetic": "/streŋθ/",
+    "meaning": "n. 力量；优势",
+    "example_en": "Her greatest strength is her determination.",
+    "example_cn": "她最大的优点是决心。"
+  },
+  {
+    "word": "stress",
+    "phonetic": "/stres/",
+    "meaning": "n. 压力；强调",
+    "example_en": "Too much stress can affect your health.",
+    "example_cn": "过多的压力会影响健康。"
+  },
+  {
+    "word": "stretch",
+    "phonetic": "/stretʃ/",
+    "meaning": "v. 延伸；伸展",
+    "example_en": "The road stretches for miles across the desert.",
+    "example_cn": "道路在沙漠中绵延数英里。"
+  },
+  {
+    "word": "structure",
+    "phonetic": "/ˈstrʌktʃər/",
+    "meaning": "n. 结构 v. 组织",
+    "example_en": "The structure of the building is very solid.",
+    "example_cn": "建筑的结构非常坚固。"
+  },
+  {
+    "word": "submit",
+    "phonetic": "/səbˈmɪt/",
+    "meaning": "v. 提交；服从",
+    "example_en": "Students must submit their essays by Friday.",
+    "example_cn": "学生必须在周五前提交论文。"
+  },
+  {
+    "word": "substance",
+    "phonetic": "/ˈsʌbstəns/",
+    "meaning": "n. 物质；实质",
+    "example_en": "Water is a common substance found everywhere.",
+    "example_cn": "水是一种到处可见的常见物质。"
+  },
+  {
+    "word": "substitute",
+    "phonetic": "/ˈsʌbstɪtjuːt/",
+    "meaning": "n. 替代品 v. 替代",
+    "example_en": "You can use honey as a substitute for sugar.",
+    "example_cn": "你可以用蜂蜜代替糖。"
+  },
+  {
+    "word": "succeed",
+    "phonetic": "/səkˈsiːd/",
+    "meaning": "v. 成功；继承",
+    "example_en": "If you work hard, you will succeed.",
+    "example_cn": "如果你努力，就会成功。"
+  },
+  {
+    "word": "sufficient",
+    "phonetic": "/səˈfɪʃnt/",
+    "meaning": "adj. 足够的",
+    "example_en": "We have sufficient evidence to proceed.",
+    "example_cn": "我们有足够的证据继续进行。"
+  },
+  {
+    "word": "suggest",
+    "phonetic": "/səˈdʒest/",
+    "meaning": "v. 建议；暗示",
+    "example_en": "I suggest that we take a different approach.",
+    "example_cn": "我建议我们采取不同的方法。"
+  },
+  {
+    "word": "superior",
+    "phonetic": "/suːˈpɪəriər/",
+    "meaning": "adj. 优越的 n. 上司",
+    "example_en": "This product is superior to the competitor's.",
+    "example_cn": "这款产品优于竞争对手的。"
+  },
+  {
+    "word": "supplement",
+    "phonetic": "/ˈsʌplɪmənt/",
+    "meaning": "n. 补充 v. 增补",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "supply",
+    "phonetic": "/səˈplaɪ/",
+    "meaning": "v./n. 供应",
+    "example_en": "The farm supplies vegetables to local markets.",
+    "example_cn": "农场向当地市场供应蔬菜。"
+  },
+  {
+    "word": "suppose",
+    "phonetic": "/səˈpəʊz/",
+    "meaning": "v. 假设；认为",
+    "example_en": "I suppose you are right about that.",
+    "example_cn": "我想你在那方面是对的。"
+  },
+  {
+    "word": "surface",
+    "phonetic": "/ˈsɜːrfɪs/",
+    "meaning": "n. 表面 v. 浮出",
+    "example_en": "The surface of the lake was perfectly calm.",
+    "example_cn": "湖面非常平静。"
+  },
+  {
+    "word": "surplus",
+    "phonetic": "/ˈsɜːrpləs/",
+    "meaning": "n. 剩余 adj. 过剩的",
+    "example_en": "The country has a trade surplus this year.",
+    "example_cn": "今年该国实现贸易顺差。"
+  },
+  {
+    "word": "survive",
+    "phonetic": "/sərˈvaɪv/",
+    "meaning": "v. 幸存；存活",
+    "example_en": "Only a few plants can survive in the desert.",
+    "example_cn": "只有少数植物能在沙漠中存活。"
+  },
+  {
+    "word": "suspect",
+    "phonetic": "/səˈspekt/",
+    "meaning": "v. 怀疑 n. 嫌疑人",
+    "example_en": "The police suspect him of the robbery.",
+    "example_cn": "警方怀疑他抢劫。"
+  },
+  {
+    "word": "suspend",
+    "phonetic": "/səˈspend/",
+    "meaning": "v. 暂停；悬挂",
+    "example_en": "The school suspended the student for cheating.",
+    "example_cn": "学校因作弊暂停了该学生的学业。"
+  },
+  {
+    "word": "sustain",
+    "phonetic": "/səˈsteɪn/",
+    "meaning": "v. 维持；支撑",
+    "example_en": "The economy cannot sustain such rapid growth.",
+    "example_cn": "经济无法维持如此快速的增长。"
+  },
+  {
+    "word": "symbol",
+    "phonetic": "/ˈsɪmbl/",
+    "meaning": "n. 象征；符号",
+    "example_en": "The dove is a symbol of peace.",
+    "example_cn": "鸽子是和平的象征。"
+  },
+  {
+    "word": "sympathy",
+    "phonetic": "/ˈsɪmpəθi/",
+    "meaning": "n. 同情",
+    "example_en": "I have great sympathy for the victims.",
+    "example_cn": "我对受害者深表同情。"
+  },
+  {
+    "word": "symptom",
+    "phonetic": "/ˈsɪmptəm/",
+    "meaning": "n. 症状",
+    "example_en": "Fever is a common symptom of the flu.",
+    "example_cn": "发烧是流感的常见症状。"
+  },
+  {
+    "word": "technique",
+    "phonetic": "/tekˈniːk/",
+    "meaning": "n. 技术；技巧",
+    "example_en": "She learned new techniques in the cooking class.",
+    "example_cn": "她在烹饪课上学了新技巧。"
+  },
+  {
+    "word": "temporary",
+    "phonetic": "/ˈtempərəri/",
+    "meaning": "adj. 暂时的",
+    "example_en": "This is only a temporary arrangement.",
+    "example_cn": "这只是临时安排。"
+  },
+  {
+    "word": "tend",
+    "phonetic": "/tend/",
+    "meaning": "v. 倾向于；照管",
+    "example_en": "People tend to gain weight in winter.",
+    "example_cn": "人们冬天容易发胖。"
+  },
+  {
+    "word": "tendency",
+    "phonetic": "/ˈtendənsi/",
+    "meaning": "n. 趋势；倾向",
+    "example_en": "There is a growing tendency toward online shopping.",
+    "example_cn": "网购有增长的趋势。"
+  },
+  {
+    "word": "terminal",
+    "phonetic": "/ˈtɜːrmɪnl/",
+    "meaning": "n. 航站楼 adj. 末期的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "territory",
+    "phonetic": "/ˈterɪtəri/",
+    "meaning": "n. 领土；领域",
+    "example_en": "The country defended its territory fiercely.",
+    "example_cn": "国家激烈地保卫其领土。"
+  },
+  {
+    "word": "threat",
+    "phonetic": "/θret/",
+    "meaning": "n. 威胁",
+    "example_en": "Pollution poses a serious threat to marine life.",
+    "example_cn": "污染对海洋生物构成严重威胁。"
+  },
+  {
+    "word": "threshold",
+    "phonetic": "/ˈθreʃhəʊld/",
+    "meaning": "n. 门槛；临界点",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "tolerate",
+    "phonetic": "/ˈtɒləreɪt/",
+    "meaning": "v. 容忍；忍受",
+    "example_en": "I will not tolerate such rude behavior.",
+    "example_cn": "我不会容忍如此粗鲁的行为。"
+  },
+  {
+    "word": "transfer",
+    "phonetic": "/trænsˈfɜːr/",
+    "meaning": "v. 转移；转让",
+    "example_en": "She transferred to a different university.",
+    "example_cn": "她转到了另一所大学。"
+  },
+  {
+    "word": "transform",
+    "phonetic": "/trænsˈfɔːrm/",
+    "meaning": "v. 转变；改造",
+    "example_en": "Technology has transformed the way we communicate.",
+    "example_cn": "技术改变了我们交流的方式。"
+  },
+  {
+    "word": "transition",
+    "phonetic": "/trænˈzɪʃn/",
+    "meaning": "n. 过渡；转变",
+    "example_en": "The transition from school to work can be challenging.",
+    "example_cn": "从学校到工作的过渡可能具有挑战性。"
+  },
+  {
+    "word": "transmit",
+    "phonetic": "/trænzˈmɪt/",
+    "meaning": "v. 传输；传播",
+    "example_en": "The disease is transmitted through water.",
+    "example_cn": "这种疾病通过水传播。"
+  },
+  {
+    "word": "transparent",
+    "phonetic": "/trænsˈpærənt/",
+    "meaning": "adj. 透明的；坦率的",
+    "example_en": "The government should be transparent about its decisions.",
+    "example_cn": "政府应对其决策保持透明。"
+  },
+  {
+    "word": "trend",
+    "phonetic": "/trend/",
+    "meaning": "n. 趋势",
+    "example_en": "There is a trend toward healthier eating.",
+    "example_cn": "有向更健康饮食的趋势。"
+  },
+  {
+    "word": "trial",
+    "phonetic": "/ˈtraɪəl/",
+    "meaning": "n. 审判；试验",
+    "example_en": "The case will go to trial next month.",
+    "example_cn": "案件下月将开庭审理。"
+  },
+  {
+    "word": "trigger",
+    "phonetic": "/ˈtrɪɡər/",
+    "meaning": "v. 触发 n. 扳机",
+    "example_en": "Stress can trigger headaches.",
+    "example_cn": "压力可能引发头痛。"
+  },
+  {
+    "word": "typical",
+    "phonetic": "/ˈtɪpɪkl/",
+    "meaning": "adj. 典型的",
+    "example_en": "This is a typical example of his work.",
+    "example_cn": "这是他作品的典型例子。"
+  },
+  {
+    "word": "ultimate",
+    "phonetic": "/ˈʌltɪmət/",
+    "meaning": "adj. 最终的；根本的",
+    "example_en": "The ultimate goal is world peace.",
+    "example_cn": "最终目标是世界和平。"
+  },
+  {
+    "word": "undergo",
+    "phonetic": "/ˌʌndərˈɡəʊ/",
+    "meaning": "v. 经历；承受",
+    "example_en": "The building will undergo major renovations.",
+    "example_cn": "建筑将进行重大翻修。"
+  },
+  {
+    "word": "undertake",
+    "phonetic": "/ˌʌndərˈteɪk/",
+    "meaning": "v. 承担；从事",
+    "example_en": "He undertook the task of organizing the event.",
+    "example_cn": "他承担了组织活动的任务。"
+  },
+  {
+    "word": "uniform",
+    "phonetic": "/ˈjuːnɪfɔːrm/",
+    "meaning": "n. 制服 adj. 统一的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "unique",
+    "phonetic": "/juːˈniːk/",
+    "meaning": "adj. 独特的",
+    "example_en": "Every person's fingerprint is unique.",
+    "example_cn": "每个人的指纹都是独一无二的。"
+  },
+  {
+    "word": "universal",
+    "phonetic": "/ˌjuːnɪˈvɜːrsl/",
+    "meaning": "adj. 普遍的；全世界的",
+    "example_en": "Music is a universal language.",
+    "example_cn": "音乐是一种世界通用的语言。"
+  },
+  {
+    "word": "update",
+    "phonetic": "/ʌpˈdeɪt/",
+    "meaning": "v./n. 更新",
+    "example_en": "Please update your contact information.",
+    "example_cn": "请更新你的联系信息。"
+  },
+  {
+    "word": "upgrade",
+    "phonetic": "/ʌpˈɡreɪd/",
+    "meaning": "v./n. 升级",
+    "example_en": "We need to upgrade our computer system.",
+    "example_cn": "我们需要升级电脑系统。"
+  },
+  {
+    "word": "upright",
+    "phonetic": "/ˈʌpraɪt/",
+    "meaning": "adj. 直立的；正直的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "upset",
+    "phonetic": "/ʌpˈset/",
+    "meaning": "adj. 心烦的 v. 打乱",
+    "example_en": "She was very upset by the bad news.",
+    "example_cn": "坏消息让她非常心烦。"
+  },
+  {
+    "word": "urban",
+    "phonetic": "/ˈɜːrbən/",
+    "meaning": "adj. 城市的",
+    "example_en": "Urban areas face many challenges.",
+    "example_cn": "城市地区面临许多挑战。"
+  },
+  {
+    "word": "urge",
+    "phonetic": "/ɜːrdʒ/",
+    "meaning": "v. 敦促 n. 冲动",
+    "example_en": "I urge you to reconsider your decision.",
+    "example_cn": "我敦促你重新考虑你的决定。"
+  },
+  {
+    "word": "urgent",
+    "phonetic": "/ˈɜːrdʒənt/",
+    "meaning": "adj. 紧急的",
+    "example_en": "This is an urgent matter that needs attention.",
+    "example_cn": "这是一件需要关注的紧急事务。"
+  },
+  {
+    "word": "utilize",
+    "phonetic": "/ˈjuːtɪlaɪz/",
+    "meaning": "v. 利用",
+    "example_en": "We should utilize renewable energy sources.",
+    "example_cn": "我们应该利用可再生能源。"
+  },
+  {
+    "word": "vacant",
+    "phonetic": "/ˈveɪkənt/",
+    "meaning": "adj. 空的；空缺的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "valid",
+    "phonetic": "/ˈvælɪd/",
+    "meaning": "adj. 有效的；合理的",
+    "example_en": "Is your passport still valid?",
+    "example_cn": "你的护照还有效吗？"
+  },
+  {
+    "word": "value",
+    "phonetic": "/ˈvæljuː/",
+    "meaning": "n. 价值 v. 重视",
+    "example_en": "Health is something we often fail to value.",
+    "example_cn": "健康是我们经常忽视其价值的东西。"
+  },
+  {
+    "word": "vanish",
+    "phonetic": "/ˈvænɪʃ/",
+    "meaning": "v. 消失",
+    "example_en": "The smile vanished from her face.",
+    "example_cn": "笑容从她脸上消失了。"
+  },
+  {
+    "word": "variety",
+    "phonetic": "/vəˈraɪəti/",
+    "meaning": "n. 多样性；种类",
+    "example_en": "There is a wide variety of books in the library.",
+    "example_cn": "图书馆里有各种各样的书。"
+  },
+  {
+    "word": "vast",
+    "phonetic": "/vɑːst/",
+    "meaning": "adj. 广阔的；巨大的",
+    "example_en": "The vast desert stretched before them.",
+    "example_cn": "广袤的沙漠在他们面前延伸。"
+  },
+  {
+    "word": "venture",
+    "phonetic": "/ˈventʃər/",
+    "meaning": "n. 冒险 v. 敢于",
+    "example_en": "Starting a business is always a risky venture.",
+    "example_cn": "创业始终是冒险的事业。"
+  },
+  {
+    "word": "verify",
+    "phonetic": "/ˈverɪfaɪ/",
+    "meaning": "v. 核实；证实",
+    "example_en": "We need to verify the accuracy of the data.",
+    "example_cn": "我们需要核实数据的准确性。"
+  },
+  {
+    "word": "version",
+    "phonetic": "/ˈvɜːrʃn/",
+    "meaning": "n. 版本",
+    "example_en": "This is the latest version of the software.",
+    "example_cn": "这是软件的最新版本。"
+  },
+  {
+    "word": "vertical",
+    "phonetic": "/ˈvɜːrtɪkl/",
+    "meaning": "adj. 垂直的",
+    "example_en": "",
+    "example_cn": ""
+  },
+  {
+    "word": "victim",
+    "phonetic": "/ˈvɪktɪm/",
+    "meaning": "n. 受害者",
+    "example_en": "The victims of the flood need immediate help.",
+    "example_cn": "洪灾受害者需要立即援助。"
+  },
+  {
+    "word": "violence",
+    "phonetic": "/ˈvaɪələns/",
+    "meaning": "n. 暴力",
+    "example_en": "Violence in schools is a growing concern.",
+    "example_cn": "校园暴力是一个日益严重的问题。"
+  },
+  {
+    "word": "virtue",
+    "phonetic": "/ˈvɜːrtʃuː/",
+    "meaning": "n. 美德；优点",
+    "example_en": "Patience is a virtue.",
+    "example_cn": "耐心是一种美德。"
+  },
+  {
+    "word": "visible",
+    "phonetic": "/ˈvɪzəbl/",
+    "meaning": "adj. 可见的",
+    "example_en": "The stars are visible on a clear night.",
+    "example_cn": "晴朗的夜晚可以看到星星。"
+  },
+  {
+    "word": "vision",
+    "phonetic": "/ˈvɪʒn/",
+    "meaning": "n. 视力；远见",
+    "example_en": "She has a clear vision for the company's future.",
+    "example_cn": "她对公司的未来有清晰的愿景。"
+  },
+  {
+    "word": "vital",
+    "phonetic": "/ˈvaɪtl/",
+    "meaning": "adj. 至关重要的",
+    "example_en": "Water is vital for survival.",
+    "example_cn": "水对生存至关重要。"
+  },
+  {
+    "word": "vivid",
+    "phonetic": "/ˈvɪvɪd/",
+    "meaning": "adj. 生动的",
+    "example_en": "She gave a vivid description of the sunset.",
+    "example_cn": "她生动地描述了日落。"
+  },
+  {
+    "word": "vocabulary",
+    "phonetic": "/vəˈkæbjələri/",
+    "meaning": "n. 词汇",
+    "example_en": "Reading helps expand your vocabulary.",
+    "example_cn": "阅读有助于扩展词汇量。"
+  },
+  {
+    "word": "voluntary",
+    "phonetic": "/ˈvɒləntri/",
+    "meaning": "adj. 自愿的",
+    "example_en": "Participation in the program is voluntary.",
+    "example_cn": "参加这个项目是自愿的。"
+  },
+  {
+    "word": "welfare",
+    "phonetic": "/ˈwelfeər/",
+    "meaning": "n. 福利",
+    "example_en": "The government should protect people's welfare.",
+    "example_cn": "政府应保障人民的福利。"
+  },
+  {
+    "word": "withdraw",
+    "phonetic": "/wɪðˈdrɔː/",
+    "meaning": "v. 撤回；提取",
+    "example_en": "She withdrew some money from her bank account.",
+    "example_cn": "她从银行账户取了一些钱。"
+  },
+  {
+    "word": "witness",
+    "phonetic": "/ˈwɪtnəs/",
+    "meaning": "n. 目击者 v. 见证",
+    "example_en": "Several witnesses saw the accident happen.",
+    "example_cn": "几名目击者看到了事故发生。"
+  },
+  {
+    "word": "worship",
+    "phonetic": "/ˈwɜːrʃɪp/",
+    "meaning": "v./n. 崇拜",
+    "example_en": "People go to temples to worship.",
+    "example_cn": "人们去寺庙礼拜。"
+  },
+  {
+    "word": "yield",
+    "phonetic": "/jiːld/",
+    "meaning": "v. 产出；屈服 n. 产量",
+    "example_en": "The farm yielded a good harvest this year.",
+    "example_cn": "农场今年收成很好。"
+  },
+  {
+    "word": "zone",
+    "phonetic": "/zəʊn/",
+    "meaning": "n. 区域；地带",
+    "example_en": "This is a no-parking zone.",
+    "example_cn": "这是禁停区。"
+  }
+]

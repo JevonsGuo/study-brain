@@ -1,0 +1,202 @@
+[
+  {
+    "subject": "化学",
+    "category": "practice",
+    "name": "组卷网",
+    "desc": "按知识点组卷，含上海高考真题",
+    "url": "https://www.zujuan.com",
+    "sort_order": 1
+  },
+  {
+    "subject": "化学",
+    "category": "practice",
+    "name": "菁优网",
+    "desc": "化学题库+详细解析",
+    "url": "https://www.jyeoo.com/chemistry",
+    "sort_order": 2
+  },
+  {
+    "subject": "化学",
+    "category": "tool",
+    "name": "PhET 互动仿真",
+    "desc": "化学实验互动模拟",
+    "url": "https://phet.colorado.edu/zh_CN/simulations/filter?subjects=chemistry",
+    "sort_order": 1
+  },
+  {
+    "subject": "化学",
+    "category": "tool",
+    "name": "Ptable",
+    "desc": "互动元素周期表",
+    "url": "https://ptable.com/?lang=zh-Hans",
+    "sort_order": 2
+  },
+  {
+    "subject": "化学",
+    "category": "video",
+    "name": "化学超人",
+    "desc": "高中化学知识体系+专题",
+    "url": "https://search.bilibili.com/all?keyword=化学超人+高中",
+    "sort_order": 1
+  },
+  {
+    "subject": "化学",
+    "category": "video",
+    "name": "化学老师",
+    "desc": "实验演示+方程式精讲",
+    "url": "https://search.bilibili.com/all?keyword=高中化学+实验",
+    "sort_order": 2
+  },
+  {
+    "subject": "化学",
+    "category": "video",
+    "name": "国家智慧教育平台",
+    "desc": "教育部官方化学课程",
+    "url": "https://www.smart-edu.cn/zone/fxztjc/xueke/xx_hx",
+    "sort_order": 3
+  },
+  {
+    "subject": "数学",
+    "category": "practice",
+    "name": "组卷网",
+    "desc": "按知识点组卷，含上海高考真题",
+    "url": "https://www.zujuan.com",
+    "sort_order": 1
+  },
+  {
+    "subject": "数学",
+    "category": "practice",
+    "name": "菁优网",
+    "desc": "题库+解析，支持按地区筛选",
+    "url": "https://www.jyeoo.com",
+    "sort_order": 2
+  },
+  {
+    "subject": "数学",
+    "category": "tool",
+    "name": "GeoGebra",
+    "desc": "数学动态几何与函数绘图",
+    "url": "https://www.geogebra.org",
+    "sort_order": 1
+  },
+  {
+    "subject": "数学",
+    "category": "tool",
+    "name": "Desmos",
+    "desc": "在线图形计算器",
+    "url": "https://www.desmos.com/calculator",
+    "sort_order": 2
+  },
+  {
+    "subject": "数学",
+    "category": "video",
+    "name": "一数",
+    "desc": "高中数学系统讲解+专题突破",
+    "url": "https://space.bilibili.com/190099",
+    "sort_order": 1
+  },
+  {
+    "subject": "数学",
+    "category": "video",
+    "name": "高中数学蔡老师",
+    "desc": "上海高考数学针对性讲解",
+    "url": "https://search.bilibili.com/all?keyword=上海高考数学",
+    "sort_order": 2
+  },
+  {
+    "subject": "数学",
+    "category": "video",
+    "name": "国家智慧教育平台",
+    "desc": "教育部官方，课程与教材对应",
+    "url": "https://www.smart-edu.cn/zone/fxztjc/xueke/xx_sx",
+    "sort_order": 3
+  },
+  {
+    "subject": "物理",
+    "category": "practice",
+    "name": "组卷网",
+    "desc": "按知识点组卷，含上海高考真题",
+    "url": "https://www.zujuan.com",
+    "sort_order": 1
+  },
+  {
+    "subject": "物理",
+    "category": "practice",
+    "name": "菁优网",
+    "desc": "物理题库+详细解析",
+    "url": "https://www.jyeoo.com/physics",
+    "sort_order": 2
+  },
+  {
+    "subject": "物理",
+    "category": "tool",
+    "name": "PhET 互动仿真",
+    "desc": "物理实验互动模拟",
+    "url": "https://phet.colorado.edu/zh_CN/simulations/filter?subjects=physics",
+    "sort_order": 1
+  },
+  {
+    "subject": "物理",
+    "category": "tool",
+    "name": "Algodoo",
+    "desc": "2D物理沙盒模拟",
+    "url": "https://www.algodoo.com",
+    "sort_order": 2
+  },
+  {
+    "subject": "物理",
+    "category": "video",
+    "name": "物理老师",
+    "desc": "高中物理系统课程+实验讲解",
+    "url": "https://search.bilibili.com/all?keyword=高中物理+系统讲解",
+    "sort_order": 1
+  },
+  {
+    "subject": "物理",
+    "category": "video",
+    "name": "坤哥物理",
+    "desc": "物理模型与解题方法",
+    "url": "https://search.bilibili.com/all?keyword=坤哥物理",
+    "sort_order": 2
+  },
+  {
+    "subject": "物理",
+    "category": "video",
+    "name": "国家智慧教育平台",
+    "desc": "教育部官方物理课程",
+    "url": "https://www.smart-edu.cn/zone/fxztjc/xueke/xx_wl",
+    "sort_order": 3
+  },
+  {
+    "subject": "英语",
+    "category": "practice",
+    "name": "百词斩",
+    "desc": "英语词汇记忆",
+    "url": "https://www.baicizhan.com",
+    "sort_order": 1
+  },
+  {
+    "subject": "英语",
+    "category": "tool",
+    "name": "YouGlish",
+    "desc": "真实语境中听发音",
+    "url": "https://youglish.com",
+    "sort_order": 1
+  },
+  {
+    "subject": "英语",
+    "category": "video",
+    "name": "英语兔",
+    "desc": "语法体系+听力训练",
+    "url": "https://space.bilibili.com/290800966",
+    "sort_order": 1
+  },
+  {
+    "subject": "英语",
+    "category": "video",
+    "name": "国家智慧教育平台",
+    "desc": "教育部官方英语课程",
+    "url": "https://www.smart-edu.cn/zone/fxztjc/xueke/xx_yy",
+    "sort_order": 2
+  }
+]

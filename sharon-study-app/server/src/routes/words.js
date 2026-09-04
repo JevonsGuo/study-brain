@@ -91,7 +91,7 @@ router.post('/', (req, res) => {
   if (!word || !meaning) return res.status(400).json({ error: 'word, meaning are required' })
   const db = getDb()
   const result = db.prepare(
-    'INSERT INTO words (word, phonetic, meaning, example_en, example_cn) VALUES (?, ?, ?, ?, ?)'
+    "INSERT INTO words (word, phonetic, meaning, example_en, example_cn, origin, user_modified) VALUES (?, ?, ?, ?, ?, 'user', 1)"
   ).run(word, phonetic || '', meaning, example_en || '', example_cn || '')
   const row = db.prepare('SELECT * FROM words WHERE id = ?').get(result.lastInsertRowid)
 
@@ -106,7 +106,7 @@ router.put('/:id', (req, res) => {
   const row = db.prepare('SELECT * FROM words WHERE id = ?').get(req.params.id)
   if (!row) return res.status(404).json({ error: 'not found' })
   const { word, phonetic, meaning, example_en, example_cn } = req.body
-  db.prepare('UPDATE words SET word = ?, phonetic = ?, meaning = ?, example_en = ?, example_cn = ? WHERE id = ?')
+  db.prepare('UPDATE words SET word = ?, phonetic = ?, meaning = ?, example_en = ?, example_cn = ?, user_modified = 1 WHERE id = ?')
     .run(word || row.word, phonetic ?? row.phonetic, meaning || row.meaning, example_en ?? row.example_en, example_cn ?? row.example_cn, req.params.id)
   const updated = db.prepare('SELECT * FROM words WHERE id = ?').get(req.params.id)
   res.json(updated)
