@@ -28,7 +28,8 @@ sharon-study/
 │   ├── .env.local            # 本地开发环境（不入git）
 │   └── .env.production       # 生产环境（不入git）
 ├── content/                  # 内容数据（入git，随版本发布）
-│   ├── words.json            # 单词字典（763词）
+│   ├── words-default.json    # 高考词汇（763词，含词形/同反义/搭配/词根/辨析）
+│   ├── words-cet6.json       # 六级词汇（1183词，含词形/同反义/搭配/词根/辨析）
 │   ├── knowledge.json        # 知识库内容（34个知识点）
 │   └── learning-resources.json # 学习资源（25条）
 ├── scripts/
@@ -47,10 +48,24 @@ sharon-study/
 | 首页 | /home | 问候语、实时时钟、模块导航卡片 |
 | 学习计划 | /study-plan | 日期导航、快速录入、按科目分组、进度追踪、日历弹窗 |
 | 错题本 | /wrong-book | 记录错题与原因，按科目筛选 |
-| 单词卡 | /word-card | 3D翻转卡片、间隔重复、每日目标、发音、掌握度、搜索 |
-| 知识库 | /knowledge | 学科卡片、章节导航、KaTeX公式、B站视频嵌入 |
+| 单词卡 | /word-card | 多词汇表、3D翻转卡片、间隔重复、折叠面板展示词形/搭配/辨析/同反义/词根 |
+| 知识库 | /knowledge | 三栏布局（章节导航+知识点+学习资源）、KaTeX公式、B站视频嵌入 |
 | 成绩追踪 | /grade-tracker | ECharts图表、趋势线/雷达/柱状图、科目详情、红涨绿跌 |
 | 番茄钟 | /timer | SVG进度环、背景音乐、可调时长、自动轮换 |
+
+### 单词卡
+
+- **多词汇表**：支持多个词库（高考词汇/六级词汇），按 `words-{word_list}.json` 自动发现
+- **间隔重复**：1→2→4→7→15→30天复习周期，掌握度三级（新词/学习中/已掌握）
+- **丰富字段**（迁移 006）：词形变化、同义词/反义词、搭配、词根词缀、易混辨析
+- **折叠面板 UI**：卡片背面用 el-collapse 手风琴模式渐进展示，空字段不生成面板
+- **交互**：键盘快捷键（空格翻转/←→切换/1不认识/2认识）、滑动操作、发音、乱序
+
+### 知识库
+
+- **三栏布局**：左栏章节导航（180px）| 中栏知识点列表与详情（flex:1）| 右栏学习资源（220px）
+- 点击知识点在中栏展开详情，左右栏始终可见（sticky 定位）
+- KaTeX 数学公式渲染、B站视频嵌入
 
 ## 环境隔离
 
@@ -59,7 +74,7 @@ sharon-study/
 | | 开发环境 (MacBook) | 生产环境 (Ubuntu/NAS) |
 |---|---|---|
 | 配置文件 | `.env.local` | `.env.production` |
-| 数据库 | `data/test.db` | `/data/sharon-study/production.db` |
+| 数据库 | `data/sharon-study.db` | `/data/sharon-study/production.db` |
 | NODE_ENV | `development` | `production` |
 | 端口 | 3000 | 3000 |
 
@@ -67,7 +82,7 @@ sharon-study/
 
 ```bash
 # 数据库路径（相对于 sharon-study-app/ 目录，生产环境用绝对路径）
-DB_PATH=data/test.db
+DB_PATH=data/sharon-study.db
 
 # 服务端口
 PORT=3000
@@ -89,18 +104,29 @@ cp .env.example .env.production  # 生产环境，修改DB_PATH为绝对路径
 
 项目使用 `_migrations` 表自动追踪迁移记录。启动时自动执行未运行的迁移。
 
+### 当前迁移记录
+
+| 迁移 | 说明 |
+|------|------|
+| 001 | words 表加 example_en/example_cn/mastery_level/interval_days/next_review |
+| 002 | knowledge_points 表加 visual_desc/video_url |
+| 003 | study_plans 表加 estimated_minutes |
+| 004 | 内容三表加 origin/user_modified，去重，建唯一索引 |
+| 005 | words 表加 word_list 列，索引改为 (word, word_list) 复合唯一 |
+| 006 | words 表加 forms/synonyms/antonyms/collocations/etymology/distinction |
+
 新增迁移：编辑 `server/src/db/index.js`，在 `MIGRATIONS` 数组中添加：
 
 ```js
 {
-  name: '003_description',
+  name: '007_description',
   up: () => {
     // ALTER TABLE 等操作
   }
 }
 ```
 
-迁移按顺序执行，已执行的不会重复运行。
+迁移按顺序执行，已执行的不会重复运行。注意：索引创建等操作必须在条件分支外执行，避免新库跳过整个分支。
 
 ## 版本号
 
@@ -147,7 +173,7 @@ npm run dev
 
 | 命令 | 环境 | 读取配置 | 目标数据库 |
 |------|------|---------|-----------|
-| `node scripts/sync-content.mjs` | 开发 | `.env.local` | `data/test.db` |
+| `node scripts/sync-content.mjs` | 开发 | `.env.local` | `data/sharon-study.db` |
 | `NODE_ENV=production node scripts/sync-content.mjs` | 生产 | `.env.production` | `/data/sharon-study/production.db` |
 
 也可用 `DB_PATH` 环境变量覆盖，直接指定数据库路径（不依赖 env 文件）：
@@ -168,6 +194,34 @@ node scripts/seed-grades.js
 ```
 
 更新内容的流程：修改 `content/*.json` -> commit -> 发布（deploy.sh 自动执行 sync-content）。
+
+#### 单词字典文件命名
+
+`content/words-{word_list}.json`，文件名中 `word_list` 部分即词汇表标识：
+- `words-default.json` → 高考词汇（word_list = "default"）
+- `words-cet6.json` → 六级词汇（word_list = "cet6"）
+
+sync-content 自动发现所有 `words-*.json` 文件。新增词汇表只需新建文件 + sync。
+
+#### 单词 enrichment 字段
+
+每个单词条目可选包含以下丰富字段：
+
+```json
+{
+  "word": "abandon",
+  "phonetic": "/əˈbændən/",
+  "meaning": "v. 放弃；遗弃",
+  "example_en": "He abandoned his old car.",
+  "example_cn": "他丢弃了旧车。",
+  "forms": { "past": "abandoned", "past_participle": "abandoned", "present_participle": "abandoning", "noun": "abandonment" },
+  "synonyms": ["desert", "forsake"],
+  "antonyms": ["retain", "keep"],
+  "collocations": [{ "phrase": "abandon hope", "meaning": "放弃希望" }],
+  "etymology": "a-(away) + bandon(control)，源自古法语",
+  "distinction": [{ "word": "desert", "diff": "desert强调违背责任的抛弃" }]
+}
+```
 
 ## 生产部署 (Ubuntu)
 
@@ -217,7 +271,7 @@ pm2 startup
 
 该脚本自动完成：
 1. Git commit + push
-2. SSH 到服务器执行 `deploy.sh`（git pull + npm install + build + 备份数据库 + 内容同步 + restart）
+2. SSH 到服务器执行 `deploy.sh`（git fetch + reset + npm install + build + 备份数据库 + 内容同步 + restart）
 
 ### 服务器手动部署
 
@@ -225,6 +279,18 @@ pm2 startup
 cd /opt/sharon-study
 bash scripts/deploy.sh
 ```
+
+### 其他设备访问
+
+在局域网内其他 Mac/PC 的 hosts 文件中添加：
+
+```bash
+# Mac/Linux: /etc/hosts
+# Windows: C:\Windows\System32\drivers\etc\hosts
+<Ubuntu服务器IP>  sharon
+```
+
+然后浏览器访问 `http://sharon/`。Nginx 反向代理 80→3000。
 
 ## 数据管理策略
 
@@ -287,3 +353,5 @@ bash scripts/reset-production.sh --confirm
 - Express 5 路由通配符用 `{*path}` 而非 `*`
 - 成绩趋势颜色：红涨绿跌（中国股市惯例）
 - 数据库文件（.db / .db-shm / .db-wal）已在 .gitignore 中，不入版本控制
+- 迁移中的索引创建必须在条件分支外执行，否则新库（CREATE TABLE 已含列）会跳过分支导致索引缺失
+- `sharon.study` 域名因 HSTS preload 无法在浏览器使用，改用 `sharon`（通过 hosts 文件映射）

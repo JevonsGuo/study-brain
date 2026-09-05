@@ -30,7 +30,26 @@ node scripts/export-content.mjs [words|knowledge|learning-resources]  # DB -> JS
 - 发布前更新版本号：三个 package.json（根 / sharon-study-app / server），publish 提交信息取 `sharon-study-app/package.json` 的 version
 - 迁移：`server/src/db/index.js` 的 `MIGRATIONS` 数组，命名 `00N_description`，启动时自动执行
 - 新增内容表时必须：加 origin/user_modified 列、建自然键唯一索引、sync-content 加对应同步函数
-- 自然键约定：words 用 `word`；knowledge 用 `(subject, title)`；learning-resources 用 `(subject, url)`——**组卷网同一 URL 挂多个科目是合法的，不能只用 url**
+- 自然键约定：words 用 `(word, word_list)`；knowledge 用 `(subject, title)`；learning-resources 用 `(subject, url)`——**组卷网同一 URL 挂多个科目是合法的，不能只用 url**
+
+## 单词卡 enrichment 字段
+
+words 表 6 个 JSON/TEXT 列（迁移 006），content JSON 可选提供：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `forms` | JSON object | 词形变化：`{past, past_participle, present_participle, noun, plural, comparative, superlative, third_person}` |
+| `synonyms` | JSON array | 同义词：`["desert","forsake"]` |
+| `antonyms` | JSON array | 反义词：`["retain","keep"]` |
+| `collocations` | JSON array | 搭配：`[{phrase:"abandon hope", meaning:"放弃希望"}]` |
+| `etymology` | plain text | 词根词缀：`"a-(away) + bandon(control)，源自古法语"` |
+| `distinction` | JSON array | 易混辨析：`[{word:"desert", diff:"desert强调违背责任的抛弃"}]` |
+
+前端卡片背面用 **折叠面板**（el-collapse accordion）渐进展示：词形变化 → 搭配 → 易混辨析 → 同义/反义。词根底部一行常驻。空字段不生成面板。卡片固定高度 420px，背面 `overflow-y: auto` 滚动。
+
+## 知识库三栏布局
+
+学科详情页三栏：左栏章节导航（180px，sticky）| 中栏知识点列表+详情（flex:1）| 右栏学习资源（220px，sticky）。点击知识点在中栏展开详情，左右栏始终可见。
 
 ## 验证方法（改完必须验证）
 
@@ -54,3 +73,5 @@ DB_PATH=/tmp/scratch.db node scripts/sync-content.mjs
 - SQLite WAL 模式：改动可能躺在 `-wal` 文件里，验证数据时以查询结果为准而非文件时间戳
 - deploy.sh 在 `git pull` 前有 `git checkout -- sharon-study-app/data/`（过渡期防冲突），data 彻底出库后可移除
 - 服务器仓库在 `/opt/sharon-study`，生产库在仓库外（`/data/sharon-study/`），两者互不影响
+- 迁移中建索引要在条件分支外执行：迁移 005 的 `CREATE INDEX` 不能只放在 `if (!columns.includes('word_list'))` 内，否则新库（CREATE TABLE 已含 word_list）会跳过整个分支导致索引缺失
+- 迁移 004 创建 `idx_words_word` 前要检查 `idx_words_word_list` 是否已存在，两个唯一索引冲突会导致 INSERT 失败
