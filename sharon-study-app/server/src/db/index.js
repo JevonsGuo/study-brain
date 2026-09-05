@@ -145,6 +145,18 @@ function initDailyConfig() {
 
 const MIGRATIONS = [
   {
+    name: '005_words_add_word_list',
+    up: () => {
+      const columns = db.prepare("PRAGMA table_info(words)").all().map(c => c.name)
+      if (!columns.includes('word_list')) {
+        db.exec("ALTER TABLE words ADD COLUMN word_list TEXT NOT NULL DEFAULT ''")
+        db.exec("UPDATE words SET word_list = 'default' WHERE word_list = ''")
+        db.exec('DROP INDEX IF EXISTS idx_words_word')
+        db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_words_word_list ON words(word, word_list)')
+      }
+    }
+  },
+  {
     name: '001_words_add_columns',
     up: () => {
       const columns = db.prepare("PRAGMA table_info(words)").all().map(c => c.name)

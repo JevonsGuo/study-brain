@@ -139,11 +139,29 @@ npm run dev
 
 ### 内容数据与测试数据
 
-内容数据（单词字典/知识库/学习资源）统一放在 `content/*.json`，随 git 版本管理。数据库文件（`sharon-study-app/data/`）不入git，**全新克隆后先执行一次下面的 sync-content**（自动建库+建表+灌入内容），直接启动服务只会得到空库：
+内容数据（单词字典/知识库/学习资源）统一放在 `content/*.json`，随 git 版本管理。数据库文件（`sharon-study-app/data/`）不入git，**全新克隆后先执行一次 sync-content**（自动建库+建表+灌入内容），直接启动服务只会得到空库。
+
+### 内容数据同步（sync-content.mjs）
+
+同一个脚本，根据 `NODE_ENV` 自动判断环境，读取对应的 `.env` 文件连接数据库。幂等执行，按自然键 upsert，重复执行不会产生冗余数据。
+
+| 命令 | 环境 | 读取配置 | 目标数据库 |
+|------|------|---------|-----------|
+| `node scripts/sync-content.mjs` | 开发 | `.env.local` | `data/test.db` |
+| `NODE_ENV=production node scripts/sync-content.mjs` | 生产 | `.env.production` | `/data/sharon-study/production.db` |
+
+也可用 `DB_PATH` 环境变量覆盖，直接指定数据库路径（不依赖 env 文件）：
 
 ```bash
-# 本地开发库灌入内容（幂等，重复执行无副作用）
+DB_PATH=/tmp/scratch.db node scripts/sync-content.mjs
+```
+
+```bash
+# 开发环境灌入内容
 node scripts/sync-content.mjs
+
+# 生产环境灌入内容
+NODE_ENV=production node scripts/sync-content.mjs
 
 # 灌入测试成绩数据（仅限本地，脚本会拒绝指向非本地地址）
 node scripts/seed-grades.js

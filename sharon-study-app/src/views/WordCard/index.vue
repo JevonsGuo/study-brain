@@ -15,6 +15,7 @@ interface Word {
   next_review: string
   review_count: number
   last_review: string
+  word_list: string
 }
 
 interface Stats {
@@ -31,10 +32,17 @@ interface Stats {
   streak: number
 }
 
+interface WordListOption {
+  word_list: string
+  count: number
+}
+
 const words = ref<Word[]>([])
 const allWords = ref<Word[]>([])
 const stats = ref<Stats | null>(null)
 const loading = ref(false)
+const wordLists = ref<WordListOption[]>([])
+const selectedWordList = ref('')
 
 const searchQuery = ref('')
 const filterMastery = ref(-1)
@@ -49,7 +57,7 @@ const autoPlay = ref(false)
 const addDialogVisible = ref(false)
 const configDialogVisible = ref(false)
 
-const newWord = ref({ word: '', phonetic: '', meaning: '', example_en: '', example_cn: '' })
+const newWord = ref({ word: '', phonetic: '', meaning: '', example_en: '', example_cn: '', word_list: '' })
 const dailyConfig = ref({ target_new: 20, target_review: 40 })
 
 const currentWord = computed(() => words.value[currentIndex.value])
@@ -84,9 +92,20 @@ const reviewProgress = computed(() => {
   return Math.min(100, Math.round((s.todayReviewed / s.targetReview) * 100))
 })
 
+const fetchWordLists = async () => {
+  try {
+    wordLists.value = await api.get('/words/word-lists')
+  } catch {
+    // silent
+  }
+}
+
 const fetchStats = async () => {
   try {
-    const data = await api.get('/words/stats')
+    const params: Record<string, string> = {}
+    if (selectedWordList.value) params.word_list = selectedWordList.value
+    const query = Object.keys(params).length > 0 ? '?' + new URLSearchParams(params).toString() : ''
+    const data = await api.get(`/words/stats${query}`)
     stats.value = data
     dailyConfig.value.target_new = data.targetNew
     dailyConfig.value.target_review = data.targetReview
@@ -98,8 +117,9 @@ const fetchStats = async () => {
 const fetchWords = async () => {
   loading.value = true
   try {
+    const wlParam = selectedWordList.value ? `&word_list=${encodeURIComponent(selectedWordList.value)}` : ''
     if (studyMode.value === 'due') {
-      const data = await api.get('/words/due')
+      const data = await api.get(`/words/due?${wlParam.slice(1)}`)
       const combined = [...data.due, ...data.newWords]
       const seen = new Set<number>()
       words.value = combined.filter((w: Word) => {
@@ -111,6 +131,7 @@ const fetchWords = async () => {
       const params: Record<string, string> = {}
       if (searchQuery.value) params.search = searchQuery.value
       if (filterMastery.value >= 0) params.mastery = String(filterMastery.value)
+      if (selectedWordList.value) params.word_list = selectedWordList.value
       const query = Object.keys(params).length > 0 ? '?' + new URLSearchParams(params).toString() : ''
       words.value = await api.get(`/words${query}`)
     }
@@ -126,7 +147,10 @@ const fetchWords = async () => {
 
 const fetchAllWords = async () => {
   try {
-    allWords.value = await api.get('/words')
+    const params: Record<string, string> = {}
+    if (selectedWordList.value) params.word_list = selectedWordList.value
+    const query = Object.keys(params).length > 0 ? '?' + new URLSearchParams(params).toString() : ''
+    allWords.value = await api.get(`/words${query}`)
   } catch {
     // silent
   }
@@ -142,6 +166,14 @@ const clearSearch = () => {
   filterMastery.value = -1
   studyMode.value = 'due'
   fetchWords()
+}
+
+const onWordListChange = () => {
+  currentIndex.value = 0
+  flipped.value = false
+  fetchStats()
+  fetchWords()
+  fetchAllWords()
 }
 
 const shuffleWords = () => {
@@ -229,7 +261,7 @@ const addWord = async () => {
   if (!newWord.value.word || !newWord.value.meaning) return
   try {
     await api.post('/words', newWord.value)
-    newWord.value = { word: '', phonetic: '', meaning: '', example_en: '', example_cn: '' }
+    newWord.value = { word: '', phonetic: '', meaning: '', example_en: '', example_cn: '', word_list: '' }
     addDialogVisible.value = false
     await fetchStats()
     await fetchWords()
@@ -262,6 +294,7 @@ const removeWord = async (id: number) => {
 }
 
 onMounted(() => {
+  fetchWordLists()
   fetchStats()
   fetchWords()
   fetchAllWords()
@@ -317,6 +350,21 @@ onMounted(() => {
 
     <div class="toolbar">
       <div class="toolbar-left">
+        <el-select
+          v-model="selectedWordList"
+          placeholder="词汇表"
+          clearable
+          style="width: 150px"
+          @change="onWordListChange"
+        >
+          <el-option label="全部词汇表" value="" />
+          <el-option
+            v-for="wl in wordLists"
+            :key="wl.word_list"
+            :label="`${wl.word_list} (${wl.count})`"
+            :value="wl.word_list"
+          />
+        </el-select>
         <el-input
           v-model="searchQuery"
           placeholder="搜索单词/释义/例句"
@@ -404,6 +452,7 @@ onMounted(() => {
           </template>
         </el-table-column>
         <el-table-column prop="word" label="单词" width="130" />
+        <el-table-column prop="word_list" label="词汇表" width="100" />
         <el-table-column prop="phonetic" label="音标" width="160" />
         <el-table-column prop="meaning" label="释义" width="160" />
         <el-table-column label="例句">
@@ -447,6 +496,16 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="中文翻译">
           <el-input v-model="newWord.example_cn" type="textarea" :rows="2" placeholder="他丢弃了旧车。" />
+        </el-form-item>
+        <el-form-item label="词汇表">
+          <el-select v-model="newWord.word_list" clearable placeholder="选择词汇表" style="width: 100%">
+            <el-option
+              v-for="wl in wordLists"
+              :key="wl.word_list"
+              :label="wl.word_list"
+              :value="wl.word_list"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>

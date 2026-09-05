@@ -37,9 +37,9 @@ function requireFields(item, fields, i, name) {
   }
 }
 
-function syncWords(db, items) {
-  const get = db.prepare('SELECT * FROM words WHERE word = ?')
-  const insert = db.prepare("INSERT INTO words (word, phonetic, meaning, example_en, example_cn, origin) VALUES (?, ?, ?, ?, ?, 'seed')")
+function syncWords(db, items, wordList) {
+  const get = db.prepare('SELECT * FROM words WHERE word = ? AND word_list = ?')
+  const insert = db.prepare("INSERT INTO words (word, phonetic, meaning, example_en, example_cn, word_list, origin) VALUES (?, ?, ?, ?, ?, ?, 'seed')")
   const update = db.prepare('UPDATE words SET phonetic = ?, meaning = ?, example_en = ?, example_cn = ? WHERE id = ?')
   const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0 }
   for (const w of items) {
@@ -47,9 +47,9 @@ function syncWords(db, items) {
     const meaning = w.meaning || ''
     const exampleEn = w.example_en || ''
     const exampleCn = w.example_cn || ''
-    const row = get.get(w.word)
+    const row = get.get(w.word, wordList)
     if (!row) {
-      insert.run(w.word, phonetic, meaning, exampleEn, exampleCn)
+      insert.run(w.word, phonetic, meaning, exampleEn, exampleCn, wordList)
       stats.inserted++
     } else if (row.user_modified) {
       stats.skippedUserModified++
@@ -122,14 +122,27 @@ loadEnvFile()
 
 const { getDb, getDbPath } = await import(pathToFileURL(path.join(APP_DIR, 'server', 'src', 'db', 'index.js')).href)
 
-const contents = [
-  { name: 'words.json', validate: (item, i, name) => requireFields(item, ['word', 'meaning'], i, name), sync: syncWords, label: '单词字典' },
-  { name: 'knowledge.json', validate: (item, i, name) => requireFields(item, ['subject', 'title'], i, name), sync: syncKnowledge, label: '知识库' },
-  { name: 'learning-resources.json', validate: (item, i, name) => requireFields(item, ['subject', 'name', 'url'], i, name), sync: syncResources, label: '学习资源' },
-]
-
 const db = getDb()
 console.log(`[sync] 数据库: ${getDbPath()}`)
+
+const wordFiles = fs.readdirSync(CONTENT_DIR)
+  .filter(f => f.startsWith('words-') && f.endsWith('.json'))
+  .sort()
+
+const contents = []
+for (const f of wordFiles) {
+  const wordList = f.slice(6, -5)
+  contents.push({
+    name: f,
+    validate: (item, i, name) => requireFields(item, ['word', 'meaning'], i, name),
+    sync: (db, items) => syncWords(db, items, wordList),
+    label: `单词字典[${wordList}]`
+  })
+}
+contents.push(
+  { name: 'knowledge.json', validate: (item, i, name) => requireFields(item, ['subject', 'title'], i, name), sync: syncKnowledge, label: '知识库' },
+  { name: 'learning-resources.json', validate: (item, i, name) => requireFields(item, ['subject', 'name', 'url'], i, name), sync: syncResources, label: '学习资源' },
+)
 
 let failed = false
 for (const c of contents) {

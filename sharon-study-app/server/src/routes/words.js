@@ -7,7 +7,7 @@ const INTERVAL_STEPS = [1, 2, 4, 7, 15, 30]
 
 router.get('/', (req, res) => {
   const db = getDb()
-  const { search, mastery } = req.query
+  const { search, mastery, word_list } = req.query
   let sql = 'SELECT * FROM words'
   const conditions = []
   const params = []
@@ -18,6 +18,10 @@ router.get('/', (req, res) => {
   if (mastery !== undefined && mastery !== '') {
     conditions.push('mastery_level = ?')
     params.push(Number(mastery))
+  }
+  if (word_list) {
+    conditions.push('word_list = ?')
+    params.push(word_list)
   }
   if (conditions.length > 0) {
     sql += ' WHERE ' + conditions.join(' AND ')
@@ -30,35 +34,45 @@ router.get('/', (req, res) => {
 router.get('/due', (req, res) => {
   const db = getDb()
   const today = new Date().toISOString().slice(0, 10)
+  const wl = req.query.word_list
+  const wlCond = wl ? ' AND word_list = ?' : ''
+  const wlParams = wl ? [wl] : []
   const rows = db.prepare(
-    "SELECT * FROM words WHERE next_review <= ? AND next_review != '' ORDER BY next_review ASC"
-  ).all(today)
+    `SELECT * FROM words WHERE next_review <= ? AND next_review != ''${wlCond} ORDER BY next_review ASC`
+  ).all(today, ...wlParams)
   const newWords = db.prepare(
-    "SELECT * FROM words WHERE mastery_level = 0 ORDER BY id ASC LIMIT 40"
-  ).all()
+    `SELECT * FROM words WHERE mastery_level = 0${wlCond} ORDER BY id ASC LIMIT 40`
+  ).all(...wlParams)
   res.json({ due: rows, newWords })
 })
 
 router.get('/stats', (req, res) => {
   const db = getDb()
   const today = new Date().toISOString().slice(0, 10)
-  const total = db.prepare('SELECT COUNT(*) as count FROM words').get().count
-  const newCount = db.prepare('SELECT COUNT(*) as count FROM words WHERE mastery_level = 0').get().count
-  const learningCount = db.prepare('SELECT COUNT(*) as count FROM words WHERE mastery_level = 1').get().count
-  const masteredCount = db.prepare('SELECT COUNT(*) as count FROM words WHERE mastery_level = 2').get().count
-  const dueCount = db.prepare("SELECT COUNT(*) as count FROM words WHERE next_review <= ? AND next_review != ''").get(today).count
+  const wl = req.query.word_list
+  const wlCond = wl ? ' AND word_list = ?' : ''
+  const wlParams = wl ? [wl] : []
+  const wlParams2 = wl ? [wl, wl, wl] : []
 
-  const todayStudied = db.prepare(
-    "SELECT COUNT(DISTINCT word_id) as count FROM study_records WHERE date = ?"
-  ).get(today).count
+  const total = db.prepare(`SELECT COUNT(*) as count FROM words WHERE 1=1${wlCond}`).get(...wlParams).count
+  const newCount = db.prepare(`SELECT COUNT(*) as count FROM words WHERE mastery_level = 0${wlCond}`).get(...wlParams).count
+  const learningCount = db.prepare(`SELECT COUNT(*) as count FROM words WHERE mastery_level = 1${wlCond}`).get(...wlParams).count
+  const masteredCount = db.prepare(`SELECT COUNT(*) as count FROM words WHERE mastery_level = 2${wlCond}`).get(...wlParams).count
+  const dueCount = db.prepare(`SELECT COUNT(*) as count FROM words WHERE next_review <= ? AND next_review != ''${wlCond}`).get(today, ...wlParams).count
 
-  const todayNew = db.prepare(
-    "SELECT COUNT(DISTINCT word_id) as count FROM study_records WHERE date = ? AND action = 'new'"
-  ).get(today).count
+  const srJoin = wl ? ' JOIN study_records sr ON sr.word_id = w.id' : ''
+  const srWhere = wl ? ` WHERE sr.word_id IN (SELECT id FROM words WHERE word_list = ?)` : ''
+  const todayStudied = wl
+    ? db.prepare(`SELECT COUNT(DISTINCT sr.word_id) as count FROM study_records sr JOIN words w ON sr.word_id = w.id WHERE sr.date = ? AND w.word_list = ?`).get(today, wl).count
+    : db.prepare("SELECT COUNT(DISTINCT word_id) as count FROM study_records WHERE date = ?").get(today).count
 
-  const todayReviewed = db.prepare(
-    "SELECT COUNT(DISTINCT word_id) as count FROM study_records WHERE date = ? AND action = 'review'"
-  ).get(today).count
+  const todayNew = wl
+    ? db.prepare(`SELECT COUNT(DISTINCT sr.word_id) as count FROM study_records sr JOIN words w ON sr.word_id = w.id WHERE sr.date = ? AND sr.action = 'new' AND w.word_list = ?`).get(today, wl).count
+    : db.prepare("SELECT COUNT(DISTINCT word_id) as count FROM study_records WHERE date = ? AND action = 'new'").get(today).count
+
+  const todayReviewed = wl
+    ? db.prepare(`SELECT COUNT(DISTINCT sr.word_id) as count FROM study_records sr JOIN words w ON sr.word_id = w.id WHERE sr.date = ? AND sr.action = 'review' AND w.word_list = ?`).get(today, wl).count
+    : db.prepare("SELECT COUNT(DISTINCT word_id) as count FROM study_records WHERE date = ? AND action = 'review'").get(today).count
 
   const config = db.prepare('SELECT * FROM daily_config ORDER BY id DESC LIMIT 1').get()
 
@@ -86,13 +100,22 @@ router.get('/stats', (req, res) => {
   })
 })
 
+router.get('/word-lists', (req, res) => {
+  const db = getDb()
+  const rows = db.prepare(
+    "SELECT word_list, COUNT(*) as count FROM words GROUP BY word_list ORDER BY word_list"
+  ).all()
+  res.json(rows)
+})
+
 router.post('/', (req, res) => {
-  const { word, phonetic, meaning, example_en, example_cn } = req.body
+  const { word, phonetic, meaning, example_en, example_cn, word_list } = req.body
   if (!word || !meaning) return res.status(400).json({ error: 'word, meaning are required' })
   const db = getDb()
+  const wl = word_list || 'user'
   const result = db.prepare(
-    "INSERT INTO words (word, phonetic, meaning, example_en, example_cn, origin, user_modified) VALUES (?, ?, ?, ?, ?, 'user', 1)"
-  ).run(word, phonetic || '', meaning, example_en || '', example_cn || '')
+    "INSERT INTO words (word, phonetic, meaning, example_en, example_cn, word_list, origin, user_modified) VALUES (?, ?, ?, ?, ?, ?, 'user', 1)"
+  ).run(word, phonetic || '', meaning, example_en || '', example_cn || '', wl)
   const row = db.prepare('SELECT * FROM words WHERE id = ?').get(result.lastInsertRowid)
 
   const today = new Date().toISOString().slice(0, 10)
