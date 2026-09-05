@@ -213,14 +213,6 @@ const selectPoint = (point: KnowledgePoint) => {
   selectedPoint.value = point
 }
 
-const goBack = () => {
-  if (selectedPoint.value) {
-    selectedPoint.value = null
-  } else {
-    router.push('/knowledge')
-  }
-}
-
 const backToSubjects = () => {
   router.push('/knowledge')
 }
@@ -377,7 +369,7 @@ onMounted(() => {
       管理模式：可编辑、删除知识点。点击卡片上的按钮操作，点击下方"退出管理"返回浏览。
     </div>
 
-    <div v-if="!selectedPoint" class="main-layout">
+    <div class="main-layout">
       <div class="chapter-sidebar">
         <div
           class="chapter-item"
@@ -397,92 +389,11 @@ onMounted(() => {
           <span class="chapter-name">{{ ch }}</span>
           <span class="chapter-count">{{ chapterPointCount(ch) }}</span>
         </div>
-
-        <div v-if="groupedResources.length > 0 || resourceManageMode" class="resources-section">
-          <div class="resources-header">
-            <span class="resources-title">📚 学习资源</span>
-            <div v-if="resourceManageMode" class="resources-manage-bar">
-              <el-button size="small" type="primary" :icon="'Plus'" @click="openAddResource">添加</el-button>
-            </div>
-          </div>
-          <div v-if="!resourceManageMode" class="resources-toggle" @click="resourceManageMode = true">
-            <el-icon size="12"><Setting /></el-icon> 管理
-          </div>
-          <div v-else class="resources-toggle" @click="resourceManageMode = false">
-            退出管理
-          </div>
-          <div v-for="group in groupedResources" :key="group.category" class="resource-group">
-            <div class="resource-group-label">{{ group.label }}</div>
-            <div v-for="r in group.items" :key="r.id" class="resource-item" :class="{ 'resource-item-manage': resourceManageMode }">
-              <a v-if="!resourceManageMode" :href="r.url" target="_blank" rel="noopener" class="resource-link">
-                <span class="resource-name">{{ r.name }}</span>
-                <span class="resource-desc">{{ r.desc }}</span>
-              </a>
-              <div v-else class="resource-info">
-                <span class="resource-name">{{ r.name }}</span>
-                <span class="resource-desc">{{ r.desc }}</span>
-              </div>
-              <div v-if="resourceManageMode" class="resource-actions">
-                <el-button size="small" type="primary" link @click="openEditResource(r)">编辑</el-button>
-                <el-popconfirm title="确定删除此资源？" @confirm="removeResource(r.id)">
-                  <template #reference>
-                    <el-button size="small" type="danger" link>删除</el-button>
-                  </template>
-                </el-popconfirm>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div class="points-area" v-loading="loading">
-        <div v-if="filteredPoints.length === 0 && !loading" class="empty-area">
-          <el-empty description="暂无知识点" />
-        </div>
-        <div
-          v-for="p in filteredPoints"
-          :key="p.id"
-          class="point-card"
-          :class="{ 'manage-card': manageMode }"
-          @click="selectPoint(p)"
-        >
-          <div class="point-header">
-            <div class="point-title">{{ p.title }}</div>
-            <el-tag v-if="!manageMode" size="small" type="info">{{ p.chapter }}</el-tag>
-          </div>
-          <div class="point-preview">{{ p.content.slice(0, 100) }}{{ p.content.length > 100 ? '...' : '' }}</div>
-          <div v-if="p.key_formulas" class="point-formulas-preview">
-            <el-icon size="12"><Memo /></el-icon>
-            {{ p.key_formulas.split('\n')[0] }}{{ p.key_formulas.split('\n').length > 1 ? ' ...' : '' }}
-          </div>
-          <div class="point-footer">
-            <div class="point-tags">
-              <div v-if="p.tips && !manageMode" class="has-tips">
-                <el-icon size="12"><Warning /></el-icon>
-                含易错提醒
-              </div>
-              <div v-if="p.visual_desc && !manageMode" class="has-visual">
-                <el-icon size="12"><Picture /></el-icon>
-                图解
-              </div>
-              <div v-if="p.video_url && !manageMode" class="has-video">
-                <el-icon size="12"><VideoPlay /></el-icon>
-                视频
-              </div>
-            </div>
-            <div v-if="manageMode" class="manage-actions">
-              <el-button size="small" type="primary" text @click.stop="openEdit(p)" :icon="'Edit'">编辑</el-button>
-              <el-button size="small" type="danger" text @click.stop="removePoint(p.id)" :icon="'Delete'">删除</el-button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-else class="point-detail-view">
-      <el-button text @click="goBack" :icon="'ArrowLeft'" class="detail-back">返回列表</el-button>
-      <div class="detail-layout">
-        <div class="detail-content-col">
+        <div v-if="selectedPoint" class="point-detail-view">
+          <el-button text @click="selectedPoint = null" :icon="'ArrowLeft'" class="detail-back">返回列表</el-button>
           <div class="detail-card">
             <div class="detail-header">
               <h3>{{ selectedPoint.title }}</h3>
@@ -508,26 +419,108 @@ onMounted(() => {
               <h4>⚠️ 易错提醒</h4>
               <div class="tips-box" v-html="selectedPoint.tips.replace(/\n/g, '<br/>')"></div>
             </div>
+
+            <div v-if="selectedPoint.video_url && getBilibiliEmbedUrl(selectedPoint.video_url)" class="detail-section">
+              <h4>🎬 视频讲解</h4>
+              <div class="video-wrapper">
+                <iframe
+                  :src="getBilibiliEmbedUrl(selectedPoint.video_url)"
+                  scrolling="no"
+                  border="0"
+                  frameborder="no"
+                  framespacing="0"
+                  allowfullscreen
+                  class="bilibili-player"
+                ></iframe>
+              </div>
+              <a :href="selectedPoint.video_url" target="_blank" rel="noopener" class="video-link">
+                在B站打开 →
+              </a>
+            </div>
           </div>
         </div>
 
-        <div v-if="selectedPoint.video_url && getBilibiliEmbedUrl(selectedPoint.video_url)" class="detail-video-col">
-          <div class="video-card">
-            <h4>🎬 视频讲解</h4>
-            <div class="video-wrapper">
-              <iframe
-                :src="getBilibiliEmbedUrl(selectedPoint.video_url)"
-                scrolling="no"
-                border="0"
-                frameborder="no"
-                framespacing="0"
-                allowfullscreen
-                class="bilibili-player"
-              ></iframe>
+        <template v-else>
+          <div v-if="filteredPoints.length === 0 && !loading" class="empty-area">
+            <el-empty description="暂无知识点" />
+          </div>
+          <div
+            v-for="p in filteredPoints"
+            :key="p.id"
+            class="point-card"
+            :class="{ 'manage-card': manageMode }"
+            @click="selectPoint(p)"
+          >
+            <div class="point-header">
+              <div class="point-title">{{ p.title }}</div>
+              <el-tag v-if="!manageMode" size="small" type="info">{{ p.chapter }}</el-tag>
             </div>
-            <a :href="selectedPoint.video_url" target="_blank" rel="noopener" class="video-link">
-              在B站打开 →
+            <div class="point-preview">{{ p.content.slice(0, 100) }}{{ p.content.length > 100 ? '...' : '' }}</div>
+            <div v-if="p.key_formulas" class="point-formulas-preview">
+              <el-icon size="12"><Memo /></el-icon>
+              {{ p.key_formulas.split('\n')[0] }}{{ p.key_formulas.split('\n').length > 1 ? ' ...' : '' }}
+            </div>
+            <div class="point-footer">
+              <div class="point-tags">
+                <div v-if="p.tips && !manageMode" class="has-tips">
+                  <el-icon size="12"><Warning /></el-icon>
+                  含易错提醒
+                </div>
+                <div v-if="p.visual_desc && !manageMode" class="has-visual">
+                  <el-icon size="12"><Picture /></el-icon>
+                  图解
+                </div>
+                <div v-if="p.video_url && !manageMode" class="has-video">
+                  <el-icon size="12"><VideoPlay /></el-icon>
+                  视频
+                </div>
+              </div>
+              <div v-if="manageMode" class="manage-actions">
+                <el-button size="small" type="primary" text @click.stop="openEdit(p)" :icon="'Edit'">编辑</el-button>
+                <el-button size="small" type="danger" text @click.stop="removePoint(p.id)" :icon="'Delete'">删除</el-button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="resource-sidebar">
+        <div class="resource-sidebar-header">
+          <span class="resources-title">📚 学习资源</span>
+          <div class="resource-header-actions">
+            <div v-if="!resourceManageMode" class="resources-toggle" @click="resourceManageMode = true">
+              <el-icon size="12"><Setting /></el-icon>
+            </div>
+            <div v-else class="resources-toggle" @click="resourceManageMode = false">
+              ✕
+            </div>
+          </div>
+        </div>
+        <div v-if="resourceManageMode" class="resource-add-bar">
+          <el-button size="small" type="primary" :icon="'Plus'" @click="openAddResource" style="width:100%">添加资源</el-button>
+        </div>
+        <div v-if="groupedResources.length === 0 && !resourceManageMode" class="resource-empty">
+          暂无资源
+        </div>
+        <div v-for="group in groupedResources" :key="group.category" class="resource-group">
+          <div class="resource-group-label">{{ group.label }}</div>
+          <div v-for="r in group.items" :key="r.id" class="resource-item" :class="{ 'resource-item-manage': resourceManageMode }">
+            <a v-if="!resourceManageMode" :href="r.url" target="_blank" rel="noopener" class="resource-link">
+              <span class="resource-name">{{ r.name }}</span>
+              <span v-if="r.desc" class="resource-desc">{{ r.desc }}</span>
             </a>
+            <div v-else class="resource-info">
+              <span class="resource-name">{{ r.name }}</span>
+              <span v-if="r.desc" class="resource-desc">{{ r.desc }}</span>
+            </div>
+            <div v-if="resourceManageMode" class="resource-actions">
+              <el-button size="small" type="primary" link @click="openEditResource(r)">编辑</el-button>
+              <el-popconfirm title="确定删除此资源？" @confirm="removeResource(r.id)">
+                <template #reference>
+                  <el-button size="small" type="danger" link>删除</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
           </div>
         </div>
       </div>
@@ -690,7 +683,7 @@ onMounted(() => {
 }
 
 .chapter-sidebar {
-  width: 220px;
+  width: 180px;
   flex-shrink: 0;
   background: #fff;
   border-radius: 10px;
@@ -698,6 +691,9 @@ onMounted(() => {
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   max-height: 600px;
   overflow-y: auto;
+  align-self: flex-start;
+  position: sticky;
+  top: 10px;
 }
 
 .chapter-item {
@@ -744,53 +740,76 @@ onMounted(() => {
   color: #409eff;
 }
 
-.resources-section {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid #ebeef5;
+.resource-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  max-height: 600px;
+  overflow-y: auto;
+  align-self: flex-start;
+  position: sticky;
+  top: 10px;
 }
 
-.resources-header {
+.resource-sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px 4px;
+  padding: 0 14px 8px;
+  border-bottom: 1px solid #f0f2f5;
+  margin-bottom: 8px;
+}
+
+.resource-header-actions {
+  display: flex;
+  align-items: center;
 }
 
 .resources-title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #303133;
 }
 
-.resources-manage-bar {
-  display: flex;
-  gap: 4px;
+.resource-add-bar {
+  padding: 0 10px 8px;
+}
+
+.resource-empty {
+  padding: 20px 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #c0c4cc;
 }
 
 .resources-toggle {
-  font-size: 11px;
+  font-size: 12px;
   color: #909399;
   cursor: pointer;
-  padding: 2px 16px;
   display: flex;
   align-items: center;
   gap: 2px;
   transition: color 0.15s;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
 .resources-toggle:hover {
   color: #409eff;
+  background: #ecf5ff;
 }
 
 .resource-group {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .resource-group-label {
   font-size: 11px;
   color: #909399;
-  padding: 2px 16px;
+  padding: 2px 14px;
   margin-bottom: 2px;
 }
 
@@ -798,25 +817,25 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 4px;
-  pointer-events: auto;
 }
 
 .resource-item-manage {
-  padding: 6px 12px;
+  padding: 6px 10px;
   border: 1px dashed #e4e7ed;
   border-radius: 6px;
-  margin: 0 4px 4px;
+  margin: 0 6px 4px;
 }
 
 .resource-link {
   display: flex;
   flex-direction: column;
-  padding: 6px 16px;
+  padding: 6px 14px;
   text-decoration: none;
   transition: background 0.15s;
   cursor: pointer;
   flex: 1;
   min-width: 0;
+  border-radius: 4px;
 }
 
 .resource-link:hover {
@@ -826,7 +845,7 @@ onMounted(() => {
 .resource-info {
   display: flex;
   flex-direction: column;
-  padding: 4px 8px;
+  padding: 4px 6px;
   flex: 1;
   min-width: 0;
 }
@@ -839,14 +858,14 @@ onMounted(() => {
 }
 
 .resource-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #409eff;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .resource-desc {
-  font-size: 10px;
+  font-size: 11px;
   color: #b0b5bd;
   line-height: 1.3;
 }
@@ -934,24 +953,6 @@ onMounted(() => {
 }
 
 .point-detail-view {
-}
-
-.detail-layout {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.detail-content-col {
-  flex: 1;
-  min-width: 0;
-}
-
-.detail-video-col {
-  flex: 1;
-  min-width: 0;
-  position: sticky;
-  top: 20px;
 }
 
 .detail-back {
@@ -1054,19 +1055,6 @@ onMounted(() => {
   color: #67c23a;
 }
 
-.video-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.video-card h4 {
-  font-size: 15px;
-  color: #606266;
-  margin: 0 0 12px;
-}
-
 .video-wrapper {
   position: relative;
   width: 100%;
@@ -1074,6 +1062,7 @@ onMounted(() => {
   border-radius: 8px;
   overflow: hidden;
   background: #000;
+  margin-bottom: 8px;
 }
 
 .bilibili-player {
