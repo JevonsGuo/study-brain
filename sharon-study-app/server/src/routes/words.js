@@ -109,13 +109,19 @@ router.get('/word-lists', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-  const { word, phonetic, meaning, example_en, example_cn, word_list } = req.body
+  const { word, phonetic, meaning, example_en, example_cn, word_list, forms, synonyms, antonyms, collocations, etymology, distinction } = req.body
   if (!word || !meaning) return res.status(400).json({ error: 'word, meaning are required' })
   const db = getDb()
   const wl = word_list || 'user'
+  const formsStr = forms ? JSON.stringify(forms) : ''
+  const synonymsStr = synonyms ? JSON.stringify(synonyms) : ''
+  const antonymsStr = antonyms ? JSON.stringify(antonyms) : ''
+  const collocationsStr = collocations ? JSON.stringify(collocations) : ''
+  const etymologyStr = etymology || ''
+  const distinctionStr = distinction ? JSON.stringify(distinction) : ''
   const result = db.prepare(
-    "INSERT INTO words (word, phonetic, meaning, example_en, example_cn, word_list, origin, user_modified) VALUES (?, ?, ?, ?, ?, ?, 'user', 1)"
-  ).run(word, phonetic || '', meaning, example_en || '', example_cn || '', wl)
+    "INSERT INTO words (word, phonetic, meaning, example_en, example_cn, word_list, origin, user_modified, forms, synonyms, antonyms, collocations, etymology, distinction) VALUES (?, ?, ?, ?, ?, ?, 'user', 1, ?, ?, ?, ?, ?, ?)"
+  ).run(word, phonetic || '', meaning, example_en || '', example_cn || '', wl, formsStr, synonymsStr, antonymsStr, collocationsStr, etymologyStr, distinctionStr)
   const row = db.prepare('SELECT * FROM words WHERE id = ?').get(result.lastInsertRowid)
 
   const today = new Date().toISOString().slice(0, 10)
@@ -128,9 +134,15 @@ router.put('/:id', (req, res) => {
   const db = getDb()
   const row = db.prepare('SELECT * FROM words WHERE id = ?').get(req.params.id)
   if (!row) return res.status(404).json({ error: 'not found' })
-  const { word, phonetic, meaning, example_en, example_cn } = req.body
-  db.prepare('UPDATE words SET word = ?, phonetic = ?, meaning = ?, example_en = ?, example_cn = ?, user_modified = 1 WHERE id = ?')
-    .run(word || row.word, phonetic ?? row.phonetic, meaning || row.meaning, example_en ?? row.example_en, example_cn ?? row.example_cn, req.params.id)
+  const { word, phonetic, meaning, example_en, example_cn, forms, synonyms, antonyms, collocations, etymology, distinction } = req.body
+  const formsStr = forms !== undefined ? (typeof forms === 'string' ? forms : JSON.stringify(forms)) : row.forms
+  const synonymsStr = synonyms !== undefined ? (typeof synonyms === 'string' ? synonyms : JSON.stringify(synonyms)) : row.synonyms
+  const antonymsStr = antonyms !== undefined ? (typeof antonyms === 'string' ? antonyms : JSON.stringify(antonyms)) : row.antonyms
+  const collocationsStr = collocations !== undefined ? (typeof collocations === 'string' ? collocations : JSON.stringify(collocations)) : row.collocations
+  const etymologyStr = etymology !== undefined ? etymology : row.etymology
+  const distinctionStr = distinction !== undefined ? (typeof distinction === 'string' ? distinction : JSON.stringify(distinction)) : row.distinction
+  db.prepare('UPDATE words SET word = ?, phonetic = ?, meaning = ?, example_en = ?, example_cn = ?, forms = ?, synonyms = ?, antonyms = ?, collocations = ?, etymology = ?, distinction = ?, user_modified = 1 WHERE id = ?')
+    .run(word || row.word, phonetic ?? row.phonetic, meaning || row.meaning, example_en ?? row.example_en, example_cn ?? row.example_cn, formsStr, synonymsStr, antonymsStr, collocationsStr, etymologyStr, distinctionStr, req.params.id)
   const updated = db.prepare('SELECT * FROM words WHERE id = ?').get(req.params.id)
   res.json(updated)
 })

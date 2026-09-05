@@ -39,24 +39,30 @@ function requireFields(item, fields, i, name) {
 
 function syncWords(db, items, wordList) {
   const get = db.prepare('SELECT * FROM words WHERE word = ? AND word_list = ?')
-  const insert = db.prepare("INSERT INTO words (word, phonetic, meaning, example_en, example_cn, word_list, origin) VALUES (?, ?, ?, ?, ?, ?, 'seed')")
-  const update = db.prepare('UPDATE words SET phonetic = ?, meaning = ?, example_en = ?, example_cn = ? WHERE id = ?')
+  const insert = db.prepare("INSERT INTO words (word, phonetic, meaning, example_en, example_cn, word_list, origin, forms, synonyms, antonyms, collocations, etymology, distinction) VALUES (?, ?, ?, ?, ?, ?, 'seed', ?, ?, ?, ?, ?, ?)")
+  const update = db.prepare('UPDATE words SET phonetic = ?, meaning = ?, example_en = ?, example_cn = ?, forms = ?, synonyms = ?, antonyms = ?, collocations = ?, etymology = ?, distinction = ? WHERE id = ?')
   const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0 }
   for (const w of items) {
     const phonetic = w.phonetic || ''
     const meaning = w.meaning || ''
     const exampleEn = w.example_en || ''
     const exampleCn = w.example_cn || ''
+    const forms = w.forms ? JSON.stringify(w.forms) : ''
+    const synonyms = w.synonyms ? JSON.stringify(w.synonyms) : ''
+    const antonyms = w.antonyms ? JSON.stringify(w.antonyms) : ''
+    const collocations = w.collocations ? JSON.stringify(w.collocations) : ''
+    const etymology = w.etymology || ''
+    const distinction = w.distinction ? JSON.stringify(w.distinction) : ''
     const row = get.get(w.word, wordList)
     if (!row) {
-      insert.run(w.word, phonetic, meaning, exampleEn, exampleCn, wordList)
+      insert.run(w.word, phonetic, meaning, exampleEn, exampleCn, wordList, forms, synonyms, antonyms, collocations, etymology, distinction)
       stats.inserted++
     } else if (row.user_modified) {
       stats.skippedUserModified++
-    } else if (row.phonetic === phonetic && row.meaning === meaning && row.example_en === exampleEn && row.example_cn === exampleCn) {
+    } else if (row.phonetic === phonetic && row.meaning === meaning && row.example_en === exampleEn && row.example_cn === exampleCn && row.forms === forms && row.synonyms === synonyms && row.antonyms === antonyms && row.collocations === collocations && row.etymology === etymology && row.distinction === distinction) {
       stats.unchanged++
     } else {
-      update.run(phonetic, meaning, exampleEn, exampleCn, row.id)
+      update.run(phonetic, meaning, exampleEn, exampleCn, forms, synonyms, antonyms, collocations, etymology, distinction, row.id)
       stats.updated++
     }
   }

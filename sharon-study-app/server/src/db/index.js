@@ -69,6 +69,13 @@ function initTables() {
       last_review TEXT NOT NULL DEFAULT '',
       origin TEXT NOT NULL DEFAULT 'seed',
       user_modified INTEGER NOT NULL DEFAULT 0,
+      word_list TEXT NOT NULL DEFAULT '',
+      forms TEXT NOT NULL DEFAULT '',
+      synonyms TEXT NOT NULL DEFAULT '',
+      antonyms TEXT NOT NULL DEFAULT '',
+      collocations TEXT NOT NULL DEFAULT '',
+      etymology TEXT NOT NULL DEFAULT '',
+      distinction TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
@@ -145,15 +152,30 @@ function initDailyConfig() {
 
 const MIGRATIONS = [
   {
+    name: '006_words_enrichment',
+    up: () => {
+      const columns = db.prepare("PRAGMA table_info(words)").all().map(c => c.name)
+      if (!columns.includes('forms')) db.exec("ALTER TABLE words ADD COLUMN forms TEXT NOT NULL DEFAULT ''")
+      if (!columns.includes('synonyms')) db.exec("ALTER TABLE words ADD COLUMN synonyms TEXT NOT NULL DEFAULT ''")
+      if (!columns.includes('antonyms')) db.exec("ALTER TABLE words ADD COLUMN antonyms TEXT NOT NULL DEFAULT ''")
+      if (!columns.includes('collocations')) db.exec("ALTER TABLE words ADD COLUMN collocations TEXT NOT NULL DEFAULT ''")
+      if (!columns.includes('etymology')) db.exec("ALTER TABLE words ADD COLUMN etymology TEXT NOT NULL DEFAULT ''")
+      if (!columns.includes('distinction')) db.exec("ALTER TABLE words ADD COLUMN distinction TEXT NOT NULL DEFAULT ''")
+    }
+  },
+  {
     name: '005_words_add_word_list',
     up: () => {
       const columns = db.prepare("PRAGMA table_info(words)").all().map(c => c.name)
       if (!columns.includes('word_list')) {
         db.exec("ALTER TABLE words ADD COLUMN word_list TEXT NOT NULL DEFAULT ''")
         db.exec("UPDATE words SET word_list = 'default' WHERE word_list = ''")
-        db.exec('DROP INDEX IF EXISTS idx_words_word')
-        db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_words_word_list ON words(word, word_list)')
       }
+      const indexes = db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='words'").all().map(r => r.name)
+      if (indexes.includes('idx_words_word') && !indexes.includes('idx_words_word_list')) {
+        db.exec('DROP INDEX IF EXISTS idx_words_word')
+      }
+      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_words_word_list ON words(word, word_list)')
     }
   },
   {
@@ -224,7 +246,10 @@ const MIGRATIONS = [
       })
       dedup()
 
-      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_words_word ON words(word)')
+      const existingIndexes = db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='words'").all().map(r => r.name)
+      if (!existingIndexes.includes('idx_words_word_list')) {
+        db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_words_word ON words(word)')
+      }
       db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_subject_title ON knowledge_points(subject, title)')
       db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_learning_resources_subject_url ON learning_resources(subject, url)')
     }
