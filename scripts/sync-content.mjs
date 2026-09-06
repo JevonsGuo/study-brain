@@ -71,10 +71,12 @@ function syncWords(db, items, wordList) {
 
 function syncKnowledge(db, items) {
   const get = db.prepare('SELECT * FROM knowledge_points WHERE subject = ? AND title = ?')
-  const insert = db.prepare("INSERT INTO knowledge_points (subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order, origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'seed')")
-  const update = db.prepare('UPDATE knowledge_points SET chapter = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ? WHERE id = ?')
+  const insert = db.prepare("INSERT INTO knowledge_points (subject, grade, book, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order, origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'seed')")
+  const update = db.prepare('UPDATE knowledge_points SET grade = ?, book = ?, chapter = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ? WHERE id = ?')
   const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0 }
   for (const k of items) {
+    const grade = k.grade || ''
+    const book = k.book || ''
     const chapter = k.chapter || ''
     const content = k.content || ''
     const keyFormulas = k.key_formulas || ''
@@ -84,14 +86,14 @@ function syncKnowledge(db, items) {
     const sortOrder = k.sort_order || 0
     const row = get.get(k.subject, k.title)
     if (!row) {
-      insert.run(k.subject, chapter, k.title, content, keyFormulas, tips, visualDesc, videoUrl, sortOrder)
+      insert.run(k.subject, grade, book, chapter, k.title, content, keyFormulas, tips, visualDesc, videoUrl, sortOrder)
       stats.inserted++
     } else if (row.user_modified) {
       stats.skippedUserModified++
-    } else if (row.chapter === chapter && row.content === content && row.key_formulas === keyFormulas && row.tips === tips && row.visual_desc === visualDesc && row.video_url === videoUrl && row.sort_order === sortOrder) {
+    } else if (row.grade === grade && row.book === book && row.chapter === chapter && row.content === content && row.key_formulas === keyFormulas && row.tips === tips && row.visual_desc === visualDesc && row.video_url === videoUrl && row.sort_order === sortOrder) {
       stats.unchanged++
     } else {
-      update.run(chapter, content, keyFormulas, tips, visualDesc, videoUrl, sortOrder, row.id)
+      update.run(grade, book, chapter, content, keyFormulas, tips, visualDesc, videoUrl, sortOrder, row.id)
       stats.updated++
     }
   }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { api } from '../../utils/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import * as echarts from 'echarts'
 import { subjectEmojis } from '../../utils/subjects'
 
@@ -125,11 +125,16 @@ const addGrade = async () => {
 
 const removeGrade = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定要删除这条成绩记录吗？', '删除确认', {
+      type: 'warning',
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消'
+    })
     await api.del(`/grades/${id}`)
     await fetchGrades()
     ElMessage.success('已删除')
   } catch {
-    ElMessage.error('删除失败')
+    // cancelled
   }
 }
 

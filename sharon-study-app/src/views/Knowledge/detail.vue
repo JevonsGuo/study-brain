@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../utils/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { subjectEmojis } from '../../utils/subjects'
@@ -148,11 +148,16 @@ const saveResource = async () => {
 
 const removeResource = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定要删除该学习资源吗？', '删除确认', {
+      type: 'warning',
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消'
+    })
     await api.del(`/learning-resources/${id}`)
     await fetchResources()
     ElMessage.success('已删除')
   } catch {
-    ElMessage.error('删除失败')
+    // cancelled
   }
 }
 
@@ -273,13 +278,18 @@ const saveEdit = async () => {
 
 const removePoint = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定要删除此知识点吗？删除后不可恢复。', '删除确认', {
+      type: 'warning',
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消'
+    })
     await api.del(`/knowledge/${id}`)
     if (selectedPoint.value?.id === id) selectedPoint.value = null
     await fetchPoints()
     await fetchChapters()
     ElMessage.success('已删除')
   } catch {
-    ElMessage.error('删除失败')
+    // cancelled
   }
 }
 
@@ -515,11 +525,7 @@ onMounted(() => {
             </div>
             <div v-if="resourceManageMode" class="resource-actions">
               <el-button size="small" type="primary" link @click="openEditResource(r)">编辑</el-button>
-              <el-popconfirm title="确定删除此资源？" @confirm="removeResource(r.id)">
-                <template #reference>
-                  <el-button size="small" type="danger" link>删除</el-button>
-                </template>
-              </el-popconfirm>
+              <el-button size="small" type="danger" link @click="removeResource(r.id)">删除</el-button>
             </div>
           </div>
         </div>

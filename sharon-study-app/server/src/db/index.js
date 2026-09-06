@@ -107,6 +107,8 @@ function initTables() {
     CREATE TABLE IF NOT EXISTS knowledge_points (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       subject TEXT NOT NULL,
+      grade TEXT NOT NULL DEFAULT '',
+      book TEXT NOT NULL DEFAULT '',
       chapter TEXT NOT NULL DEFAULT '',
       title TEXT NOT NULL,
       content TEXT NOT NULL DEFAULT '',
@@ -151,6 +153,14 @@ function initDailyConfig() {
 }
 
 const MIGRATIONS = [
+  {
+    name: '007_knowledge_add_grade_book',
+    up: () => {
+      const columns = db.prepare("PRAGMA table_info(knowledge_points)").all().map(c => c.name)
+      if (!columns.includes('grade')) db.exec("ALTER TABLE knowledge_points ADD COLUMN grade TEXT NOT NULL DEFAULT ''")
+      if (!columns.includes('book')) db.exec("ALTER TABLE knowledge_points ADD COLUMN book TEXT NOT NULL DEFAULT ''")
+    }
+  },
   {
     name: '006_words_enrichment',
     up: () => {

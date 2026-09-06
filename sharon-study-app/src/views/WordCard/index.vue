@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { api } from '../../utils/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 interface WordForms {
   past?: string
@@ -473,12 +473,17 @@ const updateDailyConfig = async () => {
 
 const removeWord = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定要从词库中删除此单词吗？', '删除确认', {
+      type: 'warning',
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消'
+    })
     await api.del(`/words/${id}`)
     await fetchStats()
     await fetchWords()
     ElMessage.success('已删除')
-  } catch (e: unknown) {
-    ElMessage.error('删除失败')
+  } catch {
+    // cancelled
   }
 }
 

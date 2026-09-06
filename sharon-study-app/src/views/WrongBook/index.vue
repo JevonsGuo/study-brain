@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { api } from '../../utils/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { subjectEmojis, defaultSubjects } from '../../utils/subjects'
 
 interface WrongItem {
@@ -29,7 +29,7 @@ const fetchWrongItems = async () => {
   try {
     wrongItems.value = await api.get('/wrong-items')
   } catch (e: unknown) {
-    ElMessage.error('加载失败: ' + (e instanceof Error ? e.message : String(e)))
+    ElMessage.error('加载错题失败: ' + (e instanceof Error ? e.message : String(e)))
   } finally {
     loading.value = false
   }
@@ -49,11 +49,16 @@ const addWrongItem = async () => {
 
 const removeItem = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定要删除这道错题记录吗？', '删除确认', {
+      type: 'warning',
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消'
+    })
     await api.del(`/wrong-items/${id}`)
     await fetchWrongItems()
     ElMessage.success('已删除')
-  } catch (e: unknown) {
-    ElMessage.error('删除失败')
+  } catch {
+    // cancelled
   }
 }
 

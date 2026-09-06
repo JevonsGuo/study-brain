@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { api } from '../../utils/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 interface PlanItem {
   id: number
@@ -308,11 +308,16 @@ const toggleDone = async (item: PlanItem) => {
 
 const removePlan = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定要删除这项学习任务吗？', '删除确认', {
+      type: 'warning',
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消'
+    })
     await api.del(`/study-plans/${id}`)
     await fetchPlans()
     ElMessage.success('已删除')
   } catch {
-    ElMessage.error('删除失败')
+    // cancelled
   }
 }
 

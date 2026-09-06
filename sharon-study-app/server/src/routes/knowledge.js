@@ -5,13 +5,21 @@ const router = Router()
 
 router.get('/', (req, res) => {
   const db = getDb()
-  const { subject, chapter } = req.query
+  const { subject, grade, book, chapter } = req.query
   let sql = 'SELECT * FROM knowledge_points'
   const conditions = []
   const params = []
   if (subject) {
     conditions.push('subject = ?')
     params.push(subject)
+  }
+  if (grade) {
+    conditions.push('grade = ?')
+    params.push(grade)
+  }
+  if (book) {
+    conditions.push('book = ?')
+    params.push(book)
   }
   if (chapter) {
     conditions.push('chapter = ?')
@@ -28,8 +36,9 @@ router.get('/', (req, res) => {
 router.get('/subjects', (req, res) => {
   const db = getDb()
   const rows = db.prepare('SELECT DISTINCT subject FROM knowledge_points ORDER BY subject ASC').all()
-  const chapters = db.prepare('SELECT subject, chapter FROM knowledge_points GROUP BY subject, chapter ORDER BY subject, chapter').all()
-  res.json({ subjects: rows.map(r => r.subject), chapters })
+  const books = db.prepare("SELECT subject, grade, book, COUNT(*) as count FROM knowledge_points WHERE book != '' GROUP BY subject, grade, book ORDER BY subject, grade, book").all()
+  const chapters = db.prepare('SELECT subject, grade, book, chapter, COUNT(*) as count FROM knowledge_points GROUP BY subject, grade, book, chapter ORDER BY subject, grade, book, chapter').all()
+  res.json({ subjects: rows.map(r => r.subject), books, chapters })
 })
 
 router.get('/:id', (req, res) => {
@@ -40,12 +49,12 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-  const { subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
+  const { subject, grade, book, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
   if (!subject || !title) return res.status(400).json({ error: 'subject, title are required' })
   const db = getDb()
   const result = db.prepare(
-    "INSERT INTO knowledge_points (subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order, origin, user_modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'user', 1)"
-  ).run(subject, chapter || '', title, content || '', key_formulas || '', tips || '', visual_desc || '', video_url || '', sort_order || 0)
+    "INSERT INTO knowledge_points (subject, grade, book, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order, origin, user_modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'user', 1)"
+  ).run(subject, grade || '', book || '', chapter || '', title, content || '', key_formulas || '', tips || '', visual_desc || '', video_url || '', sort_order || 0)
   const row = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(result.lastInsertRowid)
   res.json(row)
 })
@@ -54,10 +63,23 @@ router.put('/:id', (req, res) => {
   const db = getDb()
   const row = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(req.params.id)
   if (!row) return res.status(404).json({ error: 'not found' })
-  const { subject, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
+  const { subject, grade, book, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order } = req.body
   db.prepare(
-    'UPDATE knowledge_points SET subject = ?, chapter = ?, title = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ?, user_modified = 1 WHERE id = ?'
-  ).run(subject || row.subject, chapter ?? row.chapter, title || row.title, content ?? row.content, key_formulas ?? row.key_formulas, tips ?? row.tips, visual_desc ?? row.visual_desc, video_url ?? row.video_url, sort_order ?? row.sort_order, req.params.id)
+    'UPDATE knowledge_points SET subject = ?, grade = ?, book = ?, chapter = ?, title = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ?, user_modified = 1 WHERE id = ?'
+  ).run(
+    subject || row.subject,
+    grade ?? row.grade,
+    book ?? row.book,
+    chapter ?? row.chapter,
+    title || row.title,
+    content ?? row.content,
+    key_formulas ?? row.key_formulas,
+    tips ?? row.tips,
+    visual_desc ?? row.visual_desc,
+    video_url ?? row.video_url,
+    sort_order ?? row.sort_order,
+    req.params.id
+  )
   const updated = db.prepare('SELECT * FROM knowledge_points WHERE id = ?').get(req.params.id)
   res.json(updated)
 })

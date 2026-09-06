@@ -49,7 +49,7 @@ sharon-study/
 | 学习计划 | /study-plan | 日期导航、快速录入、按科目分组、进度追踪、日历弹窗 |
 | 错题本 | /wrong-book | 记录错题与原因，按科目筛选 |
 | 单词卡 | /word-card | 多词汇表、3D翻转卡片、间隔重复、折叠面板展示词形/搭配/辨析/同反义/词根 |
-| 知识库 | /knowledge | 三栏布局（章节导航+知识点+学习资源）、KaTeX公式、B站视频嵌入 |
+| 知识库 | /knowledge | 多栏工作台（学科导航+教材分册/章节+知识点卡片流+学习资源）、KaTeX公式、B站视频嵌入 |
 | 成绩追踪 | /grade-tracker | ECharts图表、趋势线/雷达/柱状图、科目详情、红涨绿跌 |
 | 番茄钟 | /timer | SVG进度环、背景音乐、可调时长、自动轮换 |
 
@@ -63,9 +63,13 @@ sharon-study/
 
 ### 知识库
 
-- **三栏布局**：左栏章节导航（180px）| 中栏知识点列表与详情（flex:1）| 右栏学习资源（220px）
-- 点击知识点在中栏展开详情，左右栏始终可见（sticky 定位）
-- KaTeX 数学公式渲染、B站视频嵌入
+- **教材书架 + 沉浸式宽屏阅读两阶段架构**：
+  - **教材书架（BookShelf）**：左侧学科导航，主区域按年级陈列高度仿真真实实体课本封面的教材卡片（含书脊立体装订阴影、版署标识、分册艺术纹样与考点进度徽章）
+  - **宽屏双栏阅读器（Book Reader）**：点击进入某册教材专心阅读：
+    - **左边栏（260px）**：目录章节树（章级大纲 + 细分小节考点数）
+    - **右边栏（宽栏 flex: 1）**：开阔舒适展示考点卡片流（KaTeX 公式排版、易错技巧 Tips、思维图景 Visual Desc、B站精讲视频）
+  - **学习资源抽屉（Drawer）**：平时隐藏，点击右上角快捷按钮在右侧平滑滑出，完全不侵占阅读视界
+- 知识点支持 `grade`（年级）与 `book`（分册）结构化存储（迁移 007）
 
 ## 环境隔离
 
@@ -114,6 +118,7 @@ cp .env.example .env.production  # 生产环境，修改DB_PATH为绝对路径
 | 004 | 内容三表加 origin/user_modified，去重，建唯一索引 |
 | 005 | words 表加 word_list 列，索引改为 (word, word_list) 复合唯一 |
 | 006 | words 表加 forms/synonyms/antonyms/collocations/etymology/distinction |
+| 007 | knowledge_points 表加 grade/book 列，支持高中年级与教材分册 |
 
 新增迁移：编辑 `server/src/db/index.js`，在 `MIGRATIONS` 数组中添加：
 
