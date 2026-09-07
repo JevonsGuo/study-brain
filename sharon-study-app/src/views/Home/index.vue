@@ -336,6 +336,6 @@ onUnmounted(() => {
 .module-card { margin-bottom: 20px; cursor: pointer; transition: transform 0.3s; text-align: center; }
 .module-card:hover { transform: translateY(-4px); }
 .module-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #fff; }
-.module-card h3 { margin: 0 0 8px; font-size: 18px; }
-.module-card p { color: #999; font-size: 14px; margin: 0; }
+.module-card h3 { margin: 0 0 8px; font-size: 18px; color: var(--text-main, #303133); }
+.module-card p { color: var(--text-sub, #999); font-size: 14px; margin: 0; }
 </style>

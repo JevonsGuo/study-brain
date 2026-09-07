@@ -359,7 +359,7 @@ onUnmounted(() => { stop(); stopMusic() })
 .time-display {
   font-size: 56px;
   font-weight: 800;
-  color: #1a1a2e;
+  color: var(--text-main, #1a1a2e);
   letter-spacing: -2px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -372,7 +372,7 @@ onUnmounted(() => { stop(); stopMusic() })
 
 .time-label {
   font-size: 13px;
-  color: #909399;
+  color: var(--text-sub, #909399);
   margin-top: 8px;
   font-weight: 500;
 }
@@ -421,7 +421,7 @@ onUnmounted(() => { stop(); stopMusic() })
 
 .reset-btn {
   background: rgba(0,0,0,0.06);
-  color: #606266;
+  color: var(--text-regular, #606266);
   padding: 12px 16px;
 }
 
@@ -436,10 +436,11 @@ onUnmounted(() => { stop(); stopMusic() })
 }
 
 .music-panel {
-  background: #fff;
+  background: var(--bg-card, #fff);
   border-radius: 16px;
   padding: 16px 20px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: var(--theme-transition);
 }
 
 .music-header {
@@ -452,7 +453,7 @@ onUnmounted(() => { stop(); stopMusic() })
 .music-title {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-main, #303133);
 }
 
 .music-btns {

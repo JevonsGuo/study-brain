@@ -23,6 +23,11 @@ const router = createRouter({
       component: () => import('../views/WrongBook/index.vue'),
     },
     {
+      path: '/wrong-book/:subject',
+      name: 'WrongBookSubject',
+      component: () => import('../views/WrongBook/index.vue'),
+    },
+    {
       path: '/word-card',
       name: 'WordCard',
       component: () => import('../views/WordCard/index.vue'),

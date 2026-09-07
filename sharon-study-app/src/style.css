@@ -1,3 +1,45 @@
+:root {
+  --bg-page: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-secondary: #f8fafc;
+  --bg-card-tertiary: #f1f5f9;
+  --text-main: #0f172a;
+  --text-regular: #334155;
+  --text-sub: #64748b;
+  --border-subtle: #e2e8f0;
+  --border-regular: #cbd5e1;
+  --aside-bg: #001529;
+  --aside-border: rgba(255, 255, 255, 0.1);
+  --theme-transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1), color 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.dark {
+  --bg-page: #0b0f19;
+  --bg-card: #131b2e;
+  --bg-card-secondary: #1a233a;
+  --bg-card-tertiary: #232f4b;
+  --text-main: #f8fafc;
+  --text-regular: #e2e8f0;
+  --text-sub: #94a3b8;
+  --border-subtle: #1e293b;
+  --border-regular: #334155;
+  --aside-bg: #060a12;
+  --aside-border: rgba(255, 255, 255, 0.08);
+
+  /* Element Plus 官方深色变量全面覆盖 */
+  --el-bg-color: #131b2e;
+  --el-bg-color-page: #0b0f19;
+  --el-bg-color-overlay: #182238;
+  --el-text-color-primary: #f8fafc;
+  --el-text-color-regular: #e2e8f0;
+  --el-text-color-secondary: #94a3b8;
+  --el-text-color-placeholder: #64748b;
+  --el-border-color: #26334a;
+  --el-border-color-light: #1e293b;
+  --el-border-color-lighter: #162033;
+  --el-fill-color-blank: #131b2e;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -8,9 +50,344 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  transition: var(--theme-transition);
 }
 
 #app {
   width: 100%;
   min-height: 100vh;
 }
+
+/* 现代精致滚动条 */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ========================================================== */
+/* 暗色模式核心对比度反转法则 (Dark Contrast Rules)            */
+/* 基本准则：暗色主题下，所有文本均使用高对比度亮白色/浅灰色    */
+/* ========================================================== */
+
+/* 1. 全局标题与正文对比度兜底 */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #f8fafc !important;
+}
+
+html.dark p,
+html.dark span,
+html.dark div {
+  /* 允许继承明亮主色，避免硬编码死黑字体 */
+}
+
+/* 2. Element Plus 组件通用暗色深化 */
+html.dark .el-card {
+  --el-card-bg-color: var(--bg-card);
+  --el-card-border-color: var(--border-subtle);
+  color: var(--text-main) !important;
+}
+
+html.dark .el-card__header {
+  border-bottom-color: var(--border-subtle);
+  color: var(--text-main) !important;
+}
+
+html.dark .el-dialog {
+  --el-dialog-bg-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+}
+
+html.dark .el-dialog__title {
+  color: var(--text-main) !important;
+}
+
+html.dark .el-dialog__body {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-collapse-item__header {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-bottom-color: var(--border-subtle);
+}
+
+html.dark .el-collapse-item__wrap {
+  background-color: var(--bg-card) !important;
+  border-bottom-color: var(--border-subtle);
+}
+
+html.dark .el-collapse-item__content {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-input__wrapper {
+  background-color: var(--bg-card-secondary) !important;
+  box-shadow: 0 0 0 1px var(--border-subtle) inset !important;
+}
+
+html.dark .el-input__inner {
+  color: var(--text-main) !important;
+}
+
+html.dark .el-textarea__inner {
+  background-color: var(--bg-card-secondary) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+/* 3. 知识库 (Knowledge) 暗色全覆盖 */
+html.dark .shelf-container,
+html.dark .shelf-main,
+html.dark .reader-layout,
+html.dark .reader-main-content {
+  background: var(--bg-page) !important;
+}
+
+html.dark .shelf-aside,
+html.dark .shelf-header,
+html.dark .reader-navbar,
+html.dark .reader-chapter-sidebar,
+html.dark .wide-point-card,
+html.dark .card-head,
+html.dark .card-body-content,
+html.dark .reader-empty-box {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+html.dark .brand-title,
+html.dark .headline-title,
+html.dark .active-title,
+html.dark .head-title,
+html.dark .box-header,
+html.dark .crumb-subject,
+html.dark .book-title-tag,
+html.dark .is-chapter-title {
+  color: #f8fafc !important;
+}
+
+html.dark .sub-name {
+  color: #e2e8f0 !important;
+}
+
+html.dark .box-inner-text,
+html.dark .chapter-nav-btn {
+  color: #cbd5e1 !important;
+}
+
+html.dark .chapter-nav-btn:hover {
+  background-color: var(--bg-card-secondary) !important;
+  color: #ffffff !important;
+}
+
+html.dark .chapter-nav-btn.is-chapter-title {
+  background-color: var(--bg-card-secondary) !important;
+  border-color: var(--border-subtle) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .shelf-subject-btn:hover {
+  background-color: var(--bg-card-secondary) !important;
+}
+
+html.dark .shelf-subject-btn.active {
+  background-color: rgba(37, 99, 235, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+html.dark .shelf-brand,
+html.dark .chapter-sidebar-header,
+html.dark .active-chapter-banner {
+  border-bottom-color: var(--border-subtle) !important;
+}
+
+/* 考点公式与特别提示框在暗色模式下的适配 */
+html.dark .formula-content-render {
+  background-color: #0c1222 !important;
+  border-color: #2e3856 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark .tips-content-text {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fde68a !important;
+}
+
+html.dark .visual-content-text {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #a7f3d0 !important;
+}
+
+/* 学习资源抽屉 */
+html.dark .drawer-resource-card {
+  background-color: var(--bg-card-secondary) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+html.dark .drawer-category-title,
+html.dark .resource-title {
+  color: #f8fafc !important;
+}
+
+/* 4. 错题本 (WrongBook) 暗色全覆盖 */
+html.dark .hub-overall-banner,
+html.dark .single-subject-dashboard,
+html.dark .foldable-card,
+html.dark .card-compact-row,
+html.dark .full-question-box,
+html.dark .card-lifecycle-toolbar,
+html.dark .empty-state-box,
+html.dark .stat-capsule,
+html.dark .blind-switch-wrap,
+html.dark .blind-overlay-box {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+html.dark .stat-pill-item {
+  background-color: var(--bg-card-secondary) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+html.dark .stat-pill-val,
+html.dark .stat-num,
+html.dark .progress-percent,
+html.dark .rich-card-body,
+html.dark .progress-title-line,
+html.dark .subject-card-title,
+html.dark .first-line-title,
+html.dark .change-label,
+html.dark .review-times-badge {
+  color: #f8fafc !important;
+}
+
+html.dark .rich-card-body p,
+html.dark .rich-card-body span,
+html.dark .rich-card-body div {
+  color: #f1f5f9 !important;
+}
+
+html.dark .card-compact-row:hover,
+html.dark .stat-capsule:hover {
+  background-color: var(--bg-card-secondary) !important;
+}
+
+html.dark .revealed-reason-content {
+  background-color: rgba(244, 63, 94, 0.14) !important;
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+html.dark .reason-text-desc {
+  color: #fda4af !important;
+}
+
+html.dark .subject-hero-card {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 5. 学习计划 (StudyPlan) 暗色全覆盖 */
+html.dark .top-info,
+html.dark .done-section,
+html.dark .nav-btn,
+html.dark .date-center:hover {
+  background-color: var(--bg-card) !important;
+}
+
+html.dark .date-main,
+html.dark .item-content,
+html.dark .group-header {
+  color: #f8fafc !important;
+}
+
+html.dark .quick-btn,
+html.dark .filter-tag {
+  background-color: var(--bg-card-secondary) !important;
+  border-color: var(--border-subtle) !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .quick-btn:hover,
+html.dark .filter-tag:hover {
+  color: #818cf8 !important;
+  border-color: #818cf8 !important;
+}
+
+html.dark .plan-item {
+  background-color: var(--bg-card) !important;
+}
+
+html.dark .plan-item.done {
+  background-color: rgba(82, 196, 26, 0.12) !important;
+}
+
+html.dark .plan-item.done .item-content {
+  color: #64748b !important;
+}
+
+/* 6. 首页 (Home) 暗色全覆盖 */
+html.dark .module-card {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+html.dark .module-card h3 {
+  color: #f8fafc !important;
+}
+
+html.dark .module-card p {
+  color: #94a3b8 !important;
+}
+
+/* 7. 单词卡 (WordCard) 暗色全覆盖 */
+html.dark .word-card-front,
+html.dark .word-card-back,
+html.dark .study-header,
+html.dark .mode-card {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+html.dark .word-title,
+html.dark .mode-title {
+  color: #f8fafc !important;
+}
+
+html.dark .word-phonetic,
+html.dark .word-meaning,
+html.dark .example-sentence {
+  color: #e2e8f0 !important;
+}
+
+

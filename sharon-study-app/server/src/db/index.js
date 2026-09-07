@@ -52,6 +52,8 @@ function initTables() {
       subject TEXT NOT NULL,
       question TEXT NOT NULL,
       reason TEXT NOT NULL,
+      mastery_status TEXT NOT NULL DEFAULT 'unmastered',
+      review_count INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
@@ -87,6 +89,13 @@ function initTables() {
       full_score INTEGER NOT NULL,
       date TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    );
+
+    CREATE TABLE IF NOT EXISTS grade_goals (
+      subject TEXT PRIMARY KEY,
+      target_score REAL NOT NULL,
+      target_full_score REAL NOT NULL DEFAULT 150,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
     CREATE TABLE IF NOT EXISTS study_records (
@@ -153,6 +162,27 @@ function initDailyConfig() {
 }
 
 const MIGRATIONS = [
+  {
+    name: '009_grade_goals',
+    up: () => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS grade_goals (
+          subject TEXT PRIMARY KEY,
+          target_score REAL NOT NULL,
+          target_full_score REAL NOT NULL DEFAULT 150,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `)
+    }
+  },
+  {
+    name: '008_wrong_items_mastery_status',
+    up: () => {
+      const columns = db.prepare("PRAGMA table_info(wrong_items)").all().map(c => c.name)
+      if (!columns.includes('mastery_status')) db.exec("ALTER TABLE wrong_items ADD COLUMN mastery_status TEXT NOT NULL DEFAULT 'unmastered'")
+      if (!columns.includes('review_count')) db.exec("ALTER TABLE wrong_items ADD COLUMN review_count INTEGER NOT NULL DEFAULT 0")
+    }
+  },
   {
     name: '007_knowledge_add_grade_book',
     up: () => {

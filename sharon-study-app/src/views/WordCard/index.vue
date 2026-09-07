@@ -902,9 +902,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 16px;
   padding: 8px 14px;
-  background: #f5f7fa;
+  background: var(--bg-card-secondary, #f5f7fa);
   border-radius: 10px;
   margin-bottom: 12px;
+  transition: var(--theme-transition);
 }
 
 .stats-item {
@@ -920,7 +921,7 @@ onUnmounted(() => {
 .stats-num {
   font-size: 18px;
   font-weight: 700;
-  color: #303133;
+  color: var(--text-main, #303133);
 }
 
 .stats-num.streak {
@@ -929,14 +930,14 @@ onUnmounted(() => {
 
 .stats-text {
   font-size: 11px;
-  color: #909399;
+  color: var(--text-sub, #909399);
 }
 
 .mastery-summary-compact {
   gap: 8px;
   font-size: 12px;
   margin-left: auto;
-  color: #606266;
+  color: var(--text-regular, #606266);
 }
 
 .toolbar {
