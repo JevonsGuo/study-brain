@@ -28,11 +28,16 @@ watch(() => timerStore.showCompletionModal, (show) => {
 })
 
 onMounted(() => {
-  const savedTheme = localStorage.getItem(THEME_KEY)
-  if (savedTheme) {
-    isDark.value = savedTheme === 'dark'
+  const queryTheme = new URLSearchParams(window.location.search).get('theme')
+  if (queryTheme) {
+    isDark.value = queryTheme === 'dark'
   } else {
-    isDark.value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    const savedTheme = localStorage.getItem(THEME_KEY)
+    if (savedTheme) {
+      isDark.value = savedTheme === 'dark'
+    } else {
+      isDark.value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    }
   }
   applyTheme(isDark.value)
 })

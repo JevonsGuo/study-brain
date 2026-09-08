@@ -26,7 +26,11 @@ router.get('/', (req, res) => {
   if (conditions.length > 0) {
     sql += ' WHERE ' + conditions.join(' AND ')
   }
-  sql += ' ORDER BY id DESC'
+  if (req.query.shuffle === '1' || req.query.shuffle === 'true') {
+    sql += ' ORDER BY RANDOM()'
+  } else {
+    sql += ' ORDER BY id ASC'
+  }
   const rows = db.prepare(sql).all(...params)
   res.json(rows)
 })
@@ -35,13 +39,16 @@ router.get('/due', (req, res) => {
   const db = getDb()
   const today = new Date().toISOString().slice(0, 10)
   const wl = req.query.word_list
+  const shuffle = req.query.shuffle === '1' || req.query.shuffle === 'true'
   const wlCond = wl ? ' AND word_list = ?' : ''
   const wlParams = wl ? [wl] : []
   const rows = db.prepare(
     `SELECT * FROM words WHERE next_review <= ? AND next_review != ''${wlCond} ORDER BY next_review ASC`
   ).all(today, ...wlParams)
+
+  const orderClause = shuffle ? 'ORDER BY RANDOM()' : 'ORDER BY id ASC'
   const newWords = db.prepare(
-    `SELECT * FROM words WHERE mastery_level = 0${wlCond} ORDER BY id ASC LIMIT 40`
+    `SELECT * FROM words WHERE mastery_level = 0${wlCond} ${orderClause} LIMIT 40`
   ).all(...wlParams)
   res.json({ due: rows, newWords })
 })
