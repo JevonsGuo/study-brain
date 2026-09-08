@@ -290,7 +290,10 @@ const wordListLabel = (name: string) => {
   const labels: Record<string, string> = {
     default: '高考核心词汇',
     shanghai: '上海高考专属词汇',
-    cet6: '六级拓展词汇'
+    cet6: '六级拓展词汇',
+    gre: 'GRE 核心三千词',
+    toefl: '托福核心词汇',
+    ielts: '雅思核心词汇',
   }
   return labels[name] || name
 }
@@ -300,6 +303,9 @@ const wordListColor = (name: string) => {
     default: 'linear-gradient(135deg, #a78bfa 0%, #ec4899 100%)',
     shanghai: 'linear-gradient(135deg, #f43f5e 0%, #a855f7 100%)',
     cet6: 'linear-gradient(135deg, #38bdf8 0%, #818cf8 100%)',
+    gre: 'linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%)',
+    toefl: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%)',
+    ielts: 'linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #0284c7 100%)',
   }
   return colors[name] || 'linear-gradient(135deg, #34d399 0%, #3b82f6 100%)'
 }
@@ -308,7 +314,10 @@ const wordListIcon = (name: string) => {
   const icons: Record<string, string> = {
     default: '🌸',
     shanghai: '🗼',
-    cet6: '📘'
+    cet6: '📘',
+    gre: '🏛️',
+    toefl: '🗽',
+    ielts: '🇬🇧',
   }
   return icons[name] || '📗'
 }
@@ -342,6 +351,15 @@ const fetchWordListDetails = async () => {
       const s = await api.get(`/words/stats?word_list=${encodeURIComponent(wl.word_list)}`)
       details.push({ word_list: wl.word_list, count: wl.count, stats: s })
     }
+    const orderMap: Record<string, number> = {
+      shanghai: 1,
+      default: 2,
+      cet6: 3,
+      ielts: 4,
+      toefl: 5,
+      gre: 6,
+    }
+    details.sort((a, b) => (orderMap[a.word_list] || 99) - (orderMap[b.word_list] || 99))
     wordLists.value = details
   } catch { /* silent */ }
 }
@@ -1411,8 +1429,20 @@ onUnmounted(() => {
 
 .wl-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .wl-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .wl-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .wl-card {

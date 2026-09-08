@@ -28,9 +28,13 @@ sharon-study/
 │   ├── .env.local            # 本地开发环境（不入git）
 │   └── .env.production       # 生产环境（不入git）
 ├── content/                  # 内容数据（入git，随版本发布）
-│   ├── words-default.json    # 高考词汇（763词，含词形/同反义/搭配/词根/辨析）
-│   ├── words-cet6.json       # 六级词汇（1183词，含词形/同反义/搭配/词根/辨析）
-│   ├── knowledge.json        # 知识库内容（34个知识点）
+│   ├── words-default.json    # 高考核心词汇（763词，含词形/同反义/搭配/词根/辨析）
+│   ├── words-shanghai.json   # 上海高考专属词汇（3669词，全域乱序版）
+│   ├── words-cet6.json       # 六级拓展词汇（1183词，含词形/同反义/搭配/词根/辨析）
+│   ├── words-gre.json        # GRE核心三千词（3036词，全域乱序版，含词根/例句/同反义）
+│   ├── words-toefl.json      # 托福核心词汇（6959词，全域乱序版，含学术例句与拓展）
+│   ├── words-ielts.json      # 雅思核心词汇（4974词，全域乱序版，含英联邦考试语境）
+│   ├── knowledge.json        # 知识库内容（81个考点，分册分章节）
 │   └── learning-resources.json # 学习资源（25条）
 ├── scripts/
 │   ├── deploy.sh             # 服务器部署脚本（备份+内容同步+重启）
@@ -203,8 +207,12 @@ node scripts/seed-grades.js
 #### 单词字典文件命名
 
 `content/words-{word_list}.json`，文件名中 `word_list` 部分即词汇表标识：
-- `words-default.json` → 高考词汇（word_list = "default"）
-- `words-cet6.json` → 六级词汇（word_list = "cet6"）
+- `words-default.json` → 高考核心词汇（word_list = "default"）
+- `words-shanghai.json` → 上海高考专属词汇（word_list = "shanghai"）
+- `words-cet6.json` → 六级拓展词汇（word_list = "cet6"）
+- `words-gre.json` → GRE核心三千词（word_list = "gre"）
+- `words-toefl.json` → 托福核心词汇（word_list = "toefl"）
+- `words-ielts.json` → 雅思核心词汇（word_list = "ielts"）
 
 sync-content 自动发现所有 `words-*.json` 文件。新增词汇表只需新建文件 + sync。
 
