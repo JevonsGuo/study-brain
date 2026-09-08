@@ -15,6 +15,7 @@ import wordsRouter from './routes/words.js'
 import gradesRouter from './routes/grades.js'
 import knowledgeRouter from './routes/knowledge.js'
 import learningResourcesRouter from './routes/learning-resources.js'
+import focusRecordsRouter from './routes/focus-records.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -29,6 +30,7 @@ app.use('/api/words', wordsRouter)
 app.use('/api/grades', gradesRouter)
 app.use('/api/knowledge', knowledgeRouter)
 app.use('/api/learning-resources', learningResourcesRouter)
+app.use('/api/focus-records', focusRecordsRouter)
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })

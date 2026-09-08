@@ -149,6 +149,19 @@ function initTables() {
       user_modified INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
+
+    CREATE TABLE IF NOT EXISTS focus_records (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subject TEXT NOT NULL DEFAULT '其他',
+      plan_id INTEGER DEFAULT NULL,
+      task_name TEXT NOT NULL DEFAULT '',
+      mode TEXT NOT NULL DEFAULT 'pomodoro',
+      duration_minutes INTEGER NOT NULL DEFAULT 25,
+      completed_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      notes TEXT NOT NULL DEFAULT ''
+    );
+    CREATE INDEX IF NOT EXISTS idx_focus_records_completed_at ON focus_records(completed_at);
+    CREATE INDEX IF NOT EXISTS idx_focus_records_subject ON focus_records(subject);
   `)
 
   initDailyConfig()
@@ -162,6 +175,25 @@ function initDailyConfig() {
 }
 
 const MIGRATIONS = [
+  {
+    name: '010_focus_records',
+    up: () => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS focus_records (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          subject TEXT NOT NULL DEFAULT '其他',
+          plan_id INTEGER DEFAULT NULL,
+          task_name TEXT NOT NULL DEFAULT '',
+          mode TEXT NOT NULL DEFAULT 'pomodoro',
+          duration_minutes INTEGER NOT NULL DEFAULT 25,
+          completed_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+          notes TEXT NOT NULL DEFAULT ''
+        );
+        CREATE INDEX IF NOT EXISTS idx_focus_records_completed_at ON focus_records(completed_at);
+        CREATE INDEX IF NOT EXISTS idx_focus_records_subject ON focus_records(subject);
+      `)
+    }
+  },
   {
     name: '009_grade_goals',
     up: () => {

@@ -153,14 +153,33 @@ html.dark .el-input__wrapper {
   box-shadow: 0 0 0 1px var(--border-subtle) inset !important;
 }
 
-html.dark .el-input__inner {
-  color: var(--text-main) !important;
+html.dark input,
+html.dark textarea,
+html.dark .el-input__inner,
+html.dark .el-textarea__inner,
+html.dark .quick-textarea {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #818cf8 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder,
+html.dark .el-input__inner::placeholder,
+html.dark .el-textarea__inner::placeholder,
+html.dark .quick-textarea::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+html.dark .el-form-item__label {
+  color: #e2e8f0 !important;
 }
 
 html.dark .el-textarea__inner {
   background-color: var(--bg-card-secondary) !important;
-  color: var(--text-main) !important;
   border-color: var(--border-subtle) !important;
+  box-shadow: 0 0 0 1px var(--border-subtle) inset !important;
 }
 
 /* 3. 知识库 (Knowledge) 暗色全覆盖 */

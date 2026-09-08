@@ -1,573 +1,1629 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import * as echarts from 'echarts'
+import { useTimerStore } from '../../stores/timer'
+import { api } from '../../utils/api'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  VideoPlay, VideoPause, RefreshLeft, Setting, FullScreen,
+  Right, Headset, Notebook, Check, Delete, Calendar, TrendCharts
+} from '@element-plus/icons-vue'
 
-const LONG_BREAK = 15 * 60
-const LONG_BREAK_INTERVAL = 4
+const timerStore = useTimerStore()
 
-const workDuration = ref(25)
-const breakDuration = ref(5)
-const totalSeconds = ref(workDuration.value * 60)
-const isRunning = ref(false)
-const isBreak = ref(false)
-const completedPomodoros = ref(0)
-const todayPomodoros = ref(0)
-const autoStartBreak = ref(true)
-const showSettings = ref(false)
-const isMuted = ref(false)
-const currentMusic = ref(0)
-const musicPlaying = ref(false)
-
-const musicList = [
-  { name: '雨声', icon: '🌧️', url: 'https://cdn.pixabay.com/audio/2022/03/10/audio_8cb18d7d82.mp3' },
-  { name: '钢琴', icon: '🎹', url: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf1ac.mp3' },
-  { name: '森林', icon: '🌲', url: 'https://cdn.pixabay.com/audio/2022/03/15/audio_115e6b3ed8.mp3' },
-  { name: '海浪', icon: '🌊', url: 'https://cdn.pixabay.com/audio/2024/11/04/audio_4956204700.mp3' },
+// 9 大学科色彩与 Emoji 字典
+const subjects = [
+  { name: '数学', emoji: '📐', color: '#6366f1', lightBg: '#eef2ff' },
+  { name: '物理', emoji: '⚡', color: '#e6a23c', lightBg: '#fdf6ec' },
+  { name: '化学', emoji: '🧪', color: '#f56c6c', lightBg: '#fef0f0' },
+  { name: '生物', emoji: '🧬', color: '#85ce61', lightBg: '#f0f9eb' },
+  { name: '英语', emoji: '🔤', color: '#10b981', lightBg: '#ecfdf5' },
+  { name: '语文', emoji: '📖', color: '#909399', lightBg: '#f4f4f5' },
+  { name: '政治', emoji: '📜', color: '#ed4014', lightBg: '#fef2f2' },
+  { name: '历史', emoji: '🏛️', color: '#c45656', lightBg: '#fdf2f2' },
+  { name: '地理', emoji: '🌍', color: '#2d8cf0', lightBg: '#eff6ff' },
+  { name: '其他', emoji: '📌', color: '#8c8c8c', lightBg: '#f5f5f5' },
 ]
 
-let interval: ReturnType<typeof setInterval> | null = null
-let audio: HTMLAudioElement | null = null
+// 考场模考预设
+const examPresets = [
+  { label: '📐 高考数学', duration: 120, subject: '数学' },
+  { label: '📖 语文 / 理综', duration: 150, subject: '语文' },
+  { label: '🔤 英语套卷', duration: 100, subject: '英语' },
+  { label: '⚡ 物化生大题', duration: 90, subject: '物理' },
+  { label: '⏱️ 课后限时微测', duration: 45, subject: '其他' },
+]
 
-const minutes = computed(() => String(Math.floor(totalSeconds.value / 60)).padStart(2, '0'))
-const seconds = computed(() => String(totalSeconds.value % 60).padStart(2, '0'))
+// 声学选项（离线 Web Audio 纯净噪音 + 在线白噪音）
+const soundTracks = [
+  { id: 'none', name: '静音专注', icon: '🔇', type: 'none' },
+  { id: 'pink', name: '粉红噪音 (防干扰)', icon: '🎧', type: 'synth' },
+  { id: 'brown', name: '布朗细雨 (深层沉浸)', icon: '🌧️', type: 'synth' },
+  { id: 'rain', name: '淅沥雨声', icon: '☔', type: 'online' },
+  { id: 'piano', name: '静谧钢琴', icon: '🎹', type: 'online' },
+  { id: 'forest', name: '晨曦森林', icon: '🌲', type: 'online' },
+  { id: 'waves', name: '舒缓海浪', icon: '🌊', type: 'online' },
+]
 
-const currentDuration = computed(() => {
-  if (isBreak.value) {
-    return (completedPomodoros.value % LONG_BREAK_INTERVAL === 0 && completedPomodoros.value > 0)
-      ? LONG_BREAK : breakDuration.value * 60
-  }
-  return workDuration.value * 60
-})
+// 视图标签：专注工作台 vs 统计看板
+const activeTab = ref<'timer' | 'analytics'>('timer')
+const showSettings = ref(false)
+const markPlanDoneChecked = ref(true)
 
-const progress = computed(() => {
-  const total = currentDuration.value
-  return ((total - totalSeconds.value) / total) * 100
-})
+// 今日未完成计划列表
+interface PlanItem {
+  id: number
+  subject: string
+  content: string
+  date: string
+  done: boolean
+}
+const todayPlans = ref<PlanItem[]>([])
 
-const circumference = 2 * Math.PI * 130
+// 设置表单
+const tempWorkDur = ref(timerStore.workDuration)
+const tempBreakDur = ref(timerStore.breakDuration)
+const tempExamDur = ref(timerStore.examDuration)
+const tempAutoBreak = ref(timerStore.autoStartBreak)
+
+// ECharts 实例与容器
+const subjectChartRef = ref<HTMLDivElement | null>(null)
+const trendChartRef = ref<HTMLDivElement | null>(null)
+let subjectChart: echarts.ECharts | null = null
+let trendChart: echarts.ECharts | null = null
+let themeObserver: MutationObserver | null = null
+
+// SVG 进度圆环计算
+const circumference = 2 * Math.PI * 132
 const strokeDashoffset = computed(() => {
-  return circumference - (progress.value / 100) * circumference
+  return circumference - (timerStore.progress / 100) * circumference
 })
 
-const ringBg = computed(() => isBreak.value ? 'rgba(82,196,26,0.1)' : 'rgba(99,102,241,0.1)')
-const gradientStart = computed(() => isBreak.value ? '#52c41a' : '#6366f1')
-const gradientEnd = computed(() => isBreak.value ? '#95de64' : '#818cf8')
+// 动态主题判定
+const isDark = computed(() => {
+  return typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+})
 
-const playMusic = () => {
-  if (audio) { audio.pause(); audio = null }
-  const track = musicList[currentMusic.value]
-  if (!track) return
-  audio = new Audio(track.url)
-  audio.loop = true
-  audio.volume = isMuted.value ? 0 : 0.3
-  audio.play().catch(() => {})
-  musicPlaying.value = true
-}
-
-const stopMusic = () => {
-  if (audio) { audio.pause(); audio = null }
-  musicPlaying.value = false
-}
-
-const toggleMute = () => { isMuted.value = !isMuted.value }
-
-const switchMusic = (index: number) => {
-  currentMusic.value = index
-  if (musicPlaying.value) playMusic()
-}
-
-const start = () => {
-  if (isRunning.value) return
-  isRunning.value = true
-  if (!musicPlaying.value && !isBreak.value) playMusic()
-  interval = setInterval(() => {
-    if (totalSeconds.value > 0) {
-      totalSeconds.value--
-    } else {
-      onComplete()
-    }
-  }, 1000)
-}
-
-const onComplete = () => {
-  stop()
-  playNotificationSound()
-  if (!isBreak.value) {
-    completedPomodoros.value++
-    todayPomodoros.value++
-    isBreak.value = true
-    const breakTime = (completedPomodoros.value % LONG_BREAK_INTERVAL === 0) ? LONG_BREAK : breakDuration.value * 60
-    totalSeconds.value = breakTime
-    stopMusic()
-    if (autoStartBreak.value) start()
-  } else {
-    isBreak.value = false
-    totalSeconds.value = workDuration.value * 60
-    if (autoStartBreak.value) { start(); playMusic() }
+// 颜色渐变动态响应
+const gradientStart = computed(() => {
+  if (timerStore.isBreak) return '#10b981'
+  if (timerStore.mode === 'exam') {
+    return timerStore.totalSeconds <= 15 * 60 ? '#f59e0b' : '#6366f1'
   }
-}
+  if (timerStore.mode === 'stopwatch') return '#8b5cf6'
+  const sub = subjects.find(s => s.name === timerStore.selectedSubject)
+  return sub ? sub.color : '#6366f1'
+})
 
-const stop = () => {
-  isRunning.value = false
-  if (interval) { clearInterval(interval); interval = null }
-}
+const gradientEnd = computed(() => {
+  if (timerStore.isBreak) return '#34d399'
+  if (timerStore.mode === 'exam') {
+    return timerStore.totalSeconds <= 15 * 60 ? '#fbbf24' : '#818cf8'
+  }
+  if (timerStore.mode === 'stopwatch') return '#a78bfa'
+  return '#818cf8'
+})
 
-const reset = () => {
-  stop(); stopMusic()
-  isBreak.value = false
-  totalSeconds.value = workDuration.value * 60
-}
+const currentSubjectObj = computed(() => {
+  return subjects.find(s => s.name === timerStore.selectedSubject) || subjects[0]
+})
 
-const playNotificationSound = () => {
+// 载入今日学习计划
+const loadTodayPlans = async () => {
   try {
-    const ctx = new AudioContext()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.connect(gain); gain.connect(ctx.destination)
-    osc.frequency.value = 880; gain.gain.value = 0.15
-    osc.start(); osc.stop(ctx.currentTime + 0.3)
-    setTimeout(() => {
-      const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain()
-      osc2.connect(gain2); gain2.connect(ctx.destination)
-      osc2.frequency.value = 1100; gain2.gain.value = 0.15
-      osc2.start(); osc2.stop(ctx.currentTime + 0.5)
-    }, 350)
-  } catch { /* silent */ }
-}
-
-const saveSettings = () => {
-  if (!isRunning.value) {
-    totalSeconds.value = isBreak.value ? breakDuration.value * 60 : workDuration.value * 60
+    const res = await api.get('/study-plans') as PlanItem[]
+    const today = new Date().toISOString().slice(0, 10)
+    todayPlans.value = (res || []).filter(p => p.date === today && !p.done)
+  } catch (e) {
+    console.error('Failed to load plans:', e)
   }
-  showSettings.value = false
 }
 
-watch(isMuted, (val) => { if (audio) audio.volume = val ? 0 : 0.3 })
-onUnmounted(() => { stop(); stopMusic() })
+// 选择某项计划作为当前专注任务
+const selectPlan = (plan: PlanItem) => {
+  timerStore.selectedPlanId = plan.id
+  timerStore.selectedTaskName = plan.content
+  timerStore.setSubject(plan.subject)
+  ElMessage.success(`已锁定学习任务：【${plan.subject}】${plan.content}`)
+}
+
+// 清除关联任务
+const clearSelectedPlan = () => {
+  timerStore.selectedPlanId = null
+  timerStore.selectedTaskName = ''
+}
+
+// 模考预设快速选择
+const applyExamPreset = (preset: typeof examPresets[0]) => {
+  timerStore.examDuration = preset.duration
+  timerStore.setSubject(preset.subject)
+  timerStore.selectedTaskName = preset.label
+  timerStore.switchMode('exam')
+  ElMessage.success(`已切换为【${preset.label}】(${preset.duration}分钟)`)
+}
+
+// 切换白噪音
+const selectNoise = (trackId: string) => {
+  timerStore.setNoiseType(trackId)
+}
+
+// 打开设置
+const openSettings = () => {
+  tempWorkDur.value = timerStore.workDuration
+  tempBreakDur.value = timerStore.breakDuration
+  tempExamDur.value = timerStore.examDuration
+  tempAutoBreak.value = timerStore.autoStartBreak
+  showSettings.value = true
+}
+
+// 保存设置
+const saveSettings = () => {
+  timerStore.autoStartBreak = tempAutoBreak.value
+  timerStore.setDurations(tempWorkDur.value, tempBreakDur.value, tempExamDur.value)
+  showSettings.value = false
+  ElMessage.success('设置已保存')
+}
+
+// 切换全屏禅模式
+const toggleZenMode = () => {
+  timerStore.isZenMode = !timerStore.isZenMode
+}
+
+// 退出禅模式按 ESC
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && timerStore.isZenMode) {
+    timerStore.isZenMode = false
+  }
+}
+
+// 达成弹窗确认
+const handleConfirmComplete = async () => {
+  await timerStore.confirmCompletion(markPlanDoneChecked.value)
+  await loadTodayPlans()
+  if (activeTab.value === 'analytics') {
+    renderCharts()
+  }
+}
+
+// 删除专注记录
+const handleDeleteRecord = async (id: number) => {
+  try {
+    await ElMessageBox.confirm('确定要删除这条专注记录吗？', '删除提示', {
+      confirmButtonText: '删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    await api.del(`/focus-records/${id}`)
+    ElMessage.success('记录已删除')
+    await timerStore.fetchStats()
+    renderCharts()
+  } catch { /* cancel */ }
+}
+
+// 渲染 ECharts 图表
+const renderCharts = () => {
+  nextTick(() => {
+    renderSubjectChart()
+    renderTrendChart()
+  })
+}
+
+// 1. 学科专注时长环形图
+const renderSubjectChart = () => {
+  if (!subjectChartRef.value) return
+  if (subjectChart) subjectChart.dispose()
+  subjectChart = echarts.init(subjectChartRef.value)
+
+  const dark = isDark.value
+  const bySub = timerStore.stats.by_subject || []
+
+  const chartData = bySub.map(item => {
+    const subObj = subjects.find(s => s.name === item.subject)
+    return {
+      name: item.subject,
+      value: item.minutes,
+      itemStyle: { color: subObj ? subObj.color : '#6366f1' }
+    }
+  })
+
+  const option: echarts.EChartsOption = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: dark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.96)',
+      borderColor: dark ? 'rgba(255, 255, 255, 0.12)' : '#e2e8f0',
+      textStyle: { color: dark ? '#f8fafc' : '#1e293b' },
+      formatter: (params: unknown) => {
+        const p = params as { name: string; value: number; percent: number; marker: string }
+        return `${p.marker} <b>${p.name}</b><br/>专注时长：${p.value} 分钟 (${p.percent}%)`
+      }
+    },
+    legend: {
+      orient: 'vertical',
+      right: '5%',
+      top: 'middle',
+      textStyle: { color: dark ? '#94a3b8' : '#64748b', fontSize: 12 },
+      itemGap: 8
+    },
+    series: [
+      {
+        name: '学科专注',
+        type: 'pie',
+        radius: ['45%', '72%'],
+        center: ['38%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: dark ? '#131b2e' : '#fff',
+          borderWidth: 2
+        },
+        label: { show: false },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: dark ? '#f8fafc' : '#0f172a'
+          }
+        },
+        data: chartData.length > 0 ? chartData : [{ name: '暂无数据', value: 0 }]
+      }
+    ]
+  }
+  subjectChart.setOption(option)
+}
+
+// 2. 近 7 天趋势堆叠柱状图
+const renderTrendChart = () => {
+  if (!trendChartRef.value) return
+  if (trendChart) trendChart.dispose()
+  trendChart = echarts.init(trendChartRef.value)
+
+  const dark = isDark.value
+  const recent = timerStore.stats.recent_days || []
+  const xData = recent.map(r => r.date.slice(5)) // MM-DD
+  const yData = recent.map(r => r.minutes)
+
+  const option: echarts.EChartsOption = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: dark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.96)',
+      borderColor: dark ? 'rgba(255, 255, 255, 0.12)' : '#e2e8f0',
+      textStyle: { color: dark ? '#f8fafc' : '#1e293b' },
+      formatter: (params: unknown) => {
+        const p = Array.isArray(params) ? params[0] : params
+        return `<b>${p.axisValue}</b><br/>专注时长：${p.value} 分钟`
+      }
+    },
+    grid: { left: '4%', right: '4%', bottom: '8%', top: '15%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: xData,
+      axisLine: { lineStyle: { color: dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0' } },
+      axisLabel: { color: dark ? '#94a3b8' : '#64748b' }
+    },
+    yAxis: {
+      type: 'value',
+      name: '分钟',
+      nameTextStyle: { color: dark ? '#94a3b8' : '#64748b' },
+      axisLabel: { color: dark ? '#94a3b8' : '#64748b' },
+      splitLine: { lineStyle: { color: dark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' } }
+    },
+    series: [
+      {
+        name: '专注时长',
+        type: 'bar',
+        barWidth: '36%',
+        itemStyle: {
+          borderRadius: [6, 6, 0, 0],
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#6366f1' },
+            { offset: 1, color: '#818cf8' }
+          ])
+        },
+        data: yData
+      }
+    ]
+  }
+  trendChart.setOption(option)
+}
+
+// 页面挂载
+onMounted(async () => {
+  await timerStore.fetchStats()
+  await loadTodayPlans()
+  window.addEventListener('keydown', handleKeyDown)
+
+  // 监听暗色主题切换
+  themeObserver = new MutationObserver(() => {
+    if (activeTab.value === 'analytics') {
+      renderCharts()
+    }
+  })
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+  if (themeObserver) themeObserver.disconnect()
+  if (subjectChart) subjectChart.dispose()
+  if (trendChart) trendChart.dispose()
+})
 </script>
 
 <template>
-  <div class="timer-page">
-    <div class="timer-hero" :style="{ background: `linear-gradient(135deg, ${gradientStart}15 0%, ${gradientEnd}08 100%)` }">
-      <div class="hero-top">
-        <div class="status-pill" :class="{ break: isBreak }">
-          <span class="status-dot"></span>
-          {{ isBreak ? '休息中' : '专注中' }}
-        </div>
-        <el-button text circle @click="showSettings = true" class="settings-btn">
-          <el-icon size="18"><Setting /></el-icon>
-        </el-button>
+  <div class="timer-container" :class="{ 'is-zen-active': timerStore.isZenMode }">
+    <!-- 顶部主导航控制栏 -->
+    <div class="top-nav-bar">
+      <!-- 模式胶囊群组 -->
+      <div class="mode-tabs">
+        <button
+          type="button"
+          class="mode-tab-btn"
+          :class="{ active: timerStore.mode === 'pomodoro' }"
+          @click="timerStore.switchMode('pomodoro')"
+        >
+          <span>🍅</span>
+          <span class="mode-text">经典番茄</span>
+        </button>
+        <button
+          type="button"
+          class="mode-tab-btn"
+          :class="{ active: timerStore.mode === 'exam' }"
+          @click="timerStore.switchMode('exam')"
+        >
+          <span>📝</span>
+          <span class="mode-text">考场模拟</span>
+        </button>
+        <button
+          type="button"
+          class="mode-tab-btn"
+          :class="{ active: timerStore.mode === 'stopwatch' }"
+          @click="timerStore.switchMode('stopwatch')"
+        >
+          <span>⏱️</span>
+          <span class="mode-text">心流正向</span>
+        </button>
       </div>
 
-      <div class="ring-wrapper">
-        <svg class="progress-ring" viewBox="0 0 280 280">
-          <defs>
-            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" :stop-color="gradientStart" />
-              <stop offset="100%" :stop-color="gradientEnd" />
-            </linearGradient>
-          </defs>
-          <circle class="ring-bg" cx="140" cy="140" r="130" :stroke="ringBg" />
-          <circle
-            class="ring-progress"
-            cx="140" cy="140" r="130"
-            :stroke="'url(#ringGradient)'"
-            :stroke-dasharray="circumference"
-            :stroke-dashoffset="strokeDashoffset"
-            stroke-linecap="round"
-            transform="rotate(-90 140 140)"
-          />
-        </svg>
-        <div class="ring-content">
-          <div class="time-display">{{ minutes }}<span class="time-colon">:</span>{{ seconds }}</div>
-          <div class="time-label">{{ isBreak ? (completedPomodoros % LONG_BREAK_INTERVAL === 0 && completedPomodoros > 0 ? '长休息' : '短休息') : '保持专注' }}</div>
-        </div>
-      </div>
+      <!-- 右侧控制区：视图切换 + 全屏 + 设置 -->
+      <div class="nav-right-actions">
+        <el-radio-group v-model="activeTab" size="small" @change="renderCharts">
+          <el-radio-button value="timer">
+            <el-icon><Calendar /></el-icon> 专注工作台
+          </el-radio-button>
+          <el-radio-button value="analytics">
+            <el-icon><TrendCharts /></el-icon> 学情看板
+          </el-radio-button>
+        </el-radio-group>
 
-      <div class="action-row">
-        <button v-if="!isRunning" class="action-btn start-btn" @click="start">
-          <el-icon size="20"><VideoPlay /></el-icon>
-          <span>开始</span>
+        <button class="icon-tool-btn" @click="toggleZenMode" title="全屏禅模式 (Esc退出)">
+          <el-icon size="16"><FullScreen /></el-icon>
         </button>
-        <button v-else class="action-btn pause-btn" @click="stop">
-          <el-icon size="20"><VideoPause /></el-icon>
-          <span>暂停</span>
-        </button>
-        <button class="action-btn reset-btn" @click="reset">
-          <el-icon size="18"><RefreshLeft /></el-icon>
+        <button class="icon-tool-btn" @click="openSettings" title="番茄钟设置">
+          <el-icon size="16"><Setting /></el-icon>
         </button>
       </div>
     </div>
 
-    <div class="bottom-section">
-      <div class="music-panel">
-        <div class="music-header">
-          <span class="music-title">🎵 学习背景音</span>
-          <div class="music-btns">
-            <button v-if="!musicPlaying" class="icon-btn" @click="playMusic" title="播放">
-              <el-icon size="14"><VideoPlay /></el-icon>
-            </button>
-            <button v-else class="icon-btn active" @click="stopMusic" title="停止">
-              <el-icon size="14"><VideoPause /></el-icon>
-            </button>
-            <button class="icon-btn" :class="{ muted: isMuted }" @click="toggleMute" :title="isMuted ? '取消静音' : '静音'">
-              <el-icon size="14"><component :is="isMuted ? 'Mute' : 'Microphone'" /></el-icon>
-            </button>
+    <!-- 视图一：专注计时工作台 -->
+    <div v-show="activeTab === 'timer'" class="tab-content timer-main-layout">
+      <!-- 1. 学科与计划绑定选择条 -->
+      <div class="subject-bar-card">
+        <div class="subject-capsules">
+          <button
+            v-for="sub in subjects"
+            :key="sub.name"
+            class="subject-pill"
+            :class="{ active: timerStore.selectedSubject === sub.name }"
+            @click="timerStore.setSubject(sub.name)"
+          >
+            <span class="pill-emoji">{{ sub.emoji }}</span>
+            <span class="pill-name">{{ sub.name }}</span>
+          </button>
+        </div>
+
+        <!-- 联动今日学习计划选择器 -->
+        <div class="plan-linkage-row">
+          <div class="linkage-title">
+            <el-icon><Notebook /></el-icon>
+            <span>绑定今日任务：</span>
+          </div>
+
+          <div v-if="timerStore.selectedPlanId" class="active-task-tag">
+            <span class="task-badge">今日待办</span>
+            <span class="task-name">{{ timerStore.selectedTaskName }}</span>
+            <button class="task-clear-btn" @click="clearSelectedPlan" title="取消关联">×</button>
+          </div>
+
+          <div v-else class="plan-selector">
+            <el-dropdown trigger="click" @command="selectPlan">
+              <span class="plan-dropdown-trigger">
+                {{ todayPlans.length > 0 ? `可选任务 (${todayPlans.length}项)` : '今日暂无未完成计划' }}
+                <el-icon class="el-icon--right"><Right /></el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    v-for="plan in todayPlans"
+                    :key="plan.id"
+                    :command="plan"
+                  >
+                    <span class="plan-sub-tag">[{{ plan.subject }}]</span> {{ plan.content }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="todayPlans.length === 0" disabled>
+                    暂无待办计划，可直接在下方输入专注备注
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <el-input
+              v-model="timerStore.selectedTaskName"
+              placeholder="或输入本次专注目标（例如：导数小题集训）"
+              size="small"
+              class="task-quick-input"
+              clearable
+            />
           </div>
         </div>
-        <div class="music-tracks">
+
+        <!-- 模考预设快捷栏（考场模式特有） -->
+        <div v-if="timerStore.mode === 'exam'" class="exam-preset-bar">
+          <span class="preset-label">🏫 考场预设：</span>
           <button
-            v-for="(m, i) in musicList" :key="i"
-            class="track-btn"
-            :class="{ active: currentMusic === i }"
-            @click="switchMusic(i)"
+            v-for="preset in examPresets"
+            :key="preset.label"
+            class="preset-btn"
+            :class="{ active: timerStore.examDuration === preset.duration && timerStore.selectedSubject === preset.subject }"
+            @click="applyExamPreset(preset)"
           >
-            <span class="track-icon">{{ m.icon }}</span>
-            <span class="track-name">{{ m.name }}</span>
+            {{ preset.label }} ({{ preset.duration }}m)
           </button>
         </div>
       </div>
 
-      <div class="stats-row">
-        <div class="stat-item">
-          <div class="stat-emoji">🍅</div>
-          <div class="stat-val">{{ completedPomodoros }}</div>
-          <div class="stat-key">总番茄</div>
+      <!-- 2. 核心大表盘卡片 -->
+      <div
+        class="timer-hero-card"
+        :style="{
+          background: `linear-gradient(145deg, ${gradientStart}18 0%, ${gradientEnd}0a 100%)`
+        }"
+      >
+        <!-- 表盘顶部状态指示 -->
+        <div class="hero-status-pill" :class="{ 'is-break': timerStore.isBreak }">
+          <span class="status-pulse-dot"></span>
+          <span class="status-label">
+            {{ timerStore.isBreak ? '☕ 休息充电中' : (timerStore.mode === 'exam' ? '📝 全真模考计时中' : (timerStore.mode === 'stopwatch' ? '⏱️ 心流深度自习' : '🍅 专注自习中')) }}
+          </span>
+          <span class="subject-tag-chip">{{ currentSubjectObj.emoji }} {{ timerStore.selectedSubject }}</span>
         </div>
-        <div class="stat-item">
-          <div class="stat-emoji">📅</div>
-          <div class="stat-val">{{ todayPomodoros }}</div>
-          <div class="stat-key">今日</div>
+
+        <!-- SVG 环形进度条与数码时间 -->
+        <div class="ring-stage">
+          <svg class="progress-ring-svg" viewBox="0 0 280 280">
+            <defs>
+              <linearGradient id="timerRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" :stop-color="gradientStart" />
+                <stop offset="100%" :stop-color="gradientEnd" />
+              </linearGradient>
+            </defs>
+            <circle class="ring-track" cx="140" cy="140" r="132" />
+            <circle
+              class="ring-bar"
+              cx="140" cy="140" r="132"
+              stroke="url(#timerRingGradient)"
+              :stroke-dasharray="circumference"
+              :stroke-dashoffset="strokeDashoffset"
+              stroke-linecap="round"
+              transform="rotate(-90 140 140)"
+            />
+          </svg>
+
+          <!-- 环内翻页排版数码时钟 -->
+          <div class="ring-inner-display">
+            <div class="clock-numbers">
+              <span class="clock-digit">{{ timerStore.displayMinutes }}</span>
+              <span class="clock-colon">:</span>
+              <span class="clock-digit">{{ timerStore.displaySeconds }}</span>
+            </div>
+            <div class="clock-sublabel">
+              <template v-if="timerStore.mode === 'stopwatch'">已持续沉浸</template>
+              <template v-else-if="timerStore.isBreak">长息放松 · 喝口温水</template>
+              <template v-else-if="timerStore.mode === 'exam'">
+                {{ timerStore.totalSeconds <= 15 * 60 ? '⚠️ 剩余最后15分钟' : '高考标准全真模拟' }}
+              </template>
+              <template v-else>保持专注 · 攻坚克难</template>
+            </div>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-emoji">⏱️</div>
-          <div class="stat-val">{{ completedPomodoros * workDuration }}</div>
-          <div class="stat-key">专注分</div>
+
+        <!-- 操作按钮组合 -->
+        <div class="control-actions-row">
+          <!-- 正向计时模式 -->
+          <template v-if="timerStore.mode === 'stopwatch'">
+            <button
+              v-if="!timerStore.isRunning"
+              class="btn-primary-action start-btn"
+              @click="timerStore.start"
+            >
+              <el-icon size="20"><VideoPlay /></el-icon>
+              <span>开始心流</span>
+            </button>
+            <button
+              v-else
+              class="btn-primary-action pause-btn"
+              @click="timerStore.pause"
+            >
+              <el-icon size="20"><VideoPause /></el-icon>
+              <span>暂停</span>
+            </button>
+            <button
+              v-if="timerStore.stopwatchSeconds > 0"
+              class="btn-primary-action finish-btn"
+              @click="timerStore.finishStopwatch"
+            >
+              <el-icon size="18"><Check /></el-icon>
+              <span>结算入库</span>
+            </button>
+            <button class="btn-tool-action" @click="timerStore.reset" title="重置">
+              <el-icon size="18"><RefreshLeft /></el-icon>
+            </button>
+          </template>
+
+          <!-- 倒计时模式（番茄 / 模考） -->
+          <template v-else>
+            <button
+              v-if="!timerStore.isRunning"
+              class="btn-primary-action start-btn"
+              @click="timerStore.start"
+            >
+              <el-icon size="20"><VideoPlay /></el-icon>
+              <span>{{ timerStore.isBreak ? '开始休息' : '开始专注' }}</span>
+            </button>
+            <button
+              v-else
+              class="btn-primary-action pause-btn"
+              @click="timerStore.pause"
+            >
+              <el-icon size="20"><VideoPause /></el-icon>
+              <span>暂停</span>
+            </button>
+
+            <button
+              v-if="timerStore.isBreak"
+              class="btn-tool-action skip-btn"
+              @click="timerStore.skipBreak"
+              title="跳过休息直接进入下一轮"
+            >
+              <el-icon size="18"><Right /></el-icon>
+              <span>跳过休息</span>
+            </button>
+
+            <button class="btn-tool-action" @click="timerStore.reset" title="重置计时">
+              <el-icon size="18"><RefreshLeft /></el-icon>
+            </button>
+          </template>
         </div>
-        <div class="stat-item tip-item">
-          <div class="tip-text">每{{ LONG_BREAK_INTERVAL }}个番茄长休{{ LONG_BREAK / 60 }}分钟</div>
+      </div>
+
+      <!-- 3. 声学自习室面板（离线白噪音与音量滑块） -->
+      <div class="sound-hub-card">
+        <div class="sound-header">
+          <div class="sound-title">
+            <el-icon><Headset /></el-icon>
+            <span>声学自习室 · 纯净白噪音</span>
+          </div>
+
+          <!-- 音量控制滑块 -->
+          <div class="sound-volume-ctrl">
+            <button class="mute-btn" @click="timerStore.toggleMute">
+              <span v-if="timerStore.isMuted">🔇</span>
+              <span v-else>🔊</span>
+            </button>
+            <el-slider
+              v-model="timerStore.volume"
+              :min="0"
+              :max="1"
+              :step="0.05"
+              :show-tooltip="false"
+              class="volume-slider"
+              @input="timerStore.setVolume"
+            />
+          </div>
+        </div>
+
+        <div class="noise-track-grid">
+          <button
+            v-for="track in soundTracks"
+            :key="track.id"
+            class="noise-pill-btn"
+            :class="{ active: timerStore.noiseType === track.id }"
+            @click="selectNoise(track.id)"
+          >
+            <span class="track-icon">{{ track.icon }}</span>
+            <span class="track-label">{{ track.name }}</span>
+            <span v-if="timerStore.isRunning && timerStore.noiseType === track.id" class="playing-indicator"></span>
+          </button>
         </div>
       </div>
     </div>
 
-    <el-dialog v-model="showSettings" title="⏱ 番茄钟设置" width="380px" destroy-on-close>
-      <el-form label-width="90px">
-        <el-form-item label="专注时长">
-          <el-input-number v-model="workDuration" :min="15" :max="60" :step="5" />
-          <span class="unit">分钟</span>
+    <!-- 视图二：专注学情看板 -->
+    <div v-show="activeTab === 'analytics'" class="tab-content analytics-layout">
+      <!-- 四大核心指标卡 -->
+      <div class="stats-overview-grid">
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">⏱️</div>
+          <div class="metric-info">
+            <div class="metric-label">今日专注时长</div>
+            <div class="metric-val">{{ timerStore.stats.today_minutes }} <span class="unit">分钟</span></div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">🍅</div>
+          <div class="metric-info">
+            <div class="metric-label">今日达成番茄</div>
+            <div class="metric-val">{{ timerStore.stats.today_pomodoros }} <span class="unit">个</span></div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">📅</div>
+          <div class="metric-info">
+            <div class="metric-label">累计坚持天数</div>
+            <div class="metric-val">{{ timerStore.stats.active_days }} <span class="unit">天</span></div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">🏆</div>
+          <div class="metric-info">
+            <div class="metric-label">累计专注投入</div>
+            <div class="metric-val">{{ timerStore.stats.total_minutes }} <span class="unit">分钟</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 双 ECharts 图表行 -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">各学科专注时长分布</span>
+          </div>
+          <div ref="subjectChartRef" class="echarts-container"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">近 7 天每日专注走势</span>
+          </div>
+          <div ref="trendChartRef" class="echarts-container"></div>
+        </div>
+      </div>
+
+      <!-- 专注历史流水明细表 -->
+      <div class="history-table-card">
+        <div class="table-header">
+          <span class="table-title">📜 专注明细流水账 (最近 {{ timerStore.recentRecords.length }} 次)</span>
+        </div>
+
+        <el-table :data="timerStore.recentRecords" stripe style="width: 100%" max-height="400">
+          <el-table-column prop="completed_at" label="完成时间" width="170" />
+          <el-table-column label="学科" width="110">
+            <template #default="{ row }">
+              <el-tag size="small" :style="{ color: '#6366f1' }">
+                {{ row.subject }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="模式" width="110">
+            <template #default="{ row }">
+              <span v-if="row.mode === 'exam'">📝 考场模拟</span>
+              <span v-else-if="row.mode === 'stopwatch'">⏱️ 心流正向</span>
+              <span v-else>🍅 经典番茄</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="duration_minutes" label="专注时长" width="110">
+            <template #default="{ row }">
+              <b>{{ row.duration_minutes }}</b> 分钟
+            </template>
+          </el-table-column>
+          <el-table-column prop="task_name" label="专注目标 / 关联任务" min-width="200" />
+          <el-table-column label="操作" width="80" align="center">
+            <template #default="{ row }">
+              <el-button
+                type="danger"
+                text
+                size="small"
+                @click="handleDeleteRecord(row.id)"
+              >
+                <el-icon><Delete /></el-icon>
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+
+    <!-- 全屏禅模式遮罩 (Zen Mode) -->
+    <transition name="zen-fade">
+      <div v-if="timerStore.isZenMode" class="zen-mode-overlay">
+        <!-- 退出提示 -->
+        <button class="zen-exit-btn" @click="toggleZenMode">
+          <span>退出全屏 (ESC)</span>
+        </button>
+
+        <!-- 禅模式核心大数字与发光进度圈 -->
+        <div class="zen-center-box">
+          <div class="zen-subject-badge">
+            {{ currentSubjectObj.emoji }} {{ timerStore.selectedSubject }}
+            <span v-if="timerStore.selectedTaskName" class="zen-task-text">· {{ timerStore.selectedTaskName }}</span>
+          </div>
+
+          <div class="zen-time-display">
+            <span class="zen-digit">{{ timerStore.displayMinutes }}</span>
+            <span class="zen-colon">:</span>
+            <span class="zen-digit">{{ timerStore.displaySeconds }}</span>
+          </div>
+
+          <div class="zen-progress-bar-wrap">
+            <div class="zen-progress-bar-fill" :style="{ width: `${timerStore.progress}%` }"></div>
+          </div>
+
+          <!-- 禅模式悬浮精简控制 -->
+          <div class="zen-controls">
+            <button
+              v-if="!timerStore.isRunning"
+              class="zen-btn play"
+              @click="timerStore.start"
+            >
+              <el-icon size="24"><VideoPlay /></el-icon>
+            </button>
+            <button
+              v-else
+              class="zen-btn pause"
+              @click="timerStore.pause"
+            >
+              <el-icon size="24"><VideoPause /></el-icon>
+            </button>
+            <button class="zen-btn" @click="timerStore.reset">
+              <el-icon size="20"><RefreshLeft /></el-icon>
+            </button>
+            <button class="zen-btn" @click="timerStore.toggleMute">
+              <span v-if="timerStore.isMuted">🔇</span>
+              <span v-else>🔊</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- 达成恭喜弹窗（含关联学习计划打钩确认） -->
+    <el-dialog
+      v-model="timerStore.showCompletionModal"
+      title="🎉 专注达成！"
+      width="420px"
+      :show-close="false"
+      class="completion-dialog"
+    >
+      <div class="completion-dialog-content">
+        <div class="celebrate-badge">🏆 坚持就是胜利</div>
+        <div class="celebrate-title">
+          恭喜完成本次在【{{ timerStore.lastFinishedRecord?.subject }}】的专注！
+        </div>
+        <div class="celebrate-meta">
+          本次投入专注时长：<b>{{ timerStore.lastFinishedRecord?.durationMinutes }}</b> 分钟
+        </div>
+
+        <!-- 联动计划打钩 -->
+        <div v-if="timerStore.lastFinishedRecord?.planId" class="plan-hook-box">
+          <el-checkbox v-model="markPlanDoneChecked">
+            同时标记今日学习计划为已完成：
+            <div class="hook-task-name">「{{ timerStore.lastFinishedRecord?.taskName }}」</div>
+          </el-checkbox>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button type="primary" size="large" style="width: 100%" @click="handleConfirmComplete">
+          好极了，继续保持！
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 番茄钟偏好设置弹窗 -->
+    <el-dialog v-model="showSettings" title="⏱ 番茄钟与模考偏好设置" width="400px">
+      <el-form label-width="110px">
+        <el-form-item label="番茄专注时长">
+          <el-input-number v-model="tempWorkDur" :min="10" :max="60" :step="5" />
+          <span class="input-unit">分钟</span>
         </el-form-item>
-        <el-form-item label="短休息">
-          <el-input-number v-model="breakDuration" :min="3" :max="15" :step="1" />
-          <span class="unit">分钟</span>
+        <el-form-item label="短休息时长">
+          <el-input-number v-model="tempBreakDur" :min="3" :max="20" :step="1" />
+          <span class="input-unit">分钟</span>
         </el-form-item>
-        <el-form-item label="自动切换">
-          <el-switch v-model="autoStartBreak" />
+        <el-form-item label="模考默认时长">
+          <el-input-number v-model="tempExamDur" :min="30" :max="180" :step="15" />
+          <span class="input-unit">分钟</span>
+        </el-form-item>
+        <el-form-item label="自动开始休息">
+          <el-switch v-model="tempAutoBreak" />
         </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="showSettings = false">取消</el-button>
-        <el-button type="primary" @click="saveSettings">保存</el-button>
+        <el-button type="primary" @click="saveSettings">保存偏好</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <style scoped>
-.timer-page {
-  max-width: 540px;
+.timer-container {
+  max-width: 960px;
   margin: 0 auto;
+  padding-bottom: 40px;
 }
 
-.timer-hero {
-  border-radius: 20px;
-  padding: 28px 32px 32px;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.hero-top {
+/* 顶部导航控制条 */
+.top-nav-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.status-pill {
+.mode-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-card, #ffffff);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.mode-tab-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
-  border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
-  background: rgba(99,102,241,0.1);
+  color: var(--text-regular, #64748b);
+  transition: all 0.2s;
+}
+
+.mode-tab-btn.active {
+  background: var(--primary-color, #6366f1);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-tool-btn {
+  border: none;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-regular, #64748b);
+  transition: all 0.2s;
+}
+
+.icon-tool-btn:hover {
+  color: var(--primary-color, #6366f1);
+  border-color: var(--primary-color, #6366f1);
+}
+
+/* 1. 学科与计划绑定条 */
+.subject-bar-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.subject-capsules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.subject-pill {
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-page, #f8fafc);
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-regular, #475569);
+  transition: all 0.2s;
+}
+
+.subject-pill:hover {
+  border-color: #6366f1;
   color: #6366f1;
 }
 
-.status-pill.break {
-  background: rgba(82,196,26,0.1);
-  color: #52c41a;
+.subject-pill.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
-.status-dot {
-  width: 7px;
-  height: 7px;
+.plan-linkage-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color, #e2e8f0);
+}
+
+.linkage-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main, #334155);
+}
+
+.plan-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.plan-dropdown-trigger {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366f1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.task-quick-input {
+  max-width: 320px;
+}
+
+.active-task-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.task-badge {
+  font-size: 11px;
+  background: #10b981;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.task-name {
+  font-size: 13px;
+  color: var(--text-main, #0f172a);
+  font-weight: 600;
+}
+
+.task-clear-btn {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.plan-sub-tag {
+  color: #6366f1;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* 模考预设 */
+.exam-preset-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color, #e2e8f0);
+  flex-wrap: wrap;
+}
+
+.preset-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub, #64748b);
+}
+
+.preset-btn {
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-regular, #475569);
+  transition: all 0.2s;
+}
+
+.preset-btn.active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 2. 核心大表盘卡片 */
+.timer-hero-card {
+  border-radius: 24px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  padding: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: var(--theme-transition);
+}
+
+.hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+  margin-bottom: 16px;
+}
+
+.hero-status-pill.is-break {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.status-pulse-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: currentColor;
-  animation: pulse 1.5s infinite;
+  animation: pulse 1.6s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+.subject-tag-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
 }
 
-.settings-btn {
-  color: #909399;
-}
-
-.ring-wrapper {
+.ring-stage {
   position: relative;
-  width: 280px;
-  height: 280px;
-  margin: 16px auto 24px;
+  width: 290px;
+  height: 290px;
+  margin: 10px auto 26px;
 }
 
-.progress-ring {
+.progress-ring-svg {
   width: 100%;
   height: 100%;
 }
 
-.ring-bg {
+.ring-track {
   fill: none;
-  stroke-width: 6;
+  stroke: rgba(0, 0, 0, 0.05);
+  stroke-width: 8;
 }
 
-.ring-progress {
-  fill: none;
-  stroke-width: 6;
-  transition: stroke-dashoffset 1s linear;
+.dark .ring-track {
+  stroke: rgba(255, 255, 255, 0.06);
 }
 
-.ring-content {
+.ring-bar {
+  fill: none;
+  stroke-width: 8;
+  transition: stroke-dashoffset 0.5s linear;
+}
+
+.ring-inner-display {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.time-display {
-  font-size: 56px;
+.clock-numbers {
+  font-size: 64px;
   font-weight: 800;
-  color: var(--text-main, #1a1a2e);
+  color: var(--text-main, #0f172a);
   letter-spacing: -2px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.time-colon {
-  opacity: 0.4;
+.clock-colon {
+  opacity: 0.5;
   margin: 0 2px;
 }
 
-.time-label {
+.clock-sublabel {
   font-size: 13px;
-  color: var(--text-sub, #909399);
-  margin-top: 8px;
+  color: var(--text-sub, #64748b);
+  margin-top: 10px;
   font-weight: 500;
 }
 
-.action-row {
+.control-actions-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
-.action-btn {
+.btn-primary-action {
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 15px;
   font-weight: 600;
-  transition: all 0.25s;
   color: #fff;
-  border-radius: 28px;
+  border-radius: 30px;
+  padding: 12px 36px;
+  transition: all 0.25s;
 }
 
 .start-btn {
   background: linear-gradient(135deg, #6366f1, #818cf8);
-  padding: 12px 36px;
-  box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
 }
 
 .start-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.45);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
 }
 
 .pause-btn {
   background: linear-gradient(135deg, #f59e0b, #fbbf24);
-  padding: 12px 36px;
-  box-shadow: 0 4px 16px rgba(245,158,11,0.35);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
 }
 
-.pause-btn:hover {
-  transform: translateY(-2px);
+.finish-btn {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
 }
 
-.reset-btn {
-  background: rgba(0,0,0,0.06);
-  color: var(--text-regular, #606266);
-  padding: 12px 16px;
-}
-
-.reset-btn:hover {
-  background: rgba(0,0,0,0.1);
-}
-
-.bottom-section {
+.btn-tool-action {
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-regular, #475569);
+  padding: 12px 18px;
+  border-radius: 24px;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-.music-panel {
-  background: var(--bg-card, #fff);
+.btn-tool-action:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+/* 3. 声学自习室面板 */
+.sound-hub-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 16px;
-  padding: 16px 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  transition: var(--theme-transition);
+  padding: 18px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-.music-header {
+.sound-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.music-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-main, #303133);
-}
-
-.music-btns {
-  display: flex;
-  gap: 4px;
-}
-
-.icon-btn {
-  border: none;
-  background: #f0f2f5;
-  border-radius: 8px;
-  width: 30px;
-  height: 30px;
+.sound-title {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #606266;
-  transition: all 0.2s;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
 }
 
-.icon-btn:hover { background: #e4e7ed; }
-.icon-btn.active { background: #6366f1; color: #fff; }
-.icon-btn.muted { background: #fef0f0; color: #f56c6c; }
-
-.music-tracks {
+.sound-volume-ctrl {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 160px;
+}
+
+.mute-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.volume-slider {
+  flex: 1;
+}
+
+.noise-track-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
   gap: 8px;
 }
 
-.track-btn {
-  flex: 1;
-  border: 2px solid #f0f2f5;
-  background: #fff;
-  border-radius: 12px;
-  padding: 10px 6px;
+.noise-pill-btn {
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-page, #f8fafc);
+  border-radius: 10px;
+  padding: 8px 10px;
   cursor: pointer;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-regular, #475569);
   transition: all 0.2s;
+  position: relative;
 }
 
-.track-btn:hover {
-  border-color: #d5d8dc;
-}
-
-.track-btn.active {
+.noise-pill-btn:hover {
   border-color: #6366f1;
-  background: rgba(99,102,241,0.04);
 }
 
-.track-icon {
-  font-size: 20px;
-  display: block;
-  margin-bottom: 4px;
-}
-
-.track-name {
-  font-size: 11px;
-  color: #606266;
-}
-
-.track-btn.active .track-name {
+.noise-pill-btn.active {
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.08);
   color: #6366f1;
   font-weight: 600;
 }
 
-.stats-row {
+.playing-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  animation: pulse 1s infinite;
+}
+
+/* 学情看板布局 */
+.analytics-layout {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.stat-item {
-  flex: 1;
-  background: #fff;
-  border-radius: 14px;
-  padding: 14px 10px;
-  text-align: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+.stats-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
-.stat-emoji {
-  font-size: 20px;
-  margin-bottom: 2px;
+@media (max-width: 768px) {
+  .stats-overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.stat-val {
-  font-size: 24px;
-  font-weight: 700;
-  color: #303133;
-  line-height: 1.2;
+.metric-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.stat-key {
-  font-size: 11px;
-  color: #909399;
-  margin-top: 2px;
-}
-
-.tip-item {
+.metric-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
+  font-size: 22px;
+  flex-shrink: 0;
 }
 
-.tip-text {
+.metric-label {
   font-size: 12px;
-  color: #909399;
-  line-height: 1.5;
+  color: var(--text-sub, #64748b);
+  margin-bottom: 4px;
 }
 
-.unit {
-  margin-left: 8px;
-  color: #909399;
+.metric-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+}
+
+.metric-val .unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-sub, #94a3b8);
+}
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.chart-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+  margin-bottom: 12px;
+}
+
+.echarts-container {
+  width: 100%;
+  height: 260px;
+}
+
+.history-table-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.table-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+  margin-bottom: 12px;
+}
+
+/* 全屏禅模式 (Zen Mode) */
+.zen-mode-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3000;
+  background: radial-gradient(circle at center, #1e1b4b 0%, #09090b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.zen-exit-btn {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
   font-size: 13px;
+  transition: all 0.2s;
+}
+
+.zen-exit-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.zen-center-box {
+  text-align: center;
+  max-width: 600px;
+}
+
+.zen-subject-badge {
+  font-size: 16px;
+  font-weight: 600;
+  color: #a5b4fc;
+  margin-bottom: 16px;
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.15);
+  padding: 6px 18px;
+  border-radius: 20px;
+}
+
+.zen-task-text {
+  color: #e2e8f0;
+}
+
+.zen-time-display {
+  font-size: 120px;
+  font-weight: 800;
+  letter-spacing: -4px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+}
+
+.zen-colon {
+  opacity: 0.6;
+  margin: 0 4px;
+}
+
+.zen-progress-bar-wrap {
+  width: 280px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin: 32px auto;
+  overflow: hidden;
+}
+
+.zen-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  box-shadow: 0 0 10px #6366f1;
+  transition: width 0.5s ease;
+}
+
+.zen-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.zen-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 20px;
+}
+
+.zen-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+.zen-btn.play {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.zen-btn.pause {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+/* 达成弹窗 */
+.completion-dialog-content {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.celebrate-badge {
+  font-size: 14px;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 8px;
+}
+
+.celebrate-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  margin-bottom: 12px;
+}
+
+.celebrate-meta {
+  font-size: 14px;
+  color: var(--text-regular, #475569);
+  margin-bottom: 20px;
+}
+
+.plan-hook-box {
+  background: var(--bg-page, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+}
+
+.hook-task-name {
+  font-weight: 600;
+  color: #6366f1;
+  margin-top: 4px;
+  padding-left: 24px;
+}
+
+.input-unit {
+  margin-left: 8px;
+  color: var(--text-sub, #94a3b8);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.zen-fade-enter-active,
+.zen-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.zen-fade-enter-from,
+.zen-fade-leave-to {
+  opacity: 0;
 }
 </style>
