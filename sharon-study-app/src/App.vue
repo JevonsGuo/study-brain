@@ -61,13 +61,15 @@ const toggleTheme = () => {
   setTheme(!isDark.value)
 }
 
-const activeMenu = computed(() => route.path)
+const activeMenu = computed(() => {
+  if (route.path.startsWith('/subjects')) return '/subjects'
+  return route.path
+})
 
 const menuItems = [
   { index: '/home', icon: 'HomeFilled', title: '首页' },
-  { index: '/knowledge', icon: 'Reading', title: '知识库' },
+  { index: '/subjects', icon: 'Reading', title: '学科中心' },
   { index: '/study-plan', icon: 'Calendar', title: '学习计划' },
-  { index: '/wrong-book', icon: 'Notebook', title: '错题本' },
   { index: '/word-card', icon: 'Postcard', title: '单词卡' },
   { index: '/grade-tracker', icon: 'TrendCharts', title: '成绩追踪' },
   { index: '/timer', icon: 'Timer', title: '番茄钟' },

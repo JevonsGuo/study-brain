@@ -54,6 +54,7 @@ function initTables() {
       reason TEXT NOT NULL,
       mastery_status TEXT NOT NULL DEFAULT 'unmastered',
       review_count INTEGER NOT NULL DEFAULT 0,
+      knowledge_point_id INTEGER DEFAULT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
@@ -175,6 +176,16 @@ function initDailyConfig() {
 }
 
 const MIGRATIONS = [
+  {
+    name: '011_wrong_items_knowledge_point',
+    up: () => {
+      const columns = db.prepare("PRAGMA table_info(wrong_items)").all().map(c => c.name)
+      if (!columns.includes('knowledge_point_id')) {
+        db.exec("ALTER TABLE wrong_items ADD COLUMN knowledge_point_id INTEGER DEFAULT NULL")
+      }
+      db.exec("CREATE INDEX IF NOT EXISTS idx_wrong_items_knowledge_point_id ON wrong_items(knowledge_point_id)")
+    }
+  },
   {
     name: '010_focus_records',
     up: () => {

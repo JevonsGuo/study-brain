@@ -13,19 +13,19 @@ const router = createRouter({
       component: () => import('../views/Home/index.vue'),
     },
     {
+      path: '/subjects',
+      name: 'SubjectHub',
+      component: () => import('../views/SubjectHub/index.vue'),
+    },
+    {
+      path: '/subjects/:subject',
+      name: 'SubjectWorkbench',
+      component: () => import('../views/SubjectHub/index.vue'),
+    },
+    {
       path: '/study-plan',
       name: 'StudyPlan',
       component: () => import('../views/StudyPlan/index.vue'),
-    },
-    {
-      path: '/wrong-book',
-      name: 'WrongBook',
-      component: () => import('../views/WrongBook/index.vue'),
-    },
-    {
-      path: '/wrong-book/:subject',
-      name: 'WrongBookSubject',
-      component: () => import('../views/WrongBook/index.vue'),
     },
     {
       path: '/word-card',
@@ -42,20 +42,36 @@ const router = createRouter({
       name: 'Timer',
       component: () => import('../views/Timer/index.vue'),
     },
+
+    // 历史路径平滑重定向 (保证老链接与书签 100% 兼容)
     {
       path: '/knowledge',
-      name: 'Knowledge',
-      component: () => import('../views/Knowledge/index.vue'),
+      redirect: { path: '/subjects', query: { tab: 'knowledge' } },
     },
     {
       path: '/knowledge/:subject',
-      name: 'KnowledgeSubject',
-      component: () => import('../views/Knowledge/index.vue'),
+      redirect: (to) => ({
+        path: `/subjects/${to.params.subject}`,
+        query: { tab: 'knowledge' },
+      }),
     },
     {
       path: '/knowledge/:subject/:book',
-      name: 'KnowledgeBook',
-      component: () => import('../views/Knowledge/index.vue'),
+      redirect: (to) => ({
+        path: `/subjects/${to.params.subject}`,
+        query: { tab: 'knowledge', book: to.params.book },
+      }),
+    },
+    {
+      path: '/wrong-book',
+      redirect: { path: '/subjects', query: { tab: 'wrong-book' } },
+    },
+    {
+      path: '/wrong-book/:subject',
+      redirect: (to) => ({
+        path: `/subjects/${to.params.subject}`,
+        query: { tab: 'wrong-book' },
+      }),
     },
   ],
 })

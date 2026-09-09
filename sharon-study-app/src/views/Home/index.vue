@@ -37,9 +37,8 @@ const progressPct = computed(() => {
 })
 
 const modules = [
-  { title: '知识库', desc: '各学科核心知识点', icon: 'Reading', color: '#13c2c2', path: '/knowledge' },
+  { title: '学科中心', desc: '9科考点重点与错题靶向', icon: 'Reading', color: '#13c2c2', path: '/subjects' },
   { title: '学习计划', desc: '制定和管理每日学习任务', icon: 'Calendar', color: '#1890ff', path: '/study-plan' },
-  { title: '错题本', desc: '记录错题，针对性复习', icon: 'Notebook', color: '#f5222d', path: '/wrong-book' },
   { title: '单词卡', desc: '英语单词记忆与复习', icon: 'Postcard', color: '#52c41a', path: '/word-card' },
   { title: '成绩追踪', desc: '记录成绩，可视化分析', icon: 'TrendCharts', color: '#722ed1', path: '/grade-tracker' },
   { title: '番茄钟', desc: '专注计时，高效学习', icon: 'Timer', color: '#fa8c16', path: '/timer' },
