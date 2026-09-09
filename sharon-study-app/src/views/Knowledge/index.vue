@@ -12,9 +12,14 @@ import {
   type TextbookBook
 } from '../../utils/textbookCatalog'
 import {
+  getTopicsForSubject,
+  type GaokaoTopic
+} from '../../utils/gaokaoTopics'
+import {
   Search, Plus, Edit, Delete, VideoPlay,
   FolderOpened, Compass, TopRight, ArrowLeft,
-  Collection
+  Collection, Star, StarFilled, Check,
+  Reading, Aim, RefreshRight
 } from '@element-plus/icons-vue'
 
 interface KnowledgePoint {
@@ -45,8 +50,8 @@ interface LearningResource {
 const route = useRoute()
 const router = useRouter()
 
-// 模式控制：'shelf' (教材书架) | 'reader' (沉浸式阅读器)
-const currentMode = ref<'shelf' | 'reader'>('shelf')
+// 模式控制：'topics' (高考核心专题归集) | 'shelf' (教材书架) | 'reader' (沉浸式阅读器)
+const currentMode = ref<'topics' | 'shelf' | 'reader'>('topics')
 
 // 1. 学科与分册状态
 const activeSubject = ref('数学')
@@ -61,18 +66,24 @@ const shelfGradeFilter = ref<'全部' | '高一' | '高二' | '高三'>('全部'
 const activeBook = ref('必修第一册')
 const activeChapter = ref('全部')
 
-// 2. 知识点数据
+// 2. 专题归集状态
+const activeTopicId = ref<string>('all')
+const topicFilterStatus = ref<'all' | 'starred' | 'mastered' | 'unmastered'>('all')
+const starredPointIds = ref<Set<number>>(new Set())
+const masteredPointIds = ref<Set<number>>(new Set())
+
+// 3. 知识点全量数据
 const points = ref<KnowledgePoint[]>([])
 const loadingPoints = ref(false)
 const searchQuery = ref('')
 const expandedPointIds = ref<Set<number>>(new Set())
 
-// 3. 统计数据（学科、分册、章节考点计数）
+// 4. 统计数据（学科、分册、章节考点计数）
 const subjectCounts = ref<Record<string, number>>({})
 const bookCounts = ref<Record<string, number>>({})
 const chapterCounts = ref<Record<string, number>>({})
 
-// 4. 学习资源与抽屉
+// 5. 学习资源与抽屉
 const resources = ref<LearningResource[]>([])
 const resourceDrawerVisible = ref(false)
 const resourceManageMode = ref(false)
@@ -81,7 +92,7 @@ const resourceDialogTitle = ref('添加学习资源')
 const editingResource = ref<LearningResource | null>(null)
 const resourceForm = ref({ category: 'video', name: '', desc: '', url: '' })
 
-// 5. 知识点弹窗表单
+// 6. 知识点弹窗表单
 const pointDialogVisible = ref(false)
 const pointDialogTitle = ref('添加知识点')
 const editingPoint = ref<KnowledgePoint | null>(null)
@@ -99,10 +110,115 @@ const pointForm = ref({
   sort_order: 0
 })
 
-// 6. B站视频内嵌预览弹窗
+// 7. B站视频内嵌预览弹窗
 const videoModalVisible = ref(false)
 const currentVideoTitle = ref('')
 const currentVideoEmbedUrl = ref('')
+
+// 本地持久化：标星与掌握状态
+const loadPersistedStatuses = () => {
+  try {
+    const rawStarred = localStorage.getItem('sharon_starred_points')
+    if (rawStarred) {
+      starredPointIds.value = new Set(JSON.parse(rawStarred))
+    }
+    const rawMastered = localStorage.getItem('sharon_mastered_points')
+    if (rawMastered) {
+      masteredPointIds.value = new Set(JSON.parse(rawMastered))
+    }
+  } catch (e) {
+    console.error('Failed to parse persisted point statuses', e)
+  }
+}
+
+const toggleStar = (id: number) => {
+  if (starredPointIds.value.has(id)) {
+    starredPointIds.value.delete(id)
+  } else {
+    starredPointIds.value.add(id)
+  }
+  localStorage.setItem('sharon_starred_points', JSON.stringify(Array.from(starredPointIds.value)))
+}
+
+const toggleMastered = (id: number) => {
+  if (masteredPointIds.value.has(id)) {
+    masteredPointIds.value.delete(id)
+  } else {
+    masteredPointIds.value.add(id)
+  }
+  localStorage.setItem('sharon_mastered_points', JSON.stringify(Array.from(masteredPointIds.value)))
+}
+
+// 当前学科的高考核心专题列表
+const currentSubjectTopics = computed<GaokaoTopic[]>(() => {
+  return getTopicsForSubject(activeSubject.value, points.value)
+})
+
+const activeTopicObj = computed<GaokaoTopic | null>(() => {
+  if (activeTopicId.value === 'all') return null
+  return currentSubjectTopics.value.find(t => t.id === activeTopicId.value) || null
+})
+
+const getPointTopic = (p: KnowledgePoint): GaokaoTopic | undefined => {
+  return currentSubjectTopics.value.find(t => t.match(p))
+}
+
+const getTopicPointCount = (topicId: string): number => {
+  if (topicId === 'all') return points.value.length
+  const topic = currentSubjectTopics.value.find(t => t.id === topicId)
+  if (!topic) return 0
+  return points.value.filter(p => topic.match(p)).length
+}
+
+const starredCount = computed(() => {
+  return points.value.filter(p => starredPointIds.value.has(p.id)).length
+})
+
+const masteredCount = computed(() => {
+  return points.value.filter(p => masteredPointIds.value.has(p.id)).length
+})
+
+const unmasteredCount = computed(() => {
+  return Math.max(0, points.value.length - masteredCount.value)
+})
+
+// 高考核心专题模式下展示的知识点
+const thematicDisplayPoints = computed<KnowledgePoint[]>(() => {
+  let list = points.value
+
+  // 1. 专题筛选
+  if (activeTopicId.value !== 'all') {
+    const topic = currentSubjectTopics.value.find(t => t.id === activeTopicId.value)
+    if (topic) {
+      list = list.filter(p => topic.match(p))
+    }
+  }
+
+  // 2. 状态筛选 (标星 / 掌握)
+  if (topicFilterStatus.value === 'starred') {
+    list = list.filter(p => starredPointIds.value.has(p.id))
+  } else if (topicFilterStatus.value === 'mastered') {
+    list = list.filter(p => masteredPointIds.value.has(p.id))
+  } else if (topicFilterStatus.value === 'unmastered') {
+    list = list.filter(p => !masteredPointIds.value.has(p.id))
+  }
+
+  // 3. 关键词过滤
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.trim().toLowerCase()
+    list = list.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      (p.content && p.content.toLowerCase().includes(q)) ||
+      (p.key_formulas && p.key_formulas.toLowerCase().includes(q)) ||
+      (p.tips && p.tips.toLowerCase().includes(q)) ||
+      (p.visual_desc && p.visual_desc.toLowerCase().includes(q)) ||
+      (p.chapter && p.chapter.toLowerCase().includes(q)) ||
+      (p.book && p.book.toLowerCase().includes(q))
+    )
+  }
+
+  return list.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+})
 
 // 书架展示的分册列表（按筛选年级）
 const filteredBooks = computed<TextbookBook[]>(() => {
@@ -113,11 +229,10 @@ const filteredBooks = computed<TextbookBook[]>(() => {
   return currentCatalog.value.books.filter(b => b.grade === shelfGradeFilter.value)
 })
 
-// 按年级分组的教材列表（在书架中整齐展示）
+// 按年级分组的教材列表
 const groupedBooksByGrade = computed(() => {
   const books = filteredBooks.value
   const grades: Array<{ grade: '高一' | '高二' | '高三'; title: string; books: TextbookBook[] }> = []
-
   const order: Array<'高一' | '高二' | '高三'> = ['高一', '高二', '高三']
   for (const g of order) {
     const list = books.filter(b => b.grade === g)
@@ -164,7 +279,7 @@ const getChapterCount = (ch: string): number => {
   return chapterCounts.value[`${activeBook.value}__${ch}`] || 0
 }
 
-// 当前阅读器展示的知识点
+// 阅读器模式展示的知识点
 const displayPoints = computed<KnowledgePoint[]>(() => {
   let list = points.value.filter(p => p.book === activeBook.value)
 
@@ -187,10 +302,10 @@ const displayPoints = computed<KnowledgePoint[]>(() => {
     const q = searchQuery.value.trim().toLowerCase()
     list = list.filter(p =>
       p.title.toLowerCase().includes(q) ||
-      p.content.toLowerCase().includes(q) ||
-      p.key_formulas.toLowerCase().includes(q) ||
-      p.tips.toLowerCase().includes(q) ||
-      p.visual_desc.toLowerCase().includes(q)
+      (p.content && p.content.toLowerCase().includes(q)) ||
+      (p.key_formulas && p.key_formulas.toLowerCase().includes(q)) ||
+      (p.tips && p.tips.toLowerCase().includes(q)) ||
+      (p.visual_desc && p.visual_desc.toLowerCase().includes(q))
     )
   }
 
@@ -222,10 +337,11 @@ const groupedResources = computed(() => {
   return groups
 })
 
-// 切换学科（书架上）
+// 切换学科
 const handleSelectSubject = (subjectName: string) => {
   if (activeSubject.value === subjectName) return
   activeSubject.value = subjectName
+  activeTopicId.value = 'all'
   shelfGradeFilter.value = '全部'
   const catalog = getSubjectCatalog(subjectName)
   activeBook.value = catalog && catalog.books.length > 0 ? catalog.books[0].name : ''
@@ -233,7 +349,27 @@ const handleSelectSubject = (subjectName: string) => {
   searchQuery.value = ''
   fetchSubjectKnowledge()
   fetchResources()
-  router.replace({ path: `/knowledge/${encodeURIComponent(subjectName)}` })
+  router.replace({
+    path: `/knowledge/${encodeURIComponent(subjectName)}`,
+    query: currentMode.value === 'shelf' ? { mode: 'shelf' } : { mode: 'topics' }
+  })
+}
+
+// 模式切换
+const switchToTopics = () => {
+  currentMode.value = 'topics'
+  router.replace({
+    path: `/knowledge/${encodeURIComponent(activeSubject.value)}`,
+    query: { mode: 'topics' }
+  })
+}
+
+const switchToShelf = () => {
+  currentMode.value = 'shelf'
+  router.replace({
+    path: `/knowledge/${encodeURIComponent(activeSubject.value)}`,
+    query: { mode: 'shelf' }
+  })
 }
 
 // 点击某本书进入专心阅读模式
@@ -253,7 +389,8 @@ const openBookReader = (bookName: string) => {
 const backToShelf = () => {
   currentMode.value = 'shelf'
   router.push({
-    path: `/knowledge/${encodeURIComponent(activeSubject.value)}`
+    path: `/knowledge/${encodeURIComponent(activeSubject.value)}`,
+    query: { mode: 'shelf' }
   })
 }
 
@@ -264,9 +401,8 @@ const fetchSubjectKnowledge = async () => {
     const res = await api.get(`/knowledge?subject=${encodeURIComponent(activeSubject.value)}`)
     points.value = res as KnowledgePoint[]
 
-    expandedPointIds.value = new Set(
-      points.value.filter(p => p.book === activeBook.value).map(p => p.id)
-    )
+    // 默认全部展开
+    expandedPointIds.value = new Set(points.value.map(p => p.id))
 
     const bCounts: Record<string, number> = {}
     const cCounts: Record<string, number> = {}
@@ -319,9 +455,19 @@ const togglePointExpand = (id: number) => {
   }
 }
 
+const toggleAllThematicExpand = () => {
+  const currentIds = thematicDisplayPoints.value.map(p => p.id)
+  const allExpanded = currentIds.length > 0 && currentIds.every(id => expandedPointIds.value.has(id))
+  if (allExpanded) {
+    currentIds.forEach(id => expandedPointIds.value.delete(id))
+  } else {
+    currentIds.forEach(id => expandedPointIds.value.add(id))
+  }
+}
+
 const toggleAllExpand = () => {
   const currentIds = displayPoints.value.map(p => p.id)
-  const allExpanded = currentIds.every(id => expandedPointIds.value.has(id))
+  const allExpanded = currentIds.length > 0 && currentIds.every(id => expandedPointIds.value.has(id))
   if (allExpanded) {
     currentIds.forEach(id => expandedPointIds.value.delete(id))
   } else {
@@ -484,20 +630,16 @@ const saveResource = async () => {
     resourceDialogVisible.value = false
     await fetchResources()
   } catch {
-    ElMessage.error('操作失败')
+    ElMessage.error('保存失败')
   }
 }
 
 const removeResource = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除该学习资源吗？', '删除确认', {
-      type: 'warning',
-      confirmButtonText: '确定删除',
-      cancelButtonText: '取消'
-    })
+    await ElMessageBox.confirm('确定要删除该学习资源吗？', '提示', { type: 'warning' })
     await api.del(`/learning-resources/${id}`)
+    ElMessage.success('删除成功')
     await fetchResources()
-    ElMessage.success('已删除')
   } catch {
     // cancelled
   }
@@ -505,8 +647,9 @@ const removeResource = async (id: number) => {
 
 // 路由监听与同步
 const syncStateFromRoute = () => {
-  const paramSubject = route.params.subject as string
-  const paramBook = route.params.book as string
+  const paramSubject = route.params.subject as string | undefined
+  const paramBook = route.params.book as string | undefined
+  const queryMode = route.query.mode as string | undefined
 
   if (paramSubject) {
     const sub = decodeURIComponent(paramSubject)
@@ -519,13 +662,17 @@ const syncStateFromRoute = () => {
     const b = decodeURIComponent(paramBook)
     activeBook.value = b
     currentMode.value = 'reader'
-  } else {
+  } else if (queryMode === 'shelf') {
     currentMode.value = 'shelf'
+  } else if (queryMode === 'topics') {
+    currentMode.value = 'topics'
+  } else {
+    currentMode.value = 'topics'
   }
 }
 
 watch(
-  () => [route.params.subject, route.params.book],
+  () => [route.params.subject, route.params.book, route.query.mode],
   () => {
     syncStateFromRoute()
     fetchSubjectKnowledge()
@@ -534,6 +681,7 @@ watch(
 )
 
 onMounted(async () => {
+  loadPersistedStatuses()
   syncStateFromRoute()
   await fetchGlobalStats()
   await fetchSubjectKnowledge()
@@ -544,14 +692,345 @@ onMounted(async () => {
 <template>
   <div class="knowledge-container">
     <!-- ======================================================== -->
-    <!-- 阶段一：教材书架视图 (Shelf View)                        -->
+    <!-- 全局顶层模式切换与功能栏                                 -->
     <!-- ======================================================== -->
-    <div v-if="currentMode === 'shelf'" class="shelf-layout">
+    <header class="knowledge-global-navbar">
+      <div class="nav-brand-section">
+        <div class="brand-badge">上海新高考</div>
+        <h1 class="brand-title">全科知识重点归集</h1>
+      </div>
+
+      <!-- 视图模式切换器 -->
+      <div class="global-view-switcher">
+        <button
+          class="switcher-tab-btn"
+          :class="{ active: currentMode === 'topics' }"
+          @click="switchToTopics"
+        >
+          <el-icon><Aim /></el-icon>
+          <span>🎯 高考核心专题归集</span>
+        </button>
+        <button
+          class="switcher-tab-btn"
+          :class="{ active: currentMode === 'shelf' || currentMode === 'reader' }"
+          @click="switchToShelf"
+        >
+          <el-icon><Reading /></el-icon>
+          <span>📚 教材分册阅读</span>
+        </button>
+      </div>
+
+      <div class="global-nav-actions">
+        <!-- 学习资源抽屉按钮 -->
+        <el-button
+          type="warning"
+          plain
+          :icon="Compass"
+          class="global-action-btn"
+          @click="resourceDrawerVisible = true"
+        >
+          学习资源 ({{ resources.length }})
+        </el-button>
+
+        <!-- 新增考点按钮 -->
+        <el-button
+          type="primary"
+          :icon="Plus"
+          class="global-action-btn primary"
+          @click="openAddPointDialog()"
+        >
+          新增知识点
+        </el-button>
+      </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- 视图一：高考核心专题归集 (Topics View)                    -->
+    <!-- ======================================================== -->
+    <div v-if="currentMode === 'topics'" class="topics-layout">
+      <!-- 1. 学科横向切换栏 -->
+      <div class="topics-subject-bar">
+        <div class="subject-chips-scroll">
+          <button
+            v-for="sub in SHANGHAI_TEXTBOOK_CATALOG"
+            :key="sub.subject"
+            class="topic-subject-chip"
+            :class="{ active: activeSubject === sub.subject }"
+            @click="handleSelectSubject(sub.subject)"
+          >
+            <span class="sub-emoji">{{ sub.emoji }}</span>
+            <span class="sub-name">{{ sub.subject }}</span>
+            <span class="sub-count-tag">
+              {{ activeSubject === sub.subject ? points.length : (subjectCounts[sub.subject] || 0) }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. 专题主体工作区 -->
+      <div class="topics-main-area">
+        <!-- 专题筛选胶囊列表 -->
+        <div class="topics-pills-row">
+          <button
+            class="topic-pill-btn all-pill"
+            :class="{ active: activeTopicId === 'all' }"
+            @click="activeTopicId = 'all'"
+          >
+            <span class="pill-icon">🌟</span>
+            <span class="pill-name">全部专题</span>
+            <span class="pill-badge">{{ points.length }}</span>
+          </button>
+
+          <button
+            v-for="t in currentSubjectTopics"
+            :key="t.id"
+            class="topic-pill-btn"
+            :class="{ active: activeTopicId === t.id }"
+            :style="activeTopicId === t.id ? { borderColor: t.color, background: t.bgGradient } : {}"
+            @click="activeTopicId = t.id"
+          >
+            <span class="pill-icon">{{ t.icon }}</span>
+            <span class="pill-name">{{ t.shortName }}</span>
+            <span class="pill-badge" :style="{ color: t.color }">{{ getTopicPointCount(t.id) }}</span>
+          </button>
+        </div>
+
+        <!-- 专题导读横幅 -->
+        <div class="topic-overview-banner" :style="activeTopicObj ? { background: activeTopicObj.bgGradient } : {}">
+          <div class="banner-left">
+            <div class="banner-header-line">
+              <span class="banner-icon">{{ activeTopicObj ? activeTopicObj.icon : '📐' }}</span>
+              <h2 class="banner-title">
+                {{ activeTopicObj ? activeTopicObj.name : `${activeSubject} · 上海高中三年核心知识重点全景归集` }}
+              </h2>
+              <span v-if="activeTopicObj" class="banner-tag" :style="{ background: activeTopicObj.color, color: '#fff' }">
+                {{ activeTopicObj.tag }}
+              </span>
+            </div>
+            <p class="banner-desc">
+              {{ activeTopicObj ? activeTopicObj.desc : `以高考大纲与沪教版新课标为基准，系统梳理三年核心考点、高分解题模型与提分大招，现已收录 ${points.length} 个核心要点。` }}
+            </p>
+          </div>
+
+          <div class="banner-right">
+            <div class="mastery-summary-card">
+              <div class="progress-labels">
+                <span class="label-text">掌握进度</span>
+                <span class="progress-num">{{ masteredCount }} / {{ points.length }} ({{ points.length ? Math.round(masteredCount / points.length * 100) : 0 }}%)</span>
+              </div>
+              <div class="mini-progress-track">
+                <div
+                  class="mini-progress-bar"
+                  :style="{ width: `${points.length ? Math.round(masteredCount / points.length * 100) : 0}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 控制工具栏 (搜索、状态筛选、展开收起) -->
+        <div class="thematic-control-bar">
+          <div class="control-left">
+            <!-- 状态过滤单选组 -->
+            <div class="status-filter-group">
+              <button
+                class="status-btn"
+                :class="{ active: topicFilterStatus === 'all' }"
+                @click="topicFilterStatus = 'all'"
+              >
+                全部 ({{ activeTopicId === 'all' ? points.length : getTopicPointCount(activeTopicId) }})
+              </button>
+              <button
+                class="status-btn"
+                :class="{ active: topicFilterStatus === 'starred' }"
+                @click="topicFilterStatus = 'starred'"
+              >
+                ⭐️ 重点标记 ({{ starredCount }})
+              </button>
+              <button
+                class="status-btn"
+                :class="{ active: topicFilterStatus === 'mastered' }"
+                @click="topicFilterStatus = 'mastered'"
+              >
+                ✅ 已掌握 ({{ masteredCount }})
+              </button>
+              <button
+                class="status-btn"
+                :class="{ active: topicFilterStatus === 'unmastered' }"
+                @click="topicFilterStatus = 'unmastered'"
+              >
+                ⏳ 待巩固 ({{ unmasteredCount }})
+              </button>
+            </div>
+          </div>
+
+          <div class="control-right">
+            <el-input
+              v-model="searchQuery"
+              placeholder="搜索考点、公式定理、解题大招..."
+              :prefix-icon="Search"
+              clearable
+              class="thematic-search-input"
+            />
+
+            <el-button class="tool-btn" @click="toggleAllThematicExpand">
+              {{ thematicDisplayPoints.every(p => expandedPointIds.has(p.id)) ? '全部收起' : '全部展开' }}
+            </el-button>
+          </div>
+        </div>
+
+        <!-- 考点卡片流 -->
+        <div v-loading="loadingPoints" class="thematic-cards-scroll">
+          <div v-if="thematicDisplayPoints.length > 0" class="thematic-cards-stack">
+            <article
+              v-for="p in thematicDisplayPoints"
+              :key="p.id"
+              class="thematic-point-card"
+              :class="{
+                expanded: expandedPointIds.has(p.id),
+                is_mastered: masteredPointIds.has(p.id),
+                is_starred: starredPointIds.has(p.id)
+              }"
+            >
+              <!-- 卡片头部 -->
+              <div class="t-card-head" @click="togglePointExpand(p.id)">
+                <div class="t-head-left">
+                  <div class="t-tag-badges">
+                    <span
+                      v-if="getPointTopic(p)"
+                      class="t-topic-badge"
+                      :style="{ color: getPointTopic(p)?.color, background: getPointTopic(p)?.bgGradient }"
+                    >
+                      {{ getPointTopic(p)?.icon }} {{ getPointTopic(p)?.shortName }}
+                    </span>
+                    <span class="t-book-badge">{{ p.book }} · {{ p.chapter }}</span>
+                  </div>
+                  <h3 class="t-card-title">{{ p.title }}</h3>
+                </div>
+
+                <div class="t-head-actions" @click.stop>
+                  <!-- 标星按钮 -->
+                  <button
+                    class="icon-action-btn star-btn"
+                    :class="{ active: starredPointIds.has(p.id) }"
+                    title="标记为重点"
+                    @click="toggleStar(p.id)"
+                  >
+                    <el-icon v-if="starredPointIds.has(p.id)" color="#f59e0b"><StarFilled /></el-icon>
+                    <el-icon v-else><Star /></el-icon>
+                  </button>
+
+                  <!-- 掌握状态切换 -->
+                  <button
+                    class="mastery-toggle-btn"
+                    :class="{ mastered: masteredPointIds.has(p.id) }"
+                    @click="toggleMastered(p.id)"
+                  >
+                    <el-icon><Check /></el-icon>
+                    <span>{{ masteredPointIds.has(p.id) ? '已掌握' : '待巩固' }}</span>
+                  </button>
+
+                  <!-- 视频讲解 -->
+                  <el-button
+                    v-if="p.video_url"
+                    size="small"
+                    type="success"
+                    plain
+                    :icon="VideoPlay"
+                    class="video-btn"
+                    @click="openVideoPreview(p.title, p.video_url)"
+                  >
+                    名师精讲
+                  </el-button>
+
+                  <!-- 编辑 -->
+                  <el-button
+                    size="small"
+                    type="primary"
+                    link
+                    :icon="Edit"
+                    @click="openEditPointDialog(p)"
+                  >
+                    编辑
+                  </el-button>
+
+                  <button
+                    class="caret-toggle-btn"
+                    :class="{ rotated: expandedPointIds.has(p.id) }"
+                    @click="togglePointExpand(p.id)"
+                  >
+                    ▼
+                  </button>
+                </div>
+              </div>
+
+              <!-- 卡片内容区域 -->
+              <div v-show="expandedPointIds.has(p.id)" class="t-card-body">
+                <!-- 核心解析 -->
+                <div v-if="p.content" class="box-section concept-box">
+                  <div class="box-header">
+                    <span class="bar blue"></span>
+                    <span>📖 核心概念与考点解析</span>
+                  </div>
+                  <div class="box-inner-text" v-html="renderMathAndText(p.content)"></div>
+                </div>
+
+                <!-- 核心公式 -->
+                <div v-if="p.key_formulas" class="box-section formula-box-wrap">
+                  <div class="box-header">
+                    <span class="bar purple"></span>
+                    <span>⚡ 高考必备公式与重要定理 (KaTeX)</span>
+                  </div>
+                  <div class="formula-content-render" v-html="renderMathAndText(p.key_formulas)"></div>
+                </div>
+
+                <!-- 提分大招 Tips -->
+                <div v-if="p.tips" class="box-section tips-box-wrap">
+                  <div class="box-header">
+                    <span class="bar amber"></span>
+                    <span>💡 高考解题提分大招 & 避坑经验</span>
+                  </div>
+                  <div class="tips-content-text" v-html="renderMathAndText(p.tips)"></div>
+                </div>
+
+                <!-- 思维与几何图景 -->
+                <div v-if="p.visual_desc" class="box-section visual-box-wrap">
+                  <div class="box-header">
+                    <span class="bar green"></span>
+                    <span>📐 形象图景与思维建构</span>
+                  </div>
+                  <div class="visual-content-text" v-html="renderMathAndText(p.visual_desc)"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- 空状态 -->
+          <div v-else class="thematic-empty-box">
+            <div class="empty-icon">🔍</div>
+            <h3>未检索到匹配的高考考点</h3>
+            <p>您可以更换专题、清除搜索词或点击右上角“新增知识点”补充考点。</p>
+            <el-button
+              type="primary"
+              :icon="RefreshRight"
+              @click="searchQuery = ''; activeTopicId = 'all'; topicFilterStatus = 'all'"
+            >
+              重置筛选条件
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 视图二：教材书架视图 (Shelf View)                        -->
+    <!-- ======================================================== -->
+    <div v-else-if="currentMode === 'shelf'" class="shelf-layout">
       <!-- 左侧科目导航 -->
       <aside class="shelf-sidebar">
         <div class="shelf-brand">
-          <div class="brand-tag">上海新高考</div>
-          <h2 class="brand-title">高中教材库</h2>
+          <div class="brand-tag">上海新课标</div>
+          <h2 class="brand-title">教材分册</h2>
         </div>
 
         <nav class="shelf-subject-list">
@@ -567,8 +1046,8 @@ onMounted(async () => {
               <span class="sub-name">{{ sub.subject }}</span>
               <span class="sub-ed">{{ sub.edition.split(' ')[0] }}</span>
             </div>
-            <span v-if="subjectCounts[sub.subject]" class="sub-badge">
-              {{ subjectCounts[sub.subject] }}
+            <span v-if="subjectCounts[sub.subject] || (activeSubject === sub.subject && points.length)" class="sub-badge">
+              {{ activeSubject === sub.subject ? points.length : (subjectCounts[sub.subject] || 0) }}
             </span>
           </button>
         </nav>
@@ -601,17 +1080,6 @@ onMounted(async () => {
                 {{ g }}
               </button>
             </div>
-
-            <!-- 学习资源抽屉按钮 -->
-            <el-button
-              type="primary"
-              plain
-              class="resource-trigger-btn"
-              :icon="Compass"
-              @click="resourceDrawerVisible = true"
-            >
-              学习资源 ({{ resources.length }})
-            </el-button>
           </div>
         </header>
 
@@ -648,67 +1116,54 @@ onMounted(async () => {
                   <div class="book-sheen-overlay"></div>
                 </div>
 
-                <!-- 矢量拟真封面兜底模式 -->
-                <div v-else class="cover-inner" :class="activeSubject">
-                  <!-- 顶部署名 -->
-                  <div class="cover-top-row">
-                    <span class="national-tag">普通高中教科书</span>
-                    <span class="audited-badge">2020新课标</span>
+                <!-- 精致几何设计封面模式 -->
+                <div
+                  v-else
+                  class="cover-artistic-wrapper"
+                  :style="{
+                    background: book.coverColor || currentCatalog?.gradient || 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)'
+                  }"
+                >
+                  <!-- 书脊压线 -->
+                  <div class="cover-spine-crease"></div>
+
+                  <!-- 顶部版署栏 -->
+                  <div class="artistic-top-bar">
+                    <span class="pub-badge">{{ currentCatalog?.publisher || '上海教育出版社' }}</span>
+                    <span class="std-badge">课标教材</span>
                   </div>
 
-                  <!-- 主标题与分册 -->
-                  <div class="cover-title-block">
-                    <div class="cover-subject-name">{{ activeSubject }}</div>
-                    <div class="cover-book-name">{{ book.name }}</div>
+                  <!-- 几何装饰纹样 -->
+                  <div class="artistic-pattern-canvas">
+                    <div class="pattern-circle large"></div>
+                    <div class="pattern-circle medium"></div>
+                    <div class="pattern-rect"></div>
+                    <span class="pattern-symbol">{{ currentCatalog?.emoji || '📐' }}</span>
                   </div>
 
-                  <!-- 封面中央艺术/几何图样 -->
-                  <div class="cover-art-zone">
-                    <div class="art-pattern-box" :class="[activeSubject, book.grade]">
-                      <!-- 数学几何抽象线框 -->
-                      <svg v-if="activeSubject === '数学'" viewBox="0 0 100 100" class="vector-art">
-                        <polygon points="50,15 85,35 85,70 50,90 15,70 15,35" fill="none" stroke="currentColor" stroke-width="1.8" />
-                        <line x1="50" y1="15" x2="50" y2="90" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3,3" />
-                        <line x1="15" y1="35" x2="85" y2="70" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="85" y1="35" x2="15" y2="70" stroke="currentColor" stroke-width="1.2" />
-                        <circle cx="50" cy="52" r="14" fill="none" stroke="currentColor" stroke-width="1.5" />
-                      </svg>
-                      <!-- 物理原子轨道 -->
-                      <svg v-else-if="activeSubject === '物理'" viewBox="0 0 100 100" class="vector-art">
-                        <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(30 50 50)" />
-                        <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-30 50 50)" />
-                        <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(90 50 50)" />
-                        <circle cx="50" cy="50" r="6" fill="currentColor" />
-                      </svg>
-                      <!-- 化学分子结构 -->
-                      <svg v-else-if="activeSubject === '化学'" viewBox="0 0 100 100" class="vector-art">
-                        <polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="currentColor" stroke-width="2" />
-                        <circle cx="50" cy="20" r="4" fill="currentColor" />
-                        <circle cx="76" cy="35" r="4" fill="currentColor" />
-                        <circle cx="76" cy="65" r="4" fill="currentColor" />
-                        <circle cx="50" cy="80" r="4" fill="currentColor" />
-                        <circle cx="24" cy="65" r="4" fill="currentColor" />
-                        <circle cx="24" cy="35" r="4" fill="currentColor" />
-                      </svg>
-                      <!-- 默认学科书籍图标 -->
-                      <div v-else class="emoji-art">{{ currentCatalog?.emoji }}</div>
-                    </div>
+                  <!-- 书名主视觉区 -->
+                  <div class="artistic-title-block">
+                    <div class="book-subject-tag">{{ activeSubject }}</div>
+                    <h3 class="book-main-title">{{ book.name }}</h3>
+                    <p class="book-sub-desc">{{ book.subtitle }}</p>
                   </div>
 
-                  <!-- 封面副标题 -->
-                  <div class="cover-subtitle">{{ book.subtitle }}</div>
-
-                  <!-- 封面底部出版单位 -->
-                  <div class="cover-bottom-row">
-                    <span class="publisher-name">{{ currentCatalog?.publisher }}</span>
-                    <span class="edition-label">{{ currentCatalog?.edition.split(' ')[0] }}</span>
+                  <!-- 底部信息栏 -->
+                  <div class="artistic-bottom-bar">
+                    <span class="grade-badge">{{ book.grade }}</span>
+                    <span class="edition-code">{{ currentCatalog?.edition || '沪教版' }}</span>
                   </div>
                 </div>
 
-                <!-- 考点收录进度角标 -->
-                <div class="cover-pts-badge" :class="{ 'has-points': bookCounts[book.name] }">
-                  <span v-if="bookCounts[book.name]">{{ bookCounts[book.name] }} 考点已录入</span>
-                  <span v-else>目录规划全 · 待录入</span>
+                <!-- 卡片下方信息与入库进度 -->
+                <div class="book-card-info">
+                  <div class="b-info-title">{{ book.name }}</div>
+                  <div class="b-info-meta">
+                    <span class="meta-tag">{{ book.grade }}</span>
+                    <span class="meta-points-count">
+                      收录 <strong>{{ bookCounts[book.name] || 0 }}</strong> 个考点
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -718,7 +1173,7 @@ onMounted(async () => {
     </div>
 
     <!-- ======================================================== -->
-    <!-- 阶段二：具体教材专心阅读视图 (Reader View)               -->
+    <!-- 视图三：具体教材专心阅读视图 (Reader View)               -->
     <!-- ======================================================== -->
     <div v-else class="reader-layout">
       <!-- 顶层阅读工作台导航条 -->
@@ -730,6 +1185,16 @@ onMounted(async () => {
             @click="backToShelf"
           >
             返回教材书架
+          </el-button>
+
+          <el-button
+            class="to-topics-btn"
+            :icon="Aim"
+            type="primary"
+            plain
+            @click="switchToTopics"
+          >
+            切换到高考专题
           </el-button>
 
           <div class="reader-breadcrumb">
@@ -758,26 +1223,6 @@ onMounted(async () => {
           <!-- 全部折叠/展开 -->
           <el-button @click="toggleAllExpand">
             展开/收起
-          </el-button>
-
-          <!-- 新增考点 -->
-          <el-button
-            type="primary"
-            :icon="Plus"
-            @click="openAddPointDialog()"
-          >
-            新增知识点
-          </el-button>
-
-          <!-- 抽屉触发按钮 -->
-          <el-button
-            type="warning"
-            plain
-            :icon="Compass"
-            class="drawer-trigger-btn"
-            @click="resourceDrawerVisible = true"
-          >
-            学习资源 ({{ resources.length }})
           </el-button>
         </div>
       </header>
@@ -856,6 +1301,25 @@ onMounted(async () => {
                   </div>
 
                   <div class="head-right" @click.stop>
+                    <button
+                      class="icon-action-btn star-btn"
+                      :class="{ active: starredPointIds.has(p.id) }"
+                      title="标记为重点"
+                      @click="toggleStar(p.id)"
+                    >
+                      <el-icon v-if="starredPointIds.has(p.id)" color="#f59e0b"><StarFilled /></el-icon>
+                      <el-icon v-else><Star /></el-icon>
+                    </button>
+
+                    <button
+                      class="mastery-toggle-btn"
+                      :class="{ mastered: masteredPointIds.has(p.id) }"
+                      @click="toggleMastered(p.id)"
+                    >
+                      <el-icon><Check /></el-icon>
+                      <span>{{ masteredPointIds.has(p.id) ? '已掌握' : '待巩固' }}</span>
+                    </button>
+
                     <el-button
                       v-if="p.video_url"
                       size="small"
@@ -1082,7 +1546,7 @@ onMounted(async () => {
             v-model="pointForm.key_formulas"
             type="textarea"
             :rows="3"
-            placeholder="公式定理（如 $$a^2+b^2 \\ge 2ab$$）"
+            placeholder="公式定理（如 $$a^2+b^2 \ge 2ab$$）"
           />
         </el-form-item>
 
@@ -1100,14 +1564,14 @@ onMounted(async () => {
             v-model="pointForm.visual_desc"
             type="textarea"
             :rows="3"
-            placeholder="生动的视觉化图景记忆联想"
+            placeholder="几何或形象思维辅助记忆描述"
           />
         </el-form-item>
 
-        <el-form-item label="视频链接">
+        <el-form-item label="B站视频">
           <el-input
             v-model="pointForm.video_url"
-            placeholder="B站精讲地址 (https://www.bilibili.com/video/BV...)"
+            placeholder="BV号或完整B站链接（如 https://www.bilibili.com/video/BV1xx411c7XN）"
           />
         </el-form-item>
       </el-form>
@@ -1121,31 +1585,32 @@ onMounted(async () => {
             :icon="Delete"
             @click="deletePoint(editingPoint)"
           >
-            删除此知识点
+            删除此考点
           </el-button>
           <div v-else></div>
+
           <div class="footer-action-btns">
             <el-button @click="pointDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="savePoint">保存考点</el-button>
+            <el-button type="primary" @click="savePoint">保存</el-button>
           </div>
         </div>
       </template>
     </el-dialog>
 
-    <!-- 学习资源编辑弹窗 -->
+    <!-- 资源新增/编辑弹窗 -->
     <el-dialog
       v-model="resourceDialogVisible"
       :title="resourceDialogTitle"
-      width="500px"
+      width="540px"
       destroy-on-close
     >
       <el-form :model="resourceForm" label-width="80px">
-        <el-form-item label="分类" required>
-          <el-select v-model="resourceForm.category" style="width: 100%">
-            <el-option label="🎬 视频精解" value="video" />
-            <el-option label="📝 在线刷题 & 组卷" value="practice" />
-            <el-option label="🔧 互动仿真与工具" value="tool" />
-          </el-select>
+        <el-form-item label="类别" required>
+          <el-radio-group v-model="resourceForm.category">
+            <el-radio-button label="video">视频</el-radio-button>
+            <el-radio-button label="practice">刷题</el-radio-button>
+            <el-radio-button label="tool">工具</el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="名称" required>
           <el-input v-model="resourceForm.name" placeholder="如：组卷网、互动模拟器" />
@@ -1186,6 +1651,560 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
+/* ======================================================== */
+/* 全局顶层模式切换导航条                                    */
+/* ======================================================== */
+.knowledge-global-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: var(--bg-card, #ffffff);
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  z-index: 20;
+}
+
+.nav-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-badge {
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.brand-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.global-view-switcher {
+  display: flex;
+  align-items: center;
+  background: var(--bg-page, #f1f5f9);
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+}
+
+.switcher-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-sub, #64748b);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.switcher-tab-btn:hover {
+  color: var(--text-main, #0f172a);
+}
+
+.switcher-tab-btn.active {
+  background: var(--bg-card, #ffffff);
+  color: #3b82f6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.global-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ======================================================== */
+/* 视图一：高考核心专题归集样式 (Topics View)                */
+/* ======================================================== */
+.topics-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 53px);
+  overflow: hidden;
+}
+
+/* 学科横向切换条 */
+.topics-subject-bar {
+  background: var(--bg-card, #ffffff);
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  padding: 8px 24px;
+}
+
+.subject-chips-scroll {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.subject-chips-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.topic-subject-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main, #334155);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.topic-subject-chip:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #f8fafc;
+}
+
+.topic-subject-chip.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+.topic-subject-chip.active .sub-count-tag {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.sub-count-tag {
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: var(--bg-page, #f1f5f9);
+  color: var(--text-sub, #64748b);
+}
+
+/* 专题工作区 */
+.topics-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px 24px;
+  gap: 12px;
+}
+
+/* 专题胶囊条 */
+.topics-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.topic-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main, #1e293b);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.topic-pill-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.topic-pill-btn.active {
+  border-width: 1.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.topic-pill-btn.all-pill.active {
+  background: #1e293b;
+  color: #ffffff;
+  border-color: #1e293b;
+}
+
+.pill-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.topic-pill-btn.all-pill.active .pill-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* 专题导读横幅 */
+.topic-overview-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.banner-left {
+  flex: 1;
+  max-width: 75%;
+}
+
+.banner-header-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.banner-icon {
+  font-size: 20px;
+}
+
+.banner-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.banner-tag {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.banner-desc {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--text-sub, #475569);
+  line-height: 1.5;
+}
+
+.banner-right {
+  min-width: 200px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mastery-summary-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.85));
+  backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  width: 180px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-main, #334155);
+  margin-bottom: 6px;
+}
+
+.progress-num {
+  color: #10b981;
+}
+
+.mini-progress-track {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mini-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* 控制工具栏 */
+.thematic-control-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card, #ffffff);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+.status-btn {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-btn:hover {
+  color: var(--text-main, #0f172a);
+}
+
+.status-btn.active {
+  background: var(--bg-page, #f1f5f9);
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.control-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.thematic-search-input {
+  width: 260px;
+}
+
+/* 考点卡片流滚动区 */
+.thematic-cards-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.thematic-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 24px;
+}
+
+/* 专题卡片整体 */
+.thematic-point-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.thematic-point-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.thematic-point-card.is_mastered {
+  border-left: 4px solid #10b981;
+}
+
+.thematic-point-card.is_starred {
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.12);
+}
+
+/* 卡片头部 */
+.t-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  background: var(--bg-card, #ffffff);
+  user-select: none;
+}
+
+.t-card-head:hover {
+  background: #fafafa;
+}
+
+.t-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.t-tag-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.t-topic-badge {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.t-book-badge {
+  font-size: 11.5px;
+  color: var(--text-sub, #64748b);
+  background: var(--bg-page, #f1f5f9);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.t-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.t-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-action-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.icon-action-btn:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.icon-action-btn.star-btn.active {
+  border-color: #f59e0b;
+  background: #fef3c7;
+}
+
+.mastery-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  background: transparent;
+  color: var(--text-sub, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mastery-toggle-btn:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.mastery-toggle-btn.mastered {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #059669;
+}
+
+.caret-toggle-btn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.caret-toggle-btn.rotated {
+  transform: rotate(180deg);
+}
+
+/* 卡片内容主体 */
+.t-card-body {
+  padding: 0 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--border-subtle, #f1f5f9);
+}
+
+.thematic-empty-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--bg-card, #ffffff);
+  border-radius: 12px;
+  border: 1px dashed var(--border-subtle, #cbd5e1);
+}
+
+.thematic-empty-box .empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.thematic-empty-box h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  color: var(--text-main, #0f172a);
+}
+
+.thematic-empty-box p {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--text-sub, #64748b);
+}
+
+.to-topics-btn {
+  margin-left: 8px;
+}
+
+
 .knowledge-container {
   height: calc(100vh - 64px);
   overflow: hidden;
