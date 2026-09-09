@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import * as echarts from 'echarts'
-import { useTimerStore } from '../../stores/timer'
+import { useTimerStore, type SoundCategory } from '../../stores/timer'
 import { api } from '../../utils/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   VideoPlay, VideoPause, RefreshLeft, Setting, FullScreen,
-  Right, Headset, Notebook, Check, Delete, Calendar, TrendCharts
+  Right, Headset, Notebook, Check, Delete, Calendar, TrendCharts, Plus
 } from '@element-plus/icons-vue'
 
 const timerStore = useTimerStore()
@@ -34,16 +34,33 @@ const examPresets = [
   { label: '⏱️ 课后限时微测', duration: 45, subject: '其他' },
 ]
 
-// 声学选项（离线 Web Audio 纯净噪音 + 在线白噪音）
-const soundTracks = [
-  { id: 'none', name: '静音专注', icon: '🔇', type: 'none' },
-  { id: 'pink', name: '粉红噪音 (防干扰)', icon: '🎧', type: 'synth' },
-  { id: 'brown', name: '布朗细雨 (深层沉浸)', icon: '🌧️', type: 'synth' },
-  { id: 'rain', name: '淅沥雨声', icon: '☔', type: 'online' },
-  { id: 'piano', name: '静谧钢琴', icon: '🎹', type: 'online' },
-  { id: 'forest', name: '晨曦森林', icon: '🌲', type: 'online' },
-  { id: 'waves', name: '舒缓海浪', icon: '🌊', type: 'online' },
+// 声学分类选项
+const soundCategories: { key: SoundCategory; label: string }[] = [
+  { key: 'all', label: '🌟 全部' },
+  { key: 'space', label: '☕ 空间氛围' },
+  { key: 'music', label: '🎵 治愈轻音' },
+  { key: 'nature', label: '🌿 自然之声' },
+  { key: 'synth', label: '🎧 科学白噪' },
+  { key: 'custom', label: '📻 自定义' }
 ]
+
+const currentSoundCategory = ref<SoundCategory>('all')
+
+const filteredSoundTracks = computed(() => {
+  if (currentSoundCategory.value === 'all') {
+    return timerStore.allSoundTracks
+  }
+  return timerStore.allSoundTracks.filter(t => t.category === currentSoundCategory.value || t.id === 'none')
+})
+
+const currentActiveTrack = computed(() => {
+  return timerStore.allSoundTracks.find(t => t.id === timerStore.noiseType)
+})
+
+const getCategoryCount = (cat: SoundCategory) => {
+  if (cat === 'all') return timerStore.allSoundTracks.length
+  return timerStore.allSoundTracks.filter(t => t.category === cat).length
+}
 
 // 视图标签：专注工作台 vs 统计看板
 const activeTab = ref<'timer' | 'analytics'>('timer')
@@ -142,9 +159,115 @@ const applyExamPreset = (preset: typeof examPresets[0]) => {
   ElMessage.success(`已切换为【${preset.label}】(${preset.duration}分钟)`)
 }
 
-// 切换白噪音
+// 切换白噪音/轻音乐
 const selectNoise = (trackId: string) => {
-  timerStore.setNoiseType(trackId)
+  if (trackId === 'none') {
+    timerStore.setNoiseType('none')
+    return
+  }
+  // 若点击当前正在播放的音轨，则暂停
+  if (timerStore.noiseType === trackId && timerStore.isAudioPlaying) {
+    timerStore.stopSound()
+    return
+  }
+  // 否则切换并立即播放试听
+  timerStore.setNoiseType(trackId, true)
+}
+
+// 独立试听/播放控制
+const toggleAudioPreview = () => {
+  timerStore.toggleAudioPlay()
+}
+
+// 监听音频播放异常
+watch(() => timerStore.audioError, (err) => {
+  if (err) {
+    ElMessage.error(err)
+  }
+})
+
+// 自定义音频源弹窗状态与方法
+const showCustomAudioDialog = ref(false)
+const newAudioName = ref('')
+const newAudioUrl = ref('')
+const newAudioIcon = ref('📻')
+const isTestingAudio = ref(false)
+const testAudioStatus = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+
+const openCustomAudioDialog = () => {
+  newAudioName.value = ''
+  newAudioUrl.value = ''
+  newAudioIcon.value = '📻'
+  testAudioStatus.value = null
+  showCustomAudioDialog.value = true
+}
+
+const testCustomAudio = () => {
+  if (!newAudioUrl.value.trim()) {
+    testAudioStatus.value = { type: 'error', message: '请先输入音频直链 URL' }
+    return
+  }
+  isTestingAudio.value = true
+  testAudioStatus.value = null
+  const testAudio = new Audio(newAudioUrl.value.trim())
+  let resolved = false
+
+  const timer = setTimeout(() => {
+    if (!resolved) {
+      resolved = true
+      isTestingAudio.value = false
+      testAudio.pause()
+      testAudio.src = ''
+      testAudioStatus.value = { type: 'error', message: '连接超时，请检查该音频直链是否可访问' }
+    }
+  }, 6000)
+
+  testAudio.oncanplay = () => {
+    if (!resolved) {
+      resolved = true
+      clearTimeout(timer)
+      isTestingAudio.value = false
+      testAudio.pause()
+      testAudio.src = ''
+      testAudioStatus.value = { type: 'success', message: '✅ 音频流连接测试成功！' }
+    }
+  }
+
+  testAudio.onerror = () => {
+    if (!resolved) {
+      resolved = true
+      clearTimeout(timer)
+      isTestingAudio.value = false
+      testAudio.pause()
+      testAudio.src = ''
+      testAudioStatus.value = { type: 'error', message: '❌ 音频加载失败，请确保是直接指向 mp3/aac/ogg 或流媒体的直链' }
+    }
+  }
+
+  testAudio.load()
+}
+
+const saveCustomAudio = () => {
+  if (!newAudioName.value.trim() || !newAudioUrl.value.trim()) {
+    ElMessage.warning('请填写音频名称和直链 URL')
+    return
+  }
+  const id = timerStore.addCustomTrack(newAudioName.value.trim(), newAudioUrl.value.trim(), newAudioIcon.value.trim() || '📻')
+  showCustomAudioDialog.value = false
+  currentSoundCategory.value = 'custom'
+  selectNoise(id)
+  ElMessage.success('自定义音源添加成功并已选用')
+}
+
+const handleDeleteCustomTrack = (id: string) => {
+  ElMessageBox.confirm('确定要删除该自定义音源吗？', '提示', {
+    confirmButtonText: '确定删除',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    timerStore.removeCustomTrack(id)
+    ElMessage.success('已删除自定义音源')
+  }).catch(() => {})
 }
 
 // 打开设置
@@ -349,6 +472,9 @@ onUnmounted(() => {
   if (themeObserver) themeObserver.disconnect()
   if (subjectChart) subjectChart.dispose()
   if (trendChart) trendChart.dispose()
+  if (!timerStore.isRunning) {
+    timerStore.stopSound()
+  }
 })
 </script>
 
@@ -607,43 +733,117 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- 3. 声学自习室面板（离线白噪音与音量滑块） -->
+      <!-- 3. 声学自习室面板（专注伴学音乐与白噪音） -->
       <div class="sound-hub-card">
         <div class="sound-header">
-          <div class="sound-title">
-            <el-icon><Headset /></el-icon>
-            <span>声学自习室 · 纯净白噪音</span>
+          <div class="sound-title-group">
+            <div class="sound-title">
+              <el-icon><Headset /></el-icon>
+              <span>声学自习室 · 专注音乐与空间白噪</span>
+            </div>
+            <!-- 正在播放徽章 -->
+            <div v-if="timerStore.isAudioPlaying && currentActiveTrack && currentActiveTrack.id !== 'none'" class="now-playing-badge">
+              <span class="pulse-dot"></span>
+              <span class="playing-track-name">{{ currentActiveTrack.name }}</span>
+            </div>
           </div>
 
-          <!-- 音量控制滑块 -->
-          <div class="sound-volume-ctrl">
-            <button class="mute-btn" @click="timerStore.toggleMute">
-              <span v-if="timerStore.isMuted">🔇</span>
-              <span v-else>🔊</span>
+          <!-- 右侧动作控制区 -->
+          <div class="sound-actions">
+            <!-- 独立试听/常驻开关 -->
+            <button
+              type="button"
+              class="sound-btn-pill preview-btn"
+              :class="{ 'is-playing': timerStore.isAudioPlaying }"
+              :title="timerStore.isAudioPlaying ? '点击暂停背景声' : '点击试听/播放背景声'"
+              @click="toggleAudioPreview"
+            >
+              <span v-if="timerStore.isAudioPlaying">⏸️ 暂停声音</span>
+              <span v-else>▶️ 试听 / 播放</span>
             </button>
-            <el-slider
-              v-model="timerStore.volume"
-              :min="0"
-              :max="1"
-              :step="0.05"
-              :show-tooltip="false"
-              class="volume-slider"
-              @input="timerStore.setVolume"
-            />
+
+            <!-- 添加自定义音频按钮 -->
+            <button
+              type="button"
+              class="sound-btn-pill custom-add-btn"
+              @click="openCustomAudioDialog"
+            >
+              <el-icon size="12"><Plus /></el-icon>
+              <span>自定义</span>
+            </button>
+
+            <!-- 音量控制滑块 -->
+            <div class="sound-volume-ctrl">
+              <button
+                type="button"
+                class="mute-btn"
+                :title="timerStore.isMuted ? '取消静音' : '静音'"
+                @click="timerStore.toggleMute"
+              >
+                <span v-if="timerStore.isMuted">🔇</span>
+                <span v-else>🔊</span>
+              </button>
+              <el-slider
+                v-model="timerStore.volume"
+                :min="0"
+                :max="1"
+                :step="0.05"
+                :show-tooltip="false"
+                class="volume-slider"
+                @input="timerStore.setVolume"
+              />
+            </div>
           </div>
         </div>
 
+        <!-- 分类选择胶囊 Tab -->
+        <div class="sound-category-tabs">
+          <button
+            v-for="cat in soundCategories"
+            :key="cat.key"
+            type="button"
+            class="cat-tab-btn"
+            :class="{ active: currentSoundCategory === cat.key }"
+            @click="currentSoundCategory = cat.key"
+          >
+            {{ cat.label }}
+            <span class="cat-count">{{ getCategoryCount(cat.key) }}</span>
+          </button>
+        </div>
+
+        <!-- 音轨网格 -->
         <div class="noise-track-grid">
           <button
-            v-for="track in soundTracks"
+            v-for="track in filteredSoundTracks"
             :key="track.id"
+            type="button"
             class="noise-pill-btn"
-            :class="{ active: timerStore.noiseType === track.id }"
+            :class="{
+              active: timerStore.noiseType === track.id,
+              'is-playing': timerStore.isAudioPlaying && timerStore.noiseType === track.id
+            }"
             @click="selectNoise(track.id)"
           >
             <span class="track-icon">{{ track.icon }}</span>
-            <span class="track-label">{{ track.name }}</span>
-            <span v-if="timerStore.isRunning && timerStore.noiseType === track.id" class="playing-indicator"></span>
+            <div class="track-info">
+              <div class="track-title-row">
+                <span class="track-label">{{ track.name }}</span>
+                <span
+                  v-if="track.type === 'custom'"
+                  class="delete-custom-btn"
+                  title="删除此自定义音源"
+                  @click.stop="handleDeleteCustomTrack(track.id)"
+                >
+                  ✕
+                </span>
+              </div>
+              <span v-if="track.desc" class="track-desc">{{ track.desc }}</span>
+            </div>
+
+            <!-- 声波动态跳动效果 -->
+            <div v-if="timerStore.isAudioPlaying && timerStore.noiseType === track.id" class="sound-wave-bars">
+              <span></span><span></span><span></span>
+            </div>
           </button>
         </div>
       </div>
@@ -855,6 +1055,48 @@ onUnmounted(() => {
       <template #footer>
         <el-button @click="showSettings = false">取消</el-button>
         <el-button type="primary" @click="saveSettings">保存偏好</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 自定义音频源添加弹窗 -->
+    <el-dialog
+      v-model="showCustomAudioDialog"
+      title="📻 添加自定义音频源"
+      width="440px"
+      destroy-on-close
+    >
+      <div class="custom-audio-form">
+        <el-form label-position="top">
+          <el-form-item label="音频源名称">
+            <el-input v-model="newAudioName" placeholder="例如：我的学习电台 / 个人收藏 BGM" maxlength="24" />
+          </el-form-item>
+          <el-form-item label="音频直链 URL (mp3/ogg/aac 或网络音频流)">
+            <el-input v-model="newAudioUrl" placeholder="https://example.com/audio.mp3" clearable />
+          </el-form-item>
+          <el-form-item label="代表图标 (Emoji)">
+            <el-input v-model="newAudioIcon" placeholder="📻" maxlength="4" style="width: 120px;" />
+          </el-form-item>
+        </el-form>
+
+        <div v-if="testAudioStatus" class="test-status-msg" :class="testAudioStatus.type">
+          {{ testAudioStatus.message }}
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="custom-dialog-footer">
+          <el-button :loading="isTestingAudio" @click="testCustomAudio">测试连通性</el-button>
+          <div class="dialog-right-btns">
+            <el-button @click="showCustomAudioDialog = false">取消</el-button>
+            <el-button
+              type="primary"
+              :disabled="!newAudioName.trim() || !newAudioUrl.trim()"
+              @click="saveCustomAudio"
+            >
+              保存并选用
+            </el-button>
+          </div>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -1270,7 +1512,16 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sound-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .sound-title {
@@ -1282,11 +1533,63 @@ onUnmounted(() => {
   color: var(--text-main, #0f172a);
 }
 
+.now-playing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  animation: pulse 1s infinite;
+}
+
+.sound-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sound-btn-pill {
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-page, #f8fafc);
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-regular, #475569);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.sound-btn-pill:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+.sound-btn-pill.preview-btn.is-playing {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+  font-weight: 500;
+}
+
 .sound-volume-ctrl {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 160px;
+  width: 140px;
 }
 
 .mute-btn {
@@ -1294,15 +1597,59 @@ onUnmounted(() => {
   background: transparent;
   cursor: pointer;
   font-size: 16px;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 .volume-slider {
   flex: 1;
 }
 
+/* 分类标签栏 */
+.sound-category-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+}
+
+.cat-tab-btn {
+  border: 1px solid transparent;
+  background: var(--bg-page, #f1f5f9);
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-regular, #64748b);
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.cat-tab-btn:hover {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.cat-tab-btn.active {
+  background: #6366f1;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.cat-count {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* 音轨网格卡片 */
 .noise-track-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
   gap: 8px;
 }
 
@@ -1313,34 +1660,154 @@ onUnmounted(() => {
   padding: 8px 10px;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 8px;
   font-size: 12px;
   color: var(--text-regular, #475569);
   transition: all 0.2s;
   position: relative;
+  text-align: left;
 }
 
 .noise-pill-btn:hover {
   border-color: #6366f1;
+  transform: translateY(-1px);
 }
 
 .noise-pill-btn.active {
   border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(99, 102, 241, 0.06);
   color: #6366f1;
   font-weight: 600;
 }
 
-.playing-indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.noise-pill-btn.is-playing {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px #6366f1 inset;
+}
+
+.track-icon {
+  font-size: 16px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.track-label {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-desc {
+  font-size: 10px;
+  color: var(--text-secondary, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 400;
+}
+
+.delete-custom-btn {
+  font-size: 11px;
+  color: #94a3b8;
+  padding: 0 2px;
+  border-radius: 4px;
+}
+
+.delete-custom-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* 均衡器跳动声波 */
+.sound-wave-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.sound-wave-bars span {
+  width: 2.5px;
   background: #6366f1;
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  animation: pulse 1s infinite;
+  border-radius: 1px;
+  animation: soundBarPulse 0.8s ease-in-out infinite alternate;
+}
+
+.sound-wave-bars span:nth-child(1) {
+  height: 4px;
+  animation-delay: 0.1s;
+}
+
+.sound-wave-bars span:nth-child(2) {
+  height: 12px;
+  animation-delay: 0.3s;
+}
+
+.sound-wave-bars span:nth-child(3) {
+  height: 8px;
+  animation-delay: 0.2s;
+}
+
+@keyframes soundBarPulse {
+  0% {
+    height: 3px;
+  }
+  100% {
+    height: 12px;
+  }
+}
+
+/* 自定义音频弹窗样式 */
+.custom-audio-form {
+  padding: 4px 0;
+}
+
+.test-status-msg {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.test-status-msg.success {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.test-status-msg.error {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.custom-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.dialog-right-btns {
+  display: flex;
+  gap: 8px;
 }
 
 /* 学情看板布局 */

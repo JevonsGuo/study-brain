@@ -4,6 +4,160 @@ import { api } from '../utils/api'
 
 export type TimerMode = 'pomodoro' | 'exam' | 'stopwatch'
 
+export type SoundCategory = 'all' | 'space' | 'music' | 'nature' | 'synth' | 'custom'
+
+export interface SoundTrack {
+  id: string
+  name: string
+  icon: string
+  type: 'none' | 'synth' | 'online' | 'custom'
+  category: SoundCategory
+  desc: string
+  url?: string
+}
+
+export interface CustomSoundTrack {
+  id: string
+  name: string
+  url: string
+  icon?: string
+}
+
+export const BUILTIN_SOUND_TRACKS: SoundTrack[] = [
+  { id: 'none', name: '静音专注', icon: '🔇', type: 'none', category: 'all', desc: '纯净无声 · 深度心流' },
+
+  // 空间氛围 (Focus Spaces)
+  {
+    id: 'cafe',
+    name: '街角咖啡馆',
+    icon: '☕',
+    type: 'online',
+    category: 'space',
+    desc: '轻语交谈 · 咖啡研磨',
+    url: 'https://cdn.jsdelivr.net/gh/aditikumari27/-Candle-Study---Focus-Timer-Ambient-Workspace@main/v1.mp3.mp3'
+  },
+  {
+    id: 'library',
+    name: '宁静图书馆',
+    icon: '📚',
+    type: 'online',
+    category: 'space',
+    desc: '翻书细语 · 自习空间',
+    url: 'https://cdn.jsdelivr.net/gh/aditikumari27/-Candle-Study---Focus-Timer-Ambient-Workspace@main/v3.mp3.mp3'
+  },
+  {
+    id: 'fireplace',
+    name: '温暖壁炉',
+    icon: '🔥',
+    type: 'online',
+    category: 'space',
+    desc: '木炭轻响 · 暖意自习',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/fire.mp3'
+  },
+
+  // 治愈轻音乐 (Light Music & Lofi)
+  {
+    id: 'lofi_crescent',
+    name: '治愈Lofi漫步',
+    icon: '🎵',
+    type: 'online',
+    category: 'music',
+    desc: '慢调节奏 · 舒缓解压',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/track/crescent-moon.mp3'
+  },
+  {
+    id: 'piano_celestia',
+    name: '静谧星空钢琴',
+    icon: '🎹',
+    type: 'online',
+    category: 'music',
+    desc: '治愈琴音 · 平复焦虑',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/track/ghostrifter-official-celestia.mp3'
+  },
+  {
+    id: 'lofi_cozy',
+    name: '惬意午后',
+    icon: '☀️',
+    type: 'online',
+    category: 'music',
+    desc: '清新弹拨 · 轻松阅读',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/track/otjan-bird.mp3'
+  },
+  {
+    id: 'lofi_wood',
+    name: '恬淡微风',
+    icon: '🌿',
+    type: 'online',
+    category: 'music',
+    desc: '极简空灵 · 沉静思维',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/track/silent-wood.mp3'
+  },
+
+  // 自然之声 (Nature)
+  {
+    id: 'rain',
+    name: '窗边淅沥雨',
+    icon: '☔',
+    type: 'online',
+    category: 'nature',
+    desc: '雨落窗台 · 隔绝杂音',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/rain.mp3'
+  },
+  {
+    id: 'forest',
+    name: '晨曦林风',
+    icon: '🌲',
+    type: 'online',
+    category: 'nature',
+    desc: '清脆鸟鸣 · 森林漫步',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/forest.mp3'
+  },
+  {
+    id: 'waves',
+    name: '舒缓海浪',
+    icon: '🌊',
+    type: 'online',
+    category: 'nature',
+    desc: '潮涌潮退 · 规律节奏',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/ocean-wave.mp3'
+  },
+  {
+    id: 'night',
+    name: '恬静夏夜',
+    icon: '🌙',
+    type: 'online',
+    category: 'nature',
+    desc: '夜虫微鸣 · 独处专注',
+    url: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/nightFall.mp3'
+  },
+
+  // 科学纯净合成白噪 (Web Audio Offline)
+  {
+    id: 'pink',
+    name: '粉红噪音',
+    icon: '🎧',
+    type: 'synth',
+    category: 'synth',
+    desc: '均衡声谱 · 强化记忆'
+  },
+  {
+    id: 'brown',
+    name: '布朗瀑布',
+    icon: '🌧️',
+    type: 'synth',
+    category: 'synth',
+    desc: '深度低频 · 屏蔽外界'
+  },
+  {
+    id: 'white',
+    name: '纯净白噪',
+    icon: '⚪',
+    type: 'synth',
+    category: 'synth',
+    desc: '全频遮蔽 · 抵御打扰'
+  }
+]
+
 export interface FocusRecord {
   id: number
   subject: string
@@ -84,13 +238,56 @@ export const useTimerStore = defineStore('timer', () => {
   let noiseGain: GainNode | null = null
   let bgAudioElement: HTMLAudioElement | null = null
 
-  // 在线白噪音与环境音轨
-  const onlineTracks: Record<string, string> = {
-    rain: 'https://cdn.pixabay.com/audio/2022/03/10/audio_8cb18d7d82.mp3',
-    piano: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf1ac.mp3',
-    forest: 'https://cdn.pixabay.com/audio/2022/03/15/audio_115e6b3ed8.mp3',
-    waves: 'https://cdn.pixabay.com/audio/2024/11/04/audio_4956204700.mp3',
+  // 播放状态与自定义音源列表
+  const isAudioPlaying = ref(false)
+  const audioError = ref<string | null>(null)
+
+  function loadCustomTracks(): CustomSoundTrack[] {
+    try {
+      const raw = localStorage.getItem('sharon_timer_custom_tracks')
+      return raw ? JSON.parse(raw) : []
+    } catch {
+      return []
+    }
   }
+
+  const customTracks = ref<CustomSoundTrack[]>(loadCustomTracks())
+
+  const saveCustomTracks = () => {
+    localStorage.setItem('sharon_timer_custom_tracks', JSON.stringify(customTracks.value))
+  }
+
+  const addCustomTrack = (name: string, url: string, icon = '📻'): string => {
+    const id = 'custom_' + Date.now()
+    customTracks.value.push({ id, name, url, icon })
+    saveCustomTracks()
+    return id
+  }
+
+  const removeCustomTrack = (id: string) => {
+    const idx = customTracks.value.findIndex(t => t.id === id)
+    if (idx !== -1) {
+      customTracks.value.splice(idx, 1)
+      saveCustomTracks()
+      if (noiseType.value === id) {
+        setNoiseType('none')
+      }
+    }
+  }
+
+  // 聚合所有内置与自定义音源
+  const allSoundTracks = computed<SoundTrack[]>(() => {
+    const customs: SoundTrack[] = customTracks.value.map(c => ({
+      id: c.id,
+      name: c.name,
+      icon: c.icon || '📻',
+      type: 'custom',
+      category: 'custom',
+      desc: '用户自定义网络音频直链',
+      url: c.url
+    }))
+    return [...BUILTIN_SOUND_TRACKS, ...customs]
+  })
 
   // 计算属性
   const targetSeconds = computed(() => {
@@ -249,8 +446,9 @@ export const useTimerStore = defineStore('timer', () => {
     noiseNode = whiteNoiseSource
   }
 
-  // 播放当前选中的背景白噪音
+  // 播放当前选中的背景白噪音/轻音乐/自定义音轨
   const playCurrentNoise = () => {
+    audioError.value = null
     if (noiseType.value === 'none') {
       stopSound()
       return
@@ -258,16 +456,48 @@ export const useTimerStore = defineStore('timer', () => {
 
     if (['pink', 'brown', 'white'].includes(noiseType.value)) {
       startSyntheticNoise(noiseType.value as 'pink' | 'brown' | 'white')
+      isAudioPlaying.value = true
       return
     }
 
-    // 在线音频音轨
-    if (onlineTracks[noiseType.value]) {
+    // 查找对应音轨的直链 URL
+    let trackUrl = ''
+    const foundTrack = allSoundTracks.value.find(t => t.id === noiseType.value)
+    if (foundTrack && foundTrack.url) {
+      trackUrl = foundTrack.url
+    } else {
+      // 兼容旧版 key 别名
+      const legacyAliases: Record<string, string> = {
+        piano: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/track/ghostrifter-official-celestia.mp3',
+        rain: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/rain.mp3',
+        forest: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/forest.mp3',
+        waves: 'https://cdn.jsdelivr.net/gh/ArvindParekh/Lofi-Music-App@main/public/assets/sound/effect/ocean-wave.mp3',
+      }
+      if (legacyAliases[noiseType.value]) {
+        trackUrl = legacyAliases[noiseType.value]
+      }
+    }
+
+    if (trackUrl) {
       stopSound()
-      bgAudioElement = new Audio(onlineTracks[noiseType.value])
-      bgAudioElement.loop = true
-      bgAudioElement.volume = isMuted.value ? 0 : Math.min(1, volume.value * 0.6)
-      bgAudioElement.play().catch(() => {})
+      const audio = new Audio(trackUrl)
+      audio.loop = true
+      audio.volume = isMuted.value ? 0 : Math.min(1, volume.value * 0.6)
+
+      audio.onerror = (e) => {
+        console.warn('Audio playback error:', e)
+        audioError.value = '音频加载失败，请检查网络或外链有效性'
+        isAudioPlaying.value = false
+        stopSound()
+      }
+
+      audio.play().then(() => {
+        isAudioPlaying.value = true
+      }).catch((err) => {
+        console.warn('Audio play request prevented or aborted:', err)
+      })
+
+      bgAudioElement = audio
     }
   }
 
@@ -280,7 +510,21 @@ export const useTimerStore = defineStore('timer', () => {
     }
     if (bgAudioElement) {
       bgAudioElement.pause()
+      bgAudioElement.src = ''
       bgAudioElement = null
+    }
+    isAudioPlaying.value = false
+  }
+
+  const toggleAudioPlay = () => {
+    if (isAudioPlaying.value) {
+      stopSound()
+    } else {
+      if (noiseType.value === 'none') {
+        setNoiseType('cafe', true)
+      } else {
+        playCurrentNoise()
+      }
     }
   }
 
@@ -497,10 +741,14 @@ export const useTimerStore = defineStore('timer', () => {
     if (bgAudioElement) bgAudioElement.volume = isMuted.value ? 0 : Math.min(1, val * 0.6)
   }
 
-  const setNoiseType = (type: string) => {
+  const setNoiseType = (type: string, autoPlay = true) => {
     noiseType.value = type
     localStorage.setItem('sharon_timer_noise', type)
-    if (isRunning.value) {
+    if (type === 'none') {
+      stopSound()
+      return
+    }
+    if (isRunning.value || isAudioPlaying.value || autoPlay) {
       playCurrentNoise()
     }
   }
@@ -539,6 +787,10 @@ export const useTimerStore = defineStore('timer', () => {
     progress,
     displayMinutes,
     displaySeconds,
+    isAudioPlaying,
+    audioError,
+    customTracks,
+    allSoundTracks,
     start,
     pause,
     reset,
@@ -552,6 +804,11 @@ export const useTimerStore = defineStore('timer', () => {
     setVolume,
     setNoiseType,
     toggleMute,
+    toggleAudioPlay,
+    playCurrentNoise,
+    stopSound,
+    addCustomTrack,
+    removeCustomTrack,
     playCompleteChime,
     playExamBell
   }
