@@ -156,6 +156,100 @@ const PALETTE = [
   { color: '#6366f1', bg: 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%)' }
 ]
 
+export interface SubjectMeta {
+  subject: string
+  emoji: string
+  slogan: string
+  edition: string
+  color: string
+  gradient: string
+  previewTopics: string[]
+}
+
+export const SUBJECT_METAS: Record<string, SubjectMeta> = {
+  数学: {
+    subject: '数学',
+    emoji: '📐',
+    slogan: '10大高考核心专题 · 55个高分提分点',
+    edition: '沪教版 (2020)',
+    color: '#3b82f6',
+    gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    previewTopics: ['函数与反函数', '平面解析几何', '导数及其应用', '数列与归纳法', '空间向量与立几', '二阶行列式']
+  },
+  物理: {
+    subject: '物理',
+    emoji: '⚡',
+    slogan: '力学模型 · 电磁场 · 能量与动量图景',
+    edition: '沪科版',
+    color: '#f59e0b',
+    gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    previewTopics: ['牛顿运动定律', '平抛与圆周运动', '万有引力与天体', '动能定理与功']
+  },
+  化学: {
+    subject: '化学',
+    emoji: '🧪',
+    slogan: '物质转化 · 反应原理 · 周期律与电化学',
+    edition: '沪科版',
+    color: '#10b981',
+    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    previewTopics: ['离子反应与氧化还原', '元素周期表与周期律', '原电池与电源', '铁盐与物质的量']
+  },
+  生物: {
+    subject: '生物',
+    emoji: '🧬',
+    slogan: '分子细胞 · 遗传变异与中心法则',
+    edition: '沪科版',
+    color: '#06b6d4',
+    gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+    previewTopics: ['蛋白质与核酸', '光合作用与呼吸', '孟德尔遗传定律', '中心法则与伴性遗传']
+  },
+  语文: {
+    subject: '语文',
+    emoji: '📜',
+    slogan: '古诗文鉴赏 · 文言实虚词 · 论述逻辑',
+    edition: '部编版',
+    color: '#8b5cf6',
+    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+    previewTopics: ['唐宋诗词名篇意象', '论述文逻辑脉络', '古文名篇叙事与人物']
+  },
+  英语: {
+    subject: '英语',
+    emoji: '🌍',
+    slogan: '语法核心体系 · 复合从句 · 非谓语动词',
+    edition: '上外版',
+    color: '#ec4899',
+    gradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+    previewTopics: ['高中时态体系', '定语从句连接词', '名词性从句', '非谓语动词系统']
+  },
+  政治: {
+    subject: '政治',
+    emoji: '⚖️',
+    slogan: '经济体制 · 思想政治与哲学方法论',
+    edition: '统编版',
+    color: '#ef4444',
+    gradient: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+    previewTopics: ['社会主义发展史', '生产资料所有制', '中国特色社会主义市场经济']
+  },
+  历史: {
+    subject: '历史',
+    emoji: '🏛️',
+    slogan: '中华文明源流 · 阶段特征与史料实证',
+    edition: '统编版',
+    color: '#d97706',
+    gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+    previewTopics: ['文明起源与早期国家', '秦汉大一统中央集权', '隋唐盛世与制度变革']
+  },
+  地理: {
+    subject: '地理',
+    emoji: '🗺️',
+    slogan: '自然地理运动 · 大气洋流与区域发展',
+    edition: '沪教版',
+    color: '#14b8a6',
+    gradient: 'linear-gradient(135deg, #14b8a6 0%, #0f766e 100%)',
+    previewTopics: ['地球上的大气与气压带', '水循环与洋流', '地表形态与地质作用']
+  }
+}
+
 export function getTopicsForSubject(
   subject: string,
   points: Array<{ title: string; chapter: string; book: string; grade?: string }>
