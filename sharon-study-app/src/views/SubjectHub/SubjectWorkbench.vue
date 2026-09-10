@@ -16,6 +16,7 @@ import RichQuestionEditor from '../../components/RichQuestionEditor.vue'
 import KnowledgeDrawer from './components/KnowledgeDrawer.vue'
 import {
   ArrowLeft,
+  ArrowRight,
   Reading,
   Notebook,
   Plus,
@@ -31,8 +32,10 @@ import {
   View,
   FolderOpened,
   Folder,
-  Right
+  Right,
+  TopRight
 } from '@element-plus/icons-vue'
+import { getVideoHubInfo, type VideoHubInfo } from '../../utils/videoSources'
 
 const props = defineProps<{
   subject: string
@@ -130,8 +133,9 @@ const loadAllData = async () => {
     wrongItems.value = (wRes as WrongItem[]) || []
     resources.value = (rRes as LearningResource[]) || []
 
-    // 默认考点展开
-    expandedPointIds.value = new Set(points.value.map(p => p.id))
+    // 默认考点与错题收起
+    expandedPointIds.value = new Set()
+    expandedWrongIds.value = new Set()
   } catch (err) {
     console.error('Failed to load subject data', err)
   } finally {
@@ -215,7 +219,7 @@ const toggleExpandAll = () => {
   if (areAllPointsExpanded.value) {
     expandedPointIds.value = new Set()
   } else {
-    expandedPointIds.value = new Set(points.value.map(p => p.id))
+    expandedPointIds.value = new Set(filteredPoints.value.map(p => p.id))
   }
 }
 
@@ -326,28 +330,34 @@ const renderMathAndText = (text: string): string => {
   return result
 }
 
-// B站视频嵌入弹窗
+// 考点名师微课精选中心弹窗
 const videoModalVisible = ref(false)
-const currentVideoTitle = ref('')
-const currentVideoEmbedUrl = ref('')
+const currentVideoHub = ref<VideoHubInfo | null>(null)
 
-const getBilibiliEmbedUrl = (url: string): string => {
-  const bvMatch = url.match(/\/(BV[\w]+)/)
-  if (bvMatch) return `https://player.bilibili.com/player.html?bvid=${bvMatch[1]}&autoplay=0`
-  const avMatch = url.match(/\/av(\d+)/)
-  if (avMatch) return `https://player.bilibili.com/player.html?aid=${avMatch[1]}&autoplay=0`
-  return ''
-}
+const openVideoPreview = (
+  pointOrTitle: KnowledgePoint | { title: string; subject?: string; chapter?: string; book?: string; url?: string; video_url?: string } | string,
+  maybeUrl?: string
+) => {
+  let pObj: { title: string; subject: string; chapter?: string; book?: string; video_url?: string }
 
-const openVideoPreview = (title: string, url: string) => {
-  const embed = getBilibiliEmbedUrl(url)
-  if (embed) {
-    currentVideoTitle.value = title
-    currentVideoEmbedUrl.value = embed
-    videoModalVisible.value = true
+  if (typeof pointOrTitle === 'string') {
+    pObj = {
+      title: pointOrTitle,
+      subject: props.subject,
+      video_url: maybeUrl || ''
+    }
   } else {
-    window.open(url, '_blank')
+    pObj = {
+      title: pointOrTitle.title,
+      subject: ('subject' in pointOrTitle && pointOrTitle.subject) ? pointOrTitle.subject : props.subject,
+      chapter: 'chapter' in pointOrTitle ? (pointOrTitle.chapter || '') : '',
+      book: 'book' in pointOrTitle ? (pointOrTitle.book || '') : '',
+      video_url: ('video_url' in pointOrTitle && pointOrTitle.video_url) ? pointOrTitle.video_url : ('url' in pointOrTitle ? (pointOrTitle.url || '') : '')
+    }
   }
+
+  currentVideoHub.value = getVideoHubInfo(pObj)
+  videoModalVisible.value = true
 }
 
 // 考点弹窗与编辑
@@ -445,7 +455,7 @@ const wrongSearchQuery = ref('')
 const wrongKpFilter = ref<number | null>(null)
 const blindTestMode = ref(false)
 const revealedMap = ref<Record<number, boolean>>({})
-const expandedWrongMap = ref<Record<number, boolean>>({})
+const expandedWrongIds = ref<Set<number>>(new Set())
 
 // 考点即时抽屉状态
 const drawerVisible = ref(false)
@@ -602,15 +612,23 @@ const removeWrongItem = async (id: number) => {
 }
 
 const toggleWrongFold = (id: number) => {
-  expandedWrongMap.value[id] = !expandedWrongMap.value[id]
+  if (expandedWrongIds.value.has(id)) {
+    expandedWrongIds.value.delete(id)
+  } else {
+    expandedWrongIds.value.add(id)
+  }
 }
 
-const expandAllWrong = () => {
-  filteredWrongItems.value.forEach(i => { expandedWrongMap.value[i.id] = true })
-}
+const areAllWrongExpanded = computed(() => {
+  return filteredWrongItems.value.length > 0 && filteredWrongItems.value.every(i => expandedWrongIds.value.has(i.id))
+})
 
-const collapseAllWrong = () => {
-  expandedWrongMap.value = {}
+const toggleExpandAllWrong = () => {
+  if (areAllWrongExpanded.value) {
+    expandedWrongIds.value = new Set()
+  } else {
+    expandedWrongIds.value = new Set(filteredWrongItems.value.map(i => i.id))
+  }
 }
 
 // 快速原因预设
@@ -847,9 +865,13 @@ onMounted(() => {
               clearable
               class="search-box"
             />
-            <button class="expand-all-btn" @click="toggleExpandAll">
-              <el-icon><Reading /></el-icon>
-              {{ areAllPointsExpanded ? '折叠全部' : '展开全部' }}
+            <button
+              class="expand-all-btn"
+              @click="toggleExpandAll"
+              :title="areAllPointsExpanded ? '点击收起全部考点' : '点击展开全部考点'"
+            >
+              <el-icon><component :is="areAllPointsExpanded ? Folder : FolderOpened" /></el-icon>
+              <span>{{ areAllPointsExpanded ? '全部收起' : '全部展开' }}</span>
             </button>
           </div>
         </div>
@@ -864,20 +886,21 @@ onMounted(() => {
           :class="{ 'is-mastered': masteredPointIds.has(p.id) }"
         >
           <!-- 考点头部行 -->
-          <div class="card-top-row">
+          <div class="card-top-row" @click="togglePointExpand(p.id)">
             <div class="point-meta-left">
+              <el-icon class="fold-chevron" :class="{ 'is-expanded': expandedPointIds.has(p.id) }">
+                <ArrowRight />
+              </el-icon>
               <span class="core-point-badge">🎯 核心考点</span>
               <h3
                 class="point-title"
-                @click="togglePointExpand(p.id)"
-                style="cursor: pointer"
                 :title="expandedPointIds.has(p.id) ? '点击折叠考点详情' : '点击展开考点详情'"
               >
                 {{ p.title }}
               </h3>
             </div>
 
-            <div class="point-actions-right">
+            <div class="point-actions-right" @click.stop>
               <!-- 关联错题徽章 (深度联动核心！) -->
               <div
                 v-if="wrongItemsByPointId.get(p.id)?.length"
@@ -956,16 +979,16 @@ onMounted(() => {
               <div class="visual-text">{{ p.visual_desc }}</div>
             </div>
 
-            <!-- B 站微课 -->
-            <div v-if="p.video_url" class="point-video-row">
+            <!-- 考点名师微课精讲入口 -->
+            <div class="point-video-row">
               <el-button
                 type="danger"
                 size="small"
                 plain
                 :icon="VideoPlay"
-                @click="openVideoPreview(p.title, p.video_url)"
+                @click="openVideoPreview(p)"
               >
-                🎬 观看 B 站名师精讲微课
+                🎬 名师考点微课精讲
               </el-button>
             </div>
 
@@ -1122,8 +1145,14 @@ onMounted(() => {
             <span class="switch-lbl">🙈 考前盲测模式</span>
           </div>
 
-          <el-button size="small" :icon="FolderOpened" @click="expandAllWrong">展开</el-button>
-          <el-button size="small" :icon="Folder" @click="collapseAllWrong">折叠</el-button>
+          <button
+            class="expand-all-btn"
+            @click="toggleExpandAllWrong"
+            :title="areAllWrongExpanded ? '点击收起全部错题' : '点击展开全部错题'"
+          >
+            <el-icon><component :is="areAllWrongExpanded ? Folder : FolderOpened" /></el-icon>
+            <span>{{ areAllWrongExpanded ? '全部收起' : '全部展开' }}</span>
+          </button>
 
           <el-input
             v-model="wrongSearchQuery"
@@ -1146,6 +1175,10 @@ onMounted(() => {
         >
           <div class="wrong-card-header" @click="toggleWrongFold(item.id)">
             <div class="header-main-left">
+              <el-icon class="fold-chevron" :class="{ 'is-expanded': expandedWrongIds.has(item.id) }">
+                <ArrowRight />
+              </el-icon>
+
               <!-- 掌握状态指示徽章 -->
               <span class="status-indicator-tag" :class="item.mastery_status">
                 {{ item.mastery_status === 'mastered' ? '🟢 已掌握' : item.mastery_status === 'learning' ? '🟡 练习中' : '🔴 待攻克' }}
@@ -1190,7 +1223,7 @@ onMounted(() => {
           </div>
 
           <!-- 展开内容区 -->
-          <div v-show="expandedWrongMap[item.id] !== false" class="wrong-card-body">
+          <div v-show="expandedWrongIds.has(item.id)" class="wrong-card-body">
             <!-- 题干正文 (支持富文本与KaTeX) -->
             <div class="question-content" v-html="renderMathAndText(item.question)"></div>
 
@@ -1251,26 +1284,176 @@ onMounted(() => {
     <KnowledgeDrawer
       v-model="drawerVisible"
       :point-id="drawerPointId"
-      @open-video="openVideoPreview($event.title, $event.url)"
+      @open-video="openVideoPreview($event)"
     />
 
-    <!-- 2. B站微课内嵌播放弹窗 -->
+    <!-- 2. 考点微课精选中心弹窗 -->
     <el-dialog
       v-model="videoModalVisible"
-      :title="`微课精讲: ${currentVideoTitle}`"
-      width="800px"
+      width="780px"
       destroy-on-close
+      class="video-hub-dialog"
+      :show-close="true"
     >
-      <div class="video-iframe-container">
-        <iframe
-          :src="currentVideoEmbedUrl"
-          scrolling="no"
-          border="0"
-          frameborder="no"
-          framespacing="0"
-          allowfullscreen="true"
-          class="video-iframe"
-        ></iframe>
+      <template #header>
+        <div class="video-hub-header" v-if="currentVideoHub">
+          <div class="hub-header-badge">🎬 高考名师考点微课精讲</div>
+          <h3 class="hub-header-title">
+            <span class="hub-sub-tag">【{{ currentVideoHub.subject }}】</span>
+            {{ currentVideoHub.title }}
+          </h3>
+          <div v-if="currentVideoHub.book || currentVideoHub.chapter" class="hub-header-sub">
+            <span>📚 所属章节：{{ currentVideoHub.book }} · {{ currentVideoHub.chapter }}</span>
+          </div>
+        </div>
+      </template>
+
+      <div class="video-hub-body" v-if="currentVideoHub">
+        <!-- 权威平台直达卡片流 -->
+        <div class="channel-cards-grid">
+          <!-- 渠道 1: B 站名师精讲 (推荐首选) -->
+          <div class="channel-card bili-card">
+            <div class="channel-card-top">
+              <div class="channel-brand">
+                <span class="channel-icon">📺</span>
+                <div>
+                  <div class="channel-name-row">
+                    <span class="channel-name">哔哩哔哩名师课堂</span>
+                    <span class="channel-hot-tag">⭐ 强烈推荐</span>
+                  </div>
+                  <div class="channel-feature-tags">
+                    <span class="feat-tag">1080P/4K 超清</span>
+                    <span class="feat-tag">0.5~2.0x 倍速</span>
+                    <span class="feat-tag">弹幕答疑</span>
+                    <span class="feat-tag">原站免拦截</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="channel-recommend-teachers">
+              <span class="teacher-lbl">🔥 推荐名师：</span>
+              <span v-for="teacher in currentVideoHub.biliTeachers" :key="teacher" class="teacher-pill">
+                {{ teacher }}
+              </span>
+            </div>
+
+            <p class="channel-desc">
+              {{ currentVideoHub.tips }} 聚合该考点播放量与点赞最高的名师公开课，原站原生播放体验最佳。
+            </p>
+
+            <a
+              :href="currentVideoHub.bilibiliSearchUrl"
+              target="_blank"
+              class="channel-action-btn bili-btn"
+            >
+              <el-icon><VideoPlay /></el-icon>
+              <span>在 B 站原站超清观看该考点精讲</span>
+              <el-icon><TopRight /></el-icon>
+            </a>
+          </div>
+
+          <!-- 渠道 2: 国家智慧教育平台 (教育部官方) -->
+          <div class="channel-card smartedu-card">
+            <div class="channel-card-top">
+              <div class="channel-brand">
+                <span class="channel-icon">🏛️</span>
+                <div>
+                  <div class="channel-name-row">
+                    <span class="channel-name">国家中小学智慧教育平台</span>
+                    <span class="channel-gov-tag">官方直属</span>
+                  </div>
+                  <div class="channel-feature-tags">
+                    <span class="feat-tag">教育部官方</span>
+                    <span class="feat-tag">统编教材同步</span>
+                    <span class="feat-tag">零商业广告</span>
+                    <span class="feat-tag">完全免费</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="channel-desc">
+              国家级公益性教育数字化云平台，教育部特级教师领衔录制，与统编教材新课标单元完全配套。
+            </p>
+
+            <a
+              :href="currentVideoHub.smartEduUrl"
+              target="_blank"
+              class="channel-action-btn smartedu-btn"
+            >
+              <el-icon><Reading /></el-icon>
+              <span>前往国家智慧教育云平台学习</span>
+              <el-icon><TopRight /></el-icon>
+            </a>
+          </div>
+
+          <!-- 渠道 3: 百度教育 / 题型微课 -->
+          <div class="channel-card baidu-card">
+            <div class="channel-card-top">
+              <div class="channel-brand">
+                <span class="channel-icon">🎓</span>
+                <div>
+                  <div class="channel-name-row">
+                    <span class="channel-name">高考名校题型微课题解</span>
+                    <span class="channel-sub-tag">拓展提分</span>
+                  </div>
+                  <div class="channel-feature-tags">
+                    <span class="feat-tag">近五年高考真题</span>
+                    <span class="feat-tag">解题大招</span>
+                    <span class="feat-tag">避坑拆解</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="channel-desc">
+              聚合全国百强名校模拟题与高考真题针对该考点的模型题型拆解与易错坑点实战剖析。
+            </p>
+
+            <a
+              :href="currentVideoHub.baiduSearchUrl"
+              target="_blank"
+              class="channel-action-btn baidu-btn"
+            >
+              <el-icon><Search /></el-icon>
+              <span>搜索该考点高考题解微课</span>
+              <el-icon><TopRight /></el-icon>
+            </a>
+          </div>
+        </div>
+
+        <!-- 如果配置了特选嵌入视频链接 -->
+        <div v-if="currentVideoHub.hasDirectVideo" class="direct-embed-section">
+          <div class="direct-section-header">
+            <span class="section-title">📺 特选名师直链试播（已校对有效）</span>
+            <a
+              :href="currentVideoHub.directVideoUrl"
+              target="_blank"
+              class="origin-link-btn"
+            >
+              <el-icon><TopRight /></el-icon>
+              <span>在原站全屏打开</span>
+            </a>
+          </div>
+
+          <div class="video-iframe-container">
+            <iframe
+              :src="currentVideoHub.embedUrl"
+              scrolling="no"
+              border="0"
+              frameborder="no"
+              framespacing="0"
+              allowfullscreen="true"
+              referrerpolicy="no-referrer"
+              sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
+              class="video-iframe"
+            ></iframe>
+          </div>
+          <div class="embed-hint-bar">
+            <span>💡 提示：嵌入播放器受第三方防盗链限制可能黑屏或画质受限，点击右上角【在原站全屏打开】或上方【哔哩哔哩名师课堂】即可畅享 1080P 超清与倍速。</span>
+          </div>
+        </div>
       </div>
     </el-dialog>
 
@@ -1452,17 +1635,23 @@ onMounted(() => {
 </template>
 
 <style scoped>
+:global(.app-main:has(.workbench-container)) {
+  overflow-y: hidden;
+}
+
 .workbench-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   max-width: 1400px;
   margin: 0 auto;
-  padding-bottom: 40px;
+  height: calc(100vh - 48px);
+  overflow: hidden;
 }
 
 /* 顶栏 */
 .workbench-top-nav {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1580,10 +1769,14 @@ onMounted(() => {
 .knowledge-tab-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .topics-tags-panel {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1683,6 +1876,9 @@ onMounted(() => {
   gap: 8px;
   align-items: center;
   padding: 2px 0;
+  max-height: 120px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .topic-tag-pill {
@@ -1792,9 +1988,32 @@ onMounted(() => {
 }
 
 .points-stream {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  padding-right: 6px;
+  padding-bottom: 28px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}
+
+.points-stream::-webkit-scrollbar,
+.wrong-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.points-stream::-webkit-scrollbar-thumb,
+.wrong-list::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 4px;
+}
+
+.points-stream::-webkit-scrollbar-thumb:hover,
+.wrong-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
 }
 
 .knowledge-card {
@@ -1815,6 +2034,25 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fold-chevron {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
+  flex-shrink: 0;
+}
+
+.fold-chevron.is-expanded {
+  transform: rotate(90deg);
+  color: #2563eb;
+}
+
+.card-top-row:hover .fold-chevron,
+.wrong-card-header:hover .fold-chevron {
+  color: #2563eb;
 }
 
 .point-meta-left {
@@ -2075,9 +2313,13 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .wrong-dashboard {
+  flex-shrink: 0;
   background: var(--bg-card, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 12px;
@@ -2141,6 +2383,7 @@ onMounted(() => {
 }
 
 .wrong-toolbar {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2179,9 +2422,16 @@ onMounted(() => {
 }
 
 .wrong-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-right: 6px;
+  padding-bottom: 28px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
 }
 
 .wrong-card {
@@ -2204,6 +2454,7 @@ onMounted(() => {
   background: var(--bg-card, #ffffff);
   border-bottom: 1px solid var(--border-color, #f1f5f9);
   cursor: pointer;
+  user-select: none;
   gap: 12px;
 }
 
@@ -2414,16 +2665,282 @@ onMounted(() => {
   color: #2563eb;
 }
 
+.video-hub-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hub-header-badge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.hub-header-title {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+}
+
+.hub-sub-tag {
+  color: #2563eb;
+}
+
+.hub-header-sub {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+}
+
+.channel-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.channel-card {
+  border-radius: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.channel-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.channel-card.bili-card {
+  border-left: 5px solid #fb7299;
+}
+
+.channel-card.smartedu-card {
+  border-left: 5px solid #0284c7;
+}
+
+.channel-card.baidu-card {
+  border-left: 5px solid #f59e0b;
+}
+
+.channel-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.channel-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.channel-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.channel-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.channel-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.channel-hot-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e11d48;
+  background: #ffe4e6;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.channel-gov-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.channel-sub-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d97706;
+  background: #fef3c7;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.channel-feature-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.feat-tag {
+  font-size: 11px;
+  color: var(--text-muted, #64748b);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.channel-recommend-teachers {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.teacher-lbl {
+  font-weight: 600;
+  color: #ea580c;
+}
+
+.teacher-pill {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.channel-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-sub, #475569);
+  line-height: 1.5;
+}
+
+.channel-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.channel-action-btn.bili-btn {
+  background: linear-gradient(135deg, #fb7299, #f43f5e);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(251, 114, 153, 0.3);
+}
+
+.channel-action-btn.bili-btn:hover {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  box-shadow: 0 4px 12px rgba(251, 114, 153, 0.45);
+  transform: translateY(-1px);
+}
+
+.channel-action-btn.smartedu-btn {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+.channel-action-btn.smartedu-btn:hover {
+  background: linear-gradient(135deg, #0369a1, #1d4ed8);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
+  transform: translateY(-1px);
+}
+
+.channel-action-btn.baidu-btn {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-main, #334155);
+  border: 1px solid var(--border-color, #cbd5e1);
+}
+
+.channel-action-btn.baidu-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.direct-embed-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-color, #e2e8f0);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.direct-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.origin-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.origin-link-btn:hover {
+  text-decoration: underline;
+}
+
 .video-iframe-container {
   position: relative;
   width: 100%;
-  height: 480px;
+  height: 380px;
 }
 
 .video-iframe {
   width: 100%;
   height: 100%;
   border-radius: 8px;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.embed-hint-bar {
+  font-size: 11.5px;
+  color: var(--text-muted, #64748b);
+  background: var(--bg-page, #f8fafc);
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
 }
 
 /* 暗色模式适配 */
@@ -2433,9 +2950,31 @@ onMounted(() => {
 :global(.dark) .wrong-dashboard,
 :global(.dark) .wrong-toolbar,
 :global(.dark) .wrong-card,
-:global(.dark) .wrong-card-header {
+:global(.dark) .wrong-card-header,
+:global(.dark) .channel-card {
   background: #131b2e;
   border-color: #1e293b;
+}
+
+:global(.dark) .channel-name,
+:global(.dark) .section-title,
+:global(.dark) .hub-header-title {
+  color: #f8fafc;
+}
+
+:global(.dark) .channel-desc {
+  color: #94a3b8;
+}
+
+:global(.dark) .channel-action-btn.baidu-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+}
+
+:global(.dark) .embed-hint-bar {
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
 }
 
 :global(.dark) .tag-panel-header,

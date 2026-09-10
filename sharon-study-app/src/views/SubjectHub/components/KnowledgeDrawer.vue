@@ -88,11 +88,14 @@ const renderMathAndText = (text: string): string => {
 }
 
 const triggerVideo = () => {
-  if (!point.value?.video_url) return
+  if (!point.value) return
   emit('open-video', {
     title: point.value.title,
-    url: point.value.video_url
-  })
+    url: point.value.video_url || '',
+    subject: point.value.subject,
+    chapter: point.value.chapter,
+    book: point.value.book
+  } as any)
 }
 </script>
 
@@ -157,12 +160,12 @@ const triggerVideo = () => {
         </div>
 
         <!-- 名师视频精讲按钮 -->
-        <div v-if="point.video_url" class="video-cta-card">
+        <div class="video-cta-card">
           <div class="video-cta-left">
             <el-icon class="play-indicator"><VideoPlay /></el-icon>
             <div>
               <div class="cta-title">名师考点精讲微课</div>
-              <div class="cta-subtitle">B 站高口碑高考真题拆解微课</div>
+              <div class="cta-subtitle">B 站 · 国家智慧教育平台权威微课</div>
             </div>
           </div>
           <el-button type="primary" size="small" :icon="VideoPlay" @click="triggerVideo">

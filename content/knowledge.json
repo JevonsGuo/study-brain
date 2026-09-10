@@ -48,7 +48,7 @@
     "key_formulas": "$$\\text{全称命题: } \\forall x \\in M, \\; p(x) \\iff \\text{否定: } \\exists x \\in M, \\; \\neg p(x)$$\n$$\\text{特称命题: } \\exists x \\in M, \\; p(x) \\iff \\text{否定: } \\forall x \\in M, \\; \\neg p(x)$$",
     "tips": "① 否定两步法：一改量词（∀变∃，∃变∀），二否结论（p(x)变¬p(x)），前面的条件集合 M 绝不改变！\n② 词语对照：‘都是’的否定是‘不都是’（而非‘都不是’）；‘大于’的否定是‘小于或等于’。",
     "visual_desc": "天鹅驳论：证明‘天鹅皆白’需要考察全部，反驳它只需要在湖面找出一只黑天鹅。",
-    "video_url": "https://www.bilibili.com/video/BV14J41177jW",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -87,7 +87,7 @@
     "key_formulas": "$$\\Delta = b^2 - 4ac$$\n$$a > 0, \\Delta > 0 \\implies ax^2+bx+c > 0 \\iff x \\in (-\\infty, x_1) \\cup (x_2, +\\infty)$$\n$$ax^2+bx+c > 0 \\text{ 恒成立 } (\\forall x \\in \\mathbb{R}) \\iff a > 0 \\text{ 且 } \\Delta < 0$$",
     "tips": "① 若题目中未明确“二次”，必须先对二次项系数 a = 0 进行单独检验！\n② 解含参不等式分类三步曲：看二次项系数符号；看 Δ 判别式正负；看两根大小关系。",
     "visual_desc": "抛物线浮沉图：a > 0 时，Δ < 0 如气球浮出水面永不接触 x 轴，全域恒正。",
-    "video_url": "https://www.bilibili.com/video/BV117411P7hE",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -100,7 +100,7 @@
     "key_formulas": "$$\\frac{f(x)}{g(x)} \\ge 0 \\iff \\begin{cases} f(x)g(x) \\ge 0 \\\\ g(x) \\neq 0 \\end{cases}$$\n$$||a| - |b|| \\le |a \\pm b| \\le |a| + |b|$$",
     "tips": "① 分式不等式千万不能直接去分母，必须移项通分化为标准因式乘积！\n② 含双绝对值不等式 |x - a| + |x - b| 最值问题：利用数轴距离几何意义，“两点之间线段最短”，在 [a, b] 之间取最小值 |a - b|。",
     "visual_desc": "数轴距离模型：|x - 1| + |x - 3| 表示点 x 到 1 和 3 的距离之和，在 1 与 3 之间如同两人拔河绷紧，总和恒等于两点间距 2。",
-    "video_url": "https://www.bilibili.com/video/BV1kE41127p5",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -113,7 +113,7 @@
     "key_formulas": "$$\\frac{a + b}{2} \\ge \\sqrt{ab} \\quad (a > 0, b > 0, \\text{当且仅当 } a = b \\text{ 取等})$$\n$$a^2 + b^2 \\ge 2ab \\quad (\\forall a, b \\in \\mathbb{R})$$\n$$\\text{一的代换: } \\left(\\frac{A}{x} + \\frac{B}{y}\\right)(mx + ny) = Am + Bn + \\frac{Amy}{x} + \\frac{Bnx}{y} \\ge (\\sqrt{Am} + \\sqrt{Bn})^2$$",
     "tips": "① 均值不等式使用三要素牢记：“一正、二定、三相等”，缺少任何一个等号不成立直接全错！\n② 连续使用均值不等式必须验证两次等号能否同时取到，若不能同时成立，必须采用消元法或对勾函数单调性求解！",
     "visual_desc": "半圆射影定理几何图景：以 a + b 为直径作半圆，半径为 (a + b)/2，弦切线垂直高度为 √(ab)。半径永远大于等于半弦，当且仅当垂足在圆心（a = b）时两者重合。",
-    "video_url": "https://www.bilibili.com/video/BV117411v7i2",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -126,7 +126,7 @@
     "key_formulas": "$$a^{\\frac{m}{n}} = \\sqrt[n]{a^m}, \\quad a^{-\\frac{m}{n}} = \\frac{1}{\\sqrt[n]{a^m}} \\quad (a > 0)$$\n$$a^r \\cdot a^s = a^{r+s}, \\quad (a^r)^s = a^{rs}, \\quad (ab)^r = a^r b^r$$",
     "tips": "① 分数指数幂与根式互化时，底数必须保证 a > 0。负数不能任意进行有理分数幂运算。\n② 常见配方技巧：x^(1/2) + x^(-1/2) = k，两边平方得 x + x^(-1) = k² - 2。",
     "visual_desc": "维度的平滑过渡：从离散的自乘整倍数，通过内插分割变成平滑连贯的实数幂曲线。",
-    "video_url": "https://www.bilibili.com/video/BV1v4411d7o8",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -139,7 +139,7 @@
     "key_formulas": "$$a^b = N \\iff b = \\log_a N \\quad (a > 0, a \\neq 1, N > 0)$$\n$$\\log_a(MN) = \\log_a M + \\log_a N, \\quad \\log_a\\left(\\frac{M}{N}\\right) = \\log_a M - \\log_a N$$\n$$\\log_a b = \\frac{\\log_c b}{\\log_c a}, \\quad \\log_{a^m}(b^n) = \\frac{n}{m} \\log_a b$$",
     "tips": "① 真数必须严格大于零（N > 0），底数严格大于零且不等于1（a > 0, a ≠ 1），这是对数方程与不等式求定义域的铁律！\n② 换底公式是化简不同底数对数乘积的关键武器，化为自然对数 ln 计算最规范。",
     "visual_desc": "降维打击算法：对数将复杂的‘相乘’降级为‘相加’，将指数级的爆发增长压缩成温和的平稳对数线。",
-    "video_url": "https://www.bilibili.com/video/BV15E411T7Qp",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -152,7 +152,7 @@
     "key_formulas": "$$y = a^x \\text{ 与 } y = \\log_a x \\text{ 互为反函数，图象关于 } y = x \\text{ 对称}$$\n$$a > 1 \\implies \\text{两函数在定义域内皆单调递增}$$\n$$0 < a < 1 \\implies \\text{两函数在定义域内皆单调递减}$$",
     "tips": "① 复合函数单调性“同增异减”口诀：y = f(g(x))，若内外层单调性相同则整体单调递增；单调性相反则整体单调递减。\n② 特别小心：求 y = logₐ(g(x)) 单调区间前，第一步必须先解真数 g(x) > 0！绝不能遗漏定义域。",
     "visual_desc": "照镜子对称美：把 y = x 当作镜面，指数函数的飞天曲线映射成贴地缓行的对数曲线。",
-    "video_url": "https://www.bilibili.com/video/BV1p4411d7T3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -165,7 +165,7 @@
     "key_formulas": "$$y = \\frac{ax + b}{cx + d} = \\frac{a}{c} + \\frac{b - \\frac{ad}{c}}{cx + d} \\implies \\text{值域: } y \\neq \\frac{a}{c}$$\n$$f(x) = ax^2 + bx + c \\text{ 在 } [m, n] \\text{ 需考查对称轴 } x = -\\frac{b}{2a} \\text{ 是否在区间内}$$",
     "tips": "① 换元必注明新元取值范围！“设 t 易漏 t 范围”是高中高频惨案。\n② 二次函数闭区间最值必须画出简图，考查对称轴与区间的相对位置（在区间左侧、右侧、还是内部）。",
     "visual_desc": "投影仪原理：定义域是投射在 x 轴上的影子，值域是函数图像投射在 y 轴上的光斑覆盖区间。",
-    "video_url": "https://www.bilibili.com/video/BV1G4411d7o8",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -178,7 +178,7 @@
     "key_formulas": "$$\\frac{f(x_1) - f(x_2)}{x_1 - x_2} > 0 \\iff f(x) \\text{ 严格单调递增}$$\n$$f(x) = x + \\frac{a}{x} \\; (a > 0) \\implies x \\in [\\sqrt{a}, +\\infty) \\text{ 单调递增}, \\; (0, \\sqrt{a}] \\text{ 单调递减}$$",
     "tips": "① 单调区间必须用“和”或逗号连接，绝对不能写并集符号“∪”！例如反比例函数单调递减区间为 (-∞, 0) 和 (0, +∞)，写并集直接扣全部分数。\n② 用定义证明单调性四步走：设元、作差、变形（因式分解或通分配方）、定符号。",
     "visual_desc": "登山模型：自西向东看，一直在爬坡就是增函数，一直在下坡就是减函数；对勾函数如同一道峡谷先降后升。",
-    "video_url": "https://www.bilibili.com/video/BV1K4411B7Pj",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -191,7 +191,7 @@
     "key_formulas": "$$f(-x) = f(x) \\iff \\text{偶函数 (关于 y 轴对称)}$$\n$$f(-x) = -f(x) \\iff \\text{奇函数 (关于原点对称)}, \\; 0 \\in D \\implies f(0) = 0$$\n$$f(a + x) = f(a - x) \\iff \\text{关于直线 } x = a \\text{ 对称}$$\n$$f(a + x) + f(a - x) = 2b \\iff \\text{关于点 } (a, b) \\text{ 中心对称}$$",
     "tips": "① 讨论奇偶性第一步：先看定义域是否关于原点对称，不对称直接判定为非奇非偶！\n② 奇偶性结合单调性解不等式：利用 f(-x) 转化自变量，奇函数去掉括号符号不变，利用单调性脱去函数外壳 f。",
     "visual_desc": "蝴蝶双翼（偶函数沿 y 轴折叠重合）；风车叶片（奇函数绕原点旋转 180 度完全重合）。",
-    "video_url": "https://www.bilibili.com/video/BV1u4411B7yN",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -204,7 +204,7 @@
     "key_formulas": "$$f(x + a) = -f(x) \\implies T = 2a$$\n$$f(x + a) = \\frac{1}{f(x)} \\implies T = 2a$$\n$$\\text{双轴对称 } x = a, x = b \\implies T = 2|a - b|$$\n$$\\text{一轴 } x=a \\text{ 一中心 } (b, 0) \\implies T = 4|a - b|$$",
     "tips": "① “一轴一中心周长为四倍”：牢记 x = a 轴与 (b, 0) 中心对称周期必为 4|a - b|，填空题秒杀结论。\n② 三性综合解题路径：对称性+奇偶性求周期 $\\to$ 周期化大数为小数 $\\to$ 单调性脱外壳比大小。",
     "visual_desc": "折纸与翻转：轴对称如镜面反射，中心对称如倒立翻转。两次反射回正，一反射一旋转需要四步才能重合复原。",
-    "video_url": "https://www.bilibili.com/video/BV1M4411B7W1",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -217,7 +217,7 @@
     "key_formulas": "$$f(a) \\cdot f(b) < 0 \\text{ 且连续 } \\implies \\exists c \\in (a, b), \\; f(c) = 0$$\n$$\\text{方程 } f(x) = g(x) \\text{ 根的个数 } \\iff \\text{图象 } y = f(x) \\text{ 与 } y = g(x) \\text{ 交点个数}$$",
     "tips": "① 零点存在定理只能说明有解，不能反推（例如抛物线穿透再弹回，f(a)f(b) > 0 依然可能有两根）。\n② 数形结合解零点求参：化 f(x) = k 或 f(x) = g(x)，把零点个数转化为已知静态函数与动态直线/曲线的交点个数。",
     "visual_desc": "穿河过桥模型：只要河岸连续，从江南（负）走到江北（正），必然至少踩踏水面岸线（零点）一次。",
-    "video_url": "https://www.bilibili.com/video/BV1j4411B7X3",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -230,7 +230,7 @@
     "key_formulas": "$$y = f(x) \\iff x = f^{-1}(y) \\iff y = f^{-1}(x)$$\n$$D_{f^{-1}} = R_f, \\quad R_{f^{-1}} = D_f$$\n$$f(x) \\text{ 与 } f^{-1}(x) \\text{ 图象关于 } y = x \\text{ 对称}$$",
     "tips": "① 常见丢分点：求出反函数表达式后忘记注明定义域直接扣一半分！\n② 互为反函数的图象交点不一定都在 y = x 上！增函数的交点必在 y = x 上；但减函数的交点可能成对出现在关于 y = x 对称的位置上。",
     "visual_desc": "倒带镜头：自变量与因变量互换身份，从因探果变成溯果求因，坐标轴在沿 45度斜线折叠时完全重合。",
-    "video_url": "https://www.bilibili.com/video/BV1L4411B7P6",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -243,7 +243,7 @@
     "key_formulas": "$$l = |\\alpha| r$$\n$$S = \\frac{1}{2} l r = \\frac{1}{2} |\\alpha| r^2$$\n$$\\text{周长 } C = 2r + l = 2r + \\alpha r \\implies \\text{当 } \\alpha = 2 \\text{ rad 时面积最大}$$",
     "tips": "① 扇形面积最值经典结论：周长固定为 C 时，当圆心角 α = 2 弧度时，扇形面积达到最大值 S_max = C²/16！\n② 判断象限角范围：已知 α 在第几象限，求 α/2 在第几象限，采用数轴/十字交叉法划分二等分角区。",
     "visual_desc": "绕线轮模型：软尺绕着圆轮滚动，滚过的距离即是弧长，圆心角弧度就是弧长与半径的比值。",
-    "video_url": "https://www.bilibili.com/video/BV1E4411B7K7",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -256,7 +256,7 @@
     "key_formulas": "$$\\sin^2\\alpha + \\cos^2\\alpha = 1$$\n$$\\tan\\alpha = \\frac{\\sin\\alpha}{\\cos\\alpha}$$\n$$\\frac{a\\sin\\alpha + b\\cos\\alpha}{c\\sin\\alpha + d\\cos\\alpha} = \\frac{a\\tan\\alpha + b}{c\\tan\\alpha + d}$$\n$$a\\sin^2\\alpha + b\\sin\\alpha\\cos\\alpha + c\\cos^2\\alpha = \\frac{a\\tan^2\\alpha + b\\tan\\alpha + c}{\\tan^2\\alpha + 1}$$",
     "tips": "① “弦化切”是高考化简填空第一神技：见到和差二次齐次式，除以 sin²α + cos²α（即数值1）后除以 cos²α 换元 tan α。\n② 经典知一求二：已知 sin α + cos α = t，两边平方得 1 + 2sin α cos α = t²，从而求出 sin α cos α 与 sin α - cos α。",
     "visual_desc": "单位圆上的探针：单位圆上点 P 的横坐标是余弦值，纵坐标是正弦值，斜率切线长度是正切值。",
-    "video_url": "https://www.bilibili.com/video/BV1c4411B7y8",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -269,7 +269,7 @@
     "key_formulas": "$$\\sin(\\alpha \\pm \\beta) = \\sin\\alpha\\cos\\beta \\pm \\cos\\alpha\\sin\\beta$$\n$$\\cos(\\alpha \\pm \\beta) = \\cos\\alpha\\cos\\beta \\mp \\sin\\alpha\\sin\\beta$$\n$$\\cos 2\\alpha = 2\\cos^2\\alpha - 1 = 1 - 2\\sin^2\\alpha$$\n$$\\cos^2\\alpha = \\frac{1 + \\cos 2\\alpha}{2}, \\quad \\sin^2\\alpha = \\frac{1 - \\cos 2\\alpha}{2}$$",
     "tips": "① 拆角拼角技巧：遇到难求角，巧用两已知角表达未知角，如 α = (α + β) - β，2α = (α + β) + (α - β)。\n② 和差化切变形：tan α + tan β = tan(α + β)(1 - tan α tan β)。",
     "visual_desc": "旋转坐标系叠加：向量在平面连续旋转两个角度 α 与 β，其末端投影正是三角加法恒等式的几何证明。",
-    "video_url": "https://www.bilibili.com/video/BV184411B7K2",
+    "video_url": "",
     "sort_order": 21
   },
   {
@@ -282,7 +282,7 @@
     "key_formulas": "$$a\\sin x + b\\cos x = \\sqrt{a^2 + b^2}\\sin(x + \\varphi), \\quad \\tan\\varphi = \\frac{b}{a}$$\n$$y = A\\sin(\\omega x + \\varphi) \\implies T = \\frac{2\\pi}{\\omega}$$\n$$\\text{平移法则: } \\sin\\omega x \\to \\sin\\left[\\omega\\left(x + \\frac{\\varphi}{\\omega}\\right)\\right] \\implies \\text{平移距离为 } \\frac{|\\varphi|}{\\omega}$$",
     "tips": "① 经典大坑：从 sin 2x 到 sin(2x + π/3)，只需向左平移 (π/3)/2 = π/6 个单位！千万不要直接平移 π/3！\n② 必须把 x 的系数提出来看：sin(ω(x + φ/ω))，平移只针对自变量 x 本身。",
     "visual_desc": "弹簧振子与声波波动：A 决定声响响度振幅，ω 决定音调高低频率，φ 决定起振初始相位。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W5",
+    "video_url": "",
     "sort_order": 22
   },
   {
@@ -295,7 +295,7 @@
     "key_formulas": "$$\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R$$\n$$a^2 = b^2 + c^2 - 2bc\\cos A, \\quad \\cos A = \\frac{b^2 + c^2 - a^2}{2bc}$$\n$$S = \\frac{1}{2}ab\\sin C = r\\cdot \\frac{a+b+c}{2}$$",
     "tips": "① 大边对大角定理：在 △ABC 中，a > b ⇔ A > B ⇔ sin A > sin B ⇔ cos A < cos B。\n② 三角形内角和潜规则：A + B + C = π ⇒ sin(A + B) = sin C, cos(A + B) = -cos C。\n③ 正弦定理求角时务必检验两解问题：已知 a, b, A，若 a < b 且 a > b sin A，角 B 有锐角和钝角两解！",
     "visual_desc": "几何张力天平：余弦定理是毕达哥拉斯定理的推广，钝角三角形第三边被余弦负值向外撑大，锐角向内收拢。",
-    "video_url": "https://www.bilibili.com/video/BV154411B7m5",
+    "video_url": "",
     "sort_order": 23
   },
   {
@@ -308,7 +308,7 @@
     "key_formulas": "$$\\vec{b} = \\lambda \\vec{a} \\quad (\\vec{a} \\neq \\vec{0})$$\n$$\\overrightarrow{OP} = x\\overrightarrow{OA} + y\\overrightarrow{OB} \\iff A, P, B \\text{ 三点共线 } \\iff x + y = 1$$\n$$\\overrightarrow{OM} = \\frac{\\overrightarrow{OA} + \\overrightarrow{OB}}{2} \\iff M \\text{ 是 } AB \\text{ 中点}$$",
     "tips": "① 向量不能比较大小，只能比较模长！‘a > b’在向量中是无意义的非法语句。\n② 重心性质秒解题：若 G 为 △ABC 重心，则 GA + GB + GC = 0；且 OG = (OA + OB + OC)/3。",
     "visual_desc": "风向与航向：飞机在强风中飞行，实际地面航向等于机头推力向量与风速向量的三角形矢量合成。",
-    "video_url": "https://www.bilibili.com/video/BV184411B7W6",
+    "video_url": "",
     "sort_order": 24
   },
   {
@@ -321,7 +321,7 @@
     "key_formulas": "$$\\vec{a} \\cdot \\vec{b} = |\\vec{a}||\\vec{b}|\\cos\\theta = x_1 x_2 + y_1 y_2$$\n$$\\vec{a} \\perp \\vec{b} \\iff \\vec{a} \\cdot \\vec{b} = 0 \\iff x_1 x_2 + y_1 y_2 = 0$$\n$$\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = |\\overrightarrow{AM}|^2 - |\\overrightarrow{BM}|^2 = |\\overrightarrow{AM}|^2 - \\frac{1}{4}|\\overrightarrow{BC}|^2 \\quad (M \\text{ 为 } BC \\text{ 中点})$$",
     "tips": "① 数量积不满足结合律！(a · b)c ≠ a(b · c)，前者方向平行于 c，后者方向平行于 a。\n② 极化恒等式威力：求向量数量积最大值，直接转化为找中线模长 |AM| 的最值，变双动点为单动点！",
     "visual_desc": "物理功与投影：力向量沿着位移方向所做的功，等于力在位移上的投影长度乘以位移模长。",
-    "video_url": "https://www.bilibili.com/video/BV1E4411B7W9",
+    "video_url": "",
     "sort_order": 25
   },
   {
@@ -334,7 +334,7 @@
     "key_formulas": "$$z = a + bi \\implies |z| = \\sqrt{a^2 + b^2}, \\quad \\bar{z} = a - bi$$\n$$z \\cdot \\bar{z} = |z|^2 = a^2 + b^2$$\n$$i^{4k+1}=i, \\; i^{4k+2}=-1, \\; i^{4k+3}=-i, \\; i^{4k}=1 \\implies \\sum_{k=1}^4 i^k = 0$$",
     "tips": "① 易错警示：复数“虚部是 bi”错误！虚部是实数系数 b。\n② 复数相等条件：a + bi = c + di ⇔ a = c 且 b = d（实部等于实部，虚部等于虚部），常用来列二元一次方程组求解参数。\n③ 虚数不能比较大小：只有两数皆为纯实数时才能比大小，形如 2 + 3i > 1 + i 在数学上是非法命题。",
     "visual_desc": "数轴的维度飞跃：实数是平面上的 X 轴地平线，乘上虚数单位 i 等于逆时针旋转 90 度跃入纵向维度，构建起二维复平面。",
-    "video_url": "https://www.bilibili.com/video/BV1g4411B7H2",
+    "video_url": "",
     "sort_order": 26
   },
   {
@@ -347,7 +347,7 @@
     "key_formulas": "$$a_n = a_1 + (n - 1)d$$\n$$S_n = \\frac{n(a_1 + a_n)}{2} = na_1 + \\frac{n(n - 1)}{2}d$$\n$$m + n = p + q \\implies a_m + a_n = a_p + a_q$$\n$$S_k, \\; S_{2k} - S_k, \\; S_{3k} - S_{2k} \\text{ 成等差数列，公差为 } k^2d$$",
     "tips": "① 等差数列求和 Sₙ 必须无常数项（形如 An² + Bn），若含常数项（如 Sₙ = 2n² + n + 1），则此数列从第二项起才成等差数列！\n② 奇数项求和：S₂ₙ₋₁ = (2n - 1) aₙ（奇数项总和等于项数乘以正中间一项）。",
     "visual_desc": "梯形面积阶梯模型：等差数列项像台阶整齐上扬，前 n 项和等于上底加下底乘以高除以二的梯形面积拼合法。",
-    "video_url": "https://www.bilibili.com/video/BV1z4411B7A4",
+    "video_url": "",
     "sort_order": 27
   },
   {
@@ -360,7 +360,7 @@
     "key_formulas": "$$a_n = a_1 q^{n-1}$$\n$$S_n = \\begin{cases} na_1, & q = 1 \\\\ \\frac{a_1(1 - q^n)}{1 - q} = \\frac{a_1 - a_n q}{1 - q}, & q \\neq 1 \\end{cases}$$\n$$m + n = p + q \\implies a_m a_n = a_p a_q$$\n$$S_k, \\; S_{2k} - S_k, \\; S_{3k} - S_{2k} \\text{ 成等比数列，公比为 } q^k$$",
     "tips": "① 致命陷阱：使用等比数列前 n 项和公式，第一反应必须分类讨论 q = 1 与 q ≠ 1！直接套用除以 (1 - q) 导致除以零直接扣大分。\n② 奇数项与偶数项公比为 q²；等比数列各项同号时开方才成等比中项。",
     "visual_desc": "复利滚雪球：每一次迭代都在原有一切的基础之上乘上一个倍率因子，呈现爆发式指数级裂变扩张。",
-    "video_url": "https://www.bilibili.com/video/BV1w4411B7z5",
+    "video_url": "",
     "sort_order": 28
   },
   {
@@ -373,7 +373,7 @@
     "key_formulas": "$$a_n = \\begin{cases} S_1, & n = 1 \\\\ S_n - S_{n-1}, & n \\ge 2 \\end{cases}$$\n$$a_{n+1} - a_n = f(n) \\implies a_n = a_1 + \\sum_{k=1}^{n-1} f(k)$$\n$$a_{n+1} = p a_n + q \\implies a_{n+1} + \\frac{q}{p - 1} = p\\left(a_n + \\frac{q}{p - 1}\\right)$$",
     "tips": "① 忘记检验 n = 1 必扣分：求出 aₙ = Sₙ - Sₙ₋₁ 仅仅对 n ≥ 2 有效，第一步必须写 a₁ = S₁！\n② 递推配凑口诀：看到一次式，左右加上常数 λ 构造等比；看到分数倒过来，两边取倒数变简单。",
     "visual_desc": "多米诺骨牌抵消：累加法如同一队多米诺骨牌依次冲撞抵消，只有排头 a₁ 与排尾 aₙ 稳固留存。",
-    "video_url": "https://www.bilibili.com/video/BV1C4411B7q8",
+    "video_url": "",
     "sort_order": 29
   },
   {
@@ -386,7 +386,7 @@
     "key_formulas": "$$\\frac{1}{n(n + k)} = \\frac{1}{k}\\left(\\frac{1}{n} - \\frac{1}{n + k}\\right)$$\n$$S_n = a_1 + a_2 + \\dots + a_n, \\quad qS_n = a_1 q + a_2 q + \\dots + a_n q$$\n$$(1 - q)S_n = a_1 + \\sum_{k=1}^{n-1} (a_{k+1} - a_k q) - a_n q \\implies \\text{两端除以 } (1 - q)$$",
     "tips": "① 错位相减大题得分关键点：两式相减时，最后一项是 - aₙ·q，千千万万不要漏掉负号！\n② 裂项相消注意残留项：若跨越步长为 2（如 1/(n(n+2))），消去后前面必定残留 2 项，后面也必定残留 2 项！",
     "visual_desc": "错位咬合齿轮：将整个序列像拉链一样错开一格齿位，中间原本复杂的算式互相抵消归零，只留下首尾边界项。",
-    "video_url": "https://www.bilibili.com/video/BV1D4411B7W1",
+    "video_url": "",
     "sort_order": 30
   },
   {
@@ -399,7 +399,7 @@
     "key_formulas": "$$\\text{步骤一: } n = n_0 \\text{ 命题成立}$$\n$$\\text{步骤二: 假设 } n = k \\implies \\text{证明 } n = k + 1 \\text{ 成立}$$\n$$\\text{递推核心: 从 } k \\text{ 步迈向 } k+1 \\text{ 步，必须明确使用归纳假设！}$$",
     "tips": "① 假归纳直接判零分：在证明 n = k + 1 成立的过程中，若完全没有用到“假设 n = k 成立”这一条件，属于逻辑假归纳，阅卷老师直接判 0 分！\n② 看清增加的项：从 n = k 变到 n = k + 1，项数发生了什么变化（如多了哪几项），必须在草稿纸上精确对齐列出。",
     "visual_desc": "无限登梯定理：第一步跨上第一级阶梯；第二步证明只要能站在第 k 级，就一定能迈上第 k+1 级。两者具备，通往无限。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W9",
+    "video_url": "",
     "sort_order": 31
   },
   {
@@ -412,7 +412,7 @@
     "key_formulas": "$$V_{\\text{柱}} = Sh, \\quad V_{\\text{锥}} = \\frac{1}{3}Sh, \\quad V_{\\text{球}} = \\frac{4}{3}\\pi R^3, \\quad S_{\\text{球}} = 4\\pi R^2$$\n$$2R = \\sqrt{a^2 + b^2 + c^2} \\quad (\\text{长方体模型})$$\n$$R^2 = r^2 + \\left(\\frac{h}{2}\\right)^2 \\quad (\\text{直棱柱垂面球心法})$$",
     "tips": "① “墙角模型”识别特征：四面体有三条棱两两垂直（如长方体的一个墙角），立刻用公式 (2R)² = a² + b² + c²，两秒出答案。\n② 底面外接圆半径求法复习：直角三角形斜边一半；正三角形 r = a / √3；任意三角形用正弦定理 2r = a / sin A！",
     "visual_desc": "纸箱装球模型：把不对称的几何骨架补形嵌入一个四平八稳的长方体纸箱中，箱子的八个顶点自然全部落在同一球面上。",
-    "video_url": "https://www.bilibili.com/video/BV1s4411B7W2",
+    "video_url": "",
     "sort_order": 32
   },
   {
@@ -425,7 +425,7 @@
     "key_formulas": "$$l \\not\\subset \\alpha, \\; m \\subset \\alpha, \\; l \\parallel m \\implies l \\parallel \\alpha$$\n$$l \\perp m, \\; l \\perp n, \\; m \\cap n = P, \\; m, n \\subset \\alpha \\implies l \\perp \\alpha$$\n$$\\alpha \\perp \\beta, \\; \\alpha \\cap \\beta = l, \\; m \\subset \\alpha, \\; m \\perp l \\implies m \\perp \\beta$$",
     "tips": "① 判定线面垂直必须强调“两条相交直线”，漏写“相交”二字直接扣过程分！\n② 辅助线第一法则：遇到面面垂直，立刻在其中一个面上作交线的垂线，瞬间得到全平面的法线，打通线面垂直与三垂线通道。",
     "visual_desc": "大厦立柱与开门模型：立柱垂直于地面任意两条交错瓷砖缝，所以笔直顶立；房门只要有一根门轴垂直于地面，门面无论转到哪里都垂直于地面。",
-    "video_url": "https://www.bilibili.com/video/BV1W4411B7W4",
+    "video_url": "",
     "sort_order": 33
   },
   {
@@ -438,7 +438,7 @@
     "key_formulas": "$$\\vec{n} = (x, y, z) \\iff \\begin{cases} \\vec{n} \\cdot \\overrightarrow{AB} = 0 \\\\ \\vec{n} \\cdot \\overrightarrow{AC} = 0 \\end{cases} \\iff \\begin{cases} x_1 x + y_1 y + z_1 z = 0 \\\\ x_2 x + y_2 y + z_2 z = 0 \\end{cases}$$\n$$|\\vec{a}| = \\sqrt{x^2 + y^2 + z^2}$$",
     "tips": "① 坐标系建立第一步务必写明“如图所示，以 O 为原点，以 ... 方向为 x 轴、y 轴、z 轴建立空间直角坐标系”，各点坐标写完后必须验算一遍棱长距离。\n② 取令参数巧选整数：令 z = 1 或 x = 1，优先消去含 0 最多的方程，求出的法向量尽量化为最简整数组合。",
     "visual_desc": "平面的风标雷达天线：平面如同甲板，法向量是垂直插在甲板上的雷达天线，无论甲板怎么倾斜，天线始终与甲板上所有的道路垂直。",
-    "video_url": "https://www.bilibili.com/video/BV1K4411B7W7",
+    "video_url": "",
     "sort_order": 34
   },
   {
@@ -451,7 +451,7 @@
     "key_formulas": "$$\\text{异面角: } \\cos\\theta = \\frac{|\\vec{u} \\cdot \\vec{v}|}{|\\vec{u}||\\vec{v}|}$$\n$$\\text{线面角: } \\sin\\theta = \\frac{|\\vec{u} \\cdot \\vec{n}|}{|\\vec{u}||\\vec{n}|}$$\n$$\\text{二面角: } |\\cos\\alpha| = \\frac{|\\vec{n}_1 \\cdot \\vec{n}_2|}{|\\vec{n}_1||\\vec{n}_2|}$$\n$$\\text{点到面距离: } d = \\frac{|\\overrightarrow{AP} \\cdot \\vec{n}|}{|\\vec{n}|}$$",
     "tips": "① 线面角是 sin θ 而非 cos θ！这是向量法立体几何丢分冠军。\n② 二面角正负定夺：法向量同向进或同向出，二面角为补角；一进一出二面角等于向量夹角。最稳妥方法是看几何体图形外观是张开钝角还是收缩锐角！",
     "visual_desc": "投影与影长：点到平面的距离，正是空间斜向向量 AP 在垂直法线方向上的纯投影长度。",
-    "video_url": "https://www.bilibili.com/video/BV1F4411B7W8",
+    "video_url": "",
     "sort_order": 35
   },
   {
@@ -464,7 +464,7 @@
     "key_formulas": "$$k = \\tan\\alpha = \\frac{y_2 - y_1}{x_2 - x_1} \\quad (x_1 \\neq x_2)$$\n$$l_1 \\perp l_2 \\iff A_1 A_2 + B_1 B_2 = 0$$\n$$d = \\frac{|Ax_0 + By_0 + C|}{\\sqrt{A^2 + B^2}}, \\quad d_{\\parallel} = \\frac{|C_1 - C_2|}{\\sqrt{A^2 + B^2}}$$",
     "tips": "① 设点斜式 y = kx + b 时，千万别遗漏斜率不存在的垂直线 x = x₀！\n② 截距式 x/a + y/b = 1 要求截距非零，如果题目说“在两坐标轴上截距相等”，必须补充分类讨论直线过原点（截距皆为0）的情形！",
     "visual_desc": "坡度与视线：斜率是爬坡陡峭度，两条直线垂直等于坡度相乘反号抵消，两条平行线如铁轨两边间距处处恒定相等。",
-    "video_url": "https://www.bilibili.com/video/BV1M4411B7W8",
+    "video_url": "",
     "sort_order": 36
   },
   {
@@ -477,7 +477,7 @@
     "key_formulas": "$$(x - a)^2 + (y - b)^2 = r^2$$\n$$L = 2\\sqrt{r^2 - d^2} \\quad (\\text{几何直角垂径勾股定理弦长公式})$$\n$$d = r \\iff \\text{直线与圆相切}$$",
     "tips": "① 解直线与圆，能用几何法求弦长绝对不用判别式联立韦达定理！“垂径定理构成的直角三角形 (r, d, L/2)”是提速神器。\n② 过一点求圆的切线：若点在圆外，切线必有两条！如果设点斜式只解出一个 k，必须把斜率不存在的垂直切线补上！",
     "visual_desc": "雷达警戒圈与垂径弦：雷达扫描直线穿透圆防线，从圆心向直线引垂线 d，垂线、半弦与半径三者构成最经典的勾股直角三角形。",
-    "video_url": "https://www.bilibili.com/video/BV1H4411B7W2",
+    "video_url": "",
     "sort_order": 37
   },
   {
@@ -490,7 +490,7 @@
     "key_formulas": "$$\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1 \\quad (a > b > 0, \\; a^2 = b^2 + c^2)$$\n$$e = \\frac{c}{a} = \\sqrt{1 - \\frac{b^2}{a^2}} \\in (0, 1)$$\n$$S_{\\triangle F_1 P F_2} = b^2 \\tan\\frac{\\theta}{2} \\quad (\\theta = \\angle F_1 P F_2)$$\n$$\\text{通径长} = \\frac{2b^2}{a}, \\quad \\text{焦半径 } |PF_{1, 2}| = a \\pm ex_0$$",
     "tips": "① 焦点三角形面积公式 b² tan(θ/2) 必须熟记，高考小题可节省 5 分钟草稿验算时间！\n② 看清方程分母判断焦点所在轴：谁的分母大，焦点就在哪个轴上！",
     "visual_desc": "图钉系绳画圈：两颗图钉定在焦点 F₁, F₂，一段定长细绳套在铅笔尖上拉紧绕一圈，轨迹就是优美封闭的椭圆。",
-    "video_url": "https://www.bilibili.com/video/BV1V4411B7W1",
+    "video_url": "",
     "sort_order": 38
   },
   {
@@ -503,7 +503,7 @@
     "key_formulas": "$$\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1 \\quad (a > 0, b > 0, \\; c^2 = a^2 + b^2)$$\n$$\\text{渐近线: } y = \\pm \\frac{b}{a}x \\iff \\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 0$$\n$$e = \\frac{c}{a} = \\sqrt{1 + \\frac{b^2}{a^2}} \\in (1, +\\infty)$$\n$$S_{\\triangle F_1 P F_2} = \\frac{b^2}{\\tan\\frac{\\theta}{2}} = b^2 \\cot\\frac{\\theta}{2}$$",
     "tips": "① 已知渐近线求双曲线标准方程设法技巧：已知渐近线为 ax ± by = 0，可直接设双曲线方程为 a²x² - b²y² = λ (λ ≠ 0)！\n② 焦点到渐近线的距离恒等于虚半轴长 b！这是高考选择填空高频秒杀结论。",
     "visual_desc": "双向奔赴与渐行渐远：双曲线两翼向无穷远处延伸，越来越贴近两条笔直的交叉渐近线，无限逼近却永不相交接触。",
-    "video_url": "https://www.bilibili.com/video/BV1s4411B7W5",
+    "video_url": "",
     "sort_order": 39
   },
   {
@@ -516,7 +516,7 @@
     "key_formulas": "$$y^2 = 2px \\implies F\\left(\\frac{p}{2}, 0\\right), \\; \\text{准线: } x = -\\frac{p}{2}$$\n$$|PF| = x_0 + \\frac{p}{2}$$\n$$|AB| = x_1 + x_2 + p = \\frac{2p}{\\sin^2\\theta}$$\n$$y_1 y_2 = -p^2, \\quad \\frac{1}{|AF|} + \\frac{1}{|BF|} = \\frac{2}{p}$$",
     "tips": "① 看到抛物线上的点到焦点的距离，第一条件反应必须无脑化为“点到准线的距离”！\n② 以焦点弦为直径的圆与准线相切是常考切入点，圆心到准线的距离等于该弦长的一半。",
     "visual_desc": "平行光聚焦点：汽车车灯与卫星雷达反射锅原理，从焦点射出的光线经过抛物线镜面反射，全部变成平行于对称轴的笔直光束射向远方。",
-    "video_url": "https://www.bilibili.com/video/BV1L4411B7W2",
+    "video_url": "",
     "sort_order": 40
   },
   {
@@ -529,7 +529,7 @@
     "key_formulas": "$$|AB| = \\sqrt{1 + k^2}\\sqrt{(x_1 + x_2)^2 - 4x_1 x_2}$$\n$$|AB| = \\sqrt{1 + m^2}\\sqrt{(y_1 + y_2)^2 - 4y_1 y_2} \\quad (\\text{设 } x = my + t)$$\n$$S_{\\triangle OAB} = \\frac{1}{2}|x_1 y_2 - x_2 y_1|$$",
     "tips": "① 设 x = my + t 是规避“斜率不存在分类讨论”的最高考场应试技巧，能直接节省至少 10 行分类过程！\n② 韦达定理写完第一件事必须验算 Δ > 0 边界条件，参数范围常常由此截断限定。",
     "visual_desc": "坐标系上的交割手术：一条直线刺穿圆锥曲线，韦达定理作为纽带，无需精准解出交点坐标，仅凭根与系数的关系即可掌控弦长与面积。",
-    "video_url": "https://www.bilibili.com/video/BV1K4411B7W1",
+    "video_url": "",
     "sort_order": 41
   },
   {
@@ -542,7 +542,7 @@
     "key_formulas": "$$k_{AB} \\cdot k_{OM} = -\\frac{b^2}{a^2} \\quad (\\text{椭圆中点弦公式})$$\n$$k_{AB} \\cdot k_{OM} = \\frac{b^2}{a^2} \\quad (\\text{双曲线中点弦公式})$$\n$$k_{AB} \\cdot y_0 = p \\quad (\\text{抛物线中点弦公式})$$",
     "tips": "① 点差法解出斜率后，必须回代联立检验直线与圆锥曲线判别式 Δ > 0 是否确实有两个交点！\n② 定点定值问题猜想是高分关键：草稿纸上令斜率 k = 0 或 k → ∞ 求出定点，正文直接按目标进行恒等变形逆推。",
     "visual_desc": "动态几何的不变灵魂：无论直线如何像摆钟一样旋转摇晃，交点的中点轨迹与弦斜率始终被曲线本征几何参数死死锚定在定值上。",
-    "video_url": "https://www.bilibili.com/video/BV1c4411B7W3",
+    "video_url": "",
     "sort_order": 42
   },
   {
@@ -555,7 +555,7 @@
     "key_formulas": "$$k = f'(x_0)$$\n$$y - f(x_0) = f'(x_0)(x - x_0)$$\n$$\\text{过外点设切点: } \\frac{f(t) - y_0}{t - x_0} = f'(t) \\implies \\text{解参数 } t$$",
     "tips": "① 审题必须看清字眼：“在某点”直接求导代入；“过某点”必须设切点参数 t，绝不能把外点坐标直接当导数代入！\n② 两曲线公切线解法：设出两曲线各自切点 (t₁, f(t₁)) 与 (t₂, g(t₂))，由斜率相等且两切点连线斜率等于导数值联立方程求解。",
     "visual_desc": "割线逼近切线的极限之吻：割线两点无限靠近融为一个点，瞬时斜率定格为切线，轻抚曲面呼啸而过。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W3",
+    "video_url": "",
     "sort_order": 43
   },
   {
@@ -568,7 +568,7 @@
     "key_formulas": "$$(e^x)' = e^x, \\quad (\\ln x)' = \\frac{1}{x}, \\quad (a^x)' = a^x \\ln a$$\n$$[f(x)g(x)]' = f'(x)g(x) + f(x)g'(x)$$\n$$\\left[\\frac{f(x)}{g(x)}\\right]' = \\frac{f'(x)g(x) - f(x)g'(x)}{[g(x)]^2}$$\n$$[f(g(x))]' = f'(g(x)) \\cdot g'(x)$$",
     "tips": "① 商的导数中间是减号不是加号，分母平方千万不能漏！\n② 复合函数求导最易遗漏“内层导数”：如 (sin 2x)' = 2cos 2x；(e^(3x))' = 3e^(3x)。",
     "visual_desc": "机械齿轮联动传动比：链式求导就像齿轮传动，外齿轮旋转速率乘以内部齿轮转速，层层嵌套连乘输出最终速率。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W1",
+    "video_url": "",
     "sort_order": 44
   },
   {
@@ -581,7 +581,7 @@
     "key_formulas": "$$f'(x) > 0 \\implies f(x) \\text{ 单调递增}$$\n$$f'(x) < 0 \\implies f(x) \\text{ 单调递减}$$\n$$f(x) \\text{ 在 } I \\text{ 上单调递增 } \\iff f'(x) \\ge 0 \\text{ 恒成立且不恒为零}$$",
     "tips": "① 忘记定义域直接求导讨论是扣分首恶！比如对于含有 ln x 的函数，定义域只有 (0, +∞)，讨论根大小时必须与 0 比较！\n② 单调性已知求参数范围：f(x) 单调递增 ⇔ f'(x) ≥ 0 恒成立，等号可以取到（只要导数不是恒为0常数函数）。",
     "visual_desc": "汽车车速表与前进后退：车速表指针为正向时汽车一直在往前走（增函数），指针踩过零刻度刹那未曾后退，倒挡车速为负则后退。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W2",
+    "video_url": "",
     "sort_order": 45
   },
   {
@@ -594,7 +594,7 @@
     "key_formulas": "$$f'(x_0) = 0 \\text{ 且两侧导数符号异号 } \\iff x_0 \\text{ 为极值点}$$\n$$\\text{极大值: } f'(x) \\text{ 由正变负 (山峰)}; \\quad \\text{极小值: } f'(x) \\text{ 由负变正 (山谷)}$$\n$$f_{\\max} = \\max\\{f(a), \\; f(b), \\; f(x_{\\text{极}})\\}$$",
     "tips": "① 极值点是一个实数 x₀，而不是坐标 (x₀, f(x₀))！极值是指函数值 f(x₀)。\n② 极大值不一定大于极小值！因为极值是局部山峰山谷，某座小山峰的海拔完全可能低于远处另一座大山谷的谷底海拔。",
     "visual_desc": "群山与海平面：极大值是沿途每一座小山峰的峰顶，极小值是每一处山谷的鞍部低洼，闭区间最大值是全视野可见的最高海拔之巅。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W4",
+    "video_url": "",
     "sort_order": 46
   },
   {
@@ -607,7 +607,7 @@
     "key_formulas": "$$f(x) \\ge a \\text{ 恒成立 } \\iff f(x)_{\\min} \\ge a$$\n$$f(x) \\le a \\text{ 恒成立 } \\iff f(x)_{\\max} \\le a$$\n$$a \\le g(x) \\text{ 恒成立 } \\iff a \\le g(x)_{\\min}$$",
     "tips": "① 分离参数必须注意不等号方向：除以 x 时必须明确 x 的正负符号，若 x > 0 方向不变，若 x < 0 必须改变不等号方向！\n② 遇双自变量存在性全称命题：“对任意 x₁ 存在 x₂ 使得 f(x₁) ≥ g(x₂)” ⇔ f(x)_min ≥ g(x)_min。",
     "visual_desc": "防汛抗洪安全线：水位永远不漫过堤坝（恒成立），只需要堤坝高度大于等于历史百年一遇的最高洪峰水面（f_max ≤ 堤高）。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W5",
+    "video_url": "",
     "sort_order": 47
   },
   {
@@ -620,7 +620,7 @@
     "key_formulas": "$$e^x \\ge x + 1 \\quad (\\forall x \\in \\mathbb{R}, \\; x = 0 \\text{ 取等})$$\n$$\\ln x \\le x - 1 \\quad (x > 0, \\; x = 1 \\text{ 取等})$$\n$$e^x \\ge ex, \\quad \\frac{x}{x+1} \\le \\ln(x+1) \\le x$$\n$$f'(x_0) = 0 \\implies \\text{将关系式整体代入 } f(x_0) \\text{ 消去超越项}$$",
     "tips": "① 切线放缩是压轴题破局利刃：见到指数与对数混杂多项式，立刻联想 eˣ ≥ x + 1 与 ln x ≤ x - 1 进行精准放缩。\n② 隐零点大题书写规范：第一步证明零点存在且唯一；第二步写出零点满足的方程；第三步在原函数中消元化简求范围。",
     "visual_desc": "切线如盾牌托举：曲线 y = eˣ 紧紧贴在切线 y = x + 1 上方，直线就像坚实的地板支撑着指数曲线；y = ln x 顶在 y = x - 1 下方。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W6",
+    "video_url": "",
     "sort_order": 48
   },
   {
@@ -633,7 +633,7 @@
     "key_formulas": "$$A_n^m = \\frac{n!}{(n - m)!}, \\quad C_n^m = \\frac{n!}{m!(n - m)!}$$\n$$C_n^m = C_n^{n-m}, \\quad C_{n+1}^m = C_n^m + C_n^{m-1}$$\n$$\\text{捆绑法: 相邻打包; } \\quad \\text{插空法: 间隔排位; } \\quad \\text{反面排除法: } N = N_{\\text{全}} - N_{\\text{反}}$$ ",
     "tips": "① 特殊元素与特殊位置优先安置法：有特殊限制条件的元素或位置最先安排，再处理普通元素。\n② 平均分组与分配大坑：分成 n 个大小相等的无标号组，必须除以 n! 消除组间对称重复！",
     "visual_desc": "旅行路线与行李打包：不同交通工具是分类相加；从家到机场再到目的地的连续环节是分步相乘；形影不离的朋友捆绑打包进同一个行李箱。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W7",
+    "video_url": "",
     "sort_order": 49
   },
   {
@@ -646,7 +646,7 @@
     "key_formulas": "$$(a + b)^n = \\sum_{r=0}^n C_n^r a^{n-r} b^r$$\n$$T_{r+1} = C_n^r a^{n-r} b^r \\quad (r = 0, 1, \\dots, n)$$\n$$\\sum_{r=0}^n C_n^r = 2^n, \\quad C_n^0 + C_n^2 + C_n^4 + \\dots = C_n^1 + C_n^3 + \\dots = 2^{n-1}$$",
     "tips": "① 求常数项或指定次幂项：写出标准通项 T_{r+1}，把字母 x 的指数整理合并为关于 r 的代数式，令指数等于 0 或目标次数解出 r。\n② 三项式展开转化：如 (x + 1/x - 2)ⁿ 化为 [(x - 1/x) - 2]ⁿ 或二项式乘积展开。",
     "visual_desc": "杨辉金字塔：二项式系数正是杨辉三角在每一层的数字，两肩相加得到底部，对称饱满如金字塔峰峦。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W8",
+    "video_url": "",
     "sort_order": 50
   },
   {
@@ -659,7 +659,7 @@
     "key_formulas": "$$P(B \\mid A) = \\frac{P(AB)}{P(A)}$$\n$$P(AB) = P(A)P(B) \\iff A, B \\text{ 相互独立}$$\n$$P(B) = \\sum_{i=1}^n P(A_i)P(B \\mid A_i) \\quad (\\text{全概率公式})$$\n$$P(A_k \\mid B) = \\frac{P(A_k)P(B \\mid A_k)}{\\sum_{i=1}^n P(A_i)P(B \\mid A_i)} \\quad (\\text{贝叶斯公式})$$",
     "tips": "① 区分 P(AB) 与 P(B|A)：P(AB) 是在全集样本空间里两件事都发生的几率；P(B|A) 是样本空间已经缩小到仅限 A 发生的前提下 B 发生的几率！\n② 摸球不放回模型经典结论：每次摸出红球的概率完全相等（与第几个人抽签完全无关，抽签公平定理）。",
     "visual_desc": "树状分叉决策树：从第一层分支 A₁、A₂ 出发，第二层继续分支 B，每一条路径的连乘即是该支概率，所有通往 B 的枝桠相加即是全概率。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7W9",
+    "video_url": "",
     "sort_order": 51
   },
   {
@@ -672,7 +672,7 @@
     "key_formulas": "$$E(X) = \\sum_{i=1}^n x_i p_i, \\quad D(X) = \\sum_{i=1}^n (x_i - E(X))^2 p_i = E(X^2) - [E(X)]^2$$\n$$E(aX + b) = aE(X) + b, \\quad D(aX + b) = a^2 D(X)$$\n$$X \\sim B(n, p) \\implies E(X) = np, \\quad D(X) = np(1 - p)$$\n$$X \\sim H(N, M, n) \\implies P(X = k) = \\frac{C_M^k C_{N-M}^{n-k}}{C_N^n}, \\quad E(X) = n\\frac{M}{N}$$",
     "tips": "① 放回与不放回模型判断：有放回抽样是二项分布；不放回抽样是超几何分布。\n② 概率和为 1 验算习惯：分布列表格填完，第一时间把所有概率相加，若不等于 1 说明必定有遗漏或算错，马上复查。",
     "visual_desc": "重力天平与分散程度：数学期望是概率质量分布图的物理重心平衡支点；方差是质点远离重心的旋转飞离惯性矩。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7Wa",
+    "video_url": "",
     "sort_order": 52
   },
   {
@@ -685,7 +685,7 @@
     "key_formulas": "$$X \\sim N(\\mu, \\sigma^2) \\implies P(\\mu - \\sigma < X \\le \\mu + \\sigma) \\approx 68.3\\%$$\n$$P(\\mu - 2\\sigma < X \\le \\mu + 2\\sigma) \\approx 95.5\\%$$\n$$\\hat{y} = bx + a \\implies a = \\bar{y} - b\\bar{x} \\quad (\\text{必过样本中心点 } (\\bar{x}, \\bar{y}))$$",
     "tips": "① 线性回归必过 (x̄, ȳ)：已知斜率 b 与样本数据求 a，先算 x̄, ȳ 代入 a = ȳ - bx̄ 即可，无需死记复杂截距公式。\n② 正态分布对称性利用：P(X > μ + c) = P(X < μ - c)；P(X > a) = 1 - P(X ≤ a)。",
     "visual_desc": "高斯钟形曲线：大自然鬼斧神工的分布法则，测量误差、高考总分、人群身高几乎全落在正态钟形曲线之下，两端极小，绝大多数紧紧簇拥在均值 μ 两侧。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7Wb",
+    "video_url": "",
     "sort_order": 53
   },
   {
@@ -698,7 +698,7 @@
     "key_formulas": "$$\\begin{vmatrix} a & b \\\\ c & d \\end{vmatrix} = ad - bc$$\n$$\\begin{cases} a_1 x + b_1 y = c_1 \\\\ a_2 x + b_2 y = c_2 \\end{cases} \\implies x = \\frac{D_x}{D}, \\; y = \\frac{D_y}{D} \\quad (D \\neq 0)$$\n$$D = 0, \\; D_x = D_y = 0 \\iff \\text{两直线重合（无穷多解）}$$\n$$D = 0, \\; D_x^2 + D_y^2 \\neq 0 \\iff \\text{两直线平行（无解）}$$",
     "tips": "① 上海卷填空高频原题：直接给出行列式等式 |x 1; 2 x-1| = 0，展开得 x(x-1) - 2 = 0 解一元二次方程，属于送分题，必须保万全无失。\n② 区分两直线位置关系：D = 0 说明两直线平行或重合，代入 D_x 验证可迅速区分平行还是重合。",
     "visual_desc": "二维空间基底变换剪切量：主副交叉相乘是平面面积测量的代数编码，当 D = 0 时说明二维基底被压扁成一维共线直线，失去维度支撑。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7Wc",
+    "video_url": "",
     "sort_order": 54
   },
   {
@@ -711,7 +711,7 @@
     "key_formulas": "$$x = \\rho\\cos\\theta, \\quad y = \\rho\\sin\\theta, \\quad \\rho^2 = x^2 + y^2$$\n$$\\text{椭圆参数方程: } \\begin{cases} x = a\\cos\\theta \\\\ y = b\\sin\\theta \\end{cases} \\implies \\text{设点 } P(a\\cos\\theta, b\\sin\\theta) \\text{ 求最值}$$\n$$\\text{直线标准参数方程: } \\begin{cases} x = x_0 + t\\cos\\alpha \\\\ y = y_0 + t\\sin\\alpha \\end{cases} \\implies |t| = \\text{有向距离}$$",
     "tips": "① 椭圆上的动点设坐标优先采用参数方程 P(a cos θ, b sin θ)，消去双变量转化为单变量三角函数，求最值与斜率范围极大化简！\n② 直线参数方程必须检查 t 的系数平方和 cos²α + sin²α 是否等于 1，只有标准参数方程下 |t| 才具备几何距离意义！",
     "visual_desc": "旋转雷达与圆周运动：直角坐标系是规整街道方格网，极坐标则是从灯塔射向海面的雷达波束，用角度锁定方向，用径长锁定远近。",
-    "video_url": "https://www.bilibili.com/video/BV1q4411B7Wd",
+    "video_url": "",
     "sort_order": 55
   },
   {
@@ -724,7 +724,7 @@
     "key_formulas": "$$\\bar{v} = \\frac{\\Delta x}{\\Delta t}, \\quad a = \\frac{\\Delta v}{\\Delta t} = \\frac{v_t - v_0}{t}$$\n$$\\vec{a} \\cdot \\vec{v} > 0 \\implies \\text{加速}, \\quad \\vec{a} \\cdot \\vec{v} < 0 \\implies \\text{减速}$$",
     "tips": "① “速度大则加速度大”或“加速度为零速度必为零”均属典型概念混淆，最高点自由下落瞬间速度为零但 a = g。\n② 区分速度变化率与变化量：Δv/Δt 是斜率（加速度），Δv 是初末差值。",
     "visual_desc": "跑道与油门仪表盘：仪表盘刻度代表当前速度 v；踩油门推背感代表加速度 a。推背感方向与车速相同时提速，踩刹车推背感向前即与速度反向减速。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -737,7 +737,7 @@
     "key_formulas": "$$v_t = v_0 + at, \\quad x = v_0 t + \\frac{1}{2} a t^2, \\quad v_t^2 - v_0^2 = 2ax$$\n$$v_{\\frac{t}{2}} = \\bar{v} = \\frac{v_0 + v_t}{2}, \\quad v_{\\frac{x}{2}} = \\sqrt{\\frac{v_0^2 + v_t^2}{2}}$$\n$$\\Delta x = x_{n+1} - x_n = a T^2$$",
     "tips": "① 追及相遇问题首选画 v-t 图像：图线与时间轴围成面积即为位移，相交点即速度相等临界点，几何直观一目了然。\n② 刹车类减速陷阱：先计算刹车完全停下所需时间 t_停 = v₀/a，若题目所求时间 t > t_停，位移只能按 t_停 计算！",
     "visual_desc": "两车在平行车道追逐：后车速度快于前车距离拉近；速度相等的刹那间间距最小，若此时未撞上且之后后车速度低于前车，则永远不再相撞。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -750,7 +750,7 @@
     "key_formulas": "$$F = kx, \\quad f_k = \\mu N$$\n$$\\sum F_x = 0, \\quad \\sum F_y = 0$$\n$$F_x = F \\cos\\theta, \\quad F_y = F \\sin\\theta$$",
     "tips": "① 绝不可把滑动摩擦力公式 f = μN 套到静摩擦力上，静摩擦力必须通过受力平衡方程求解！\n② 动态平衡问题巧用“辅助圆”或矢量三角形法：当一个力恒定、一个力方向不变时，矢量三角形外接圆法极为迅速。",
     "visual_desc": "滑块在斜面上：重力垂直向下，斜面支持力垂直斜面向上，静摩擦力沿斜面阻碍下滑。把重力沿斜面分解为下滑力 mg sinθ 与压紧力 mg cosθ。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -763,7 +763,7 @@
     "key_formulas": "$$\\vec{F}_{\\text{合}} = m\\vec{a} \\implies \\begin{cases} \\sum F_x = m a_x \\\\ \\sum F_y = m a_y \\end{cases}$$\n$$N_{\\text{超重}} = m(g + a), \\quad N_{\\text{失重}} = m(g - a)$$",
     "tips": "① 弹簧弹力不能突变（需要形变调整时间），而轻绳张力可以瞬间突变。剪断细绳瞬间，弹簧弹力保持不变！\n② 传送带模型必先找共速点：共速前有相对滑动（受滑动摩擦力加速或减速），共速后看是否有静摩擦力维持相对静止。",
     "visual_desc": "电梯升降体验：电梯加速上升或减速下降时（a 向上），脚底受力增大，体重计读数变大（超重）；电梯加速下降或减速上升时（a 向下），飘飘欲仙（失重）。",
-    "video_url": "https://www.bilibili.com/video/BV1xx411c7xx",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -776,7 +776,7 @@
     "key_formulas": "$$x = v_0 t, \\quad y = \\frac{1}{2} g t^2 \\implies y = \\frac{g}{2 v_0^2} x^2$$\n$$v = \\sqrt{v_0^2 + (gt)^2}, \\quad \\tan\\theta = \\frac{g t}{v_0} = 2\\tan\\alpha$$",
     "tips": "① 运动时间完全由下落高度决定：t = √(2h/g)，与初速度 v₀ 毫无关系！初速度只与时间共同决定水平射程。\n② 斜面平抛问题分两类：从斜面抛出落在斜面上（位移偏角固定为斜面倾角 α，tanα = y/x），或垂直撞在斜面上（速度偏角与斜面垂直）。",
     "visual_desc": "水枪水平喷水：水流划出优美抛物线。不管初速度多大，在同一高度落到地面的时间完全一样；初速度越大，水花溅得越远。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -789,7 +789,7 @@
     "key_formulas": "$$v = \\omega r, \\quad F_{\\text{向}} = m\\frac{v^2}{r} = m\\omega^2 r = m\\frac{4\\pi^2}{T^2}r$$\n$$\\text{轻绳模型最高点临界: } v_{\\min} = \\sqrt{gr}$$\n$$\\text{轻杆模型最高点临界: } v_{\\min} = 0$$",
     "tips": "① 向心力是效果力，受力分析时绝对不能画出一个“向心力”！它是由合外力或某个分力来充当。\n② 区分圆周运动的供需关系：当合外力 F_供 < m(v²/r) 时做离心运动；F_供 > m(v²/r) 时做近心运动。",
     "visual_desc": "过山车转大圆环：在最高点倒挂时，如果速度不够快就会掉下来；而如果是卡在轨道槽内（杆模型），就算速度停滞也不会跌落。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -802,7 +802,7 @@
     "key_formulas": "$$F = G\\frac{Mm}{r^2} = m\\frac{v^2}{r} = m\\omega^2 r = m\\frac{4\\pi^2}{T^2}r = ma$$\n$$G M = g R^2 \\quad (\\text{黄金代换})$$\n$$v = \\sqrt{\\frac{GM}{r}}, \\quad T = 2\\pi\\sqrt{\\frac{r^3}{GM}}$$",
     "tips": "① 变轨分析必记：卫星由低轨进入高轨，必须点火“加速”（短时间速度变大，万有引力不足以提供向心力，离心进入椭圆转移轨道），而在高轨稳定运行时线速度反而比低轨小！\n② 只有环绕天体的周期与轨道半径才能算中心天体质量 M，绝不能算环绕天体自身质量。",
     "visual_desc": "行星绕日公转罗盘：离太阳越近的行星（水星、金星）飞奔如箭；远离太阳的木星、海王星悠哉漫游，一年动辄数十年（高轨低速大周期）。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -815,7 +815,7 @@
     "key_formulas": "$$W_{\\text{合}} = \\Delta E_k = \\frac{1}{2}m v_2^2 - \\frac{1}{2}m v_1^2$$\n$$E_{k1} + E_{p1} = E_{k2} + E_{p2}$$\n$$W_{\\text{其他}} = \\Delta E_{\\text{机}}, \\quad Q = f_k \\cdot s_{\\text{相对}}$$",
     "tips": "① 判定机械能是否守恒三法：条件法（只受或只受重力弹力做功）、状态法（初末状态机械能总值比较）、转化法（系统只有动能和势能互换，无内能电能耗散）。\n② 摩擦力做功求内能必用相对位移：Q = f_滑 · s_相对，千万不要用地面位移代入！",
     "visual_desc": "滚轴滑梯俯冲：起点高处势能满满，顺滑冲下势能全转化为高速动能；若滑梯粗糙，摩擦耗散发热，机械能便不再守恒。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -828,7 +828,7 @@
     "key_formulas": "$$E = \\frac{F}{q} = \\frac{kQ}{r^2} = \\frac{U}{d}$$\n$$W_{AB} = q U_{AB} = E_{pA} - E_{pB}, \\quad U_{AB} = \\varphi_A - \\varphi_B$$\n$$E_p = q\\varphi$$",
     "tips": "① 公式 E = U/d 中的 d 必须是两等势面间沿电场线方向的距离，非电场线方向两点连线必须乘以 cosθ！\n② 粒子轨迹弯曲方向必指向合外力（电场力）方向，由此可立即判断电场力方向，再结合电场线方向判定粒子带电正负。",
     "visual_desc": "等高线地图：等势面就像地理上的等高线，电场线就像水流方向（沿着坡度最陡处向下流）。坡越陡（等势面越密），水流越急（电场强度越大）。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -841,7 +841,7 @@
     "key_formulas": "$$v = \\sqrt{\\frac{2qU_1}{m}}$$\n$$y = \\frac{1}{2} a t^2 = \\frac{U_2 L^2}{4 d U_1}, \\quad \\tan\\theta = \\frac{v_y}{v_0} = \\frac{U_2 L}{2 d U_1}$$",
     "tips": "① 粒子射出偏转极板时，出射速度的反向延长线必定经过偏转极板沿轴线方向的中点 L/2！\n② 注意重力是否可忽略：电子、质子、α 粒子等微观带电粒子重力一般远小于电场力，忽略不计；但带电液滴、油滴、尘埃重力不能忽略。",
     "visual_desc": "阴极射线示波管：电子束经过小孔被高压电场猛烈加速喷出，穿过上下两块平行金属板，在偏转电场拉扯下向上弯曲打在荧光屏上形成光斑。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -854,7 +854,7 @@
     "key_formulas": "$$I = \\frac{E}{R + r}, \\quad U = E - I r$$\n$$P_{\\text{总}} = E I, \\quad P_{\\text{出}} = U I = I^2 R = \\frac{E^2 R}{(R + r)^2}$$\n$$R = r \\implies P_{\\text{出}\\max} = \\frac{E^2}{4r}$$",
     "tips": "① 抓住定值电阻是突破口：可变电阻变化时，与之相连的定值电阻电流与两端电压正比（U = IR），其消耗功率直接由电流单调决定。\n② 电源效率随着外电阻 R 增大而单调提高：η = P_出 / P_总 = R / (R + r)，最大输出功率时效率仅为 50%。",
     "visual_desc": "水泵循环回路：电源电动势 E 是把水抽到高处的水泵；内阻 r 是水泵管道内部摩擦水阻；外电阻 R 是水流转动水车做功的阻力。水泵内阻越大，对外供水能力越受制约。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -867,7 +867,7 @@
     "key_formulas": "$$R_x = \\frac{U}{I}, \\quad \\text{判断临界: } R_0 = \\sqrt{R_A R_V}$$\n$$U = E - I r \\implies \\text{纵截距} = E, \\quad |\\text{斜率}| = r = \\left|\\frac{\\Delta U}{\\Delta I}\\right|$$",
     "tips": "① 绘制 U-I 图像时注意纵坐标起始点：若纵坐标不是从 0 开始起算，则直线与横轴的交点绝对不是短路电流！必须根据斜率算内阻。\n② 保护电阻别忘了合并：如果电路串联了一个定值保护电阻 R₀，求出的等效内阻为 r' = r + R₀，必须扣除 R₀ 才是电池真实内阻。",
     "visual_desc": "电路仪表探针：电压表像个漏斗会偷偷漏走一点点微小电流（分流）；电流表像个细沙网会阻碍一点点电势（分压）。根据电阻大小选内外接就是两害相权取其轻。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -880,7 +880,7 @@
     "key_formulas": "$$I = F \\Delta t = \\Delta p = m v_2 - m v_1$$\n$$m_1 v_1 + m_2 v_2 = m_1 v_1' + m_2 v_2'$$\n$$\\text{完全弹性碰撞质量相等: } v_1' = v_2, \\quad v_2' = v_1$$\n$$\\text{完全非弹性碰撞: } v_{\\text{共}} = \\frac{m_1 v_1 + m_2 v_2}{m_1 + m_2}$$",
     "tips": "① 碰撞满足三大法则：动量守恒法则、动能不增加法则（E_k末 ≤ E_k初）、运动合理性法则（碰后前车速度不能小于后车速度）。\n② 动量是严格的矢量！在一维碰撞列式前，必须先规定正方向，带入带有正负号的速度值计算。",
     "visual_desc": "牛顿摆球撞击：拉起最左边一个钢球松手，撞击一瞬间只有最右边一个球弹飞起来，中间球纹丝不动（动量与动能无损传递速度互换）。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -893,7 +893,7 @@
     "key_formulas": "$$v = \\frac{\\lambda}{T} = \\lambda f$$\n$$\\Delta x = v \\cdot \\Delta t = n\\lambda + \\frac{\\Delta t}{T}\\lambda$$",
     "tips": "① 波动问题的多解性陷阱：由于波在时间上的周期性（周期 T）和空间上的周期性（波长 λ），若未指明传播方向或时间间隔范围，必须加通用通项 n (n ∈ N)。\n② 传播中各质点起振方向必定与振源初始起振方向完全一致！",
     "visual_desc": "球场人浪翻滚：看台上观众依次起立坐下（质点只在竖直方向上下振动），但观众并未换座位，眼前却看到一圈汹涌波浪席卷全场向前奔驰。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -906,7 +906,7 @@
     "key_formulas": "$$E = n\\frac{\\Delta \\Phi}{\\Delta t}, \\quad E = B L v, \\quad E = \\frac{1}{2} B L^2 \\omega$$\n$$q = \\bar{I} \\Delta t = \\frac{n \\Delta \\Phi}{R_{\\text{总}}}$$\n$$F_{\\text{安}} = B I L = \\frac{B^2 L^2 v}{R}$$",
     "tips": "① “阻碍”不是“阻止”：阻碍只是延缓磁通量的变化，最终磁通量依然在增或在减。\n② 电磁感应焦耳热计算双途径：如果是匀速直线运动，可用 Q = I²Rt 或 Q = W_安；若是非匀速过程，首选能量守恒定律：Q = E_k初 - E_k末 + W_外。",
     "visual_desc": "磁悬浮列车制动电磁阻尼：铜盘在磁铁两极间飞速旋转，强大的涡流产生方向相反的安培力像无形的大手死死拉住铜盘迅速刹车，过程平稳毫无机械摩擦磨损。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -919,7 +919,7 @@
     "key_formulas": "$$E_m = n B S \\omega, \\quad E = \\frac{E_m}{\\sqrt{2}}, \\quad U = \\frac{U_m}{\\sqrt{2}}, \\quad I = \\frac{I_m}{\\sqrt{2}}$$\n$$\\frac{U_1}{U_2} = \\frac{n_1}{n_2}, \\quad \\frac{I_1}{I_2} = \\frac{n_2}{n_1}, \\quad P_{\\text{入}} = P_{\\text{出}}$$\n$$P_{\\text{损}} = \\left(\\frac{P}{U_{\\text{送}}}\\right)^2 R_{\\text{线}}$$",
     "tips": "① 变压器只对变化的交变电流变压，若原线圈输入恒定直流电，副线圈两端输出电压为零！\n② 动态变压器负载变化传递律：副线圈负载电阻 R 减小 ⟹ 副线圈电流 I₂ 增大 ⟹ 变压器输出功率增大 ⟹ 原线圈电流 I₁ 相应增大。",
     "visual_desc": "千里高压输电走廊：电厂发电机吐出 1 万伏电能，经巨型升压变压器抬高到 50 万伏特高压，电流缩减为五十分之一，在崇山峻岭间细导线上奔腾数千公里而损耗极低。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -932,7 +932,7 @@
     "key_formulas": "$$R = \\frac{m v}{q B}, \\quad T = \\frac{2\\pi m}{q B}$$\n$$t = \\frac{\\theta}{2\\pi} T = \\frac{\\theta m}{q B}$$\n$$E_{km} = \\frac{1}{2} m v_{\\max}^2 = \\frac{q^2 B^2 R^2}{2m}$$",
     "tips": "① 磁场临界边界求解三大武器：动态放缩圆（速度大小变化方向确定）、动态旋转圆（速度大小确定方向发散）、平移圆。\n② 左手定则与负电荷：四指指向正电荷运动方向，若是负电荷（如电子），四指必须指向运动的反方向！",
     "visual_desc": "粒子跑跑卡丁车：电荷冲入磁场被一根看不见的绳子（洛伦兹力）牵引打转，在 D 形盒内像盘香一样越转越大圈，最终在最外边缘以极高动能射出轰击原子核。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -945,7 +945,7 @@
     "key_formulas": "$$\\frac{p_1 V_1}{T_1} = \\frac{p_2 V_2}{T_2} = C$$\n$$\\Delta U = W + Q$$\n$$T = t + 273.15 \\text{ K}$$",
     "tips": "① 气体封闭液柱压强求解三步法：选取最低液面为基准参考面，同一种连续静止液体同一水平面上压强处处相等；平衡法列力平衡方程。\n② 计算时温度绝对不能用摄氏度 t 代入！必须先转化为热力学温度 T = t + 273 K。",
     "visual_desc": "自行车打气筒：急速向下压缩气筒（外界做功 W > 0，瞬间来不及散热 Q ≈ 0），气筒内能暴增 ΔU > 0，摸起来烫手，这就是绝热压缩升温的直观写照。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -958,7 +958,7 @@
     "key_formulas": "$$E_k = h\\nu - W_0 = e U_c$$\n$$h\\nu = E_m - E_n$$\n$$N = \\text{C}_n^2 = \\frac{n(n - 1)}{2}$$",
     "tips": "① 区分“光子能量”与“光强”：光子能量由频率决定（ε = hν），影响能否打出电子及电子最大初动能；光强由单位时间光子数目决定，影响单位时间打出的光电子数及饱和电流大小。\n② 原子跃迁吸收能量辨析：若吸收光子，光子能量必须恰好等于两能级差（或大于等于电离能）；若由实物碰撞粒子传递能量，只要碰撞粒子的动能大于等于能级差即可部分吸收！",
     "visual_desc": "楼梯跳跃模型：原子能级就像不规则间隔的楼梯台阶。电子在台阶间跳跃不能悬空，吸收刚好合适能量的光子一跃而上，跌落下来时吐出一个特定颜色的纯净光子。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -971,7 +971,7 @@
     "key_formulas": "$$N = N_0 \\left(\\frac{1}{2}\\right)^{\\frac{t}{\\tau}}, \\quad m = m_0 \\left(\\frac{1}{2}\\right)^{\\frac{t}{\\tau}}$$\n$$\\Delta E = \\Delta m \\cdot c^2 = \\Delta m \\times 931.5 \\text{ MeV}$$\n$$\\text{比结合能} = \\frac{\\text{结合能}}{A}$$",
     "tips": "① 核反应方程配平黄金原则：质量数守恒（上标相等）与电荷数守恒（下标相等），但核反应中质量并不严格守恒（存在质量亏损并转化为释放的结合能）！\n② 区分四种核反应类型：衰变（自发释放 α/β）、人工核转变（α粒子轰击氮核生成氧）、重核裂变（铀235被慢中子轰击）、轻核聚变（氘氚聚变）。",
     "visual_desc": "核能释放质能魔术：四个独立的氢核紧密抱团聚变成一个氦核时，总质量竟然神奇地缩减了一小点点，这点微小的质量亏损乘以光速的平方，化作照亮太阳系数十亿年的炽热阳光。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -984,7 +984,7 @@
     "key_formulas": "$$n = \\frac{\\sin\\theta_1}{\\sin\\theta_2} = \\frac{c}{v}, \\quad \\sin C = \\frac{1}{n}$$\n$$\\Delta x = \\frac{L}{d} \\lambda \\implies \\lambda = \\frac{d}{L} \\Delta x$$",
     "tips": "① 不同色光折射率规律（红到紫）：频率 ν 逐渐增大，折射率 n 逐渐增大，介质中光速 v 逐渐减小，临界角 C 逐渐减小，更容易发生全反射！\n② 测条纹间距技巧：利用测量头测出 n 个亮条纹间距 a，则相邻条纹间距 Δx = a / (n - 1)，万不可错写成 a/n。",
     "visual_desc": "光纤内部奇幻全反射：一束激光从光导纤维一端射入，由于纤芯折射率高于外层包层，光波像银球打弹子一样在纤芯内壁不断发生 100% 无损全反射，曲折前行奔向大洋彼岸。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 21
   },
   {
@@ -997,7 +997,7 @@
     "key_formulas": "$$T = 2\\pi \\sqrt{LC}, \\quad f = \\frac{1}{2\\pi\\sqrt{LC}}$$\n$$c = \\lambda f = 3.0 \\times 10^8 \\text{ m/s}$$",
     "tips": "① 恒定不变的电场不会产生磁场！只有“变化”的电场才能产生磁场，“均匀变化”产生恒定磁场，“振荡变化”才产生电磁波。\n② 机械波不能在真空中传播（必须依赖介质），而电磁波可以在真空中以光速 c 自由传播，这是二者最本质的区别。",
     "visual_desc": "平静水面激起涟漪：在真空中按一下交变开关，电场生磁场，磁场生电场，一环套一环像水波涟漪一样迅速以每秒 30 万公里的极速向全宇宙空间扩散开去。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 22
   },
   {
@@ -1010,7 +1010,7 @@
     "key_formulas": "$$\\text{分散系分类标准: } d < 1\\text{ nm (溶液)}, \\quad 1\\text{ nm} \\le d \\le 100\\text{ nm (胶体)}, \\quad d > 100\\text{ nm (浊液)}$$\n$$\\text{FeCl}_3 + 3\\text{H}_2\\text{O} \\;\\xlongequal{\\Delta}\\; \\text{Fe(OH)}_3(\\text{胶体}) + 3\\text{HCl}$$",
     "tips": "① 区分“胶体”与“胶粒”：胶体是电中性的分散系，只有胶粒可能吸附电荷带电，不能说“Fe(OH)₃ 胶体带正电”！\n② 渗析提纯：利用半透膜分离胶体与溶液中的离子或小分子（血液透析原理），提纯胶体时半透膜外必须是流动的水。",
     "visual_desc": "晨雾丁达尔光柱：森林清晨阳光透过树梢薄雾，洒下一道道神圣金色光束；茶水在聚光手电筒照射下侧视出现亮丽光斑光路，尽显微观散射之美。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -1023,7 +1023,7 @@
     "key_formulas": "$$\\text{离子守恒: } \\sum \\text{质量守恒}, \\quad \\sum \\text{电荷守恒}, \\quad \\sum \\text{得失电子守恒}$$\n$$\\text{Ba}^{2+} + \\text{SO}_4^{2-} = \\text{BaSO}_4\\downarrow$$\n$$\\text{Al}^{3+} + 3\\text{HCO}_3^- = \\text{Al(OH)}_3\\downarrow + 3\\text{CO}_2\\uparrow$$",
     "tips": "① 审题陷阱大坑：“在强酸性/强碱性溶液中”、“无色透明溶液中”（排除 Cu²⁺蓝色、Fe³⁺黄色、Fe²⁺浅绿色、MnO₄⁻紫红色）。\n② “过量少量”反应方程式：谁不足谁的计量数定为 1！如向 NaHCO₃ 溶液中滴入过量 Ca(OH)₂：HCO₃⁻ + Ca²⁺ + OH⁻ = CaCO₃↓ + H₂O。",
     "visual_desc": "微观离子捉对起舞：烧杯中水分子将 NaCl 晶格拆成游离的 Na⁺ 和 Cl⁻；当 Ba²⁺ 遇到 SO₄²⁻，强烈的库仑引力瞬间将它们拉抱在一起沉入杯底，结成不溶的白玉微晶。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -1036,7 +1036,7 @@
     "key_formulas": "$$\\sum \\text{升高的化合价总数} = \\sum \\text{降低的化合价总数} = \\text{转移电子总数 } n(e^-)$$\n$$2\\text{KMnO}_4 + 16\\text{HCl} = 2\\text{KCl} + 2\\text{MnCl}_2 + 5\\text{Cl}_2\\uparrow + 8\\text{H}_2\\text{O}$$",
     "tips": "① 双线桥与单线桥规范：双线桥由反应物指向生成物同一元素，标明“得/失 n e⁻”；单线桥由还原剂中失电子元素指向氧化剂中得电子元素，只标“n e⁻”，箭头本身即代表电子转移方向！\n② 部分氧化还原反应计算：注意区分起氧化作用的酸与起酸性介质作用的酸（如浓硝酸与铜反应生成 Cu(NO₃)₂ 与 NO₂）。",
     "visual_desc": "电子羽毛球接发球：还原剂像发球手大力挥拍击出带负电的电子（化合价抬升）；氧化剂像接球手稳稳接住飞来的电子（化合价压低），全场电子总数严格守恒。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -1049,7 +1049,7 @@
     "key_formulas": "$$n = \\frac{N}{N_A} = \\frac{m}{M} = \\frac{V}{V_m} = c \\cdot V$$\n$$\\text{标况 (0}^\\circ\\text{C, 101 kPa): } V_m = 22.4 \\text{ L/mol}$$",
     "tips": "① 凡是看到“标准状况下”先看是不是气体（SO₃ 熔点 16.8℃，标况下是固体；常温常压是液体）！\n② 弱酸或盐类水解：1 L 0.1 mol/L CH₃COONa 溶液中，CH₃COO⁻ 数目因水解小于 0.1 N_A；但根据物料守恒 CH₃COO⁻ + CH₃COOH 等于 0.1 N_A。",
     "visual_desc": "化学微观计数箱：1 摩尔就是一整打预包装的微观粒子大礼盒，里面整整齐齐码放着 6.02×10²³ 个分子；称出 18 克水，不多不少刚好倒出了一整箱水分子。",
-    "video_url": "https://www.bilibili.com/video/BV1xx411c7xx",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -1062,7 +1062,7 @@
     "key_formulas": "$$\\text{金属性判据: 单质置换水/酸能力, 最高价水化物碱性, 金属单质还原性}$$\n$$\\text{非金属性判据: 与氢化合剧烈程度, 氢化物稳定性, 最高价含氧酸酸性}$$\n$$\\text{最低负价} = \\text{主族族序数} - 8$$",
     "tips": "① 判断非金属性强弱必须用“最高价”含氧酸！不能用亚硫酸和碳酸比较非金属性（H₂SO₄ > H₂CO₃ 可以证明 S > C，但 H₂SO₃ 不行）。\n② 氢化物水溶液的酸性（如 HI > HBr > HCl > HF）绝不能作为非金属性强弱的判据！非金属性看的是气态氢化物的生成难易与热稳定性。",
     "visual_desc": "化学大厦元素矩阵：主族元素像大厦的窗户整齐排列；越往右上角（氟 F），对电子的渴望越强烈如贪婪磁石；越往左下角（铯 Cs），电子越容易脱手如同滚烫的热炭。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -1075,7 +1075,7 @@
     "key_formulas": "$$\\text{SO}_2 + \\text{Cl}_2 + 2\\text{H}_2\\text{O} = \\text{H}_2\\text{SO}_4 + 2\\text{HCl} \\quad (\\text{漂白性相互抵消!})$$\n$$\\text{Cu} + 2\\text{H}_2\\text{SO}_4(\\text{浓}) \\;\\xlongequal{\\Delta}\\; \\text{CuSO}_4 + \\text{SO}_2\\uparrow + 2\\text{H}_2\\text{O}$$\n$$\\text{C} + 2\\text{H}_2\\text{SO}_4(\\text{浓}) \\;\\xlongequal{\\Delta}\\; \\text{CO}_2\\uparrow + 2\\text{SO}_2\\uparrow + 2\\text{H}_2\\text{O}$$",
     "tips": "① 漂白机理辨析：SO₂ 是结合化合漂白（加热复原）；次氯酸、过氧化氢、臭氧是强氧化性氧化漂白（永久不可逆）；活性炭是物理吸附漂白。\n② SO₂ 与 CO₂ 混合气体检验大题规范顺序：SO₂（品红褪色）⟶ 除去 SO₂（足量酸性高锰酸钾或饱和 NaHCO₃）⟶ 检验 SO₂ 除尽（品红不褪色）⟶ 检验 CO₂（澄清石灰水变浑浊）。",
     "visual_desc": "铜丝浓酸魔法：加热试管，无色浓酸吞噬红铜，咕嘟咕嘟冒出呛人的刺激性 SO₂ 气泡，试管内溶液渐渐凝成深邃的翡翠孔雀蓝，冷却加水化作透亮天青色。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -1088,7 +1088,7 @@
     "key_formulas": "$$4\\text{NH}_3 + 5\\text{O}_2 \\;\\xlongequal[\\Delta]{\\text{催化剂}}\\; 4\\text{NO} + 6\\text{H}_2\\text{O}$$\n$$\\text{Cu} + 4\\text{HNO}_3(\\text{浓}) = \\text{Cu(NO}_3)_2 + 2\\text{NO}_2\\uparrow + 2\\text{H}_2\\text{O}$$\n$$3\\text{Cu} + 8\\text{HNO}_3(\\text{稀}) = 3\\text{Cu(NO}_3)_2 + 2\\text{NO}\\uparrow + 4\\text{H}_2\\text{O}$$",
     "tips": "① 铜与浓硝酸反应后期的隐蔽陷阱：随着浓硝酸浓度逐渐降低，反应会自发转变为铜与“稀硝酸”反应，生成的气体由 NO₂ 转变为 NO！\n② 离子方程式酸性环境判定：酸性条件下 NO₃⁻ 具有强氧化性，遇 Fe²⁺ 立即氧化为 Fe³⁺并释放 NO，不可错当无反应！",
     "visual_desc": "红色喷泉奇观：圆底烧瓶充入干燥氨气，一滴水注入，瓶内真空吸力瞬间爆发，烧杯中的酚酞红水如怒放喷泉狂飙而上，在瓶中绽放出一朵娇艳欲滴的玫红之花。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -1101,7 +1101,7 @@
     "key_formulas": "$$\\text{负极: } \\text{失 } e^-, \\; \\text{氧化反应}; \\quad \\text{正极: } \\text{得 } e^-, \\; \\text{还原反应}$$\n$$\\text{电子流向: 负极 } \\longrightarrow \\text{ 外电路 } \\longrightarrow \\text{ 正极}$$\n$$\\text{溶液离子流向: 阳离子 } \\longrightarrow \\text{ 正极}, \\quad \\text{阴离子 } \\longrightarrow \\text{ 负极}$$",
     "tips": "① 电子绝对不下水！电子只能在外电路金属导线中传递，溶液中导电依靠的是自由移动离子的定向迁移。\n② 电极方程式配平必须考虑电解质介质环境：酸性环境不能出现 OH⁻，碱性环境不能出现 H⁺，熔融碳酸盐介质依靠 CO₃²⁻ 传导传递。",
     "visual_desc": "原电池水车回路：锌片像溶解的跳水板向外喷涌电子流，电子顺着导线欢快点亮中央的小灯泡；铜片像接收站，溶液中的氢离子蜂拥扑向铜片抓走电子欢叫着化作氢气气泡。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -1114,7 +1114,7 @@
     "key_formulas": "$$\\Delta H = \\sum E_{\\text{断键}} - \\sum E_{\\text{成键}} = \\sum H_{\\text{生成物}} - \\sum H_{\\text{反应物}}$$\n$$\\text{目标反应方程式} = a \\cdot \\text{反应(1)} + b \\cdot \\text{反应(2)} \\implies \\Delta H = a\\Delta H_1 + b\\Delta H_2$$",
     "tips": "① 燃烧热的水必须是“液态水 H₂O(l)”！若生成气态水 H₂O(g)，则所放出的热量小于燃烧热。\n② 反应吸放热与反应条件无关：许多放热反应需要加热才能发生（如铝热反应、木炭燃烧）；吸热反应常温下也能自发进行（如 Ba(OH)₂·8H₂O 与 NH₄Cl 晶体反应）。",
     "visual_desc": "登山势能假说：盖斯定律就像登山者的海拔变化，无论你选择悬崖垂直攀岩直上，还是盘山公路迂回漫游，从山脚 A 点到达山顶 B 点，总重力势能增加量完全一模一样。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -1127,7 +1127,7 @@
     "key_formulas": "$$v(A) : v(B) : v(C) = a : b : c$$\n$$\\Delta H = E_{a(\\text{正})} - E_{a(\\text{逆})}$$\n$$v = \\frac{\\Delta c}{\\Delta t}$$",
     "tips": "① 纯固体和纯液体的浓度可视为常数，改变其用量不会改变化学反应速率！但改变固体的表面积（粉碎）可显著加快速率。\n② 惰性气体对速率影响看体积变不变：恒容充入惰性气体，各反应气体分压不变浓度不变，速率不变；恒压充入惰性气体，容积扩大分压减小浓度降低，速率减慢！",
     "visual_desc": "微观翻山隧道：化学反应就像分子想要翻过高耸险峻的活化能大山，催化剂像施工队，在大山中间炸出了一条低矮平缓的穿山隧道，让亿万普通分子瞬间轻松穿过。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -1140,7 +1140,7 @@
     "key_formulas": "$$K = \\frac{c^c(C) \\cdot c^d(D)}{c^a(A) \\cdot c^b(B)} \\quad (\\text{纯固体纯液体不列入})$$\n$$Q < K \\implies v_{\\text{正}} > v_{\\text{逆}} \\; (\\text{正向移动})$$\n$$\\alpha(A) = \\frac{c_{\\text{转}}(A)}{c_{\\text{初}}(A)} \\times 100\\%$$",
     "tips": "① “减弱”不等于“消除”：增大压强平衡向气体体积减小的方向移动，但新平衡时的压强依然比原平衡大！\n② 纯固体或纯液体不写入平衡常数表达式（如 C(s) + H₂O(g) ⇌ CO(g) + H₂(g)，K = [c(CO)·c(H₂)] / c(H₂O)）。",
     "visual_desc": "化学天平拔河：中间的平衡针被两侧的正向与逆向力拉扯稳定；当你往左盘加重物（增加反应物），天平受力倾斜向右滑动，直到重新在更高水平线恢复静止平衡。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -1153,7 +1153,7 @@
     "key_formulas": "$$K_a = \\frac{c(\\text{H}^+) \\cdot c(\\text{A}^-)}{c(\\text{HA})}, \\quad K_w = c(\\text{H}^+) \\cdot c(\\text{OH}^-) = 1.0 \\times 10^{-14} \\; (25^\\circ\\text{C})$$\n$$\\text{pH} = -\\lg c(\\text{H}^+), \\quad c(\\text{H}^+) \\cdot c(\\text{OH}^-) = K_w$$",
     "tips": "① “pH = 7 的溶液一定显中性”只在 25℃ 成立！在 100℃ 时纯水中性 pH = 6，若此时 pH = 7 溶液反而显碱性。\n② 强酸无论稀释多少倍，其 pH 也绝不可能超过 7（不能稀释变成碱性，无限稀释逼近 7）。",
     "visual_desc": "酸碱跷跷板：水分子天生蕴含等量的 H⁺ 与 OH⁻；酸的注入让 H⁺ 暴增，强行将 OH⁻ 压到极其微弱的角落，但二者的乘积 K_w 像一条锁链永远恒定不变。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -1166,7 +1166,7 @@
     "key_formulas": "$$\\text{电荷守恒: } \\sum z_i c(M^{z_i+}) = \\sum z_j c(X^{z_j-})$$\n$$\\text{Na}_2\\text{CO}_3: \\; c(\\text{Na}^+) > c(\\text{CO}_3^{2-}) > c(\\text{OH}^-) > c(\\text{HCO}_3^-) > c(\\text{H}^+)$$\n$$K_h = \\frac{K_w}{K_a}$$",
     "tips": "① 质子守恒最快写出法：找到水电离出来的最终产物（谁得到了质子，谁失去了质子，失去的必等于得到的）。\n② 等浓度酸与对应酸根离子混合溶液（如等浓度 CH₃COOH 与 CH₃COONa）：看酸的电离程度与水解程度强弱对比（醋酸电离大于水解呈酸性，次氯酸水解大于电离呈碱性）。",
     "visual_desc": "三大守恒照妖镜：溶液中无论怎么水解、电离，正负电荷总电量必须百分百归零（电荷守恒）；投进去的钠原子与碳原子骨架永远按 2:1 完整存在（物料守恒）。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -1179,7 +1179,7 @@
     "key_formulas": "$$A_m B_n(s) \\rightleftharpoons m A^{n+}(aq) + n B^{m-}(aq) \\implies K_{sp} = [c(A^{n+})]^m \\cdot [c(B^{m-})]^n$$\n$$Q_c > K_{sp} \\implies \\text{析出沉淀}, \\quad Q_c < K_{sp} \\implies \\text{沉淀溶解}$$",
     "tips": "① 难溶电解质绝不是“绝对不溶”，化学上通常将溶解度小于 0.01 g / 100g 称为难溶物，残留在溶液中的离子浓度低于 1.0 × 10⁻⁵ mol/L 即可认为沉淀完全。\n② 算 K_sp 幂次千万别漏乘漏方：如 Mg(OH)₂，设溶解度为 s，则 c(Mg²⁺)=s，c(OH⁻)=2s，K_sp = s · (2s)² = 4s³！",
     "visual_desc": "微观溶解与结晶之网：沉淀表面就像人满为患的地铁出入口，有的离子冲入水中，有的离子跌落回晶格；当溶解度极小的硫化钠加入时，银离子被瞬间夺走转投更坚韧的黑色沉淀怀抱。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -1192,7 +1192,7 @@
     "key_formulas": "$$\\text{阳极: } \\text{失 } e^-, \\; \\text{氧化反应}; \\quad \\text{阴极: } \\text{得 } e^-, \\; \\text{还原反应}$$\n$$\\text{电解饱和食盐水: } 2\\text{NaCl} + 2\\text{H}_2\\text{O} \\;\\xlongequal{\\text{电解}}\\; 2\\text{NaOH} + \\text{H}_2\\uparrow + \\text{Cl}_2\\uparrow$$",
     "tips": "① 活性电极阳极陷阱：只要阳极不是石墨或铂（如铁或铜作阳极），溶液里的阴离子无论还原性多强一律不放电，金属阳极本身必先溶解！\n② 串联电解池计算通法：各极转移的电子物质的量处处严格相等，直接根据得失电子守恒建立计算等式。",
     "visual_desc": "粗铜化羽成蝶：在强大电流驱动下，杂乱粗劣的铜棒在阳极无私解体溶化，杂质金银化作阳极泥沉落池底；纯洁的纯铜晶体像霜雪一样整齐致密地在阴极缓缓镀出。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -1205,7 +1205,7 @@
     "key_formulas": "$$\\text{泡利原理: 每个轨道最多 } 2 \\text{ 个电子且自旋相反 } (\\uparrow\\downarrow)$$\n$$\\text{洪特规则特例: } \\text{Cr: } [\\text{Ar}] 3d^5 4s^1, \\quad \\text{Cu: } [\\text{Ar}] 3d^{10} 4s^1$$\n$$\\text{第一电离能异常倒挂: } I_1(\\text{N}) > I_1(\\text{O}), \\quad I_1(\\text{Mg}) > I_1(\\text{Al})$$",
     "tips": "① 基态与激发态辨析：电子跃迁到更高能级为激发态，激发态回到基态释放光子（焰色试验光谱原理），两状态电子数相同，但电子排布式偏离构造原理。\n② 价电子排布式：过渡元素价电子包含最外层 s 电子和未充满的次外层 d 电子（如 Fe 为 3d⁶ 4s²）。",
     "visual_desc": "公寓住客与上下铺：能量最低原理就像住客先占低楼层；洪特规则就像单间空着时住客宁愿一人一间，不愿挤同室同铺；泡利原理规定一个上下铺最多只能睡两个人且头脚倒置。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -1218,7 +1218,7 @@
     "key_formulas": "$$\\text{价电子对数} = \\sigma + \\frac{1}{2}(a - xb)$$\n$$\\text{对数 2: } sp \\text{ (直线形)}, \\quad \\text{对数 3: } sp^2 \\text{ (平面三角形/V形)}, \\quad \\text{对数 4: } sp^3 \\text{ (四面体/三角锥/V形)}$$",
     "tips": "① 区分“VSEPR 模型”与“分子立体构型”：分子立体构型只看原子原子核的空间排列，不包含孤电子对！如 H₂O 的 VSEPR 模型是四面体形，但分子构型是 V 形。\n② 碳原子的杂化判定速记：全单键为 sp³，含 1 个双键为 sp²，含 1 个三键或两个积累双键为 sp。",
     "visual_desc": "气球气囊互斥模型：把 4 个充气气球扎在一起，它们会自发因排斥而张开成四面体；孤对电子就像一只特别胖的大气球，把另外几个纤细的成键小气球挤得靠拢缩角。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -1231,7 +1231,7 @@
     "key_formulas": "$$\\rho = \\frac{n \\cdot M}{N_A \\cdot V_{\\text{晶胞}}} = \\frac{n \\cdot M}{N_A \\cdot (a \\times 10^{-10})^3} \\;\\text{g/cm}^3$$\n$$\\text{均摊法: } N = N_{\\text{内部}} + \\frac{1}{2} N_{\\text{面心}} + \\frac{1}{4} N_{\\text{棱上}} + \\frac{1}{8} N_{\\text{顶角}}$$",
     "tips": "① 空间利用率与配位数：NaCl 中 Na⁺ 与 Cl⁻ 配位数均为 6（八面体）；CsCl 配位数为 8；干冰晶胞中每个 CO₂ 分子紧邻 12 个 CO₂ 分子。\n② 熔沸点比较总纲：共价晶体 > 离子晶体通常 > 分子晶体；分子晶体中若含有分子间氢键（如 HF、H₂O、NH₃），其熔沸点反常高！",
     "visual_desc": "食盐晶莹方糖立方：无数 Na⁺ 与 Cl⁻ 像黑白双色棋子交错镶嵌在三维正方体棋盘上，每个球都被周围六个异电荷球牢牢拥抱锁定，严丝合缝坚不可摧。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -1244,7 +1244,7 @@
     "key_formulas": "$$\\text{不饱和度(缺氢指数): } \\Omega = C + 1 - \\frac{H}{2} + \\frac{N}{2} \\quad (\\text{O/S 计为 0})\\\\\n\\Omega = 1 \\implies \\text{一个双键或一个环}; \\quad \\Omega = 4 \\implies \\text{苯环}$$",
     "tips": "① 限制条件同分异构体书写（高考压轴必考）：先算不饱和度 Ω 锁定骨架，根据性质特征锁定官能团（如能发生银镜反应说明有 -CHO；与 FeCl₃ 显紫色说明有酚羟基；能与 NaHCO₃ 反应说明有 -COOH）。\n② 同系物判定标准：结构相似（官能团种类和数目相同），在分子组成上相差一个或若干个 CH₂ 原子团。",
     "visual_desc": "乐高积木拼装艺术：固定碳骨架作为积木底座，把功能积木（-OH, -CHO）在各个卡槽间穿梭平移；翻个跟头对称的算同一种，插在不同插槽就变成了性质迥异的新物质。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -1257,7 +1257,7 @@
     "key_formulas": "$$\\text{甲苯酸性高锰酸钾氧化: } \\text{C}_6\\text{H}_5\\text{-CH}_3 \\;\\xrightarrow{\\text{KMnO}_4(\\text{H}^+)}\\; \\text{C}_6\\text{H}_5\\text{-COOH}$$\n$$\\text{马氏加成规则: } \\text{R-CH=CH}_2 + \\text{HX} \\longrightarrow \\text{R-CH(X)-CH}_3$$",
     "tips": "① 苯的同系物能被酸性高锰酸钾氧化的充要条件：与苯环直接相连的侧链碳上必须连有氢原子（苄基氢）！若如叔丁基苯，侧链碳无氢则不能被酸性高锰酸钾氧化褪色。\n② 区分有机反应类型试剂：溴水（烯烃发生加成褪色，萃取为物理变化）vs 液溴（铁催化下苯发生取代）。",
     "visual_desc": "六角共轭苯环铠甲：六个碳原子肩并肩紧握双手，头顶盘旋着一朵封闭的六电子大云环；无论外界怎么冲撞都坚不可摧，唯有在强催化剂利刃下才能在环边替换下一颗氢原子。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -1270,7 +1270,7 @@
     "key_formulas": "$$\\text{CH}_3\\text{CHO} + 2[\\text{Ag(NH}_3)_2]\\text{OH} \\;\\xrightarrow{\\Delta}\\; \\text{CH}_3\\text{COONH}_4 + 2\\text{Ag}\\downarrow + 3\\text{NH}_3 + \\text{H}_2\\text{O}$$\n$$\\text{CH}_3\\text{COOH} + \\text{CH}_3\\text{CH}_2\\text{OH} \\;\\xlongequal[\\Delta]{\\text{浓H}_2\\text{SO}_4}\\; \\text{CH}_3\\text{COOCH}_2\\text{CH}_3 + \\text{H}_2\\text{O}$$",
     "tips": "① 银镜实验成功五大要素：试管洁净；配制银氨溶液氨水不能过量（逐滴滴加氨水至沉淀刚好溶解）；必须采用水浴加热不能直接用酒精灯加热；反应过程绝对禁止振荡试管！\n② 卤代烃水解与消去条件区分：强碱水溶液加热为水解生成醇；强碱醇溶液加热为消去生成烯烃。",
     "visual_desc": "官能团接力变身舞台：从醇的脱氢氧化为醛，到醛的得氧蜕变为羧酸，再到羧酸与醇携手脱水结合成香气扑鼻的酯类香精，分子结构步步演进千变万化。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 21
   },
   {
@@ -1283,7 +1283,7 @@
     "key_formulas": "$$\\text{官能团保护示例: } -\\text{OH} \\;\\xrightarrow{\\text{CH}_3\\text{COOH}}\\; -\\text{OCOCH}_3 \\;\\xrightarrow{\\text{其他反应}}\\; \\dots \\;\\xrightarrow{\\text{H}_2\\text{O/H}^+} conduct\\; -\\text{OH}$$\n$$\\text{成环反应: 二元酸与二元醇缩聚, 氨基酸分子间脱水成肽键}$$",
     "tips": "① 设计合成路线切忌漏写条件：如光照、催化剂、△、浓硫酸、NaOH 醇溶液等，少一个条件直接扣分！\n② 充分利用题给“已知信息”：高考有机推断题中题干给出的陌生人名反应方程式，往往就是合成路线中某一步关键骨架构建的核心模板，按图索骥替换基团即可。",
     "visual_desc": "化学乐高逆向图纸：像拆解瑞士钟表一样，从最终精密的目标药分子倒退拆成齿轮与摆轮；在易受损的娇嫩零件涂上一层保护腊，完成粗暴焊接后再洗去保护层，浑然天成。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 22
   },
   {
@@ -1296,7 +1296,7 @@
     "key_formulas": "$$\\frac{\\text{自由水}}{\\text{结合水}} \\uparrow \\implies \\text{代谢旺盛, 抗逆性} \\downarrow; \\quad \\frac{\\text{自由水}}{\\text{结合水}} \\downarrow \\implies \\text{代谢减弱, 抗逆性} \\uparrow$$\n$$\\text{元素组成: 糖类 (C, H, O); 脂肪 (C, H, O); 磷脂 (C, H, O, N, P)}$$",
     "tips": "① 烘干种子 vs 灼烧种子：烘干种子失去的是自由水和部分结合水，种子仍有微弱生命力；高温灼烧种子失去全部水分和有机物，剩下的灰烬即为无机盐。\n② 脂肪氧化分解释放能量多于等质量糖类：因为脂肪分子中 C、H 比例高，O 比例低，彻底氧化时耗氧量更多，产生的水和释放的 ATP 显著更多！",
     "visual_desc": "细胞微观海洋：自由水分子像川流不息的小溪在细胞质中穿梭运送营养；结合水像胶水一样死死黏附在蛋白质骨架上；无机盐离子像点缀在海中的微型磁石稳定电荷平衡。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -1309,7 +1309,7 @@
     "key_formulas": "$$\\text{肽键数} = \\text{脱水数} = n - m \\quad (n: \\text{氨基酸数}, m: \\text{肽链数})$$\n$$M_{\\text{蛋白}} = n \\cdot a - 18(n - m) - 2 \\times N_{\\text{二硫键}}$$\n$$\\text{至少含游离 } -\\text{NH}_2 / -\\text{COOH} = m$$",
     "tips": "① 双缩脲试剂与斐林试剂区别：虽然成分都是 NaOH 和 CuSO₄，但斐林试剂是等量混合立即使用（Cu(OH)₂）；双缩脲试剂是先加 A 液（0.1 g/mL NaOH 营造碱性环境），再加 B 液（4滴 0.01 g/mL CuSO₄ 生成络合物紫色）。\n② 环肽特殊计算：环肽首尾相连，脱水数 = 肽键数 = 氨基酸数 n！",
     "visual_desc": "珍珠项链编织：21 种不同色彩的氨基酸珍珠排成一长串，两两咬合脱落一滴水珠扣成肽键；多条链相互折叠拧成具有立体三维构象的精密生命引擎。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -1322,7 +1322,7 @@
     "key_formulas": "$$\\text{细胞生物: } 2 \\text{ 种核酸}, \\; 5 \\text{ 种碱基}, \\; 8 \\text{ 种核苷酸}, \\; \\text{遗传物质是 DNA}$$\n$$\\text{病毒: } 1 \\text{ 种核酸}, \\; 4 \\text{ 种碱基}, \\; 4 \\text{ 种核苷酸}, \\; \\text{遗传物质是其自身核酸}$$",
     "tips": "① 观察 DNA 和 RNA 在细胞中分布实验：甲基绿将 DNA 染成绿色，吡罗红将 RNA 染成红色；盐酸的作用是改变细胞膜通透性，并使染色质中的 DNA 与蛋白质分离。\n② 碱基与核苷酸种类判断：水解产物若提到“彻底水解”得到磷酸、五碳糖和碱基；若提到“初步水解”得到的是核苷酸。",
     "visual_desc": "生命的双螺旋天梯：四种不同颜色的脱氧核苷酸积木按照严谨的互补配对规则螺旋上升，数万亿个字母构成了书写人类全部生命密码的无字天书。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -1335,7 +1335,7 @@
     "key_formulas": "$$\\text{自由扩散: 顺浓度, 无载体, 无 ATP}$$\n$$\\text{协助扩散: 顺浓度, 需通道/载体蛋白, 无 ATP}$$\n$$\\text{主动运输: 逆浓度, 需载体蛋白, 消耗 ATP}$$",
     "tips": "① 自由扩散与协助扩散最大吸收速率瓶颈：协助扩散在浓度极高时速率不再增加，受载体蛋白数量限制；主动运输受载体数量和能量（氧气浓度）双重限制。\n② 葡萄糖跨膜方式陷阱：进入红细胞是协助扩散；进入小肠绒毛上皮细胞或肾小管上皮细胞是主动运输（协同运输逆浓度）。",
     "visual_desc": "海关港口安检口：脂溶性小客商像微风穿墙（自由扩散）；普通市民走专用闸机通道无阻滑入（协助扩散）；危险大货车需要安保吊车耗费燃油强行倒运吊进（主动运输）。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -1348,7 +1348,7 @@
     "key_formulas": "$$\\text{催化本质: 降低化学反应的活化能 } E_a$$\n$$\\text{底物浓度充足时: } v \\propto [\\text{酶浓度}]$$",
     "tips": "① 实验自变量控制次序：探究温度影响时，必须先将酶溶液和底物溶液分别在各自目标温度下保温一段时间，再混合反应！绝不能混合后再调温度。\n② 酶活性与生成物生成量的区别：酶变性失活后酶活性为零；但生成物量不再改变（保持固定值），而不是降为零！",
     "visual_desc": "一把钥匙开一把锁：酶的活性中心像一把精密雕琢的锁孔，只有特定的底物分子钥匙能够严丝合缝插进去瞬间解开枷锁，化作产物飘然而去，锁具完好如初准备下一轮接合。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -1361,7 +1361,7 @@
     "key_formulas": "$$\\text{有氧呼吸: } \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{H}_2\\text{O} + 6\\text{O}_2 \\;\\xrightarrow{\\text{酶}}\\; 6\\text{CO}_2 + 12\\text{H}_2\\text{O} + \\text{能量(大量)}$$\n$$\\text{光合作用: } 6\\text{CO}_2 + 12\\text{H}_2\\text{O} \\;\\xlongequal[\\text{叶绿体}]{\\text{光能}}\\; \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 + 6\\text{H}_2\\text{O}$$\n$$\\text{真正光合} = \\text{表观(净)光合} + \\text{呼吸消耗}$$",
     "tips": "① 骤然停止光照或停止 CO₂ 供应物质含量动态变化：\n   - 骤停光照（缺 ATP 和 NADPH）：C₃ 还原受阻 ⟹ C₃ 增多，C₅ 减少。\n   - 骤停 CO₂（缺 CO₂ 固定）：C₅ 消耗受阻，C₃ 减少，C₅ 增多。\n② 密闭温室大棚一天昼夜 CO₂ 浓度曲线：最高点与最低点对应光合速率等于呼吸速率的两个时刻！",
     "visual_desc": "叶绿体能量铸币厂：类囊体薄膜上的叶绿素像太阳能电池板捕获阳光，电解水分子喷薄出氧气，顺便给 ATP 充好电；基质中的卡尔文转盘转动，吞下二氧化碳铸造出甜蜜的葡萄糖砖块。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -1374,7 +1374,7 @@
     "key_formulas": "$$\\text{减I前期: 联会形成四分体 (1 个四分体 = 1 对同源染色体 = 2 条染色体 = 4 条单体 = 4 个 DNA)}$$\n$$\\text{减数分裂结果: 染色体数目减半, DNA 减半, 形成 4 个子细胞}$$",
     "tips": "① 区分受精卵中遗传物质来源：受精卵核基因一半来自父方一半来自母方；但细胞质基因（线粒体 DNA）几乎全部来自母方（卵细胞）！\n② 卵细胞形成 vs 精子形成：精子形成两次分裂均等分裂，形成 4 个精子细胞变形；卵细胞形成过程初级卵母细胞和次级卵母细胞均不均等分裂，最终只形成 1 个卵细胞和 3 个极体。",
     "visual_desc": "染色体双人舞会：同源染色体两两相拥跳起联会华尔兹，手臂交叉互换彼此的衣角碎片；一声令下各奔东西迈向两侧（减I），随后单体解散各自单飞（减II），生命的多样性由此喷涌。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -1387,7 +1387,7 @@
     "key_formulas": "$$\\text{Aa } \\times \\text{ Aa } \\implies 1 \\text{ AA} : 2 \\text{ Aa} : 1 \\text{ aa} \\quad (\\text{显性性状中纯合子占 } 1/3, \\text{ 杂合子占 } 2/3)$$\n$$\\text{连续自交 } n \\text{ 代, 杂合子比例: } \\left(\\frac{1}{2}\\right)^n, \\quad \\text{纯合子比例: } 1 - \\left(\\frac{1}{2}\\right)^n$$",
     "tips": "① 显性后代中的纯合子概率：在 F₂ 显性个体中，纯合子 AA 占 1/3，杂合子 Aa 占 2/3！审题必须看清是“后代中”还是“显性个体中”。\n② 自由交配 vs 连续自交：自交是基因型相同的个体交配（纯合率大幅升高）；自由交配在无选择条件下种群基因型频率和基因频率保持不变（利用配子棋盘法或哈代-温伯格定律求解极快）。",
     "visual_desc": "孟德尔豌豆试验田：神父小心翼翼去雄套袋，黄圆绿皱的豌豆在修道院后院发芽结果；揭开谜底的那一刻，3 比 1 的神圣比例宣告了现代遗传学第一道曙光的降临。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -1400,7 +1400,7 @@
     "key_formulas": "$$\\text{AaBb 自交: } 9 A\\_B\\_ : 3 A\\_bb : 3 aaB\\_ : 1 aabb$$\n$$\\text{变型分类: } 9:7, \\; 9:6:1, \\; 9:3:4, \\; 15:1, \\; 13:3, \\; 1:4:6:4:1$$\n$$\\text{拆分乘法法则: } P(\\text{A-B-}) = P(\\text{A-}) \\times P(\\text{B-}) = \\frac{3}{4} \\times \\frac{3}{4} = \\frac{9}{16}$$",
     "tips": "① 乘法分配法则妙用：解决多对独立遗传基因问题，一律拆分成单对基因独立计算概率，再将各项概率相乘！\n② 显性纯合致死效应：若 AA 或 BB 致死，则 9:3:3:1 将变为 4:2:2:1 或 6:3:2:1，注意检查分母总数是否为 16。",
     "visual_desc": "4×4 十六宫格棋盘：两对染色体在减数分裂中自由洗牌，十六格棋盘上九颗金子、三颗红宝石、三颗蓝宝石与一颗银珠精准落位，衍生出千姿百态的生命变奏曲。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -1413,7 +1413,7 @@
     "key_formulas": "$$\\text{伴X隐性: } X^b X^b (\\text{女病}) \\implies X^b Y (\\text{子病}) \\text{ 且 } X^b Y (\\text{父病})$$\n$$\\text{伴X显性: } X^A Y (\\text{父病}) \\implies X^A X^- (\\text{女必病})$$",
     "tips": "① 概率计算区分性别条件：\n   - “生一个患病男孩的概率”：已包含性别概率，需要乘以生男孩的 1/2。\n   - “生了一个男孩，其患病的概率”：性别已确定为男孩，只需在男孩群体中求患病概率，不乘 1/2！\n② 伴 X 染色体同源区段：X 和 Y 染色体同源区段上的基因遗传与常染色体类似，但基因型必须带染色体符号书写（如 XᴬYᵃ）。",
     "visual_desc": "家族血脉谱系图：方形代表男，圆形代表女；黑色病魔顺着一条看不见的隐性 X 染色体暗流涌动，悄悄潜伏在母亲体内，却在儿子身上锋芒毕露无所遁形。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -1426,7 +1426,7 @@
     "key_formulas": "$$A = T, \\quad G = C \\implies A + C = T + G = \\frac{1}{2}(A + T + C + G)$$\n$$\\text{复制 } n \\text{ 次所需某种脱氧核苷酸数} = (2^n - 1) \\times m$$\n$$\\text{基因(DNA碱基数) : mRNA碱基数 : 蛋白质氨基酸数} = 6 : 3 : 1$$",
     "tips": "① 区分 RNA 聚合酶的功能：RNA 聚合酶兼具“解开双螺旋”和“催化形成磷酸二酯键”双重功能，转录不需要另外加解旋酶！\n② 翻译方向判断：核糖体沿着 mRNA 移动方向是 5' ⟶ 3'；多聚核糖体中，多肽链越长的核糖体距离翻译起点越远，这使得少量 mRNA 能迅速合成大量蛋白质。",
     "visual_desc": "生命的复印与传达：解旋酶像拉链头拉开双链，DNA 聚合酶顺势组装全新副链；信使 RNA 像抄录好的指令书飞奔出核孔，核糖体工厂按图索骥三步一码组装出精巧蛋白机器。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -1439,7 +1439,7 @@
     "key_formulas": "$$\\text{血浆} \\xrightleftharpoons[\\text{渗出}]{\\text{重吸收}} \\text{组织液} \\xrightarrow{\\text{单向吸收}} \\text{淋巴液} \\xrightarrow{\\text{回流}} \\text{血浆}$$\n$$\\text{血浆 pH 缓冲对: } \\text{H}_2\\text{CO}_3 \\rightleftharpoons \\text{H}^+ + \\text{HCO}_3^-$$",
     "tips": "① 组织水肿的五大成因：营养不良（血浆蛋白减少）、花粉过敏（毛细血管壁通透性增大）、肾小球肾炎（蛋白尿）、淋巴管堵塞、组织细胞代谢旺盛产物积累。\n② 内环境稳态是动态平衡：并非恒定不变，而是在一定正常范围内微弱波动。",
     "visual_desc": "细胞的恒温滋养浴池：组织细胞像娇嫩的珊瑚游弋在透明清澈的内环境海水中；营养不断由血浆渗入，代谢废物被淋巴和血液卷走，机体像精密温控仪维持着生命浴池的安宁。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -1452,7 +1452,7 @@
     "key_formulas": "$$\\text{静息电位: } \\text{K}^+ \\text{ 外流 } \\implies \\text{外正内负}$$\n$$\\text{动作电位: } \\text{Na}^+ \\text{ 内流 } \\implies \\text{外负内正}$$\n$$\\text{信号转换: 电信号 } \\longrightarrow \\text{ 化学信号(递质) } \\longrightarrow \\text{ 电信号}$$",
     "tips": "① 神经递质的作用归宿：发挥作用后迅速被降解或被突触前膜重新回收，若递质降解酶受抑制（如有机磷农药中毒），递质持续作用导致肌肉持续痉挛或麻痹。\n② 刺激传入神经传出效应器动作：该过程由于没有经过完整的反射弧，绝不能称为“反射”！反射必须依赖完整反射弧。",
     "visual_desc": "微观神经电流与火花：电脉冲像闪电沿着神经轴突一路疾驰；到达突触终点时刹车，化身无数微小的化学信号水泡（递质）飘过海峡，在彼岸重新激发起熊熊电火花向前传导。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -1465,7 +1465,7 @@
     "key_formulas": "$$\\text{分级反馈轴: } \\text{下丘脑} \\xrightarrow{+\\text{TRH}} \\text{垂体} \\xrightarrow{+\\text{TSH}} \\text{甲状腺} \\xrightarrow{+\\text{TH}} \\text{靶器官}$$\n$$\\text{TH 浓度过高} \\;\\xrightarrow{-\\text{负反馈}}\\; \\text{抑制下丘脑与垂体分泌}$$",
     "tips": "① 产生“渴觉、痛觉、冷觉”的中枢必须在“大脑皮层”！下丘脑只能感受刺激并分泌激素，不能产生感觉。\n② 抗利尿激素的产生与释放：抗利尿激素是由“下丘脑”合成并分泌的，储存在“垂体后叶”并由垂体释放，万不可错当垂体合成！",
     "visual_desc": "机体恒温恒糖中枢：下丘脑像统领全身的指挥官，发布密令经过垂体副官逐级放大调动甲状腺卫队；若士兵过多，自律的反馈信函立即送达指挥室暂停招募，秩序井然。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -1478,7 +1478,7 @@
     "key_formulas": "$$\\text{体液免疫: B 细胞 } \\xrightarrow{\\text{双重信号+细胞因子}} \\text{浆细胞(产生抗体) + 记忆 B 细胞}$$\n$$\\text{细胞免疫: 细胞毒性 T 细胞 } \\longrightarrow \\text{密切接触裂解靶细胞}$$\n$$\\text{二次免疫: 反应更快、更强烈、抗体滴度更高}$$",
     "tips": "① 唯一没有识别抗原功能的免疫细胞是“浆细胞”！浆细胞只能专职合成并分泌抗体；唯一没有特异性识别功能的免疫细胞是“吞噬细胞”（能识别非特异抗原）。\n② 抗体不能直接消灭细胞内的病毒：抗体只能在细胞外液中与抗原结合，细胞内的病原体必须先靠细胞免疫裂解靶细胞将其释放出来，再由体液免疫彻底消灭。",
     "visual_desc": "体内特种作战协同：巡逻的吞噬细胞拉响警报，辅助性 T 参谋发出指令；B 细胞兵工厂接到图纸开足马力喷射特异性巡航导弹（抗体）；特种刺客（细胞毒性 T）直捣黄龙刺破感染老巢，将残余一网打尽。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -1491,7 +1491,7 @@
     "key_formulas": "$$\\text{极性运输: 形态学上端 } \\longrightarrow \\text{ 形态学下端 (主动运输, 需 ATP)}$$\n$$\\text{敏感度排序: 根 > 芽 > 茎}$$\n$$\\text{低浓度促进, 高浓度抑制 (两重性)}$$",
     "tips": "① 促进果实“发育”与“成熟”截然不同：促进子房发育成果实（膨大变大）的是“生长素”和“赤霉素”（无籽番茄是用生长素处理未受粉雌蕊）；促进果实变软成熟变甜的是“乙烯”！\n② 茎的背地性不表现两重性：茎近地侧生长素浓度高促进生长快，远地侧浓度低促进生长慢，两侧均为“促进”作用，只是程度不同。",
     "visual_desc": "向阳而生的草木智慧：向日葵顶端的感光罗盘察觉到晨曦，把微小的生长素向阴影背光一侧赶运；背光侧细胞像充气一样拼命伸展拔高，推动着花盘娇憨地追逐太阳的方向。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -1504,7 +1504,7 @@
     "key_formulas": "$$N_{\\text{标志重捕}} = \\frac{M \\cdot n}{m} \\quad (M: \\text{初捕标记}, n: \\text{重捕总数}, m: \\text{重捕中标记})$$\n$$N_t = N_0 \\lambda^t \\quad (\\text{J型增长模型})$$\n$$\\text{S型增长速率在 } K/2 \\text{ 处达到极大值}$$",
     "tips": "① 种群增长率 vs 种群增长速率：“J”型曲线增长率恒定不变，增长速率持续递增；“S”型曲线增长率持续减小，增长速率先增大后减小，在 K/2 时达到最大值。\n② K 值是环境容纳量，并非固定死数：改善环境条件（增加庇护所、食物）K 值会增大；环境破坏污染 K 值降低。",
     "visual_desc": "森林鹿群起落图谱：新引入小岛的鹿群乘着丰美的牧草以 J 型爆炸式繁衍；当荒岛草木啃噬殆尽，饥荒与疾病让数量在撞击到环境红线 K 值时回落抚平，走向 S 型稳态均衡。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -1517,7 +1517,7 @@
     "key_formulas": "$$\\text{摄入量} = \\text{同化量} + \\text{粪便量 (属于上一营养级!)}$$\n$$\\text{同化量} = \\text{自身呼吸消耗} + \\text{用于生长发育繁殖的能量}$$\n$$\\text{能量传递效率} = \\frac{\\text{下一营养级同化量}}{\\text{上一营养级同化量}} \\times 100\\% \\in [10\\%, 20\\%]$$",
     "tips": "① 能量金字塔绝不可能倒置：由于能量逐级递减，任何健康生态系统的能量金字塔必定上窄下宽；但数量金字塔可以倒置（如一棵百年大树上生活着数千只昆虫）。\n② 物质与能量循环辨析：物质是循环利用、全球性的；而能量是单向流动、逐级递减的，必须依靠太阳能持续输入维持运转。",
     "visual_desc": "生态金字塔能量阶梯：滚烫的阳光倾泻在无垠绿野，亿万卡路里被绿叶织成麦浪；小羊咀嚼着青草截留下一成体能，狼群撕裂猎物仅能汲取残存的微芒；能量在阶梯上消耗散溢，唯有碳原子在天地间轮回不息。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -1530,7 +1530,7 @@
     "key_formulas": "$$\\text{杂交瘤细胞} = \\text{已免疫 B 细胞(产生特异抗体)} + \\text{骨髓瘤细胞(体外无限增殖)}$$\n$$\\text{两次筛选: HAT 培养基初筛 } \\longrightarrow \\text{ 多孔培养板抗体阳性检测确证}$$",
     "tips": "① 诱导动物细胞融合特有的方法：可以使用“灭活的病毒”（如灭活的仙台病毒）；而诱导植物原生质体融合绝对不能用病毒！\n② 胃蛋白酶不能用于动物细胞分散：因为胃蛋白酶的最适 pH 是 1.5~2.2，强酸环境会杀死动物活细胞，必须使用弱碱性的胰蛋白酶或中性的胶原蛋白酶。",
     "visual_desc": "抗癌神奇子弹诞生记：患癌小鼠的淋巴卫士与癌细胞在电火花下融合联姻，诞生出兼具“无限长生不老”与“百步穿杨专一制导”的杂交瘤超级战士，化作扫除肿瘤的精准靶向药。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -1543,7 +1543,7 @@
     "key_formulas": "$$\\text{PCR 三阶段: } 95^\\circ\\text{C 变性} \\longrightarrow 55^\\circ\\text{C 复性(引物结合)} \\longrightarrow 72^\\circ\\text{C 延伸(Taq 酶)}$$\n$$\\text{基因表达载体} = \\text{启动子} + \\text{目的基因} + \\text{终止子} + \\text{标记基因} + \\text{复制原点}$$",
     "tips": "① 启动子与起始密码子辨析：启动子是“DNA 上的特异启动序列”，是 RNA 聚合酶识别和结合的位点（属于转录调控元件）；起始密码子位于“mRNA”上，是翻译开始的信号！\n② 质粒切割双酶切原则：为了防止目的基因和质粒自身环化以及反向连接，设计引物时两端通常连接“两种不同的限制酶切位点”（双酶切）。",
     "visual_desc": "分子剪刀与复印神机：限制酶像高精度分子手术刀在特定基因条形码处咔嚓剪开切口；在微型 PCR 热循环仪内，温度像潮汐一样循环起伏，几滴无色试剂在数小时内自我克隆出千亿份相同的基因蓝图。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -1556,7 +1556,7 @@
     "key_formulas": "$$\\text{杜甫《登高》八重悲境: } \\text{万里(地之远)} \\to \\text{悲秋(时之暮)} \\to \\text{常作客(身之飘)} \\to \\text{百年(岁之暮)} \\to \\text{多病(体之衰)} \\to \\text{独(朋之绝)} \\to \\text{登台(望之远)} \\to \\text{艰苦潦倒(国之难)}$$",
     "tips": "① 诗歌比较题答题模板：先答手法共性与差异（如李白重虚写浪漫夸张，杜甫重实录格律写实），再结合具体诗句剖析意象，最后落脚到作者的胸襟与人生困境。\n② 区分抒情主人公与作者：品读游仙诗时，梦境是解脱也是抗争，结句“世间行乐亦如此”是看透后的决绝，非消极避世。",
     "visual_desc": "盛唐双峰并峙：李白脚踏谢公屐飞升青云霓裳羽衣仙殿，仰天大笑摔碎权贵冠冕；杜甫在夔州萧萧落木与滚滚长江间白发苍颜迎风独立，将苍生之苦压进严整如铁铸的律诗格律。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -1569,7 +1569,7 @@
     "key_formulas": "$$\\text{立论: } \\text{古之学者必有师} \\implies \\text{从师标准: 道之所存, 师之所存}$$\n$$\\text{驳论三组对比: } \\begin{cases} \\text{圣人从师} \\; \\text{vs} \\; \\text{众人耻师} \\\\ \\text{爱子择师} \\; \\text{vs} \\; \\text{于身耻师} \\\\ \\text{百工相师} \\; \\text{vs} \\; \\text{士族耻师} \\end{cases} \\implies \\text{直指士大夫浮伪虚矫}$$",
     "tips": "① “句读之不知”宾语前置句式：正常语序为“不知句读”，之是宾语前置的标志。全句“句读之不知，惑之不解，或师焉，或不焉”属于错综互文！\n② 论据选择时效性与针对性：韩愈借赞赏少年李蟠“不拘于时，学于余”，既给李蟠以鼓励，又树立敢于抗击陋俗的先锋标杆。",
     "visual_desc": "大唐文坛金刚怒目：士大夫们峨冠博带相互嘲笑“道大耻师”，韩愈像孤胆文坛旗手，挥动如椽巨笔写下《师说》，以三柄对比利剑劈碎千年等级门第偏见。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -1582,7 +1582,7 @@
     "key_formulas": "$$\\text{水月之喻哲思: } \\begin{cases} \\text{变之视角: 逝者如斯, 曾不能以一瞬} \\implies \\text{生老病死} \\\\ \\text{不变视角: 物与我皆无尽也} \\implies \\text{精神恒久超脱} \\end{cases} \\implies \\text{清风明月, 物我交融}$$",
     "tips": "① “主客问答”是赋体的传统假托结构：文中的“客”实际上是苏轼内心苦闷、悲凉、执念的投影；苏子的作答则是理性、通达、超然的自我拯救与辩证开解。\n② 识记词类活用：“侣鱼虾而友麋鹿”（名词意动用法，以...为侣，以...为友）。",
     "visual_desc": "赤壁月夜一苇扁舟：一叶孤舟漂浮于万顷江波之上，清风吹拂箫声幽咽；贬谪黄州的苏轼手把酒盏，看着水中破碎复圆的月影，与天地清风共醉忘却荣辱千秋。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -1595,7 +1595,7 @@
     "key_formulas": "$$\\text{故都秋之文眼: } \\text{清(色调纯净)} + \\text{静(意境悠远)} + \\text{悲凉(内心感伤)} \\implies \\text{主客观情景融合}$$",
     "tips": "① 散文鉴赏感官联觉分析法：品味槐树落蕊“没有声音，也没有气味，但脚踏上去很微细很柔软的感觉”，调动了视觉、触觉与心理幻觉的多维通感。\n② 南方秋与北国秋对比的作用：以江南秋天的“慢、润、淡”反衬北国之秋的“浓烈、干爽、深邃”，凸显对北平故都秋天的狂热挚爱。",
     "visual_desc": "北平深巷秋晨小院：斑驳破败的芦草瓦屋檐下，几朵蓝白相间的牵牛花静静绽放；一缕淡白阳光透过槐树绿叶洒在细软的落蕊泥地上，耳边传来游民懒洋洋的秋雨闲话。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -1608,7 +1608,7 @@
     "key_formulas": "$$\\text{座次尊卑: } \\text{东向坐 (尊者独霸)} > \\text{南向坐 (亚父)} > \\text{北向坐 (沛公臣服)} > \\text{西向侍 (张良陪侍)}$$\n$$\\text{性格决定命运: } \\begin{cases} \\text{项羽: 自矜寡谋, 妇人之仁} \\implies \\text{乌江自刎} \\\\ \\text{刘邦: 屈伸隐忍, 善纳谋臣} \\implies \\text{定鼎天下} \\end{cases}$$",
     "tips": "① 词类活用必考点：“籍吏民，封府库”（名词作动词，登记造册）；“常以身翼蔽沛公”（名词作状语，像鸟张开翅膀一样）。\n② 樊哙闯帐的多维功能：不仅是武勇救主，更通过一番有理有节的说辞（“怀王与诸将约...先破秦入咸阳者王之...今沛公先破秦...诛赏不行而听细人之说”），在道义上完全将项羽置于不仁不义的被动境地！",
     "visual_desc": "古军帐杀气腾腾：项庄长剑寒光凛凛步步紧逼刘邦，项伯挥袖以肉身死死阻挡；樊哙撞翻戟士生啖猪肩，怒目圆睁须发尽张；亚父范增手按佩剑叹息天命已失。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -1621,7 +1621,7 @@
     "key_formulas": "$$\\text{曾皙之志: } \\text{春服既成} \\to \\text{浴乎沂} \\to \\text{风乎舞雩} \\to \\text{咏而归} \\implies \\text{礼乐教化之大成盛世}$$\n$$\\text{孟子仁政逻辑: } \\text{不忍之心(发端)} \\xrightarrow{\\text{推恩}} \\text{老吾老以及人之老} \\xrightarrow{\\text{制度保障}} \\text{制民之产} \\implies \\text{天下归心}$$",
     "tips": "① 孟子经典论辩技法：善用层层铺垫、因势利导、类比归谬，迫使对方在逻辑陷阱中不得不承认己方观点。\n② 掌握核心文言实词：“哂”（微笑讥笑）、“比及”（等到）、“相”（赞礼司仪）、“端章甫”（名作动，穿礼服戴礼帽）。",
     "visual_desc": "孔门师弟暮春畅想：庭院里琴音袅袅止歇，曾皙舍瑟而作款款道来；师徒几人在微风吹拂的舞雩台上携手放歌，洗尽凡尘功名杂念，照见华夏大同最温柔的文明梦境。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -1634,7 +1634,7 @@
     "key_formulas": "$$\\text{戏剧结构冲突树: } \\begin{cases} \\text{伦理悲剧: 周萍 - 繁漪 - 四凤 - 周冲 (两代乱伦毁灭)} \\\\ \\text{阶级悲剧: 周朴园 (资产矿主) } \\;\\text{vs}\\; \\text{鲁大海 (罢工工人)} \\\\ \\text{性格悲剧: 周朴园伪善冷酷 } \\;\\text{vs}\\; \\text{繁漪雷雨般极端挣扎} \\end{cases}$$",
     "tips": "① 舞台说明鉴赏：剧本开头对周公馆沉闷、紧闭门窗、闷热雷雨欲来天气的细腻描写，既是典型环境渲染，更是旧中国封建家庭压抑窒息与社会革命风暴即将爆发的象征符号。\n② 潜台词分析：品味周朴园反复追问“你来干什么？”“谁指使你来的？”，潜台词暴露的是他生怕昔日丑闻动摇其社会地位与商业信誉的极度恐慌。",
     "visual_desc": "雷雨交加的公馆危楼：华丽沉重的红木客厅里，门窗紧锁雷声轰鸣；闪电撕裂夜空照亮每个人绝望的面容，两代人隐藏三十年的血缘与罪孽在暴风雨中土崩瓦解化作灰烬。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -1647,7 +1647,7 @@
     "key_formulas": "$$\\text{四权杀人网络: } \\text{夫权(逼嫁卖身)} + \\text{族权(婆家抢夺)} + \\text{神权(阴司分身地狱恐惧)} + \\text{政权/理学(鲁四老爷绝其生路)}$$\n$$\\text{反讽张力: } \\text{富豪吉庆祝福之夜 } \\;\\longleftrightarrow\\; \\text{赤贫妇女横死雪堆}$$",
     "tips": "① 肖像描写的传神笔法：紧扣祥林嫂“眼睛”的三次变化（初到时“顺着眼”安分善良 ⟶ 丧子再来时“眼光角上带着泪痕”充满麻木 ⟶ 临死前“只有那眼珠间或一轮”彻底失去生机）。\n② “捐门槛”的悲剧高潮：祥林嫂耗尽数年血汗钱去土地庙捐门槛祈求赎罪，以为解脱了罪名，但鲁四老爷一声“放着罢，祥林嫂！”彻底将她打入绝望深渊。",
     "visual_desc": "漫天雪花吞噬人间：年终鲁镇香烟缭绕爆竹噼啪，肥壮的福礼摆满香案；门外刺骨寒风中，灰白头发、手提破碗的祥林嫂无声倒在雪泥地里，天地一派白茫茫的冷酷荒凉。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -1660,7 +1660,7 @@
     "key_formulas": "$$\\text{庄子境界跃迁: } \\text{小知小年(蜩鸠)} \\xrightarrow{\\text{突破}} \\text{大知大年(鹏椿)} \\xrightarrow{\\text{破除所待}} \\text{御风(列子)} \\xrightarrow{\\text{无所待}} \\text{至人无己(逍遥)}$$\n$$\\text{老子辩证观: } \\text{反者道之动, 弱者道之用}$$",
     "tips": "① 庄子散文特色：“寓言、重言、卮言”三言并举，汪洋恣肆、奇幻莫测，不可按字面逻辑死扣，而应神会其超越现实的精神寄托。\n② “无己、无功、无名”对应关系：“无己”消除主体偏见；“无功”摆脱世俗功业评价；“无名”超越社会名誉绑架。",
     "visual_desc": "北冥有鱼其名为鲲：北极寒海深处潜藏的巨鱼腾跃化为垂天大鹏，翅膀卷起暴风直冲九万里浩荡苍穹；低洼榆树间的寒蝉自鸣得意，不知天地宇宙之无穷高远。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -1673,7 +1673,7 @@
     "key_formulas": "$$\\text{比兴象征体系: } \\begin{cases} \\text{美人 } \\longleftrightarrow \\text{ 楚怀王(政治依托) / 崇高人格} \\\\ \\text{香草(芷兰菊) } \\longleftrightarrow \\text{ 芳洁高尚美德 / 美政理想} \\\\ \\text{恶草(萧艾) } \\longleftrightarrow \\text{ 嫉贤嫉能奸邪佞臣} \\end{cases}$$",
     "tips": "① 区分《诗经》现实主义与楚辞浪漫主义：《诗经》质朴写实，重在社会生活民风风俗的忠实记录；楚辞奇幻瑰丽，借神游仙界、扣天门、求女等上天入地的神话奇境寄托炽烈政治抱负。\n② 赋比兴在《离骚》中的融会贯通：比兴不再是断章零散的开头点缀，而是通篇结构化的有机隐喻网络。",
     "visual_desc": "汨罗江畔披兰幽兰：楚国大夫峨冠博带，佩戴陆离长剑，身披芙蓉花瓣编织的衣裳；在凄风苦雨的楚国大地上，乘着玉龙神车巡游上天扣击天帝重门，呼唤正义降临人间。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -1686,7 +1686,7 @@
     "key_formulas": "$$\\text{三段论标准式: } M - P \\;\\land\\; S - M \\implies S - P$$\n$$\\text{矛盾关系: } A \\;\\land\\; \\neg A \\implies \\text{必有一真一假 (排中律 + 矛盾律)}$$\n$$\\text{充要条件假言推理: 肯前必肯后, 否后必否前}$$",
     "tips": "① 现代文选择题比对选项原则：三步比对法——切分选项意群 ⟶ 定位原文对应区间 ⟶ 聚焦关联词与限定词（“只有...才”、“凡是”、“导致”、“彻底”、“逐渐”）。\n② 识别论述文推断前提假设：题干问“这一结论成立的隐含前提是”，寻找的是连接论据与论点之间必不可少的未言明的逻辑桥梁。",
     "visual_desc": "天平两端的逻辑砝码：论点是天平托盘，论据是标准砝码，逻辑论证链是精密的杠杆；任何偷换概念的微小杂质都会让天平倾斜倒塌，唯有严密的因果链条才能经受推敲考验。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -1699,7 +1699,7 @@
     "key_formulas": "$$\\text{《过秦论》论证架构: } \\text{六世蓄势之雄强 } \\;\\text{vs}\\; \\text{陈涉之微弱, 一夫作难而七庙隳} \\implies \\text{仁义不施而攻守之势异也}$$\n$$\\text{《伶官传序》: } \\text{忧劳兴国 } \\;\\text{vs}\\; \\text{逸豫亡身} \\implies \\text{人事决定盛衰}$$",
     "tips": "① 政论文气势的生成密码：善用“句句相承”的铺叙排偶、对偶句与反问句，将历史材料高度概括为强烈的感官画面与逻辑落差，形成排山倒海的说服力。\n② 掌握重点文言虚词用法：“岂非人事哉”的“岂”（难道，加强反问）；“以”字多义（“以致天下之士”连词表结果；“还矢先王，而告以成功”介词把）。",
     "visual_desc": "千古帝陵与残矢家训：秦始皇焚百家收天下兵器铸十二金人，咸阳宫阙终成焦土；李存勖身背三支复仇箭矢告祭家庙登临帝位，转瞬间却为宠幸优伶兵变饮恨马前，青史如镜洞察兴亡规律。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -1712,7 +1712,7 @@
     "key_formulas": "$$\\text{项脊轩时空轴: } \\text{修葺书斋(少年乐事)} \\to \\text{家族析产多隙(兴衰叹)} \\to \\text{忆母思祖(亲情伤)} \\to \\text{悼亡妻植枇杷(相思绝唱)}$$\n$$\\text{最高抒情境界: } \\text{不言悲而悲凉彻骨, 借物抒情, 景在情在}$$",
     "tips": "① 鉴赏结尾“枇杷树”神句四维度：①点明栽植时间；②点明栽植之人；③凸显岁月流逝与树之繁茂；④物在人亡，睹物思人，将无限深情寄托于摇曳苍翠之中。\n② 散文白描技法提炼：不用浓墨重彩修饰，客观勾勒人物动作语言与自然小景，以真实打动读者。",
     "visual_desc": "轩亭月夜碧绿枇杷：小院修竹掩映，半墙月影斑驳摇曳；当年小娇妻手植的一株柔嫩枇杷幼苗，如今历经风雨已长成郁郁葱葱、亭亭如盖的大树，默默守护着书轩深处的墨痕相思。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -1725,7 +1725,7 @@
     "key_formulas": "$$\\text{诗歌鉴赏答题四步法: } \\text{指出表达技巧(手法)} \\longrightarrow \\text{结合诗句展开具体分析} \\longrightarrow \\text{概括描摹的意境氛围} \\longrightarrow \\text{点明传达的思想情感}$$\n$$\\text{以乐景写哀: 乐景 } \\times \\text{ 哀情 } \\implies \\text{倍增其哀, 反差震撼}$$",
     "tips": "① 区分“借景抒情”与“托物言志”：借景抒情描写的是大范围自然山川风景，抒发作者喜怒哀乐情感；托物言志描写的是某具体微观器物（如梅、竹、蝉、石灰），赋予物以人格化道德象征。\n② 审题关注诗题与注释：高考诗歌题目中的“宿”、“送”、“怀古”、“次韵”及诗后人物生平注释，往往直接暗示了全诗的情感基调与写作背景！",
     "visual_desc": "古道斜阳西风残照：十里长亭折柳相送，一弯冷月悬挂枯桐残枝；鸿雁掠过秋水塞外，词人凭栏远眺千古兴亡事，几滴清泪打湿青衫衣襟。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -1738,7 +1738,7 @@
     "key_formulas": "$$\\text{宾语前置三大铁律: } \\begin{cases} \\text{否定句中代词作宾: 不我欺 } (\\to \\text{不欺我}) \\\\ \\text{疑问代词作宾前置: 吾谁与归 } (\\to \\text{吾与谁归}) \\\\ \\text{标志词 \"之/是\" 前置: 何陋之有 } (\\to \\text{有何陋}) \\end{cases}$$\n$$\\text{状语后置: 介词短语后置 (于/以/乎)}$$",
     "tips": "① 文言翻译“留、删、换、调、补”五字法：人名地名官阶国号保留；发语词语气词删除；单音节词换成现代双音节词；倒装句调回现代汉语语序；省略成分必须括号补齐！\n② 谨防词类活用失分：名词作状语、名词作动词、使动用法（使...怎么样）、意动用法（以...为...）。",
     "visual_desc": "古文字解构魔方：竹简上古拙的象形文字在语境中层层拼合还原；遇到倒装句，如同给古汉语重新调整语序链条，使其严谨对接现代汉语的阅读心智。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -1751,7 +1751,7 @@
     "key_formulas": "$$\\text{文言断句铁律: 发语词前断, 叹词后断, 呼语后断, 句末助词(也矣乎哉)后断}$$\n$$\\text{官职变迁核心词: } \\begin{cases} \\text{升职: 拔, 擢, 迁} \\\\ \\text{降职: 贬, 谪, 左迁} \\\\ \\text{授官: 拜, 除, 辟, 召} \\\\ \\text{退休: 致仕, 乞骸骨} \\end{cases}$$",
     "tips": "① 看到“左迁”必是贬官！如白居易《琵琶行》“予左迁九江郡司马”，万不可望文生义翻译成调动工作或提拔！\n② 翻译切忌漏字：翻译句子必须在原文每个字下方标出对应译文，宁可写得稍显繁冗，也绝不能丢掉任何修饰限制成分。",
     "visual_desc": "朝堂玉阶任命升沉：朱红圣旨宣读，新科进士拜除授官跃升青云；御史参劾一道贬书左迁边陲荒郡；老臣颤巍巍递上乞骸骨折子告老归田，浮生荣辱化作方寸简册。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -1764,7 +1764,7 @@
     "key_formulas": "$$\\text{论证严密性评价: } \\text{论题聚焦} + \\text{论据充分典型} + \\text{概念界定严谨} + \\text{论辩层层递进} + \\text{留有审慎反思空间}$$\n$$\\text{主观题采分点: 提炼关键词 } \\to \\text{ 整合分条分点 } \\to \\text{ 逻辑自洽表达}$$",
     "tips": "① 谨防“假性推断”：原文只是提及 A 现象与 B 现象并存，选项推断成“A 导致了 B”，立即识别为强加因果！\n② 论据与论点错位陷阱：原文举某位学者的例子是为了证明某项局限性，选项却误说成证明了该理论的合理性，必须看清举例上下文的作者情感倾向。",
     "visual_desc": "学术思辨解构手术：在社科文浩瀚的专业术语中，持手术刀精准挑开修饰性枝叶，剔除背景噪音，露出主干论点骨架与严密因果逻辑咬合齿轮。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -1777,7 +1777,7 @@
     "key_formulas": "$$\\text{文学赏析黄金公式: } \\text{修辞/手法} + \\text{语境内容具象描摹} + \\text{人物心理/形象塑造} + \\text{主旨深意与美感价值}$$\n$$\\text{视角转换功能: } \\text{突破单一局限, 丰富叙事层次, 增强复调张力}$$",
     "tips": "① 区分“线索”与“主题”：线索是贯穿全文组织材料的脉络红线（如一件器物、一次旅行、一种感情）；主题是作者通过这根线索想要传达的深层价值反思。\n② 关注文章中的“反常”之笔：小说散文中人物反常的举动、突兀的沉默、反季节的景物，往往就是作者精心埋下的题眼与破题密钥！",
     "visual_desc": "水墨留白文学画卷：字行间不是直白的呐喊，而是淡墨晕染的江南小巷与雨雾苍山；文字在最深沉处戛然而止，给读者留下一整片广袤无垠的想象夜空。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -1790,7 +1790,7 @@
     "key_formulas": "$$\\text{上海思辨作文论证方程: } \\begin{cases} \\text{第1步: 概念澄清界定 (厘清内涵与外延边界)} \\\\ \\text{第2步: 矛盾对立剖析 (为何二者会产生现实冲突)} \\\\ \\text{第3步: 互构共生论证 (A 是 B 的基石, B 是 A 的升华)} \\\\ \\text{第4步: 边界与警惕 (过犹不及, 警惕极端化异化)} \\\\ \\text{第5步: 现实实践归宿 (当代青年的精神突围与行动)} \\end{cases}$$",
     "tips": "① 上海卷作文严禁“例子流水账”：事例只能充当论证的佐证，篇幅严控在 1/4 以内！核心是作者自己层层推演的思想逻辑力量。\n② 善用辩证让步法：多用“固然...但并不意味着...”、“若仅仅沉溺于...则难免陷入...之泥淖”，展现出极高的思想成熟度与思维包容度。",
     "visual_desc": "哲学思辨天平与太极鱼：黑白二元在冲突中流转咬合，不是非黑即白的粗暴站队，而是像太极图一样在动态制衡中探求更高层级的文明和谐，在混沌中点亮理性之光。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -1803,7 +1803,7 @@
     "key_formulas": "$$\\text{默写满分法则: 语境定篇目 } \\to \\text{ 提示定句子 } \\to \\text{ 笔画严谨无错别字 } \\to \\text{ 全句通读复核}$$",
     "tips": "① 错别字一字扣一分！写完必须在心里默读每个字的字形结构，特别注意草字头、金字旁、走之底等偏旁部首细节。\n② 规范书写字体：端正楷书，切忌潦草连笔，不涂抹成黑疙瘩，让阅卷老师一目了然。",
     "visual_desc": "华夏文脉薪火长卷：千百年来圣贤智者的心声化作一行行墨香四溢的诗行金句，在高中学子的笔尖下流淌回响，汇聚成永不熄灭的中华文明浩瀚星河。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -1816,7 +1816,7 @@
     "key_formulas": "$$\\text{主将从现: } \\text{Main Clause (will/shall do)} + \\text{if / when / as soon as} + \\text{Subordinate (do / does)}$$\n$$\\text{现在完成时持续动词: } \\text{buy } \\to \\text{ have had}, \\; \\text{borrow } \\to \\text{ have kept}, \\; \\text{die } \\to \\text{ have been dead (搭配 for/since)}$$",
     "tips": "① 终止性动词不能与 for/since 引导的时间段连用：如“He has died for 3 years”是严重语病！必须改为“He has been dead for 3 years”或“It is 3 years since he died”。\n② 客观真理永远用一般现在时：即使主句是过去时，宾语从句陈述的是客观规律时态也不变（如 The teacher said that light travels faster than sound）。",
     "visual_desc": "时空轴线时间列车：现在完成时站在“现在”的回合回望过去抛出的锚钩；过去完成时退回到“过去某站”，再向更早的荒原追溯历史的足迹，层次分明。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -1829,7 +1829,7 @@
     "key_formulas": "$$\\text{关系代词充当成分: } \\begin{cases} \\text{主语: that, which, who (不可省略)} \\\\ \\text{宾语: that, which, whom, who (可省略)} \\\\ \\text{定语: whose + n. = the + n. + of which} \\end{cases}$$\n$$\\text{只用 that: 不定代词 / 最高级序数词 / the only / 人物并列}$$",
     "tips": "① 介词提前只能用 which 或 whom：当介词置于关系代词之前时（介词 + 关系代词），指物只能用 which，指人只能用 whom，绝对不能用 that 或 who！\n② 复合先行词主谓一致：在“one of the + 复数名词 + 定语从句”结构中，从句谓语动词用复数；但在“the only one of the + 复数名词 + 定语从句”中，从句谓语动词用单数！",
     "visual_desc": "修饰词挂钩链条：先行词像一节车厢，关系代词像联结挂钩；关系代词跳进后节车厢充当主语或宾语支柱，严丝合缝将两节车厢紧密挂锁融为一体。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -1842,7 +1842,7 @@
     "key_formulas": "$$\\text{从句缺主语/宾语} \\implies \\text{用关系代词 (which / that)}$$\n$$\\text{从句主宾完整缺状语} \\implies \\text{用关系副词 (where / when / why) = 介词 + which}$$\n$$\\text{抽象地点: } \\text{situation / case / stage / condition / point} + \\text{where}$$",
     "tips": "① 抽象地点 where 经典例句：He has reached a point where he must make a decision（他已经到了必须做决定的节点）。此时 point 是抽象情境，后接 where。\n② 先行词为 the reason 时：The reason why he was absent was that he was ill（表语从句必须用 that 引导，不能用 because！）。",
     "visual_desc": "从句坐标系定位：关系副词就像 GPS 定位信标，当先行词是个舞台（地点/境况）或时间刻度时，它在从句幕后提供舞台背景时空，让主谓宾主角在舞台上完整起舞。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -1855,7 +1855,7 @@
     "key_formulas": "$$\\text{主语/宾语} \\implies \\text{名词 (n.)}; \\quad \\text{修饰名词} \\implies \\text{形容词 (adj.)}$$\n$$\\text{修饰动词/句子/形容词} \\implies \\text{副词 (adv.)}; \\quad \\text{谓语位置} \\implies \\text{动词 (v. 结合时态语态)}$$\n$$\\text{形容词 + ly} \\to \\text{副词}; \\quad \\text{名词 + ly} \\to \\text{形容词 (friendly, lovely, lonely)}$$",
     "tips": "① “名词 + ly”是形容词而非副词：如 friendly（友好的）、lively（生动的）、lovely（可爱的）、orderly（井然有序的），万不可当作副词修饰动词！\n② 情感色彩反向派生：牢记上下文语境中的否定或相反意义（如 help ⟶ helpless 无助的；lead ⟶ mislead 误导）。",
     "visual_desc": "词汇乐高积木变形：词根像积木核心；加个前缀换个面孔反向翻转，加个后缀立刻变身穿上名词、形容词或动词的新外衣，在语法句式中灵活就位。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -1868,7 +1868,7 @@
     "key_formulas": "$$\\text{从句成分完整无缺} \\implies \\text{选用 that (无实义)}$$\n$$\\text{从句缺主语/宾语/表语} \\implies \\text{选用 what (= the thing that)}$$\n$$\\text{同位语从句: that 不作成分, 说明内容; \\; 定语从句: that 充当主/宾, 起修饰作用}$$",
     "tips": "① 只能用 whether 不能用 if 的五大场合：置于介词之后（depend on whether...）；引导主语从句且放在句首时；引导表语从句与同位语从句时；后紧跟 or not 时（whether or not）；与动词不定式连用时（whether to do）。\n② it 作形式主语/形式宾语：主语或宾语从句过长时，用 it 占位，把真实从句后置（如 I find it amazing that she won the first prize）。",
     "visual_desc": "充当句子的乐高大积木：名词性从句就像整块巨大的拼图，可以直接塞进主句的主语槽、宾语槽或表语槽；that 是一张透明双面胶只管粘贴，what 则自带零件填补从句的空缺。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -1881,7 +1881,7 @@
     "key_formulas": "$$\\text{逻辑主语与非谓语关系: } \\begin{cases} \\text{主动 / 进行: doing (having done)} \\\\ \\text{被动 / 完成: done (having been done)} \\\\ \\text{目的 / 将来: to do} \\end{cases}$$\n$$\\text{分词短语作状语必须与主句主语保持逻辑一致!}$$",
     "tips": "① 垂悬分词（逻辑主语不一致语病）：*Walking down the street, a car hit him（车在街上走？错误！主句主语是 car，与 walking 不匹配，必须改为 While he was walking...）。\n② 结果状语特殊对比：doing 作结果状语表示自然而然、意料之中的必然结果；不定式 only to do 作结果状语表示出人意料、令人沮丧的意外结果！",
     "visual_desc": "主被动双色光标：非谓语动词像挂在主句主语身上的隐形背包；如果是主语自己蹦跳着做出的动作闪烁绿光（doing），如果是主语被外界施加塑造则亮起深沉的蓝光（done）。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -1894,7 +1894,7 @@
     "key_formulas": "$$\\text{remember / forget / regret} + \\begin{cases} \\text{to do: 将要做的事 (未发生)} \\\\ \\text{doing: 已经做过的事 (已发生)} \\end{cases}$$\n$$\\text{need / want / require} + \\text{doing} = \\text{to be done} \\quad (\\text{主动表被动})$$",
     "tips": "① 介词后接动名词陷阱（中的 to 是介词而非不定式符号！）：\n   - look forward to doing, pay attention to doing, be/get used to doing (习惯于), devote oneself to doing, object to doing, lead to doing, stick to doing，这些 to 后面一律接 doing！\n② 动名词的复合结构：所有格/宾格 + doing（如 Would you mind my/me opening the window? 作主语时通常用所有格形式）。",
     "visual_desc": "过去的回忆与未来的灯塔：doing 像相册记录着过去已经发生的真实经历（remember doing）；to do 像悬挂在前面的路标指引你将要去探寻的下一站目标（remember to do）。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -1907,7 +1907,7 @@
     "key_formulas": "$$\\text{状语从句省略公式: } \\text{连词} + \\cancel{\\text{主语} + \\text{be 动词}} + \\text{分词(doing/done) / 形容词 / 介词短语}$$\n$$\\text{as 让步倒装: } \\text{adj. / adv. / v. / n.(无冠词)} + \\text{as / though} + \\text{主语} + \\text{谓语}$$\n$$\\text{hardly ... when ...} = \\text{no sooner ... than ...} \\quad (\\text{一...就...倒装})$$",
     "tips": "① as 引导让步状语从句必须倒装：形容词/副词/动词/单数名词（不带冠词！）提前。如 Child as he is, he knows a lot（虽是个孩子，懂很多），绝不能加 a child！\n② 区别 so...that 与 such...that：such 修饰名词（such + a/an + adj. + n. 或 such + adj. + 复数/不可数名词）；so 修饰形容词/副词（so + adj. + a/an + n.，但在 many, much, few, little 前一律用 so！）。",
     "visual_desc": "修剪枝叶的句式盆景：在主从句主语相同的前提下，剪掉冗余沉重的主语和 be 动词，留下苍劲凝练的分词和形容词，短小精悍却风骨毕现。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -1920,7 +1920,7 @@
     "key_formulas": "$$\\text{句首修饰整句: } \\text{只能用 as, 绝不用 which (As is known to all, ...)}$$\n$$\\text{句末修饰整句: } \\begin{cases} \\text{as: 正如...那样 (顺承赞同)} \\\\ \\text{which: 这一点/导致了... (结果事实)} \\end{cases}$$",
     "tips": "① 识别先行词是词还是整句：He failed in the exam, which made his parents very angry（which 指代他考试不及格这件事）。\n② as is expected 与 what is expected 辨析：As is expected, he passed the exam（as 引导非限制性定语从句，句首有逗号）；What is expected is that he will pass the exam（what 引导主语从句，充当 is 的主语）。",
     "visual_desc": "句子大厦的轻巧浮标：as 像站在大厦顶端挥舞的导引旗帜（句首句尾自由翱翔），预示着下文水到渠成的常理；which 像连结大厦后墙的排水管道，把主句的因果顺理成章流向结局。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -1933,7 +1933,7 @@
     "key_formulas": "$$\\text{就近原则: } \\text{either A or B / neither A nor B / not only A but also B } \\implies \\text{谓语随 B 变}$$\n$$\\text{就远原则: } A + \\text{as well as / together with / rather than / except} + B \\implies \\text{谓语随 A 变}$$",
     "tips": "① “a number of” vs “the number of”：a number of + 复数名词（许多...，核心主语是复数名词），谓语动词用复数；the number of + 复数名词（...的数目，核心主语是 number），谓语动词用单数！\n② 分数与百分数作主语：分数/百分数 + of + 名词，谓语动词单复数完全取决于 of 后面的名词单复数形态（如 60% of the water is polluted; 60% of the students are girls）。",
     "visual_desc": "天平两端的重心调度：就远原则就像主语身后带了一长串随行行李箱（with, as well as），无论箱子多重，天平只衡量最初站在踏板上的主人的分量。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -1946,7 +1946,7 @@
     "key_formulas": "$$\\text{独立主格: } \\text{独立逻辑主语} + \\begin{cases} \\text{doing (主动进行)} \\\\ \\text{done (被动完成)} \\\\ \\text{adj. / prep. phrase} \\end{cases} \\implies \\text{充当状语, 无连词}$$\n$$\\text{with 复合结构: with} + \\text{宾语} + \\text{doing / done / to do / adj. / prep.}$$",
     "tips": "① 独立主格中不能出现任何连词！如果句中有 and 或 because 等连词，必须用完整的并列句或状语从句，万不可画蛇添足加连词。\n② 区分天气与客观存在的引导词：There being no bus, we had to walk home（there being 是 there be 的独立主格形式）；It being a rainy day, we stayed indoors（it 指代天气）。",
     "visual_desc": "自带光环的特行客：独立主格就像句子中一个自给自足的小家庭，自己带着独立的主语主人，领着分词动作跟在主句后方默默提供背景说明，无需连词签证便可穿梭全句。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -1959,7 +1959,7 @@
     "key_formulas": "$$\\text{与过去相反: if} + \\text{had done}, \\; \\text{主句: would have done } \\iff \\text{Had I done, ... (倒装)}$$\n$$\\text{与现在相反: if} + \\text{did (were)}, \\; \\text{主句: would do } \\iff \\text{Were I, ... (倒装)}$$\n$$\\text{建议命令要求从句: } \\text{suggest / order / insist / demand} + \\text{that} + (\\text{should}) + \\text{do}$$",
     "tips": "① insist 与 suggest 的真实语气 vs 虚拟语气陷阱：\n   - suggest 表“建议”用 (should) do；表“暗示、表明”用真实语气（The smile suggested that she was happy）。\n   - insist 表“坚决要求”用 (should) do；表“坚持说、坚持事实”用真实语气（He insisted that he had seen the thief）。\n② 错综时间条件句：从句与主句时间不一致（如“如果过去没做某事，现在就不会怎么样”），从句按过去虚拟（had done），主句按现在虚拟（would do）。",
     "visual_desc": "平行时空的齿轮倒转：虚拟语气就像推开平行宇宙的时空之门，把现实的时态发条用力往回拨慢一格（现在拨到过去，过去拨到大过去），构筑起人类对未竟可能性的诗意假设。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -1972,7 +1972,7 @@
     "key_formulas": "$$\\text{否定词句首: } \\text{Never / Seldom / Hardly / Little} + \\text{助动词} + \\text{主语} + \\text{动词原形}$$\n$$\\text{Only + 状语句首: } \\text{Only then did I realize the truth} \\quad (\\text{修饰主语不倒装: Only you know it})$$\n$$\\text{完全倒装代词例外: } \\text{Here comes the bus (倒装) } \\;\\text{vs}\\; \\text{Here it comes (不倒装!)}$$",
     "tips": "① only 修饰主语时绝对不能倒装：Only you can understand me（此时 only 修饰的是主语 you，不是状语，语序完全正常！）。\n② not until 句首倒装大招：Not until his mother came back did the boy go to bed（not until 引导从句时不倒装，主句部分倒装！）。",
     "visual_desc": "句式语序杂技表演：平时安分守己的助动词在否定词和 only 的冲锋号声中一跃而起跳到主语前面打头阵，瞬间点燃全句强烈的情感强调火力。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -1985,7 +1985,7 @@
     "key_formulas": "$$\\text{还原法铁律: } \\cancel{\\text{It is / was}} + [\\text{被强调部分}] + \\cancel{\\text{that / who}} + [\\text{其余部分}] = \\text{完整单句}$$\n$$\\text{强调 not until: } \\text{It was not until } [\\dots] \\text{ that } + \\text{主语} + \\text{动词过去式 (主句恢复陈述语序)}$$",
     "tips": "① 强调介词短语状语绝不用 where/when：It was in the park that I met him（必须用 that，万不可顺着中文“在公园”错选 where！）。\n② 强调主语时主谓一致：It is I who am responsible for this matter（that/who 后面的谓语动词人称和数必须与被强调的主语 I 严格一致！）。",
     "visual_desc": "聚光灯定点特写：整个句子舞台灯光熄灭，唯有一道强烈的聚光灯（It is...that）精准打在想要强调的主角或时间地点身上，将其从背景中剥离出来，璀璨夺目。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -1998,7 +1998,7 @@
     "key_formulas": "$$\\text{无灵主语模式: } \\text{抽象名词 / 情感事物} + \\text{remind / rob / prevent / witness} + \\text{人}$$\n$$\\text{双重否定: } \\text{cannot ... too ... (再...也不为过)}, \\quad \\text{never ... without ... (每次必定)}$$\n$$\\text{比较表最高: } \\text{Negative word (Nothing / Nobody)} + \\text{比较级} + \\text{than ...}$$",
     "tips": "① 写作中无灵主语切忌乱套：动词必须能与无生命主语在修辞上达成拟人契合（如 An idea suddenly struck me 胜过 I suddenly had an idea）。\n② any other vs any：若在同一范围内比较，必须加 other 排除自身（He is taller than any other boy in his class）；若在不同范围比较，则不加 other（China is larger than any country in Africa）。",
     "visual_desc": "文字的镜头语言切换：从凡事都要“我来我看”的第一人称主观手持晃动镜头，切换为无灵主语沉稳厚重的固定机位全景深镜头，文字瞬间展现出庄重典雅的学术质感。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -2011,7 +2011,7 @@
     "key_formulas": "$$\\text{Summary 满分结构: } \\text{总起句 (本文主旨)} + \\text{要点1 (原因/现象)} + \\text{However / Meanwhile (要点2 影响/转折)} + \\text{Therefore (要点3 对策/结论)}$$\n$$\\text{字数控制: } 55 \\le \\text{Words} \\le 65 \\quad (\\text{最佳区间})$$",
     "tips": "① 绝不能出现第一人称“I think / in my opinion”：概要写作是客观转述作者观点，绝不能掺杂考生个人主观评价！\n② 连续照抄 7 个单词以上判定为抄袭原文扣分：必须通过变换语态（被动语态）、变换句式（利用 with 复合结构或分词短语压缩两个句子为一个复合句）实现语言创新。",
     "visual_desc": "信息原矿熔铸金条：原文像一块夹杂着例证泥沙与数据碎石的庞大矿石，用逻辑滤网筛去一切浮华枝节，淬炼提取出三粒纯金要点，以精悍连词焊接成一根 60 词的璀璨金条。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -2024,7 +2024,7 @@
     "key_formulas": "$$\\text{无提示词锁定范围: 冠词 (a/an/the) } \\mid \\text{ 介词 (in/on/with) } \\mid \\text{ 连词 (and/but/if) } \\mid \\text{ 代词 (it/that/which)}$$\n$$\\text{十一选十破局: 词性预判定位 } \\to \\text{ 缩小候选池(2-3个) } \\to \\text{ 语境语义精配}$$",
     "tips": "① 语法填空谓语 vs 非谓语判定先数动词：一个完整的简单句只能有一个谓语动词，若句子已有谓语且无连词连接，括号内的动词必是非谓语动词（doing/done/to do）！\n② 十一选十做完后余下未选的词：检查未选词是否与已选空的语义产生更优替换，确保排除项是真正的干扰项。",
     "visual_desc": "语法侦探拼图游戏：10 个形态各异的词汇零件在候车厅排队，根据每个句子空缺处牙口凹槽的形状（词性规格），迅速挑选匹配零件严丝合缝嵌入电路板中。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -2037,7 +2037,7 @@
     "key_formulas": "$$\\text{完形解题铁律: 上下文寻找线索复现 } (\\text{原词复现 / 同义近义复现 / 反义转折复现})$$\n$$\\text{情感走向曲线: } \\text{困境阻碍(负向) } \\xrightarrow{\\text{努力/转机}} \\text{顿悟启示(中性) } \\xrightarrow{\\text{成功成长(正向)}}$$",
     "tips": "① 绝不脱离语篇选词：如果某个选项单看那句话非常顺口，但与整段或整篇文章的情感基调相背离，必定是命题人设置的诱饵干扰项！\n② 首句通常不设空：第一句话往往包含文章的主题或背景，必须精读深挖，定下全篇的基调方向。",
     "visual_desc": "语篇星空连线织网：每个空格不是孤立的黑洞，而是与上下文散落的词语线索有着千丝万缕的引力绳索相连；顺着情节的情感温度计追寻，正确选项在交汇点上熠熠生辉。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -2050,7 +2050,7 @@
     "key_formulas": "$$\\text{英汉转换结构图: } \\text{英语 (树状结构: 主干 + 后置长修饰)} \\;\\longleftrightarrow\\; \\text{汉语 (竹状结构: 短句线性铺展)}$$\n$$\\text{定语切分法: 长定语从句 } \\longrightarrow \\text{ 拆成并列后句, 承前代词连接}$$",
     "tips": "① 避免中式英语硬译（Chinglish）：如“由于天气恶劣，活动取消了”，不要硬译成 Because the weather was bad, so...（because 和 so 不能并用！），可优雅译为 Bad weather led to the cancellation of the activity 或 The event was cancelled due to unfavorable weather。\n② 活用题给重点短语：上海卷汉译英题干常给出提示词，必须将提示词准确地嵌入句中，漏用或误用形式扣除重点分。",
     "visual_desc": "跨语言建筑转换机：把英语茂密盘旋的大榕树藤蔓（从句介词短语），修剪拉直成汉语清爽明快的一块块方正青砖步道；也能将汉语的散点短语，优雅重组成英伦庄园般层次严谨的参天大厦。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -2063,7 +2063,7 @@
     "key_formulas": "$$\\text{段落黄金 PEEL 结构: } \\text{Point (论点)} \\to \\text{Explanation (阐释)} \\to \\text{Example (例证)} \\to \\text{Link (扣题过渡)}$$\n$$\\text{写作提分三部曲: 亮点词汇替换 } \\to \\text{ 复合高级句式组合 } \\to \\text{ 严密逻辑连词衔接}$$",
     "tips": "① 词汇多样性替换大招：\n   - think ⟶ maintain / hold the view that / assume\n   - important ⟶ vital / crucial / indispensable / of vital significance\n   - helpful ⟶ beneficial / rewarding / conducive to\n   - problem ⟶ dilemma / obstacle / thorny issue\n② 开头与结尾首尾呼应：首段迅速亮出核心立场，尾段重申并升华主旨，给阅卷老师留下深刻清爽的整体认知印象。",
     "visual_desc": "行云流水的乐章谱写：优雅的书法线条如同五线谱上律动的音符，高级从句与短语如同和谐的多重交响，而严谨的衔接连词是贯穿全曲的指挥节拍，奏响满分作文华彩。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -2076,7 +2076,7 @@
     "key_formulas": "$$\\text{社会基本矛盾: } \\begin{cases} \\text{生产力} \\;\\xrightleftharpoons[\\text{反作用}]{\\text{决定}}\\; \\text{生产关系} \\\\ \\text{经济基础} \\;\\xrightleftharpoons[\\text{反作用}]{\\text{决定}}\\; \\text{上层建筑} \\end{cases} \\implies \\text{决定社会形态更替}$$\n$$\\text{资本主义根本矛盾: 生产社会化 } \\;\\text{vs}\\; \\text{生产资料私人占有}$$",
     "tips": "① 区分“根本原因”与“直接原因”：资本主义经济危机的直接原因是生产无限扩大的趋势与劳动人民有支付能力需求相对缩小之间的矛盾，以及个别企业有组织性与整个社会无政府状态之间的矛盾；根本原因才是基本矛盾。\n② 私有制并非天生就有，而是生产力发展到一定历史阶段的产物，最终也会随生产力高度发达而消亡。",
     "visual_desc": "社会形态进化阶梯：从石器时代的钻木取火与部落篝火平均分食，到青铜铁器铸造私有城邦，再到大机器轰鸣的资本主义蒸汽工厂；生产力工具的不断换代，推动着人类文明阶梯式破茧化蝶。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -2089,7 +2089,7 @@
     "key_formulas": "$$\\text{科学社会主义理论基石: } \\text{唯物史观} + \\text{剩余价值学说}$$\n$$\\text{两步走战略: } \\text{新民主主义革命 (必要准备)} \\longrightarrow \\text{社会主义革命 (必然趋势)}$$\n$$\\text{三大改造完成 (1956)} \\implies \\text{公有制确立, 正式迈入社会主义社会}$$",
     "tips": "① 新民主主义革命与旧民主主义革命的根本区别在于“领导阶级不同”！旧民主主义革命由资产阶级领导，新民主主义革命由无产阶级（通过共产党）领导。\n② 中华人民共和国成立（1949）标志着新民主主义革命的胜利；而三大改造完成（1956）才标志着社会主义基本制度的确立。",
     "visual_desc": "双星闪耀与红色破晓：马克思与恩格斯在伦敦雾夜写就宣言火炬，照亮了十月革命的冬宫炮火；嘉兴南湖红船启航，中国革命的列车越过新民主主义的站台，鸣笛驶入社会主义崭新纪元。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -2102,7 +2102,7 @@
     "key_formulas": "$$\\text{四个自信: } \\text{道路自信 (必由之路)} + \\text{理论自信 (行动指南)} + \\text{制度自信 (根本保障)} + \\text{文化自信 (精神力量)}$$\n$$\\text{新时代主要矛盾: } \\text{人民日益增长的美好生活需要 } \\;\\text{vs}\\; \\text{不平衡不充分的发展}$$",
     "tips": "① “主要矛盾发生转化”≠“基本国情发生改变”：我国依然是世界最大发展中国家，必须始终坚持以经济建设为中心！\n② 改革开放是“强国之路”，四项基本原则是“立国之本”，以经济建设为中心是“兴国之要”。",
     "visual_desc": "南海春潮与复兴号奔驰：从小岗村的十八个红手印到深圳蛇口春雷炸响；四十余载改革春风拂遍神州，高铁穿山越海，中国号巨轮在四个自信的定海神针庇佑下载着民族复兴梦想破浪远航。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -2115,7 +2115,7 @@
     "key_formulas": "$$\\text{基本经济制度三要素: } \\begin{cases} \\text{所有制: 公有制为主体、多种所有制共同发展} \\\\ \\text{分配制: 按劳分配为主体、多种分配方式并存} \\\\ \\text{体制: 社会主义市场经济体制} \\end{cases}$$\n$$\\text{公有制 (主体)} \\;\\longleftrightarrow\\; \\text{国有经济 (主导, 命脉控制力)}$$",
     "tips": "① 概念辨析杀手：“社会主义经济”指公有制经济；“社会主义市场经济”包括公有制经济和非公有制经济两者！\n② 市场准入“一视同仁”：各种所有制主体在法律地位上平等、在市场竞争中平等、受到法律同等保护，绝不能对民营企业设立隐形壁垒歧视。",
     "visual_desc": "经济列车双轮驱动：国有经济像重工业重载火车头压舱稳定全局、保障战略安全；民营经济像漫山遍野灵活奔跑的新能源列车，充满活力解决亿万百姓就业烟火。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -2128,7 +2128,7 @@
     "key_formulas": "$$\\text{市场机制: } \\text{价格机制} + \\text{供求机制} + \\text{竞争机制} \\implies \\text{决定性作用}$$\n$$\\text{市场失灵三缺陷: } \\text{自发性(为了利益不择手段)} + \\text{盲目性(一哄而上)} + \\text{滞后性(事后调整)}$$\n$$\\text{宏观调控工具: 财政政策 (减税降费/发行国债) } \\;\\land\\; \\text{货币政策 (降准降息/流动性)}$$",
     "tips": "① 区分财政政策与货币政策制定主体：财政政策由政府（财政部）制定执行，核心工具是税收和国债；货币政策由中央银行（中国人民银行）制定执行，核心工具是利率和存款准备金率。\n② “市场起决定性作用”不等于“完全由市场自流”，政府必须在维护市场秩序、弥补市场失灵方面更好发挥作用。",
     "visual_desc": "无形之手与有形之手协同：市场的无形之手像奔腾不息的活水滋养千万商贾；政府的有形之手像坚固平整的堤坝导流引渠，防范泛滥与暗礁，确保大河平稳奔流向前。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -2141,7 +2141,7 @@
     "key_formulas": "$$\\text{新发展理念五维矩阵: } \\begin{cases} \\text{创新: 第一动力 (科技自立自强)} \\\\ \\text{协调: 不平衡破局 (区域/城乡协同)} \\\\ \\text{绿色: 和谐共生 (双碳目标/生态红线)} \\\\ \\text{开放: 内外联动 (双循环新格局)} \\\\ \\text{共享: 根本目的 (以人民为中心/共同富裕)} \\end{cases}$$",
     "tips": "① 建设现代化经济体系的着力点：着力点必须始终放在“实体经济”上，坚决防止脱实向虚！\n② 共同富裕不是同时富裕、同步富裕，也不是劫富济贫搞平均主义，而是分阶段促进的全体人民普遍富裕。",
     "visual_desc": "五色花瓣高质量引擎：创新紫催生前沿芯片算力，协调橙缝合城乡经络，绿色翠描绘碳中和绿水青山，开放蓝通达四海货轮，共享金温暖万家灯火，五瓣汇聚盛放时代光芒。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -2154,7 +2154,7 @@
     "key_formulas": "$$\\text{收入分配三层次: } \\text{初次分配 (市场主导, 效能优先)} + \\text{再分配 (政府调节, 税收转移)} + \\text{第三次分配 (道德慈善, 社会自愿)}$$\n$$\\text{社会保障四支柱: } \\text{社会保险(核心)} > \\text{社会救助(底线托底)} > \\text{社会福利(最高改善)} > \\text{社会优抚(军属尊崇)}$$",
     "tips": "① 按劳分配的前提必须是“公有制”：私营企业或外企雇员的工资奖金属于“按劳动要素分配”，绝不能写成按劳分配！\n② 社会保险与商业保险：社会保险是政府强制推行的公益性保障，商业保险是商业机构按照自愿自费原则提供的盈利性金融契约保障。",
     "visual_desc": "社会公平安全伞：从车间流汗的多劳多得分红，到国家转移支付兜底老幼病残的社保安全网，再到企业家爱心捐助的慈善阳光，层层编织撑起百姓安居乐业的晴空。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -2167,7 +2167,7 @@
     "key_formulas": "$$\\text{中国特色社会主义最本质特征} = \\text{中国共产党领导}$$\n$$\\text{党的执政方式三位一体: } \\text{科学执政 (遵规律)} + \\text{民主执政 (为人民)} + \\text{依法执政 (基本方式)}$$\n$$\\text{跳出历史周期率两个答案: 人民监督民主 + 党的自我革命}$$",
     "tips": "① 党不是国家国家机关！党不行使国家行政、审判、检察等国家职能，党是通过依法执政、提出建议上升为国家法律意志来领导国家。\n② 全面从严治党永远在路上：核心是加强党的领导，基础在全面，关键在严，要害在治。",
     "visual_desc": "风雨航船的中流砥柱：狂风骤雨中，党旗高悬船头，指引航向；自省自律的纪律戒尺随时剔除船底藤壶杂质，始终与亿万人民心手相依同舟共济。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -2180,7 +2180,7 @@
     "key_formulas": "$$\\text{国体: 人民民主专政} \\implies \\text{本质: 人民当家作主}$$\n$$\\text{全过程人民民主三特性: } \\text{最广泛(主体与内容全覆盖)} + \\text{最真实(制度程序保障)} + \\text{最管用(高效解决民生)}$$\n$$\\text{全过程闭环: 民主选举 } \\to \\text{ 民主协商 } \\to \\text{ 民主决策 } \\to \\text{ 民主管理 } \\to \\text{ 民主监督}$$",
     "tips": "① “人民”与“公民”法律辨析：“公民”是法律概念，包含具有中国国籍的全体人员（包括被剥夺政治权利的罪犯）；“人民”是政治概念，指拥护社会主义和祖国统一的广大劳动群众，不包括极少数敌对阶级分子。\n② 区分民主决策与民主管理：公民参与听证会、发表社情民意属于“民主决策”；村委会、居委会自我管理自我服务属于“基层民主管理”。",
     "visual_desc": "从屋场小院到人民大会堂：村头大榕树下村民围坐促膝板凳协商修路水渠，民意化作人大代表公文包里的建言提案，在金色国徽下投票表决成为国家庄严法令，全过程闭环流转生生不息。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -2193,7 +2193,7 @@
     "key_formulas": "$$\\text{根本政治制度: 人民代表大会制度 (政体)}$$\n$$\\text{三大基本政治制度: } \\begin{cases} \\text{中国共产党领导的多党合作和政治协商制度 (政党关系)} \\\\ \\text{民族区域自治制度 (民族关系)} \\\\ \\text{基层群众自治制度 (基层民主自治)} \\end{cases}$$\n$$\\text{政协职能: 政治协商、民主监督、参政议政 (非立法, 非行政, 非国家机关!)}$$",
     "tips": "① 人大代表质询权 vs 政协委员提案：人大代表享有“质询权”，对政府等机关的工作提出质问并要求答复；政协不是国家机关，政协委员提出的是“政协提案”，不享有质询权！\n② 村委会居委会性质定位：村委会是“基层群众性自治组织”，绝对不是国家机关，村干部不属于公务员编制！",
     "visual_desc": "四梁八柱民主大厦：人民代表大会制度顶天立地为根本栋梁，多党合作协商人脉如织，民族区域自治同心筑梦，基层居委村委根植大地沃土，构筑起风雨不动的人民当家作主殿堂。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -2206,7 +2206,7 @@
     "key_formulas": "$$\\text{法治十六字方针: } \\text{科学立法(前提)} + \\text{严格执法(关键)} + \\text{公正司法(防线)} + \\text{全民守法(基础)}$$\n$$\\text{法治三位一体: 法治国家(目标) + 法治政府(主体) + 法治社会(基础)}$$\n$$\\text{行政法铁律: 法定职责必须为, 法无授权不可为}$$",
     "tips": "① 区分依法执政与依法行政：中国共产党是“依法执政”，各级人民政府（行政机关）是“依法行政”！主体千万不能张冠李戴。\n② 司法权独立行使：司法机关依法独立行使职权，不受行政机关、社会团体和个人的干涉，但必须接受党的领导与人大监督！",
     "visual_desc": "正义天平与法网织就：法律殿堂上，天平平直无偏，法官敲响法槌裁决人间纠纷；行政执法者胸佩徽章依规而行，宪法长河润泽万家，守护每个人尊严与自由的宁静港湾。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -2219,7 +2219,7 @@
     "key_formulas": "$$\\text{物质决定意识} \\implies \\text{一切从实际出发, 实事求是}$$\n$$\\text{意识的能动作用: } \\begin{cases} \\text{能动认识: 目的性, 自觉选择性, 能动创造性} \\\\ \\text{能动改造: 通过实践将观念转化为现实} \\end{cases}$$\n$$\\text{规律客观性} + \\text{发挥主观能动性} \\implies \\text{按客观规律办事, 反对唯意志论与宿命论}$$",
     "tips": "① 意识不能“直接”改造客观世界：意识必须通过“人的实践活动”作为中介才能引起客观世界的改变，说“意识直接改变了现实”是典型唯心主义！\n② 规律不能被“改变、发明或废除”：人类只能“发现、认识、利用”规律，改变的是规律发生作用的具体条件，绝不是规律本身。",
     "visual_desc": "驭风破浪的帆船：大海的风向与潮汐是不可改变的客观规律（规律客观性）；水手扬起白帆调整舵向迎风破浪甚至逆风走Z字前行，正是人类智慧利用规律的最高礼赞。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -2232,7 +2232,7 @@
     "key_formulas": "$$\\text{整体与部分: } \\text{立足整体, 统筹全局} \\;\\land\\; \\text{搞好局部, 用局部推整体}$$\n$$\\text{发展实质: 新事物产生, 旧事物灭亡}$$\n$$\\text{量变质变规律: } \\text{量变(准备/渐进)} \\xrightarrow{\\text{突破关节点/适度}} \\text{质变(飞跃/突破)} \\longrightarrow \\text{新量变}$$",
     "tips": "① “任何两个事物之间都存在联系”是错误的！联系具有普遍性是说没有任何事物是孤立存在的，但具体事物之间的联系是有条件的，不能生拉硬扯。\n② 运动变化不等于发展：只有前进的、上升的运动变化才是“发展”，倒退、僵化的变化不是发展。",
     "visual_desc": "抽丝剥茧的多米诺骨牌与雏鸟破壳：整体宇宙万物像一张互联共振的引力网络；一颗种子在土壤中经年累月积攒力量（量变），终于在春雷破土而出展叶开花（质变飞跃）。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -2245,7 +2245,7 @@
     "key_formulas": "$$\\text{矛盾两大属性: } \\text{同一性 (相互转化/共存)} + \\text{斗争性 (相互排斥)} \\implies \\text{推动事物运动变化}$$\n$$\\text{共性个性关系: } \\text{普遍性寓于特殊性之中, 并通过特殊性表现出来}$$\n$$\\text{两点论与重点论: } \\begin{cases} \\text{主次矛盾: 办事情, 抓重点, 牵牛鼻子, 解决关键} \\\\ \\text{主次方面: 看问题, 定性质, 抓主流, 辨别优劣} \\end{cases}$$",
     "tips": "① 区分“办事情”与“看问题”语言标志：题干出现“关键、核心、突破口、首要任务、重中之重”选主次矛盾；题干出现“主流、方向、大局、评价、总体上看”选矛盾主次方面！\n② 矛盾双方转化需要条件：矛盾双方的相互转化绝不是无条件的、自发的，必须创造必要的具体客观条件。",
     "visual_desc": "打蛇打七寸与九个指头与一个指头：治国理政抓主要矛盾就像猎人精准瞄准蛇之七寸一击制胜；评价经济大势抓主流就像数清九个健康指头，不为个别小指头的划伤叶障目。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -2258,7 +2258,7 @@
     "key_formulas": "$$\\text{实践决定认识: 来源 } \\mid \\text{ 动力 } \\mid \\text{ 唯一标准 } \\mid \\text{ 归宿目的}$$\n$$\\text{真理特性: 客观性(一元) } + \\text{ 条件性 } + \\text{ 具体性 (具体的历史的统一)}$$\n$$\\text{认识规律: 实践 } \\to \\text{ 认识 } \\to \\text{ 再实践 } \\implies \\text{波浪式前进, 螺旋式上升}$$",
     "tips": "① 认识的来源与获得途径区分：认识的唯一来源是“实践”；但获得认识的途径有两条——直接经验和间接经验（读书学习）。\n② 真理中包含着谬误是错误的：真理与谬误有着确定的界限，不能混淆，但在一定条件下二者可以相互转化（超出适用条件真理变谬误）。",
     "visual_desc": "攀登真理的螺旋天梯：科学家在暗夜实验室一次次推翻草稿（反复性），带着实验数据冲破旧理论的迷雾（超越历史局限）；真理在一次次实践试炼中如螺旋阶梯般节节拔高直抵真知。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -2271,7 +2271,7 @@
     "key_formulas": "$$\\text{社会存在决定社会意识; 社会意识具有相对独立性}$$\n$$\\text{历史创造者: 人民群众 (物质财富 + 精神财富 + 社会变革)}$$\n$$\\text{人生价值评价: } \\text{根本看对社会的奉献与担当}$$\n$$\\text{价值选择两大标准: 符合社会发展客观规律 } \\;\\land\\; \\text{符合最广大人民根本利益}$$",
     "tips": "① “英雄人物创造历史”是唯心史观：英雄人物在历史发展中起重要推动作用，但历史的根本书写者和决定力量永远是人民群众！\n② 价值判断是价值选择的基础：先有价值判断，后做出具体的价值选择，价值判断和价值选择具有社会历史性和主体差异性。",
     "visual_desc": "人民史诗的宏大画卷：千万个平凡的面孔在车间挥汗、在田垄播种、在边关站岗，平凡的个体汇聚成奔腾的历史洪流；唯有将个人滴水融入人民海洋者，生命之河永不干涸。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -2284,7 +2284,7 @@
     "key_formulas": "$$\\text{国体 (内容) } \\xrightleftharpoons[\\text{服务反映}]{\\text{决定}}\\; \\text{政体 (形式)}$$\n$$\\text{政体分类: } \\begin{cases} \\text{元首产生: 民主共和制(选举) } \\;\\text{vs}\\; \\text{君主立宪制(世袭虚位)} \\\\ \\text{行政立法关系: 议会制(向议会负责) } \\;\\text{vs}\\; \\text{总统制(向选民负责)} \\end{cases}$$\n$$\\text{国家结构: 单一制(中央集权统一) } \\;\\text{vs}\\; \\text{联邦制(联邦与州分权)}$$",
     "tips": "① 总统制国家的议会不能对总统投不信任案迫使总统辞职：议会只能依据宪法启动特定弹劾程序；总统也无权解散议会。\n② 区分国家形式与国家性质：国体是国家性质，政体与国家结构形式共同构成国家形式。",
     "visual_desc": "环球政体沙盘演示：白金汉宫里的王冠象征古老传统虚位守望；白宫与国会山的三权制衡齿轮交错咬合；人民大会堂代表投票凝聚十四亿人民意志，各具特色的制度形态交相辉映。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -2297,7 +2297,7 @@
     "key_formulas": "$$\\text{国际关系基石: } \\text{共同利益 } \\to \\text{ 合作基础}; \\quad \\text{利益冲突 } \\to \\text{ 矛盾根源}$$\n$$\\text{我国外交政策: 独立自主(基本立场) } + \\text{ 维护和平促进发展(宗旨目标) } + \\text{ 和平共处五项原则(准则)}$$\n$$\\text{全球治理方案: 构建人类命运共同体 + 全球发展倡议/全球安全倡议/全球文明倡议}$$",
     "tips": "① “国家利益决定国际关系”不代表中国可以损害别国利益：我国在坚定维护本国国家利益的同时，兼顾他国合理关切，在谋求本国发展中促进各国共同发展。\n② 联合国的性质与作用：联合国是当今世界最具普遍性、代表性和权威性的政府间国际组织，安理会负有维护国际和平与安全的主要责任，坚持“大国一致原则”（五常一票否决权）。",
     "visual_desc": "联合国地球村议事殿堂：不同肤色国旗在微风中招展，大国博弈与多边合作在讲台上碰撞；中国外交官庄严宣告真正的多边主义，以命运与共的胸怀为撕裂的世界搭起和解的彩虹之桥。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -2310,7 +2310,7 @@
     "key_formulas": "$$\\text{动产所有权变动: 交付生效}; \\quad \\text{不动产所有权变动: 登记生效 (不登记不生效!)}$$\n$$\\text{担保物权区分: 抵押权 (不转移占有) } \\;\\text{vs}\\; \\text{质权 (转移占有)}$$\n$$\\text{著作权保护期: 作者终生 + 死后 50 年; \\; 注册商标: 10 年 (可无限续展)}$$",
     "tips": "① 房屋买卖合同与房屋所有权转移：签了买卖合同且付清全款，只要没去不动产登记中心办理“过户登记”，买方就没有取得房屋所有权！\n② 善意取得制度：动产占有人无权处分，受让人以合理价格受让且不知情，完成交付即善意取得所有权，原主人只能向处分人追偿赔偿损失。",
     "visual_desc": "法律产权契约之锁：大到一处高楼大厦登记簿上的鲜红印章（不动产登记生效），小到智能手机转让一手交钱一手交货（动产交付生效）；法律之锁明确产权边界，护航交易安全。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 19
   },
   {
@@ -2323,7 +2323,7 @@
     "key_formulas": "$$\\text{定金罚则: 给付方违约没收定金; 收受方违约双倍返还定金 (定金上限 } \\le 20\\% \\text{ 总价)}$$\n$$\\text{一般侵权四要件: 违法行为} + \\text{损害事实} + \\text{因果关系} + \\text{主观过错}$$\n$$\\text{诉讼时效: 一般为 3 年; 举证原则: 谁主张谁举证, 特殊倒置}$$",
     "tips": "① “定金”与“订金”天壤之别：只有字面写明为“定金”才能适用双倍返还罚则；写成“订金、押金、意向金”只是预付款，违约只能原额退还！\n② 建筑物坠落物 vs 高空抛物：建筑物脱落坠落（所有人过错推定）；高空抛物难以确定具体侵权人的，除能证明自己不是侵权人的外，由可能加害的建筑物使用人给予补偿。",
     "visual_desc": "法庭审判席证据交锋：原告举出合同与付款凭据（谁主张谁举证）；被告在医院医疗损害纠纷中必须调出手术全流程病历自证无过错（举证责任倒置），法袍下的天平以证据与法理抚平人间创伤。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 20
   },
   {
@@ -2336,7 +2336,7 @@
     "key_formulas": "$$\\text{早期政治特征: } \\text{神权王权结合} + \\text{血缘政治纽带(宗法制)} + \\text{家国一体} + \\text{最高权力尚未高度集中}$$\n$$\\text{西周宗法核心: 嫡长子继承制 } \\implies \\text{解决贵族权力财产分配纠纷}$$",
     "tips": "① 嫡长子辨析：正妻所生的第一个儿子即为嫡长子，哪怕庶子年龄更大也只能算小宗！宗法制核心是确立不可争议的继承权。\n② 早期政治并非绝对专制：商周时期保留有原始民主遗存，国人暴动驱逐周厉王，说明君主权力受到宗族贵族与国人群体的制约。",
     "visual_desc": "宗庙青铜鼎与分封诸侯版图：镐京宗庙内九鼎森严，嫡长子执爵告祭列祖列宗；周天子手持节钺将千里封土分封王弟功臣，八百诸侯如众星拱月环卫周室天下。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -2349,7 +2349,7 @@
     "key_formulas": "$$\\text{大变革逻辑链: 铁犁牛耕(生产力) } \\to \\text{ 井田瓦解私有确立(生产关系) } \\to \\text{ 变法确立县制(政治) } \\to \\text{ 百家争鸣(思潮)}$$\n$$\\text{战国四家治国策: 儒家(仁义礼乐) } \\;\\land\\; \\text{道家(无为顺应) } \\;\\land\\; \\text{法家(严刑法度) } \\;\\land\\; \\text{墨家(兼爱尚贤)}$$",
     "tips": "① 官僚政治取代贵族政治的标志：官员不再享有封地世袭特权，而是由国君直接任免、领取俸禄、有固定任期（县制的设立是官僚政治的重要里程碑）。\n② 商鞅重农抑商的时代合理性：战国兼并战争频仍，粮食储备与充足兵源直接决定生死存亡，抑商有利于保障农业劳动力与战争后勤。",
     "visual_desc": "咸阳宫前立木为信：铁犁破开荒芜原野，商鞅在国都南门立木五十金，法度严明斩断世袭旧贵族利益；稷下学宫诸子辩士拂袖高谈，思想的星火在战火中淬炼成百家华章。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -2362,7 +2362,7 @@
     "key_formulas": "$$\\text{秦中央集权构架: 皇帝独尊 } \\longrightarrow \\text{三公九卿(中央相互牵制) } \\longrightarrow \\text{郡县制(地方绝对服从中央)}$$\n$$\\text{汉武帝大一统: 推恩令(削藩) } + \\text{中朝(削相权) } + \\text{独尊儒术(思想统一) } + \\text{盐铁官营(统财权)}$$",
     "tips": "① “推恩令”之巧：汉武帝并未强行废黜诸侯国，而是允许诸侯王将封地分封给所有子弟为列侯，归郡统辖，以和平合法的手段将大割据势力彻底碎裂化，朝廷不费一兵一卒！\n② 董仲舒的新儒学并非先秦原始儒学：新儒学吸收了阴阳五行家、法家、道家思想，神化君权的同时用“天人感应”制约君主的暴政。",
     "visual_desc": "未央宫金戈长风：未央宫前张骞白马持节向西出使大月氏，踏出漫漫沙漠丝路；汉武帝大笔一挥颁布推恩令，诸侯王封地瞬间瓦解；太学朗朗读书声中，儒学正统铸就千年华夏底色。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -2375,7 +2375,7 @@
     "key_formulas": "$$\\text{孝文帝汉化矩阵: 均田制(经济) } + \\text{迁都洛阳(空间) } + \\text{改姓易服通婚(血缘文化)} \\implies \\text{北方民族深度大交融}$$\n$$\\text{江南开发动力: 战乱南迁(永嘉南渡) } \\to \\text{ 带来先进技术劳力 } \\to \\text{ 开启经济重心南移序幕}$$",
     "tips": "① 区分经济重心南移的节点：魏晋南北朝是江南开发的“起步阶段”；唐朝中叶安史之乱后经济重心“开始南移”；南宋时期完成南移（“苏湖熟，天下足”）。\n② 民族交融是双向的：不仅是少数民族学习汉族农耕与制度，汉族也吸收了少数民族的游牧衣食、胡服胡乐（胡床、胡饼流行）。",
     "visual_desc": "洛阳汉化新朝与江南水乡青泥：洛阳宫殿内鲜卑贵族改披宽袍大袖用洛阳汉音吟诵雅乐；长江两岸北方难民扶老携幼开荒筑堤，稻花飘香江南千倾水田。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -2388,7 +2388,7 @@
     "key_formulas": "$$\\text{三省分工: } \\text{中书省 (决策拟旨)} \\xrightarrow{\\text{封驳审议}} \\text{门下省 (审核)} \\xrightarrow{\\text{落地执行}} \\text{尚书省 (下辖六部)}$$\n$$\\text{两税法征税标准质变: } \\text{由 \"以人丁为主\" (丁税) } \\longrightarrow \\text{ 转向 \"以资产为主\" (地税)}$$",
     "tips": "① 门下省的“封驳权”不等于西方三权分立：门下省的审查反驳权归根结底来自于皇帝赋予，目的不是制衡皇权，而是防止皇帝个人决断失误，是君主专制的内部优化。\n② 两税法两季征收时令：夏税不过六月，秋税不过十一月，征收铜钱为主也促进了商品经济发展。",
     "visual_desc": "大唐长安政事堂与雁塔题名：政事堂内三省宰相围坐茶汤前辩论驳回中书拟旨；大雁塔下寒门举子凭一篇锦绣策论高中进士，金榜题名春风得意马蹄疾，一人得道改变全族门楣。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -2401,7 +2401,7 @@
     "key_formulas": "$$\\text{宋代分权架构: } \\begin{cases} \\text{二府: 中书门下(行政) } \\;\\text{vs}\\; \\text{枢密院(军政)} \\\\ \\text{三司使(财政) } \\;\\land\\; \\text{参知政事(副相削相权)} \\\\ \\text{地方控权: 文官知州 + 通判监督 + 转运使统财} \\end{cases}$$\n$$\\text{商业突破: 坊市界限打破 } + \\text{突破时空限制(夜市) } + \\text{世界上最早纸币交子}$$",
     "tips": "① 宋代“冗官、冗兵、冗费”与积贫积弱：为了分权设立大量副职官僚（冗官），为了防范农民起义和外族侵扰收编流民为禁军（冗兵），导致财政开支极度庞大（冗费），军队战斗力反而低下。\n② 朱熹的“存天理灭人欲”不是让人禁绝基本生存欲望：朱熹指出“饮食者，天理也；要求美味，人欲也”，主张节制非分的过激贪婪欲望。",
     "visual_desc": "清明上河图市井繁华：汴京虹桥两侧茶楼酒肆林立，士农工商摩肩接踵；算盘噼啪声中，胡商与行脚僧在市舶司码头卸下沉甸甸的香料象牙，交子纸币在指尖流转如飞。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -2414,7 +2414,7 @@
     "key_formulas": "$$\\text{明清专制进化树: 废丞相(六部分立) } \\to \\text{ 设内阁(票拟咨询) } \\to \\text{ 军机处(跪受笔录, 皇权至顶)}$$\n$$\\text{中西历史大分流 (18世纪): } \\begin{cases} \\text{西方: 启蒙运动、工业革命、资产阶级代议制} \\\\ \\text{中国: 文字狱、手工农业、专制顶峰、闭关锁国} \\end{cases}$$",
     "tips": "① 内阁首辅绝不等于丞相：宰相是法定的最高行政长官，拥有合法的决策权与草拟奏报权，可制约皇权；内阁大学士只是皇帝的私人秘书顾问，权力大小完全取决于皇帝宠信程度！\n② 闭关锁国不是“绝对绝缘”：清政府保留了广州“十三行”一口通商特许，但严格禁止民间自由出海，本质是封闭落后的防范自守政策。",
     "visual_desc": "养心殿军机处狭窄值房：清晨烛影摇曳，三品军机大臣跪伏在冰凉金砖上飞速笔录口谕；一纸朱批圣旨发往沿海勒令海禁，紧闭的大门外，西方的风帆蒸汽战舰已悄然逼近海疆。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -2427,7 +2427,7 @@
     "key_formulas": "$$\\text{半殖民地演进四部曲: } \\text{《南京条约》(开始)} \\to \\text{《北京条约》(加深)} \\to \\text{《马关条约》(大大加深)} \\to \\text{《辛丑条约》(完全沦陷)}$$\n$$\\text{救亡演进: 器物层(洋务运动) } \\to \\text{ 制度层(戊戌变法/辛亥革命) } \\to \\text{ 思想层(新文化运动)}$$\n$$\\text{辛亥革命终结了 \"君主专制制度\", 并非终结了 \"封建制度\"!}$$",
     "tips": "① 严禁混淆概念：“辛亥革命推翻了君主专制制度”，绝不能写成“推翻了封建制度”！封建剥削土地所有制和封建思想特权直到新中国土地改革才被彻底终结。\n② 《临时约法》实行责任内阁制的目的：为了限制袁世凯专权，因人设法将总统制改为责任内阁制，由总理向国会负责。",
     "visual_desc": "武昌城头的首义枪声：楚望台军械库火光冲天，革命军剪去发辫撕碎黄龙旗；南京总统府前五色旗冉冉升起，孙中山庄严宣誓就职大总统，两千年帝制轰然倒塌，共和晨曦照亮大地。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -2440,7 +2440,7 @@
     "key_formulas": "$$\\text{五四运动 (1919)} \\implies \\text{工人阶级登台, 新民主主义革命开端}$$\n$$\\text{工农武装割据: 武装斗争(形式) } + \\text{土地革命(核心内容) } + \\text{根据地建设(战略依托)}$$\n$$\\text{遵义会议 (1935)} \\implies \\text{独立自主解决党内问题, 生死攸关伟大转折}$$",
     "tips": "① 抗战时间起算标准：十四年抗战（1931 年九一八事变至 1945 年日本投降）；全民族抗战八年（1937 年七七事变至 1945 年）。\n② 抗日民族统一战线的法宝：坚持中国共产党在统一战线中的独立自主原则，坚持发展进步势力、争取中间势力、孤立顽固势力的策略方针。",
     "visual_desc": "宝塔山下的抗日号角：黄河在咆哮大刀向鬼子头上砍去，延安窑洞青灯下写就持久战宏图；千百万支前小车滚滚推向淮海决战前线，百万雄师过大江占领总统府，红旗插遍祖国江山。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -2453,7 +2453,7 @@
     "key_formulas": "$$\\text{过渡时期总路线 (一化三改): 逐步实现工业化 } \\;\\land\\; \\text{完成农业/手工业/资本工商业改造}$$\n$$\\text{经济体制改革突破口: 农村家庭联产承包责任制 (包产到户, 统分结合)}$$\n$$\\text{十四大 (1992): 确立建立社会主义市场经济体制的目标}$$",
     "tips": "① 家庭联产承包责任制没有改变土地公有制性质：农民获得的只是土地的“承包经营权和使用权”，土地所有权依然属于村集体公有！\n② 浦东开发开放的重大战略地位：1990 年中央决定开发开放浦东，成为我国扩大开放的窗口和长江流域开放带动的龙头，引领上海迈向国际经济中心。",
     "visual_desc": "天安门城楼红旗与黄浦江畔春潮：1949 年开国大典礼炮齐鸣，毛主席庄严宣告中国人民从此站立起来了；1990 年陆家嘴芦苇滩涂拔地建起东方明珠，浦东大开放迎向全球经济浩瀚蔚蓝。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -2466,7 +2466,7 @@
     "key_formulas": "$$\\text{古希腊民主历程: 梭伦改革(奠基) } \\to \\text{ 克里斯提尼(确立) } \\to \\text{ 伯里克利(黄金巅峰)}$$\n$$\\text{雅典民主局限性: } \\text{狭隘性 (成年男性公民)} + \\text{原始直接民主 (抽签轮番)} + \\text{泛滥沦为民粹暴政}$$",
     "tips": "① 区分“公民”与“居民”：雅典城邦居民中，奴隶占近一半，外邦人和妇女占大半，真正享有公民权的成年男性仅占总人口约 10% 左右！\n② 希腊文明与大河文明差异根源：希腊多山少平原、海岸线曲折良港众多，催生了发达的工商业与航海贸易，孕育了平等契约民主理念；大河文明土地广阔依靠灌溉，催生集权专制帝国。",
     "visual_desc": "雅典卫城帕特农神庙：地中海的湛蓝晴空下，公民大会露天石阶上成年公民高举双手激烈辩论表决法案，陶片上刻下野心政客的名字；神庙巨石立柱见证着欧洲直接民主最初的幼芽。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -2479,7 +2479,7 @@
     "key_formulas": "$$\\text{西欧封建三位一体: } \\text{封君封臣制 (政治契约)} + \\text{庄园农奴制 (经济自足)} + \\text{基督教神权 (思想垄断)}$$\n$$\\text{权利等级铁律: \"我的附庸的附庸, 不是我的附庸\" (王权分散脆弱)}$$",
     "tips": "① 区分农奴与奴隶：农奴不是领主的私人纯财产，不能被随意买卖屠杀，拥有自己的简陋农具与家庭，生产积极性高于古典奴隶制奴隶。\n② 城市的兴起打破了封建庄园经济：“城市的空气使人自由”，逃入自治城市满一年的农奴便成为自由市民，瓦解了封建农奴制度根基。",
     "visual_desc": "古堡高耸与羊皮纸契约：尖顶石砌哥特教堂阴影笼罩着封建庄园的泥泞麦田；领主佩戴铁剑跪在教皇权杖前接受授职宣誓，而城堡脚下石板街巷中，自治行会的行商正悄悄积攒着撼动旧王权的黄金。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -2492,7 +2492,7 @@
     "key_formulas": "$$\\text{新航路开辟两大革命: } \\begin{cases} \\text{商业革命: 贸易范围大西洋扩大 + 中心转移 + 商品剧增} \\\\ \\text{价格革命: 金银暴增物价飞涨 } \\to \\text{ 封建地主衰落, 资产阶级暴富} \\end{cases}$$\n$$\\text{黑奴三角贸易: 欧洲出程(枪支) } \\to \\text{ 非洲中程(黑奴出卖) } \\to \\text{ 美洲归程(金银蔗糖原料)}$$",
     "tips": "① “商业革命” vs “价格革命”区分：商业革命指的是“商品流、贸易路线、商贸机构”的变化；价格革命专门指“金银流入导致的物价飞涨、货币贬值、阶级力量此消彼长”。\n② 哥伦布并未到达真正的印度：他误以为到达了印度，将美洲原住民称为印第安人（Indians），这一地理大发现以亚美利哥的勘测最终命名为美洲。",
     "visual_desc": "扬帆风暴角与全球航路罗盘：三桅帆船在惊涛骇浪的大西洋劈波斩浪，麦哲伦船员骨瘦如柴却在海天尽头望见麦哲伦海峡的曙光；各大洲孤立隔绝的历史长河就此打破，汇聚成全球化惊涛。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -2505,7 +2505,7 @@
     "key_formulas": "$$\\text{西方思想演进: 文艺复兴(人性觉醒) } \\to \\text{ 宗教改革(信仰自由) } \\to \\text{ 启蒙运动(理性制度蓝图)}$$\n$$\\text{美国 1787 宪法三权分立制衡: } \\begin{cases} \\text{总统: 行政权, 否决国会法案, 任命大法官} \\\\ \\text{国会: 立法权, 弹劾总统, 批准任命} \\\\ \\text{联邦法院: 司法权, 违宪审查权} \\end{cases}$$",
     "tips": "① 英国首相与内阁共进退机制：首相若在议会遭到不信任投票，要么内阁集体辞职，要么提请国王解散议会重新大选！\n② 美国 1787 宪法的历史局限：承认黑人奴隶制合法性，按五分之三折算黑人人口纳税人数（五分之三妥协），印第安人和妇女无选举权。",
     "visual_desc": "启蒙理性的思想火种与费城制宪会议：卢梭在日内瓦湖畔深思人民主权的誓约；费城独立厅内五十五位制宪先贤激烈争吵妥协，将三权分立的机械钟表结构铸造成人类首部现代联邦宪法。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -2518,7 +2518,7 @@
     "key_formulas": "$$\\text{一工 (蒸汽时代, 英国独大): 改良蒸汽机 } + \\text{机器工厂制 } + \\text{自由竞争资本主义}$$\n$$\\text{二工 (电气时代, 科学技术结合): 电力内燃机 } + \\text{垄断组织帝国主义 } + \\text{世界市场最终形成}$$\n$$\\text{马克思主义三来源: 德意志古典哲学 } + \\text{英国古典政治经济学 } + \\text{英法空想社会主义}$$",
     "tips": "① 两次工业革命对资本主义世界市场形成的推动三阶段：新航路开辟（雏形）⟶ 第一次工业革命（初步形成）⟶ 第二次工业革命（最终确立形成）。\n② 巴黎公社性质：是无产阶级建立政权的第一次尝试，但它并不是马克思主义直接指导下的革命，而是民族矛盾与阶级矛盾交织下的自发革命尝试。",
     "visual_desc": "冒烟的烟囱林立与红旗公社：曼彻斯特黑烟蔽日的巨大纺织厂里飞梭轰鸣，蒸汽机喷出白雾转动巨型飞轮；巴黎蒙马特尔高地上工人筑起街垒高唱国际歌，无产阶级破土而出撼动旧世界。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -2531,7 +2531,7 @@
     "key_formulas": "$$\\text{冷战三大对峙板块: } \\begin{cases} \\text{政治: 杜鲁门主义 } \\;\\text{vs}\\; \\text{情报局} \\\\ \\text{经济: 马歇尔计划 } \\;\\text{vs}\\; \\text{经互会} \\\\ \\text{军事: 北约 (1949) } \\;\\text{vs}\\; \\text{华约 (1955, 两极格局正式形成)} \\end{cases}$$\n$$\\text{多极化力量: 欧洲一体化 } + \\text{日本崛起 } + \\text{中国腾飞 } + \\text{不结盟运动(第三世界)}$$",
     "tips": "① 区分“马歇尔计划”与“杜鲁门主义”：杜鲁门主义是冷战在政治上的宣言书；马歇尔计划（欧洲复兴计划）是杜鲁门主义在经济上的一次大规模应用，既复兴欧洲又控制西欧遏制苏联。\n② 雅尔塔体系的大国强权烙印：美苏在雅尔塔等会议上背着当事小国（如中国外蒙古问题、波兰边界划分）进行私下地缘利益交易，体现了大国沙文主义。",
     "visual_desc": "柏林墙边的铁幕对峙：查理检查站两侧美苏重型坦克炮口相对熄火轰鸣；太空竞赛人造卫星在冷月轨道闪烁，而柏林墙下渴望自由的青年终在 1989 年手持钢锤凿碎隔离两半球的混凝土巨墙。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -2544,7 +2544,7 @@
     "key_formulas": "$$\\text{选官制度演进主线: } \\text{世卿世禄(血缘)} \\to \\text{察举制(品行孝廉)} \\to \\text{九品中正制(门第家世)} \\to \\text{科举制(考试才学)}$$\n$$\\text{三大趋势: 标准客观化 } + \\text{权力中央化 } + \\text{范围平民化}$$",
     "tips": "① 九品中正制的最初动机：曹丕设立九品中正制原本是为了从地方豪强手中收回选官大权，中正官由中央任命；但由于门阀士族势大，最终适得其反沦为门阀专政工具。\n② 明清八股取士的僵化局限：明清科举考试命题严格限定在“四书五经”，文体格式死板拘泥于“八股文”，禁绝独立发挥，培养了大量脱离实际的忠顺奴仆，阻碍了近代科学技术的萌芽。",
     "visual_desc": "千年选拔龙门考卷：从先秦诸侯大殿里的世袭金带，到汉代察举制竹简上的举孝廉名录，再到江南贡院密密麻麻的号舍考棚，油灯下一个个布衣书生握笔蘸墨，在三寸朱卷上以才华抗衡天命。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -2557,7 +2557,7 @@
     "key_formulas": "$$\\text{监察特征: } \\text{位卑权重 (以小驭大)} + \\text{独立垂直于行政} + \\text{对皇帝一人负责}$$\n$$\\text{基层治理双轨制: } \\text{官权不下县 (县衙)} \\;\\longleftrightarrow\\; \\text{县下唯宗族 (乡绅乡约保甲自治)}$$",
     "tips": "① 监察官的演变走向行政化规律：汉代的刺史、宋代的通判、明代的巡抚巡按原本都是临时的巡行监察官，但久而久之均演变成为地方常驻的一级行政长官！\n② 谏官与监察官的区别：监察官是监察百官贪渎（绳纠百官）；谏官是对君主皇帝进行规劝进谏（规谏君主）。宋代台谏合一强化了整体监察职能。",
     "visual_desc": "巡行天下风宪之印：绣着獬豸神兽官袍的御史大人高举尚方宝剑巡视郡县，弹劾贪吏；乡村祠堂前，宗族老者手敲竹板宣讲乡规民约，宗族伦理与王权律令共同织密古代帝国长治久安网络。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 18
   },
   {
@@ -2570,7 +2570,7 @@
     "key_formulas": "$$T_{\\text{目标}} = T_{\\text{已知}} \\pm \\frac{\\Delta \\lambda}{15^\\circ} \\quad (\\text{东加西减})$$\n$$v_\\varphi = 1670 \\cdot \\cos\\varphi \\;\\text{km/h}, \\quad \\omega = 15^\\circ/\\text{h}$$\n$$\\text{赤道晨昏交点: 晨线交赤道 } = 6:00, \\; \\text{昏线交赤道 } = 18:00$$\n$$\\text{今天范围占比} = \\frac{180^\\circ - \\lambda_{(0\\text{时})}}{360^\\circ}$$",
     "tips": "① 新旧一天范围计算速记：从 0 时经线向东到 180° 经线为“新的一天”（今天），从 180° 经线向东到 0 时经线为“旧的一天”（昨天）！\n② 晨线昏线判定技巧：顺着地球自转方向（自西向东），从黑夜跨入白昼为晨线；从白昼跨入黑夜为昏线。",
     "visual_desc": "悬浮在太空中的昼夜晨昏轮盘：一侧是灿烂的阳光照射，一侧是深邃的暗夜阴影；金黄色的晨昏分割线在蔚蓝星球上缓慢滑动，赤道上清晨六点与黄昏六点的钟声每天准时敲响。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 1
   },
   {
@@ -2583,7 +2583,7 @@
     "key_formulas": "$$H = 90^\\circ - |\\varphi \\pm \\delta| \\quad (\\varphi: \\text{当地纬度}, \\delta: \\text{直射点纬度})$$\n$$\\text{夏至日北半球: 昼长夜短, 极昼范围 } [66^\\circ 34'\\text{N}, 90^\\circ\\text{N}]$$\n$$\\text{太阳能热水器倾角} = 90^\\circ - H = |\\varphi \\pm \\delta| \\quad (\\text{板面与光线垂直})$$",
     "tips": "① 楼间距采光计算：保证一楼在一年中正午采光最佳，必须按当地“冬至日”的正午太阳高度角 H_min 计算楼间距：L = h / tan H_min！\n② 昼长计算对称法则：同一地点在夏至与冬至的昼夜长短正好互补（夏至昼长 = 冬至夜长）；南北半球纬度相同的两地，同一天昼长与夜长互换。",
     "visual_desc": "四季日照斜射光轮：夏至高阳当空如火，北半球日影最短，午夜的北极圈阳光普照金光不灭；冬至低阳斜射长影拖曳，南极大陆在极昼暖阳下冰川泛起蓝光。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 2
   },
   {
@@ -2596,7 +2596,7 @@
     "key_formulas": "$$\\text{大气受热链: } \\text{太阳短波辐射} \\xrightarrow{\\text{削弱}} \\text{地面增温} \\xrightarrow{\\text{地面长波}} \\text{大气吸收} \\xrightarrow{\\text{大气逆辐射}} \\text{保温地面}$$\n$$\\text{热力环流口诀: } \\text{热膨胀上升低压, 冷收缩下沉高压; 水平方向高压流向低压}$$",
     "tips": "① 气压高低只在“同一水平高度”上比较：垂直方向上海拔越高气压永远越低（近地面低压的气压依然高于高空高压！）。\n② 等压面凹凸判别技巧：“高高低低”法则——等压面向上凸起为高气压，向下凹陷为低气压。",
     "visual_desc": "海陆风帆与城市热穹顶：晴朗午后金黄沙滩炙手可热，微风带着海洋水汽徐徐吹向海岸（海风）；城市楼宇森林吐出滚滚热浪形成热气穹顶，郊野清凉微风顺着绿带向市区回流。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 3
   },
   {
@@ -2609,7 +2609,7 @@
     "key_formulas": "$$\\text{七压六带: } \\text{赤低(热) - 信风 - 副高(动) - 西风 - 副极低(动) - 极东 - 极高(热)}$$\n$$\\text{地中海气候: 夏季副高(干热) } \\;\\land\\; \\text{冬季西风(温湿)}$$\n$$\\text{南亚夏季西南季风成因} = \\text{气压带风带北移 (东南信风越赤道右偏为西南风)}$$",
     "tips": "① 盛行西风带风向易错：北半球西风带是“西南风”，南半球西风带是“西北风”（由于南半球地转偏向力向左偏）。\n② 降水规律判定：低压带（上升气流）和由低纬吹向高纬的风（西风带）多阴雨；高压带（下沉气流）和由高纬吹向低纬的风（信风带、极地东风）多干燥晴朗。",
     "visual_desc": "季风大陆的呼吸肺叶：盛夏的大陆像滚烫的吸管将印度洋的磅礴水汽化作西南季风长驱直入喜马拉雅南坡；隆冬的西伯利亚冰原凝成巨大的冷空气气球，狂暴的西北寒风横扫千重大江南北。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 4
   },
   {
@@ -2622,7 +2622,7 @@
     "key_formulas": "$$\\text{冷锋: 降水在锋后 (大风降温暴雨)}; \\quad \\text{暖锋: 降水在锋前 (连续阴雨)}$$\n$$\\text{气旋 (低压): 气流上升 } \\implies \\text{阴雨天气; } \\quad \\text{反气旋 (高压): 气流下沉 } \\implies \\text{晴朗干燥}$$\n$$\\text{锋面气旋: 左冷右暖 (北半球气旋槽部偏西为冷锋, 偏东为暖锋)}$$",
     "tips": "① 锋面气旋“左冷右暖”铁律：中纬度低压气旋的槽部常形成锋面，北半球低压槽西侧（左侧）吹偏北冷风必定是冷锋，东侧（右侧）吹偏南暖风必定是暖锋！\n② 台风不同部位风向：台风中心（台风眼）无风晴朗，台风眼外侧是狂风暴雨的漩涡风雨区，根据低压逆时针辐合可判断台风中心过境前后风向的剧烈转换。",
     "visual_desc": "冷暖锋云系沙盘：蔚蓝冷空气前锋像推土机楔入暖气团下方，激起翻滚沉重的乌云暴雨；台风高空螺旋云系像巨型飞轮疯狂旋转，中心台风眼平静如镜倒映蔚蓝天空。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 5
   },
   {
@@ -2635,7 +2635,7 @@
     "key_formulas": "$$\\text{洋流环流口诀: } \\text{北顺南逆中低纬, 北逆南无中高纬; 南纬四十西风漂, 北印季风夏顺冬逆}$$\n$$\\text{渔场成因两大机制: } \\begin{cases} \\text{寒暖流交汇: 北海道/纽芬兰/北海} \\\\ \\text{上升补偿流: 秘鲁渔场} \\end{cases}$$",
     "tips": "① 暖流温度不一定高于寒流：暖流寒流是相对于流经海区水温而言的（水温比流经海区高的为暖流，水温比流经海区低的为寒流），低纬度的寒流水温往往高于高纬度的暖水！\n② 判定洋流性质看等温线凸向：“凸向即流向”——等温线向水温高处弯曲凸起为寒流，向水温低处弯曲凸起为暖流。",
     "visual_desc": "深蓝大洋水体传送带：温热的墨西哥湾暖流如同奔腾的巨型热水管道注入冰封北大西洋，融化极地浮冰；秘鲁沿岸离岸风卷起表层海水，深海冰冷富饶的矿物营养涌出，亿万银鱼如狂澜跃动。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 6
   },
   {
@@ -2648,7 +2648,7 @@
     "key_formulas": "$$\\text{岩层新老关系判背向斜: } \\begin{cases} \\text{背斜: 中间老, 两翼新 (储油气, 建隧道)} \\\\ \\text{向斜: 中间新, 两翼老 (储水, 盆地)} \\end{cases}$$\n$$\\text{断层地貌: 地垒上升成断块山 (华山泰山); 地堑下沉成谷地平原 (渭河平原)}$$",
     "tips": "① 严禁单凭地形起伏断定背斜向斜：必须看“岩层弯曲形态与新老年代序列”！地表凹陷的坑谷完全可能是背斜顶部被侵蚀后的背斜谷。\n② 冲积扇地貌颗粒分选规律：从出山口（扇顶）到扇缘，流水流速逐渐减缓，堆积物颗粒由粗变细（砾石 ⟶ 粗砂 ⟶ 细砂 ⟶ 黏土）。",
     "visual_desc": "亿万年岩层褶皱年轮：地壳剧烈挤压将水平岩层揉搓成千重波浪；背斜拱门像苍穹穹顶包裹着黑色原油与天然气，向斜深谷像聚宝盆盛装甘泉；断崖拔地千仞化作险峻华山。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 7
   },
   {
@@ -2661,7 +2661,7 @@
     "key_formulas": "$$\\text{山地自然带丰富度} \\propto \\text{相对高度大} \\times \\text{纬度低}$$\n$$\\text{雪线高低主导因素: } \\begin{cases} \\text{降水(迎风坡降雪多, 雪线低)} \\\\ \\text{气温(阳坡气温高, 雪线高)} \\end{cases} \\implies \\text{降水影响通常占优势}$$",
     "tips": "① 相同自然带海拔高低比较：同一种自然带在阳坡分布的海拔高度通常高于阴坡（阳坡热量充足，自然带向上延伸攀升）。\n② 关注山体基带与水平带的对应关系：若某山地基带为温带落叶阔叶林，则该山体必定位于温带季风或温带海洋性气候区。",
     "visual_desc": "珠峰自然带垂直生态塔：从南坡低海拔葱茏青翠的热带雨林芭蕉，随着攀登海拔抬升依次经过常绿阔叶林、高山针叶林、高山灌丛草甸，最终到达白雪皑皑终年不化的冰川雪线，一山跨越五带繁茂千景。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 8
   },
   {
@@ -2674,7 +2674,7 @@
     "key_formulas": "$$\\text{木桶理论: 资源环境承载力由最匮乏的资源短板决定}$$\n$$\\text{承载力影响函数: } K = f(\\text{资源丰度}(+), \\text{科技水平}(+), \\text{开放度}(+), \\text{消费水平}(-))$$\n$$\\text{资源环境承载力 (极限生存)} \\gg \\text{人口合理容量 (适度高质量)}$$",
     "tips": "① 消费水平对环境承载力的反向制约：人均生活消费水平越高，每个人消耗的资源粮食越多，当地所能承载的最大人口数反而越小！\n② 户籍迁移与流动人口：农民工进城务工经商属于“人口流动”（未改变户籍），不属于严格统计意义上的户籍人口迁移，但具有极强的人口迁移空间效应。",
     "visual_desc": "候鸟迁徙与木桶容量：数千万年轻人追逐现代产业拉力汇聚北上广深超大都市圈；城市水资源与土地像木桶木板决定着这片热土的承载上限，在高质量发展的蓝图里寻找人与自然的黄金平衡。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 9
   },
   {
@@ -2687,7 +2687,7 @@
     "key_formulas": "$$\\text{地租决定函数: 地租} = f(\\text{距市中心远近}, \\text{交通便捷通达度})$$\n$$\\text{工业环保选址: } \\begin{cases} \\text{单一风向: 盛行风下风向} \\\\ \\text{季风区: 与季风垂直的郊外} \\\\ \\text{多风向: 最小风频的上风向} \\end{cases} \\;\\land\\; \\text{河流下游}$$",
     "tips": "① 郊区城镇化 vs 逆城市化辨析：郊区城镇化发生在城市加速发展阶段，人口产业向城市外围郊区扩张；逆城市化发生在城镇化后期成熟阶段，人口迁往远离大城市的乡村小城镇（追求田园生态与交通改善）。\n② CBD 不等于普通商业街：中央商务区（CBD）不仅是零售商业，更汇聚了跨国银行总部、会计事务所、法律咨询等高端现代生产性服务业。",
     "visual_desc": "陆家嘴城市天际线与地租同心圆：摩天大楼林立的城市核心地租寸土寸金，银行金融机构抢占云端办公室；随着环线地铁轨道向外辐射，安宁优雅的花园洋房与外环外的现代工业园区秩序井然铺展。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 10
   },
   {
@@ -2700,7 +2700,7 @@
     "key_formulas": "$$\\text{农业区位评价矩阵: } \\begin{cases} \\text{自然: 光热温差 + 水分灌溉 + 地形土壤} \\\\ \\text{社会: 市场(主导) + 交通冷链 + 政策劳动力 + 科技良种} \\end{cases}$$\n$$\\text{季风水田农业特征: 单产高, 商品率低, 机械化低, 科技低, 小农经营, 水利工程量大}$$",
     "tips": "① “光照强”不等于“热量充足”：青藏高原太阳辐射极强光照充足，但海拔高气温低热量严重不足（只能在河谷温热处发展湟水谷地雅鲁藏布江谷地农业）！\n② 区分决定农业“类型和规模”的因素：决定种植什么作物、种多大面积的核心决定性因素永远是“市场”！",
     "visual_desc": "江南鱼米水乡与美国小麦平原：太湖平原秧苗郁郁葱葱，引水沟渠密布梯田如镜倒映春雨；北美大平原上巨型联合收割机列队驶过金色麦浪，重载列车将粮食运往全球深水港口。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 11
   },
   {
@@ -2713,7 +2713,7 @@
     "key_formulas": "$$\\text{五大导向型工业: 原料导向 } \\mid \\text{ 市场导向 } \\mid \\text{ 动力(能源)导向 } \\mid \\text{ 劳动力导向 } \\mid \\text{ 技术导向}$$\n$$\\text{工业集聚效应: 共享基建 } + \\text{ 节约运费能耗 } + \\text{ 加强技术协作 } \\implies \\text{降本增效}$$",
     "tips": "① 汽车制造业与造船业的区位属性：现代大型汽车整车制造和造船属于“复杂协作装配型”，多属于市场与技术结合的集聚枢纽型产业，需要庞大的零部件供应链配套。\n② 硅谷分散设厂逻辑：芯片研发总部留在硅谷（技术导向），但组装制造工厂分散迁往东南亚或墨西哥（劳动力导向降低成本）。",
     "visual_desc": "张江科学城与全球智能制造车间：张江实验室洁净无尘室里光刻机雕琢纳米芯片，研发大脑与高校紧密咬合；千里之外沿海保税港内，智能机械臂流水线自动装配，全球供应链秒级同步运转。",
-    "video_url": "https://www.bilibili.com/video/BV1q7411P7z3",
+    "video_url": "",
     "sort_order": 12
   },
   {
@@ -2726,7 +2726,7 @@
     "key_formulas": "$$\\text{交通运输选择五步法: } \\begin{cases} \\text{急需/贵重/轻小: 航空运输} \\\\ \\text{大宗/笨重/长途远洋: 水路运输} \\\\ \\text{长途/大宗客货/连续: 铁路运输} \\\\ \\text{短途/灵活/门到门: 公路运输} \\\\ \\text{油气流体液体: 管道运输} \\end{cases}$$\n$$\\text{商业网点两大区位原则: 市场最优 (市中心) } \\;\\land\\; \\text{交通最优 (环路高速枢纽)}$$",
     "tips": "① 高铁对航空航天客运的冲击临界里程：高铁在 1000 公里以内（运行 3~4 小时）对民航客运具有压倒性竞争优势；超过 1500 公里以上民航速度优势才逐步显现。\n② 运费随距离变化的递增坡度：公路在短途内运费最低，随距离延长运费陡升；水运初始起步价高，但随距离延长运费曲线最为平缓。",
     "visual_desc": "虹桥综合交通枢纽巨型十字绣：虹桥机场跑道上喷气客机呼啸起降，地下候车大厅内高铁列车八方呼啸交汇，地铁轨道网与高架公路立体盘旋，客货流如水银泻地连通长三角脉搏。",
-    "video_url": "https://www.bilibili.com/video/BV15E41177jU",
+    "video_url": "",
     "sort_order": 13
   },
   {
@@ -2739,7 +2739,7 @@
     "key_formulas": "$$\\text{黄土高原水土流失治理: } \\text{保塬(平整保水) } + \\text{护坡(梯田林草) } + \\text{固沟(打坝淤地)}$$\n$$\\text{荒漠化草方格沙障双重功效: 增摩擦削风速 } \\;\\land\\; \\text{截雨水降蒸发利草木}$$",
     "tips": "① “退耕还林”不可一刀切盲目种树：在干旱半干旱荒漠边缘降水不足 400mm 地区，盲目种树会导致蒸腾加剧耗尽地下水，造成大面积枯死！必须遵循自然客观规律“宜林则林、宜草则草、宜荒则荒”。\n② 淤地坝的双重价值：既拦截了泥沙进入黄河下游沉积抬高悬河床，又在沟道深处淤造出平整肥沃的高产水浇地，实现生态与生计双赢。",
     "visual_desc": "千沟万壑变梯田绿洲：黄土高原纵横交错的苍黄梁峁被修筑成一层层青翠的等高线水田梯田；淤地坝像拦水长城把泥沙截留在山坳深处，塞上江南生机盎然。",
-    "video_url": "https://www.bilibili.com/video/BV1vE411T74W",
+    "video_url": "",
     "sort_order": 14
   },
   {
@@ -2752,7 +2752,7 @@
     "key_formulas": "$$\\text{传统工业区衰落原因: 结构单一 } + \\text{ 煤炭地位下降 } + \\text{ 钢铁产能过剩 } + \\text{ 新技术冲击环境恶化}$$\n$$\\text{综合整治转型路径: 调结构(育新兴/现代服务) } + \\text{ 治环境(降污染/造公园) } + \\text{ 强科技(改工艺/延链条)}$$",
     "tips": "① 资源枯竭型城市不能“弃矿搞全盘去工业化”：转型不是彻底丢弃原有重工业根基，而是依托原有机械装备工业基础，向精密化、高端化、绿色化先进制造业转型延伸！\n② 德国鲁尔区工业旅游典范：将关停的关税同盟煤矿工业区改造为世界文化遗产公园，将废气储气罐改造为欧洲最大室内潜水池，化沉重包袱为文化地标名片。",
     "visual_desc": "生锈高炉变身艺术公园：熄灭煤火的百米生锈高炉如今被爬山虎青藤缠绕，璀璨射灯将其点亮为现代音乐厅舞台；旁边的老厂房内聚集着软件工程师与文创设计师，工业老城焕发赛博朋克生机。",
-    "video_url": "https://www.bilibili.com/video/BV117411V78G",
+    "video_url": "",
     "sort_order": 15
   },
   {
@@ -2765,7 +2765,7 @@
     "key_formulas": "$$\\text{上海五个中心: 国际经济 } + \\text{ 国际金融 } + \\text{ 国际贸易 } + \\text{ 国际航运 } + \\text{ 国际科技创新}$$\n$$\\text{长三角一体化逻辑: 龙头引领(上海) } + \\text{ 各扬所长(苏浙皖) } + \\text{ 交通互通 } + \\text{ 产业协同 } + \\text{ 生态共保}$$",
     "tips": "① 区域一体化不是“同质化无序竞争”：必须坚持差异化定位、错位分工发展，防止各地盲目重复争抢相同产业项目造成恶性内耗！\n② 辐射带动效应的“虹吸效应”与“扩散效应”：初期大城市会吸聚周边中小城市的人才资金（虹吸），但当城市发展到一定层级，资本、技术与产业会加速向周边梯度转移外溢（辐射扩散）。",
     "visual_desc": "东海之滨超级都市圈光网：洋山深水港无人集装箱卡车在跨海大桥上奔驰如梭；长三角高铁网上动车组如银龙穿梭，半小时沪苏同城、一小时沪杭相约，四地协同画出全球顶级城市群璀璨夜景。",
-    "video_url": "https://www.bilibili.com/video/BV1xb411d71B",
+    "video_url": "",
     "sort_order": 16
   },
   {
@@ -2778,7 +2778,7 @@
     "key_formulas": "$$\\text{长江发展战略核心: 共抓大保护, 不搞大开发 (生态优先, 绿色发展)}$$\n$$\\text{长江经济带三大增长极: 长三角城市群 } + \\text{ 长江中游城市群 } + \\text{ 成渝双城经济圈}$$\n$$\\text{西电东送水火互补: 上游西南水力清洁能源 } \\longrightarrow \\text{ 特高压输送入华东长三角沿海}$$",
     "tips": "① “不搞大开发”绝不等于“不搞发展”：而是否定传统粗放破坏资源生态的粗放开发，走科技创新绿色循环低碳的高质量协同发展之路。\n② 水电站生态影响双重性：水库大坝能防洪蓄水、发电灌溉、改善航道，但也会阻隔洄游鱼类产卵繁殖路径、造成库区泥沙淤积下游冲刷，必须建设生态鱼道定期生态补水冲沙调度。",
     "visual_desc": "万里长江碧波画卷：从青藏高原唐古拉山冰川雪水起步，奔腾过白鹤滩水电站耸立的千米双曲拱坝，润泽三湘四水洞庭千重稻浪，最终在长江口浩浩荡荡涌入东海，一江清水生机盎然百舸争流。",
-    "video_url": "https://www.bilibili.com/video/BV1bE411T74W",
+    "video_url": "",
     "sort_order": 17
   },
   {
@@ -2791,7 +2791,7 @@
     "key_formulas": "$$\\text{粮食安全双支柱: 藏粮于地 (严守 18 亿亩耕地红线) } \\;\\land\\; \\text{藏粮于技 (育良种/建高标准农田)}$$\n$$\\text{双碳战略时间表: 2030 年前实现碳达峰 } \\longrightarrow \\text{ 2060 年前实现碳中和}$$\n$$\\text{领海管辖体系: 领海基线 } \\to \\text{ 领海 (12海里) } \\to \\text{ 毗连区 (24海里) } \\to \\text{ 专属经济区 (200海里)}$$",
     "tips": "① 专属经济区不等于领海：专属经济区内沿海国享有勘探、开发和管辖自然资源的排他性主权权利，但其他国家仍享有合法的航行与飞越自由；领海则享有完全排他的国家主权！\n② 解决我国能源危机的根本出路：开源（大力开发清洁风光核能）与节流（调整产业结构提高能效）并重，走绿色低碳转型新路。",
     "visual_desc": "蓝绿交织的美丽中国图景：腾格里沙漠浩瀚沙海铺满如镜的光伏蓝板矩阵，蔚蓝海湾巨型海上风电机组叶片破风转动；祖国广袤黑土地金灿灿麦浪翻滚，海防卫士守望祖国万里海疆蓝水深蓝。",
-    "video_url": "https://www.bilibili.com/video/BV1Es411f7R3",
+    "video_url": "",
     "sort_order": 18
   }
 ]
