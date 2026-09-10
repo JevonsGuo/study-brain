@@ -13,6 +13,11 @@ const router = createRouter({
       component: () => import('../views/Home/index.vue'),
     },
     {
+      path: '/study-plan',
+      name: 'StudyPlan',
+      component: () => import('../views/StudyPlan/index.vue'),
+    },
+    {
       path: '/subjects',
       name: 'SubjectHub',
       component: () => import('../views/SubjectHub/index.vue'),
@@ -21,11 +26,6 @@ const router = createRouter({
       path: '/subjects/:subject',
       name: 'SubjectWorkbench',
       component: () => import('../views/SubjectHub/index.vue'),
-    },
-    {
-      path: '/study-plan',
-      name: 'StudyPlan',
-      component: () => import('../views/StudyPlan/index.vue'),
     },
     {
       path: '/word-card',

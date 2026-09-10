@@ -8,6 +8,7 @@ import 'katex/dist/katex.min.css'
 import {
   SUBJECT_METAS,
   getTopicsForSubject,
+  getBooksForSubject,
   type GaokaoTopic
 } from '../../utils/gaokaoTopics'
 import { subjectEmojis } from '../../utils/subjects'
@@ -147,7 +148,9 @@ const masteredPointIds = ref<Set<number>>(new Set())
 const expandedPointIds = ref<Set<number>>(new Set())
 const expandedWrongOnPointIds = ref<Set<number>>(new Set())
 
+const filterDimension = ref<'topic' | 'book'>('topic')
 const activeTopicId = ref<string>('all')
+const activeBook = ref<string>('all')
 const topicFilterStatus = ref<'all' | 'starred' | 'mastered' | 'unmastered'>('all')
 const knowledgeSearchQuery = ref('')
 
@@ -188,6 +191,34 @@ const subjectTopics = computed<GaokaoTopic[]>(() => {
   return getTopicsForSubject(props.subject, points.value)
 })
 
+const topicPointCounts = computed(() => {
+  const counts: Record<string, number> = {}
+  for (const t of subjectTopics.value) {
+    counts[t.id] = points.value.filter(p => t.match(p)).length
+  }
+  return counts
+})
+
+const subjectBooks = computed(() => {
+  return getBooksForSubject(points.value)
+})
+
+const starredCount = computed(() => points.value.filter(p => starredPointIds.value.has(p.id)).length)
+const masteredCount = computed(() => points.value.filter(p => masteredPointIds.value.has(p.id)).length)
+const unmasteredCount = computed(() => points.value.filter(p => !masteredPointIds.value.has(p.id)).length)
+
+const areAllPointsExpanded = computed(() => {
+  return filteredPoints.value.length > 0 && filteredPoints.value.every(p => expandedPointIds.value.has(p.id))
+})
+
+const toggleExpandAll = () => {
+  if (areAllPointsExpanded.value) {
+    expandedPointIds.value = new Set()
+  } else {
+    expandedPointIds.value = new Set(points.value.map(p => p.id))
+  }
+}
+
 const activeTopicObj = computed(() => {
   if (activeTopicId.value === 'all') return null
   return subjectTopics.value.find(t => t.id === activeTopicId.value)
@@ -197,9 +228,15 @@ const activeTopicObj = computed(() => {
 const filteredPoints = computed(() => {
   let list = points.value
 
-  // 1. 专题过滤
-  if (activeTopicId.value !== 'all' && activeTopicObj.value) {
-    list = list.filter(p => activeTopicObj.value!.match(p))
+  // 1. 专题/分册维度过滤
+  if (filterDimension.value === 'topic') {
+    if (activeTopicId.value !== 'all' && activeTopicObj.value) {
+      list = list.filter(p => activeTopicObj.value!.match(p))
+    }
+  } else {
+    if (activeBook.value !== 'all') {
+      list = list.filter(p => p.book === activeBook.value)
+    }
   }
 
   // 2. 状态过滤
@@ -597,6 +634,8 @@ watch(
     wrongKpFilter.value = null
     knowledgeSearchQuery.value = ''
     activeTopicId.value = 'all'
+    activeBook.value = 'all'
+    filterDimension.value = 'topic'
   },
   { immediate: true }
 )
@@ -691,44 +730,128 @@ onMounted(() => {
     <!-- TAB 1: 核心考点重点库                                     -->
     <!-- ======================================================== -->
     <div v-if="activeTab === 'knowledge'" class="knowledge-tab-content" v-loading="loadingPoints">
-      <!-- 专题横向胶囊导航 -->
-      <div class="topics-filter-bar">
-        <div class="topics-pill-list">
-          <button
-            class="topic-pill"
-            :class="{ active: activeTopicId === 'all' }"
-            @click="activeTopicId = 'all'"
-          >
-            全部专题 ({{ points.length }})
-          </button>
-          <button
-            v-for="t in subjectTopics"
-            :key="t.id"
-            class="topic-pill"
-            :class="{ active: activeTopicId === t.id }"
-            @click="activeTopicId = t.id"
-          >
-            {{ t.name }}
-          </button>
+      <!-- 核心考点重点标签面板 (全量平铺展开，免去横向挪动，按严格序号排好) -->
+      <div class="topics-tags-panel">
+        <!-- 标签顶栏：维度切换与说明 -->
+        <div class="tag-panel-header">
+          <div class="header-left">
+            <span class="panel-icon">🏷️</span>
+            <span class="panel-title">核心考点标签筛选</span>
+            <span class="panel-hint">
+              共 {{ filterDimension === 'topic' ? subjectTopics.length : subjectBooks.length }} 个{{ filterDimension === 'topic' ? '核心专题' : '教材分册' }} · 全部平铺直接点击筛选
+            </span>
+          </div>
+
+          <div class="header-right">
+            <!-- 维度切换：高考核心专题 vs 官方教材分册 -->
+            <div class="dimension-switch">
+              <button
+                class="dim-btn"
+                :class="{ active: filterDimension === 'topic' }"
+                @click="filterDimension = 'topic'; activeBook = 'all'"
+              >
+                🎯 按高考专题
+              </button>
+              <button
+                class="dim-btn"
+                :class="{ active: filterDimension === 'book' }"
+                @click="filterDimension = 'book'; activeTopicId = 'all'"
+              >
+                📚 按教材分册
+              </button>
+            </div>
+
+            <!-- 显式重置按钮 -->
+            <button
+              v-if="activeTopicId !== 'all' || activeBook !== 'all' || topicFilterStatus !== 'all' || knowledgeSearchQuery"
+              class="reset-filter-btn"
+              @click="activeTopicId = 'all'; activeBook = 'all'; topicFilterStatus = 'all'; knowledgeSearchQuery = ''"
+            >
+              <el-icon><RefreshRight /></el-icon>
+              重置全部
+            </button>
+          </div>
         </div>
 
-        <!-- 考点状态与搜索 -->
-        <div class="point-controls">
-          <el-radio-group v-model="topicFilterStatus" size="small">
-            <el-radio-button value="all">全部</el-radio-button>
-            <el-radio-button value="starred">⭐️ 重点</el-radio-button>
-            <el-radio-button value="mastered">✅ 已掌握</el-radio-button>
-            <el-radio-button value="unmastered">🔴 待攻克</el-radio-button>
-          </el-radio-group>
+        <!-- 标签平铺流 (全部放出来，flex-wrap: wrap，按严格顺序排好) -->
+        <div class="tags-cloud-container">
+          <!-- 维度 1: 按高考核心专题 -->
+          <template v-if="filterDimension === 'topic'">
+            <button
+              class="topic-tag-pill all-pill"
+              :class="{ active: activeTopicId === 'all' }"
+              @click="activeTopicId = 'all'"
+            >
+              <span class="tag-icon">🌟</span>
+              <span class="tag-name">全部专题</span>
+              <span class="tag-count">{{ points.length }}</span>
+            </button>
 
-          <el-input
-            v-model="knowledgeSearchQuery"
-            placeholder="搜索考点/公式..."
-            size="small"
-            :prefix-icon="Search"
-            clearable
-            class="search-box"
-          />
+            <button
+              v-for="t in subjectTopics"
+              :key="t.id"
+              class="topic-tag-pill"
+              :class="{ active: activeTopicId === t.id }"
+              :style="activeTopicId === t.id ? { '--active-color': t.color } : {}"
+              @click="activeTopicId = t.id"
+            >
+              <span class="tag-icon">{{ t.icon }}</span>
+              <span class="tag-name">{{ t.shortName || t.name }}</span>
+              <span class="tag-count">{{ topicPointCounts[t.id] || 0 }}</span>
+            </button>
+          </template>
+
+          <!-- 维度 2: 按教材分册 -->
+          <template v-else>
+            <button
+              class="topic-tag-pill all-pill"
+              :class="{ active: activeBook === 'all' }"
+              @click="activeBook = 'all'"
+            >
+              <span class="tag-icon">🌟</span>
+              <span class="tag-name">全部分册</span>
+              <span class="tag-count">{{ points.length }}</span>
+            </button>
+
+            <button
+              v-for="b in subjectBooks"
+              :key="b.book"
+              class="topic-tag-pill"
+              :class="{ active: activeBook === b.book }"
+              @click="activeBook = b.book"
+            >
+              <span class="tag-icon">📘</span>
+              <span class="tag-name">{{ b.book }}</span>
+              <span class="tag-count">{{ b.count }}</span>
+            </button>
+          </template>
+        </div>
+
+        <!-- 底栏控制条：掌握状态过滤 + 快速搜索 + 展开/折叠 -->
+        <div class="tag-panel-footer">
+          <div class="footer-left">
+            <el-radio-group v-model="topicFilterStatus" size="small" class="status-radio-group">
+              <el-radio-button value="all">全部 ({{ points.length }})</el-radio-button>
+              <el-radio-button value="starred">⭐️ 重点 ({{ starredCount }})</el-radio-button>
+              <el-radio-button value="mastered">✅ 已掌握 ({{ masteredCount }})</el-radio-button>
+              <el-radio-button value="unmastered">🔴 待攻克 ({{ unmasteredCount }})</el-radio-button>
+            </el-radio-group>
+          </div>
+
+          <div class="footer-right">
+            <el-input
+              v-model="knowledgeSearchQuery"
+              placeholder="搜索考点/公式/关键词..."
+              size="small"
+              :prefix-icon="Search"
+              clearable
+              class="search-box"
+            />
+            <button class="expand-all-btn" @click="toggleExpandAll">
+              <el-icon><Reading /></el-icon>
+              {{ areAllPointsExpanded ? '折叠全部' : '展开全部' }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1460,58 +1583,212 @@ onMounted(() => {
   gap: 16px;
 }
 
-.topics-filter-bar {
+.topics-tags-panel {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 12px;
   background: var(--bg-card, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 12px;
-  padding: 10px 16px;
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.tag-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--border-color, #e2e8f0);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-.topics-pill-list {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 2px;
+.panel-icon {
+  font-size: 15px;
 }
 
-.topic-pill {
-  border: 1px solid var(--border-color, #e2e8f0);
-  background: transparent;
-  border-radius: 20px;
-  padding: 4px 12px;
+.panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.panel-hint {
   font-size: 12px;
   color: var(--text-muted, #64748b);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
 }
 
-.topic-pill:hover {
-  border-color: #3b82f6;
-  color: #2563eb;
-}
-
-.topic-pill.active {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
-  font-weight: 600;
-}
-
-.point-controls {
+.header-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+.dimension-switch {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.dim-btn {
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dim-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.reset-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #ea580c;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reset-filter-btn:hover {
+  background: #ffedd5;
+}
+
+.tags-cloud-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.topic-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-page, #f8fafc);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-regular, #334155);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.topic-tag-pill:hover {
+  border-color: #3b82f6;
+  color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12);
+}
+
+.topic-tag-pill.active {
+  background: var(--active-color, #2563eb);
+  border-color: var(--active-color, #2563eb);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+.topic-tag-pill.all-pill.active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.tag-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.tag-name {
+  font-size: 12px;
+}
+
+.tag-count {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-muted, #64748b);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.topic-tag-pill.active .tag-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.tag-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color, #e2e8f0);
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.expand-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.expand-all-btn:hover {
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
 .search-box {
-  width: 180px;
+  width: 190px;
 }
 
 .points-stream {
@@ -2151,7 +2428,7 @@ onMounted(() => {
 
 /* 暗色模式适配 */
 :global(.dark) .workbench-top-nav,
-:global(.dark) .topics-filter-bar,
+:global(.dark) .topics-tags-panel,
 :global(.dark) .knowledge-card,
 :global(.dark) .wrong-dashboard,
 :global(.dark) .wrong-toolbar,
@@ -2159,6 +2436,69 @@ onMounted(() => {
 :global(.dark) .wrong-card-header {
   background: #131b2e;
   border-color: #1e293b;
+}
+
+:global(.dark) .tag-panel-header,
+:global(.dark) .tag-panel-footer {
+  border-color: #1e293b;
+}
+
+:global(.dark) .panel-title {
+  color: #f8fafc;
+}
+
+:global(.dark) .dimension-switch {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .dim-btn.active {
+  background: #1e293b;
+  color: #60a5fa;
+}
+
+:global(.dark) .reset-filter-btn {
+  background: rgba(234, 88, 12, 0.15);
+  border-color: rgba(234, 88, 12, 0.3);
+  color: #fb923c;
+}
+
+:global(.dark) .topic-tag-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+:global(.dark) .topic-tag-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+:global(.dark) .topic-tag-pill.active {
+  background: var(--active-color, #3b82f6);
+  border-color: var(--active-color, #3b82f6);
+  color: #ffffff;
+}
+
+:global(.dark) .topic-tag-pill.all-pill.active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+:global(.dark) .tag-count {
+  background: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+:global(.dark) .expand-all-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+:global(.dark) .expand-all-btn:hover {
+  border-color: #3b82f6;
+  color: #60a5fa;
 }
 
 :global(.dark) .subject-title,

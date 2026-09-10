@@ -73,8 +73,10 @@ function syncKnowledge(db, items) {
   const get = db.prepare('SELECT * FROM knowledge_points WHERE subject = ? AND title = ?')
   const insert = db.prepare("INSERT INTO knowledge_points (subject, grade, book, chapter, title, content, key_formulas, tips, visual_desc, video_url, sort_order, origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'seed')")
   const update = db.prepare('UPDATE knowledge_points SET grade = ?, book = ?, chapter = ?, content = ?, key_formulas = ?, tips = ?, visual_desc = ?, video_url = ?, sort_order = ? WHERE id = ?')
-  const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0 }
+  const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0, deleted: 0 }
+  const currentKeys = new Set()
   for (const k of items) {
+    currentKeys.add(`${k.subject}:::${k.title}`)
     const grade = k.grade || ''
     const book = k.book || ''
     const chapter = k.chapter || ''
@@ -97,6 +99,20 @@ function syncKnowledge(db, items) {
       stats.updated++
     }
   }
+
+  // 清理 content/knowledge.json 中已删除且未被用户修改或错题关联的旧 seed 知识点
+  const allSeed = db.prepare("SELECT id, subject, title FROM knowledge_points WHERE origin = 'seed' AND user_modified = 0").all()
+  const deleteStmt = db.prepare('DELETE FROM knowledge_points WHERE id = ?')
+  const checkWrongRef = db.prepare('SELECT count(*) as count FROM wrong_items WHERE knowledge_point_id = ?')
+  for (const row of allSeed) {
+    if (!currentKeys.has(`${row.subject}:::${row.title}`)) {
+      const ref = checkWrongRef.get(row.id)
+      if (ref.count === 0) {
+        deleteStmt.run(row.id)
+        stats.deleted++
+      }
+    }
+  }
   return stats
 }
 
@@ -104,8 +120,10 @@ function syncResources(db, items) {
   const get = db.prepare('SELECT * FROM learning_resources WHERE subject = ? AND url = ?')
   const insert = db.prepare("INSERT INTO learning_resources (subject, category, name, desc, url, sort_order, origin) VALUES (?, ?, ?, ?, ?, ?, 'seed')")
   const update = db.prepare('UPDATE learning_resources SET category = ?, name = ?, desc = ?, sort_order = ? WHERE id = ?')
-  const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0 }
+  const stats = { total: items.length, inserted: 0, updated: 0, unchanged: 0, skippedUserModified: 0, deleted: 0 }
+  const currentKeys = new Set()
   for (const r of items) {
+    currentKeys.add(`${r.subject || ''}:::${r.url}`)
     const category = r.category || 'video'
     const name = r.name || ''
     const desc = r.desc || ''
@@ -121,6 +139,16 @@ function syncResources(db, items) {
     } else {
       update.run(category, name, desc, sortOrder, row.id)
       stats.updated++
+    }
+  }
+
+  // 清理 content/learning-resources.json 中已删除且未被用户修改的旧 seed 资源
+  const allSeed = db.prepare("SELECT id, subject, url FROM learning_resources WHERE origin = 'seed' AND user_modified = 0").all()
+  const deleteStmt = db.prepare('DELETE FROM learning_resources WHERE id = ?')
+  for (const row of allSeed) {
+    if (!currentKeys.has(`${row.subject}:::${row.url}`)) {
+      deleteStmt.run(row.id)
+      stats.deleted++
     }
   }
   return stats
@@ -167,7 +195,8 @@ for (const c of contents) {
     continue
   }
   const stats = db.transaction(() => c.sync(db, items))()
-  console.log(`[sync] ${c.label}: 共 ${stats.total} | 新增 ${stats.inserted} | 更新 ${stats.updated} | 无变化 ${stats.unchanged} | 跳过用户修改 ${stats.skippedUserModified}`)
+  const deletedMsg = stats.deleted ? ` | 清理废弃种子 ${stats.deleted}` : ''
+  console.log(`[sync] ${c.label}: 共 ${stats.total} | 新增 ${stats.inserted} | 更新 ${stats.updated} | 无变化 ${stats.unchanged} | 跳过用户修改 ${stats.skippedUserModified}${deletedMsg}`)
 }
 
 if (failed) process.exit(1)

@@ -68,8 +68,8 @@ const activeMenu = computed(() => {
 
 const menuItems = [
   { index: '/home', icon: 'HomeFilled', title: '首页' },
-  { index: '/subjects', icon: 'Reading', title: '学科中心' },
   { index: '/study-plan', icon: 'Calendar', title: '学习计划' },
+  { index: '/subjects', icon: 'Reading', title: '学科中心' },
   { index: '/word-card', icon: 'Postcard', title: '单词卡' },
   { index: '/grade-tracker', icon: 'TrendCharts', title: '成绩追踪' },
   { index: '/timer', icon: 'Timer', title: '番茄钟' },
