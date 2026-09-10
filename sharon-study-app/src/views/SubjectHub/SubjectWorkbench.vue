@@ -33,7 +33,10 @@ import {
   FolderOpened,
   Folder,
   Right,
-  TopRight
+  TopRight,
+  Tools,
+  CopyDocument,
+  FullScreen
 } from '@element-plus/icons-vue'
 import { getVideoHubInfo, type VideoHubInfo } from '../../utils/videoSources'
 
@@ -47,18 +50,18 @@ const router = useRouter()
 // -------------------------------------------------------------
 // 1. 工作台 Tab 切换管理 (核心考点库 vs 错题靶向本)
 // -------------------------------------------------------------
-const activeTab = ref<'knowledge' | 'wrong-book'>('knowledge')
+const activeTab = ref<'knowledge' | 'wrong-book' | 'resources'>('knowledge')
 
 const syncTabFromRoute = () => {
   const queryTab = route.query.tab as string
-  if (queryTab === 'wrong-book' || queryTab === 'knowledge') {
+  if (queryTab === 'wrong-book' || queryTab === 'knowledge' || queryTab === 'resources') {
     activeTab.value = queryTab
   } else {
     activeTab.value = 'knowledge'
   }
 }
 
-const switchTab = (tab: 'knowledge' | 'wrong-book') => {
+const switchTab = (tab: 'knowledge' | 'wrong-book' | 'resources') => {
   activeTab.value = tab
   router.replace({
     query: {
@@ -641,6 +644,159 @@ const appendReason = (tag: string) => {
   }
 }
 
+// -------------------------------------------------------------
+// 5. 学科工具箱与学习资源管理 (Tab 3)
+// -------------------------------------------------------------
+const resourceCategoryFilter = ref<'all' | 'tool' | 'practice' | 'video'>('all')
+const resourceSearchQuery = ref('')
+
+const resourceCategoryCounts = computed(() => {
+  const counts = { all: resources.value.length, tool: 0, practice: 0, video: 0 }
+  for (const r of resources.value) {
+    if (r.category === 'tool') counts.tool++
+    else if (r.category === 'practice') counts.practice++
+    else if (r.category === 'video') counts.video++
+  }
+  return counts
+})
+
+const filteredResources = computed(() => {
+  let list = resources.value
+  if (resourceCategoryFilter.value !== 'all') {
+    list = list.filter(r => r.category === resourceCategoryFilter.value)
+  }
+  if (resourceSearchQuery.value.trim()) {
+    const q = resourceSearchQuery.value.trim().toLowerCase()
+    list = list.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      (r.desc && r.desc.toLowerCase().includes(q)) ||
+      r.url.toLowerCase().includes(q)
+    )
+  }
+  return list
+})
+
+const getResourceDomain = (urlStr: string) => {
+  try {
+    const u = new URL(urlStr)
+    return u.hostname.replace(/^www\./, '')
+  } catch {
+    return ''
+  }
+}
+
+const getCategoryMeta = (cat: string) => {
+  switch (cat) {
+    case 'tool':
+      return { label: '专属神器', icon: '🧰', badgeClass: 'tool-badge' }
+    case 'practice':
+      return { label: '权威题库', icon: '📝', badgeClass: 'practice-badge' }
+    case 'video':
+      return { label: '精选微课', icon: '🎬', badgeClass: 'video-badge' }
+    default:
+      return { label: '学习资源', icon: '🔗', badgeClass: 'default-badge' }
+  }
+}
+
+const copyResourceUrl = async (url: string) => {
+  try {
+    await navigator.clipboard.writeText(url)
+    ElMessage.success('已复制资源链接到剪贴板')
+  } catch {
+    ElMessage.error('复制失败，请手动复制')
+  }
+}
+
+// 在线内嵌试用 / 预览模态框
+const previewModalVisible = ref(false)
+const previewResource = ref<LearningResource | null>(null)
+
+const isEmbedFriendly = (url: string) => {
+  return /desmos\.com|geogebra\.org|ptable\.com|falstad\.com|molview\.org|nullschool\.net|stellarium-web\.org|worldmapper\.org|biodigital\.com/i.test(url)
+}
+
+const getEmbedUrl = (res: LearningResource) => {
+  if (res.url.includes('geogebra.org/calculator')) {
+    return 'https://www.geogebra.org/calculator'
+  }
+  return res.url
+}
+
+const openResourcePreview = (r: LearningResource) => {
+  previewResource.value = r
+  previewModalVisible.value = true
+}
+
+// 添加/编辑资源弹窗
+const resourceDialogVisible = ref(false)
+const resourceForm = ref({
+  id: null as number | null,
+  subject: props.subject,
+  category: 'tool' as 'tool' | 'practice' | 'video',
+  name: '',
+  desc: '',
+  url: '',
+  sort_order: 10
+})
+
+const openAddResourceDialog = () => {
+  resourceForm.value = {
+    id: null,
+    subject: props.subject,
+    category: 'tool',
+    name: '',
+    desc: '',
+    url: '',
+    sort_order: resources.value.length + 1
+  }
+  resourceDialogVisible.value = true
+}
+
+const openEditResourceDialog = (r: LearningResource) => {
+  resourceForm.value = {
+    id: r.id,
+    subject: r.subject,
+    category: (r.category as any) || 'tool',
+    name: r.name,
+    desc: r.desc || '',
+    url: r.url,
+    sort_order: r.sort_order || 0
+  }
+  resourceDialogVisible.value = true
+}
+
+const saveResource = async () => {
+  if (!resourceForm.value.name.trim() || !resourceForm.value.url.trim()) {
+    ElMessage.warning('请填写资源名称和链接地址')
+    return
+  }
+  try {
+    if (resourceForm.value.id) {
+      await api.put(`/learning-resources/${resourceForm.value.id}`, resourceForm.value)
+      ElMessage.success('已更新学习资源')
+    } else {
+      await api.post('/learning-resources', resourceForm.value)
+      ElMessage.success('已成功添加学习资源')
+    }
+    resourceDialogVisible.value = false
+    await loadAllData()
+  } catch (err) {
+    console.error('Failed to save resource', err)
+    ElMessage.error('保存学习资源失败')
+  }
+}
+
+const removeResource = async (r: LearningResource) => {
+  try {
+    await ElMessageBox.confirm(`确定要删除资源「${r.name}」吗？`, '删除确认', { type: 'warning' })
+    await api.del(`/learning-resources/${r.id}`)
+    ElMessage.success('已删除资源')
+    await loadAllData()
+  } catch {
+    // cancelled
+  }
+}
+
 // 切换学科时自动重载
 watch(
   () => props.subject,
@@ -654,6 +810,8 @@ watch(
     activeTopicId.value = 'all'
     activeBook.value = 'all'
     filterDimension.value = 'topic'
+    resourceCategoryFilter.value = 'all'
+    resourceSearchQuery.value = ''
   },
   { immediate: true }
 )
@@ -710,6 +868,15 @@ onMounted(() => {
             <el-icon><Notebook /></el-icon>
             <span>错题靶向本 ({{ wrongItems.length }})</span>
           </button>
+          <button
+            type="button"
+            class="seg-tab-btn"
+            :class="{ active: activeTab === 'resources' }"
+            @click="switchTab('resources')"
+          >
+            <el-icon><Tools /></el-icon>
+            <span>学科工具箱 ({{ resources.length }})</span>
+          </button>
         </div>
 
         <!-- 快速录入操作 -->
@@ -724,7 +891,7 @@ onMounted(() => {
           录入错题
         </el-button>
         <el-button
-          v-else
+          v-else-if="activeTab === 'knowledge'"
           type="primary"
           size="default"
           :icon="Plus"
@@ -732,6 +899,16 @@ onMounted(() => {
           @click="openAddPoint()"
         >
           添加考点
+        </el-button>
+        <el-button
+          v-else
+          type="primary"
+          size="default"
+          :icon="Plus"
+          class="record-btn"
+          @click="openAddResourceDialog()"
+        >
+          推荐自选资源
         </el-button>
 
         <el-button
@@ -1048,7 +1225,7 @@ onMounted(() => {
     <!-- ======================================================== -->
     <!-- TAB 2: 错题靶向本                                         -->
     <!-- ======================================================== -->
-    <div v-else class="wrong-tab-content" v-loading="loadingWrong">
+    <div v-else-if="activeTab === 'wrong-book'" class="wrong-tab-content" v-loading="loadingWrong">
       <!-- 顶部战况卡片 -->
       <div class="wrong-dashboard">
         <div class="stat-capsules">
@@ -1272,6 +1449,138 @@ onMounted(() => {
 
         <div v-if="filteredWrongItems.length === 0" class="empty-wrong">
           <span>暂无符合条件的错题记录</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: 学科工具箱与学习资源                               -->
+    <!-- ======================================================== -->
+    <div v-else-if="activeTab === 'resources'" class="resources-tab-content">
+      <!-- 冻结顶栏：分类筛选 + 快速搜索 + 推荐添加 -->
+      <div class="resource-toolbar">
+        <div class="toolbar-left">
+          <el-radio-group v-model="resourceCategoryFilter" size="default" class="category-radio-group">
+            <el-radio-button value="all">
+              🌟 全部神器 ({{ resourceCategoryCounts.all }})
+            </el-radio-button>
+            <el-radio-button value="tool">
+              🧰 专属神器 ({{ resourceCategoryCounts.tool }})
+            </el-radio-button>
+            <el-radio-button value="practice">
+              📝 权威题库 ({{ resourceCategoryCounts.practice }})
+            </el-radio-button>
+            <el-radio-button value="video">
+              🎬 精选微课 ({{ resourceCategoryCounts.video }})
+            </el-radio-button>
+          </el-radio-group>
+        </div>
+
+        <div class="toolbar-right">
+          <el-input
+            v-model="resourceSearchQuery"
+            placeholder="搜索工具、题库或资源关键词..."
+            size="default"
+            :prefix-icon="Search"
+            clearable
+            class="resource-search-input"
+          />
+          <el-button
+            type="primary"
+            plain
+            size="default"
+            :icon="Plus"
+            @click="openAddResourceDialog"
+          >
+            添加自选资源
+          </el-button>
+        </div>
+      </div>
+
+      <!-- 可滚动卡片流网格 (垂直滚动，顶栏完全冻结) -->
+      <div class="resource-grid-wrapper">
+        <div v-if="filteredResources.length > 0" class="resource-cards-grid">
+          <div
+            v-for="res in filteredResources"
+            :key="res.id"
+            class="resource-card"
+            :class="`category-${res.category}`"
+          >
+            <!-- 卡片顶栏：分类徽章 + 来源域名 + 操作按钮 -->
+            <div class="res-card-header">
+              <div class="res-header-left">
+                <span class="res-category-badge" :class="getCategoryMeta(res.category).badgeClass">
+                  {{ getCategoryMeta(res.category).icon }} {{ getCategoryMeta(res.category).label }}
+                </span>
+                <span v-if="getResourceDomain(res.url)" class="res-domain-chip" :title="res.url">
+                  {{ getResourceDomain(res.url) }}
+                </span>
+              </div>
+              <div class="res-header-right">
+                <button
+                  class="res-icon-btn"
+                  @click="copyResourceUrl(res.url)"
+                  title="复制链接地址"
+                >
+                  <el-icon><CopyDocument /></el-icon>
+                </button>
+                <button
+                  class="res-icon-btn"
+                  @click="openEditResourceDialog(res)"
+                  title="编辑"
+                >
+                  <el-icon><Edit /></el-icon>
+                </button>
+                <button
+                  class="res-icon-btn delete-btn"
+                  @click="removeResource(res)"
+                  title="删除"
+                >
+                  <el-icon><Delete /></el-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- 卡片主体：资源名称 + 描述 -->
+            <div class="res-card-body">
+              <h3 class="res-title" :title="res.name">{{ res.name }}</h3>
+              <p class="res-desc">{{ res.desc || '为高中学生打造的学科辅助精品资源与实用在线工具。' }}</p>
+            </div>
+
+            <!-- 卡片底栏：操作按钮组 -->
+            <div class="res-card-footer">
+              <!-- 在线嵌入试用 (若是交互工具) -->
+              <button
+                v-if="isEmbedFriendly(res.url)"
+                class="res-btn-embed"
+                @click="openResourcePreview(res)"
+                title="在当前页面直接内嵌试用"
+              >
+                <el-icon><FullScreen /></el-icon>
+                <span>在线试用</span>
+              </button>
+
+              <!-- 原站新窗口直达 -->
+              <a
+                :href="res.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="res-btn-direct"
+                :title="`新窗口打开 ${res.name}`"
+              >
+                <span>🚀 原站直达</span>
+                <el-icon><TopRight /></el-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="resource-empty">
+          <div class="empty-icon">🧰</div>
+          <p class="empty-text">未找到符合条件的学习资源或神器</p>
+          <el-button type="primary" plain @click="resourceSearchQuery = ''; resourceCategoryFilter = 'all'">
+            清空筛选
+          </el-button>
         </div>
       </div>
     </div>
@@ -1629,6 +1938,89 @@ onMounted(() => {
       <template #footer>
         <el-button @click="pointDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="savePoint">保存考点</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 6. 在线神器内嵌试用弹窗 -->
+    <el-dialog
+      v-model="previewModalVisible"
+      width="90vw"
+      top="4vh"
+      destroy-on-close
+      class="tool-preview-dialog"
+      :show-close="true"
+    >
+      <template #header>
+        <div class="tool-preview-header" v-if="previewResource">
+          <div class="tool-preview-title-row">
+            <span class="tool-preview-icon">💻</span>
+            <span class="tool-preview-title">{{ previewResource.name }}</span>
+            <span class="res-domain-chip">{{ getResourceDomain(previewResource.url) }}</span>
+          </div>
+          <div class="tool-preview-actions">
+            <a
+              :href="previewResource.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="open-external-link"
+            >
+              <span>新窗口全屏打开</span>
+              <el-icon><TopRight /></el-icon>
+            </a>
+          </div>
+        </div>
+      </template>
+
+      <div class="tool-preview-container" v-if="previewResource">
+        <div class="tool-preview-hint-bar">
+          <span>💡 提示：若部分原站因跨域安全策略阻止内嵌显示，请点击右上角「新窗口全屏打开」直接使用官方完整功能。</span>
+        </div>
+        <iframe
+          :src="getEmbedUrl(previewResource)"
+          class="tool-iframe"
+          frameborder="0"
+          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+          sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+        ></iframe>
+      </div>
+    </el-dialog>
+
+    <!-- 7. 添加/编辑学习资源弹窗 -->
+    <el-dialog
+      v-model="resourceDialogVisible"
+      :title="resourceForm.id ? '编辑学习资源' : '添加自选学习资源'"
+      width="540px"
+      destroy-on-close
+    >
+      <el-form label-position="top">
+        <el-form-item label="所属学科">
+          <el-input :model-value="props.subject" disabled />
+        </el-form-item>
+        <el-form-item label="资源类型" required>
+          <el-radio-group v-model="resourceForm.category">
+            <el-radio value="tool">🧰 专属神器 (交互工具/沙盒)</el-radio>
+            <el-radio value="practice">📝 权威题库 (组卷/模拟卷)</el-radio>
+            <el-radio value="video">🎬 精选微课 (优质公开课)</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="资源名称" required>
+          <el-input v-model="resourceForm.name" placeholder="例如：GeoGebra 动态几何、PhET 物理仿真..." />
+        </el-form-item>
+        <el-form-item label="链接地址 (URL)" required>
+          <el-input v-model="resourceForm.url" placeholder="https://..." />
+        </el-form-item>
+        <el-form-item label="核心特色 / 使用说明">
+          <el-input
+            v-model="resourceForm.desc"
+            type="textarea"
+            :rows="3"
+            placeholder="简述该工具如何帮助高考学习，如：动态函数图像分析、历年真题精准组卷..."
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="resourceDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveResource">保存资源</el-button>
       </template>
     </el-dialog>
   </div>
@@ -3082,5 +3474,401 @@ onMounted(() => {
 
 :global(.dark) .wrong-question-snippet {
   color: #e2e8f0;
+}
+
+/* ========================================================= */
+/* TAB 3: 学科工具箱与学习资源                               */
+/* ========================================================= */
+.resources-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.resource-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.category-radio-group :deep(.el-radio-button__inner) {
+  font-weight: 600;
+  padding: 8px 16px;
+}
+
+.resource-search-input {
+  width: 260px;
+}
+
+.resource-grid-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.resource-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+.resource-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.resource-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.resource-card.category-tool::before {
+  background: linear-gradient(90deg, #10b981, #06b6d4);
+}
+
+.resource-card.category-practice::before {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+}
+
+.resource-card.category-video::before {
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  border-color: #93c5fd;
+}
+
+.res-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.res-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.res-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.tool-badge {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.practice-badge {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.video-badge {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.default-badge {
+  background: rgba(100, 116, 139, 0.1);
+  color: #475569;
+  border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.res-domain-chip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 2px 7px;
+  border-radius: 5px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.res-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.res-icon-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.res-icon-btn:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.res-icon-btn.delete-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.res-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.res-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  line-height: 1.4;
+}
+
+.res-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted, #64748b);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.res-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #f1f5f9);
+}
+
+.res-btn-direct {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s;
+}
+
+.res-btn-direct:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+.res-btn-embed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.res-btn-embed:hover {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: #059669;
+  transform: translateY(-1px);
+}
+
+.resource-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 0;
+  background: var(--bg-card, #ffffff);
+  border: 1px dashed var(--border-color, #cbd5e1);
+  border-radius: 16px;
+}
+
+.empty-icon {
+  font-size: 40px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+}
+
+/* 在线内嵌试用弹窗 */
+.tool-preview-dialog :deep(.el-dialog__body) {
+  padding: 0;
+  height: 82vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tool-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 32px;
+}
+
+.tool-preview-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-preview-icon {
+  font-size: 18px;
+}
+
+.tool-preview-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.open-external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(37, 99, 235, 0.08);
+  transition: all 0.2s;
+}
+
+.open-external-link:hover {
+  background: rgba(37, 99, 235, 0.16);
+}
+
+.tool-preview-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.tool-preview-hint-bar {
+  padding: 8px 16px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 500;
+  border-bottom: 1px solid #fde68a;
+  flex-shrink: 0;
+}
+
+.tool-iframe {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+/* 深色模式适配 */
+:global(.dark) .resource-toolbar {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+:global(.dark) .resource-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+:global(.dark) .resource-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark) .res-title {
+  color: #f8fafc;
+}
+
+:global(.dark) .res-domain-chip {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+:global(.dark) .res-card-footer {
+  border-top-color: #1f2937;
+}
+
+:global(.dark) .resource-empty {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+:global(.dark) .tool-preview-hint-bar {
+  background: #78350f;
+  color: #fde68a;
+  border-bottom-color: #92400e;
 }
 </style>
