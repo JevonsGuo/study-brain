@@ -35,7 +35,7 @@ const openPinPrompt = async () => {
   }
 }
 
-const THEME_KEY = 'sharon_study_theme'
+const THEME_KEY = 'study_theme'
 
 watch(() => timerStore.showCompletionModal, (show) => {
   if (show && route.path !== '/timer') {
@@ -61,7 +61,7 @@ onMounted(() => {
   if (queryTheme) {
     isDark.value = queryTheme === 'dark'
   } else {
-    const savedTheme = localStorage.getItem(THEME_KEY)
+    const savedTheme = localStorage.getItem(THEME_KEY) || localStorage.getItem('sharon_study_theme')
     if (savedTheme) {
       isDark.value = savedTheme === 'dark'
     } else {

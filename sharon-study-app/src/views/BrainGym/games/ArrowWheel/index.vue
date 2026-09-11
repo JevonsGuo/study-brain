@@ -46,10 +46,10 @@ const isGameOver = ref(false)
 const isLevelCleared = ref(false)
 const isShaking = ref(false)
 
-const BEST_LEVEL_KEY = 'sharon_arrow_best_level'
+const BEST_LEVEL_KEY = 'study_arrow_best_level'
 
 const loadBestLevel = () => {
-  const saved = localStorage.getItem(BEST_LEVEL_KEY)
+  const saved = localStorage.getItem(BEST_LEVEL_KEY) || localStorage.getItem('sharon_arrow_best_level')
   bestLevel.value = saved ? Number(saved) : 1
 }
 

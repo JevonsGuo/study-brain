@@ -166,9 +166,9 @@ const knowledgeSearchQuery = ref('')
 
 const loadLocalStatuses = () => {
   try {
-    const rawStarred = localStorage.getItem('sharon_starred_points')
+    const rawStarred = localStorage.getItem('study_starred_points') || localStorage.getItem('sharon_starred_points')
     if (rawStarred) starredPointIds.value = new Set(JSON.parse(rawStarred))
-    const rawMastered = localStorage.getItem('sharon_mastered_points')
+    const rawMastered = localStorage.getItem('study_mastered_points') || localStorage.getItem('sharon_mastered_points')
     if (rawMastered) masteredPointIds.value = new Set(JSON.parse(rawMastered))
   } catch (e) {
     console.error('Failed to load local statuses', e)
@@ -178,13 +178,13 @@ const loadLocalStatuses = () => {
 const toggleStar = (id: number) => {
   if (starredPointIds.value.has(id)) starredPointIds.value.delete(id)
   else starredPointIds.value.add(id)
-  localStorage.setItem('sharon_starred_points', JSON.stringify(Array.from(starredPointIds.value)))
+  localStorage.setItem('study_starred_points', JSON.stringify(Array.from(starredPointIds.value)))
 }
 
 const toggleMastered = (id: number) => {
   if (masteredPointIds.value.has(id)) masteredPointIds.value.delete(id)
   else masteredPointIds.value.add(id)
-  localStorage.setItem('sharon_mastered_points', JSON.stringify(Array.from(masteredPointIds.value)))
+  localStorage.setItem('study_mastered_points', JSON.stringify(Array.from(masteredPointIds.value)))
 }
 
 const togglePointExpand = (id: number) => {

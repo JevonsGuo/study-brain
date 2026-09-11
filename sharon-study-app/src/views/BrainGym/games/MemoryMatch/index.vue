@@ -73,11 +73,11 @@ const matchedPairsCount = computed(() => {
 })
 
 // 最佳记录持久化（综合以最少步数与最少时间评价）
-const bestRecordKey = computed(() => `sharon_memory_best_${currentLevel.value.key}`)
+const bestRecordKey = computed(() => `study_memory_best_${currentLevel.value.key}`)
 const bestRecord = ref<{ moves: number; timeMs: number } | null>(null)
 
 const loadBestRecord = () => {
-  const saved = localStorage.getItem(bestRecordKey.value)
+  const saved = localStorage.getItem(bestRecordKey.value) || localStorage.getItem(`sharon_memory_best_${currentLevel.value.key}`)
   if (saved) {
     try {
       bestRecord.value = JSON.parse(saved)

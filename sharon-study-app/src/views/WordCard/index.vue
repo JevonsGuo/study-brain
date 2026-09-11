@@ -91,7 +91,7 @@ const studyMode = ref<'all' | 'due'>('due')
 
 const currentIndex = ref(0)
 const flipped = ref(false)
-const savedShuffle = typeof localStorage !== 'undefined' ? localStorage.getItem('sharon_word_shuffle') : null
+const savedShuffle = typeof localStorage !== 'undefined' ? (localStorage.getItem('study_word_shuffle') || localStorage.getItem('sharon_word_shuffle')) : null
 const shuffled = ref(savedShuffle === null ? true : savedShuffle === '1')
 const autoPlayAudio = ref(true)
 const preferredAccent = ref<'us' | 'uk'>('us') // us: 美音, uk: 英音
@@ -480,7 +480,7 @@ const shuffleWords = () => {
 const toggleShuffle = () => {
   shuffled.value = !shuffled.value
   if (typeof localStorage !== 'undefined') {
-    localStorage.setItem('sharon_word_shuffle', shuffled.value ? '1' : '0')
+    localStorage.setItem('study_word_shuffle', shuffled.value ? '1' : '0')
   }
   fetchWords()
 }

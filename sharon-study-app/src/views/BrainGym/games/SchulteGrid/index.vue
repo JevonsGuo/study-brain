@@ -39,11 +39,11 @@ let timerInterval: ReturnType<typeof setInterval> | null = null
 const totalCount = computed(() => currentSize.value * currentSize.value)
 
 // 最佳纪录（按模式存储于 localStorage）
-const bestRecordKey = computed(() => `sharon_schulte_best_${currentSize.value}x${currentSize.value}`)
+const bestRecordKey = computed(() => `study_schulte_best_${currentSize.value}x${currentSize.value}`)
 const bestTimeMs = ref<number | null>(null)
 
 const loadBestRecord = () => {
-  const saved = localStorage.getItem(bestRecordKey.value)
+  const saved = localStorage.getItem(bestRecordKey.value) || localStorage.getItem(`sharon_schulte_best_${currentSize.value}x${currentSize.value}`)
   bestTimeMs.value = saved ? Number(saved) : null
 }
 

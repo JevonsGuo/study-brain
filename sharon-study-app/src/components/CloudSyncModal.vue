@@ -17,14 +17,14 @@ const isTesting = ref(false)
 const isBackingUp = ref(false)
 const lastSyncTime = ref('')
 
-const STORAGE_EMAIL_KEY = 'sharon_nutstore_email'
-const STORAGE_PWD_KEY = 'sharon_nutstore_pwd'
-const STORAGE_SYNC_KEY = 'sharon_nutstore_last_sync'
+const STORAGE_EMAIL_KEY = 'study_nutstore_email'
+const STORAGE_PWD_KEY = 'study_nutstore_pwd'
+const STORAGE_SYNC_KEY = 'study_nutstore_last_sync'
 
 onMounted(() => {
-  nutstoreEmail.value = localStorage.getItem(STORAGE_EMAIL_KEY) || ''
-  nutstorePassword.value = localStorage.getItem(STORAGE_PWD_KEY) || ''
-  lastSyncTime.value = localStorage.getItem(STORAGE_SYNC_KEY) || ''
+  nutstoreEmail.value = localStorage.getItem(STORAGE_EMAIL_KEY) || localStorage.getItem('sharon_nutstore_email') || ''
+  nutstorePassword.value = localStorage.getItem(STORAGE_PWD_KEY) || localStorage.getItem('sharon_nutstore_pwd') || ''
+  lastSyncTime.value = localStorage.getItem(STORAGE_SYNC_KEY) || localStorage.getItem('sharon_nutstore_last_sync') || ''
 })
 
 const saveNutstoreConfig = () => {
@@ -95,10 +95,10 @@ const exportLocalBackup = () => {
   // 收集用户所有重要学习状态打包
   const exportPayload = {
     exported_at: new Date().toISOString(),
-    version: localStorage.getItem('sharon_database_version') || '20260911-001',
-    starred_points: JSON.parse(localStorage.getItem('sharon_starred_points') || '[]'),
-    mastered_points: JSON.parse(localStorage.getItem('sharon_mastered_points') || '[]'),
-    theme: localStorage.getItem('sharon_study_theme') || 'light'
+    version: localStorage.getItem('study_database_version') || localStorage.getItem('sharon_database_version') || '20260911-001',
+    starred_points: JSON.parse(localStorage.getItem('study_starred_points') || localStorage.getItem('sharon_starred_points') || '[]'),
+    mastered_points: JSON.parse(localStorage.getItem('study_mastered_points') || localStorage.getItem('sharon_mastered_points') || '[]'),
+    theme: localStorage.getItem('study_theme') || localStorage.getItem('sharon_study_theme') || 'light'
   }
 
   const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' })

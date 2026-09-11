@@ -72,12 +72,12 @@ const remainingMines = computed(() => {
 })
 
 // 最佳用时持久化
-const bestTimeKey = computed(() => `sharon_minesweeper_best_${currentLevel.value.key}`)
+const bestTimeKey = computed(() => `study_minesweeper_best_${currentLevel.value.key}`)
 const bestTimeMs = ref<number | null>(null)
 const isNewRecord = ref(false)
 
 const loadBestRecord = () => {
-  const saved = localStorage.getItem(bestTimeKey.value)
+  const saved = localStorage.getItem(bestTimeKey.value) || localStorage.getItem(`sharon_minesweeper_best_${currentLevel.value.key}`)
   if (saved) {
     bestTimeMs.value = Number(saved)
   } else {

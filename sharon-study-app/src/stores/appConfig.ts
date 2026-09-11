@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { api } from '../utils/api'
 import { ElMessage } from 'element-plus'
 
-const DB_VERSION_KEY = 'sharon_database_version'
+const DB_VERSION_KEY = 'study_database_version'
 
 export interface VersionMeta {
   database_version: string
@@ -18,7 +18,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   const isMaintenanceMode = ref(false)
 
   const initLocalVersion = () => {
-    const saved = localStorage.getItem(DB_VERSION_KEY)
+    const saved = localStorage.getItem(DB_VERSION_KEY) || localStorage.getItem('sharon_database_version')
     if (saved) {
       currentDbVersion.value = saved
     }

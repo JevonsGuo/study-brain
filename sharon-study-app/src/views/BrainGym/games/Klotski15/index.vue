@@ -29,11 +29,11 @@ let timerInterval: ReturnType<typeof setInterval> | null = null
 const totalTiles = computed(() => currentSize.value * currentSize.value)
 
 // 最佳记录：步数与时间
-const bestRecordKey = computed(() => `sharon_klotski_best_${currentSize.value}x${currentSize.value}`)
+const bestRecordKey = computed(() => `study_klotski_best_${currentSize.value}x${currentSize.value}`)
 const bestRecord = ref<{ moves: number; timeMs: number } | null>(null)
 
 const loadBestRecord = () => {
-  const saved = localStorage.getItem(bestRecordKey.value)
+  const saved = localStorage.getItem(bestRecordKey.value) || localStorage.getItem(`sharon_klotski_best_${currentSize.value}x${currentSize.value}`)
   if (saved) {
     try {
       bestRecord.value = JSON.parse(saved)

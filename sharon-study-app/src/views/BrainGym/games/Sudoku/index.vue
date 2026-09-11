@@ -127,11 +127,11 @@ const elapsedTime = ref(0)
 let timerInterval: ReturnType<typeof setInterval> | null = null
 
 // 加载历史最佳记录
-const bestRecordKey = computed(() => `sharon_sudoku_best_${currentMode.value}`)
+const bestRecordKey = computed(() => `study_sudoku_best_${currentMode.value}`)
 const bestTimeMs = ref<number | null>(null)
 
 const loadBestRecord = () => {
-  const saved = localStorage.getItem(bestRecordKey.value)
+  const saved = localStorage.getItem(bestRecordKey.value) || localStorage.getItem(`sharon_sudoku_best_${currentMode.value}`)
   bestTimeMs.value = saved ? Number(saved) : null
 }
 

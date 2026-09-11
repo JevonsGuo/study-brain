@@ -116,11 +116,11 @@ const currentVideoEmbedUrl = ref('')
 // 本地持久化：标星与掌握状态
 const loadPersistedStatuses = () => {
   try {
-    const rawStarred = localStorage.getItem('sharon_starred_points')
+    const rawStarred = localStorage.getItem('study_starred_points') || localStorage.getItem('sharon_starred_points')
     if (rawStarred) {
       starredPointIds.value = new Set(JSON.parse(rawStarred))
     }
-    const rawMastered = localStorage.getItem('sharon_mastered_points')
+    const rawMastered = localStorage.getItem('study_mastered_points') || localStorage.getItem('sharon_mastered_points')
     if (rawMastered) {
       masteredPointIds.value = new Set(JSON.parse(rawMastered))
     }
@@ -135,7 +135,7 @@ const toggleStar = (id: number) => {
   } else {
     starredPointIds.value.add(id)
   }
-  localStorage.setItem('sharon_starred_points', JSON.stringify(Array.from(starredPointIds.value)))
+  localStorage.setItem('study_starred_points', JSON.stringify(Array.from(starredPointIds.value)))
 }
 
 const toggleMastered = (id: number) => {
@@ -144,7 +144,7 @@ const toggleMastered = (id: number) => {
   } else {
     masteredPointIds.value.add(id)
   }
-  localStorage.setItem('sharon_mastered_points', JSON.stringify(Array.from(masteredPointIds.value)))
+  localStorage.setItem('study_mastered_points', JSON.stringify(Array.from(masteredPointIds.value)))
 }
 
 // -------------------------------------------------------------

@@ -58,11 +58,11 @@ const shakingPeg = ref<number | null>(null)
 let timerInterval: ReturnType<typeof setInterval> | null = null
 
 // 最佳记录持久化
-const bestRecordKey = computed(() => `sharon_hanoi_best_${currentLevel.value.key}`)
+const bestRecordKey = computed(() => `study_hanoi_best_${currentLevel.value.key}`)
 const bestRecord = ref<{ moves: number; timeMs: number } | null>(null)
 
 const loadBestRecord = () => {
-  const saved = localStorage.getItem(bestRecordKey.value)
+  const saved = localStorage.getItem(bestRecordKey.value) || localStorage.getItem(`sharon_hanoi_best_${currentLevel.value.key}`)
   if (saved) {
     try {
       bestRecord.value = JSON.parse(saved)

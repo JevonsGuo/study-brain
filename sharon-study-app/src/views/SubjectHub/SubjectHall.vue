@@ -42,9 +42,9 @@ const masteredPointIds = ref<Set<number>>(new Set())
 // 本地持久化掌握状态
 const loadLocalStatuses = () => {
   try {
-    const rawStarred = localStorage.getItem('sharon_starred_points')
+    const rawStarred = localStorage.getItem('study_starred_points') || localStorage.getItem('sharon_starred_points')
     if (rawStarred) starredPointIds.value = new Set(JSON.parse(rawStarred))
-    const rawMastered = localStorage.getItem('sharon_mastered_points')
+    const rawMastered = localStorage.getItem('study_mastered_points') || localStorage.getItem('sharon_mastered_points')
     if (rawMastered) masteredPointIds.value = new Set(JSON.parse(rawMastered))
   } catch (e) {
     console.error('Failed to load point statuses', e)

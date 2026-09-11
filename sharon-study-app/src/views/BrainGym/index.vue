@@ -18,8 +18,12 @@ const router = useRouter()
 // 当前正在玩的游戏 ID，null 表示停留在游戏大厅
 const activeGameId = ref<GameId | null>(null)
 
+// 本地缓存读写辅助 (study_ 前缀，平滑兼容历史 sharon_ 键)
+const getStorage = (key: string) => localStorage.getItem('study_' + key) || localStorage.getItem('sharon_' + key)
+const setStorage = (key: string, val: string) => localStorage.setItem('study_' + key, val)
+
 // 全局音效静音偏好
-const isSoundMuted = ref(localStorage.getItem('sharon_braingym_muted') === 'true')
+const isSoundMuted = ref(getStorage('braingym_muted') === 'true')
 
 // 今日累计与总统计
 const todayPlays = ref(0)
@@ -27,21 +31,21 @@ const totalTrainSeconds = ref(0)
 
 const toggleSoundMute = () => {
   isSoundMuted.value = !isSoundMuted.value
-  localStorage.setItem('sharon_braingym_muted', String(isSoundMuted.value))
+  setStorage('braingym_muted', String(isSoundMuted.value))
 }
 
 // 载入统计与纪录
 const loadStats = () => {
   const todayStr = new Date().toISOString().slice(0, 10)
-  const savedDate = localStorage.getItem('sharon_braingym_stat_date')
+  const savedDate = getStorage('braingym_stat_date')
   if (savedDate !== todayStr) {
-    localStorage.setItem('sharon_braingym_stat_date', todayStr)
-    localStorage.setItem('sharon_braingym_today_plays', '0')
+    setStorage('braingym_stat_date', todayStr)
+    setStorage('braingym_today_plays', '0')
     todayPlays.value = 0
   } else {
-    todayPlays.value = Number(localStorage.getItem('sharon_braingym_today_plays') || '0')
+    todayPlays.value = Number(getStorage('braingym_today_plays') || '0')
   }
-  totalTrainSeconds.value = Number(localStorage.getItem('sharon_braingym_total_sec') || '0')
+  totalTrainSeconds.value = Number(getStorage('braingym_total_sec') || '0')
 }
 
 // 记录保存回调
@@ -50,31 +54,31 @@ const handleRecordSaved = (data: { gameId: string; timeMs: number }) => {
   const addSec = Math.max(1, Math.round(data.timeMs / 1000))
   totalTrainSeconds.value += addSec
 
-  localStorage.setItem('sharon_braingym_today_plays', String(todayPlays.value))
-  localStorage.setItem('sharon_braingym_total_sec', String(totalTrainSeconds.value))
+  setStorage('braingym_today_plays', String(todayPlays.value))
+  setStorage('braingym_total_sec', String(totalTrainSeconds.value))
 }
 
 // 获取各游戏的历史最佳描述
 const getGameBestDisplay = (gameId: GameId): string | null => {
   if (gameId === 'schulte') {
-    const best5 = localStorage.getItem('sharon_schulte_best_5x5')
+    const best5 = getStorage('schulte_best_5x5')
     if (best5) return `5×5 最佳: ${(Number(best5) / 1000).toFixed(2)}s`
-    const best3 = localStorage.getItem('sharon_schulte_best_3x3')
+    const best3 = getStorage('schulte_best_3x3')
     if (best3) return `3×3 最佳: ${(Number(best3) / 1000).toFixed(2)}s`
     return null
   }
   if (gameId === 'game2048') {
-    const bestScore = localStorage.getItem('sharon_2048_best_score')
+    const bestScore = getStorage('2048_best_score')
     if (bestScore && Number(bestScore) > 0) return `最高分: ${bestScore}`
     return null
   }
   if (gameId === 'sudoku') {
-    const best4 = localStorage.getItem('sharon_sudoku_best_4x4')
+    const best4 = getStorage('sudoku_best_4x4')
     if (best4) {
       const s = Math.floor(Number(best4) / 1000)
       return `4×4最佳: ${Math.floor(s / 60)}分${s % 60}秒`
     }
-    const best9 = localStorage.getItem('sharon_sudoku_best_9x9_easy')
+    const best9 = getStorage('sudoku_best_9x9_easy')
     if (best9) {
       const s = Math.floor(Number(best9) / 1000)
       return `9×9最佳: ${Math.floor(s / 60)}分${s % 60}秒`
@@ -82,14 +86,14 @@ const getGameBestDisplay = (gameId: GameId): string | null => {
     return null
   }
   if (gameId === 'klotski15') {
-    const best4 = localStorage.getItem('sharon_klotski_best_4x4')
+    const best4 = getStorage('klotski_best_4x4')
     if (best4) {
       try {
         const parsed = JSON.parse(best4)
         return `4×4最佳: ${parsed.moves}步`
       } catch { /* ignore */ }
     }
-    const best3 = localStorage.getItem('sharon_klotski_best_3x3')
+    const best3 = getStorage('klotski_best_3x3')
     if (best3) {
       try {
         const parsed = JSON.parse(best3)
@@ -99,19 +103,19 @@ const getGameBestDisplay = (gameId: GameId): string | null => {
     return null
   }
   if (gameId === 'arrow') {
-    const bestLvl = localStorage.getItem('sharon_arrow_best_level')
+    const bestLvl = getStorage('arrow_best_level')
     if (bestLvl && Number(bestLvl) > 1) return `最高闯过: LV.${bestLvl}`
     return null
   }
   if (gameId === 'minesweeper') {
-    const best8 = localStorage.getItem('sharon_minesweeper_best_8x8')
+    const best8 = getStorage('minesweeper_best_8x8')
     if (best8) return `8×8最佳: ${Math.round(Number(best8) / 1000)}s`
-    const best9 = localStorage.getItem('sharon_minesweeper_best_9x9')
+    const best9 = getStorage('minesweeper_best_9x9')
     if (best9) return `9×9最佳: ${Math.round(Number(best9) / 1000)}s`
     return null
   }
   if (gameId === 'memory') {
-    const best4 = localStorage.getItem('sharon_memory_best_4x4')
+    const best4 = getStorage('memory_best_4x4')
     if (best4) {
       try {
         const parsed = JSON.parse(best4)
@@ -121,14 +125,14 @@ const getGameBestDisplay = (gameId: GameId): string | null => {
     return null
   }
   if (gameId === 'hanoi') {
-    const best3 = localStorage.getItem('sharon_hanoi_best_3')
+    const best3 = getStorage('hanoi_best_3')
     if (best3) {
       try {
         const parsed = JSON.parse(best3)
         return `3阶最佳: ${parsed.moves}步`
       } catch { /* ignore */ }
     }
-    const best4 = localStorage.getItem('sharon_hanoi_best_4')
+    const best4 = getStorage('hanoi_best_4')
     if (best4) {
       try {
         const parsed = JSON.parse(best4)

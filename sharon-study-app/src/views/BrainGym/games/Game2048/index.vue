@@ -32,10 +32,10 @@ const canUndo = ref(false)
 // 开始时间与计时
 const startTime = ref(0)
 
-const BEST_SCORE_KEY = 'sharon_2048_best_score'
+const BEST_SCORE_KEY = 'study_2048_best_score'
 
 const loadBestScore = () => {
-  const saved = localStorage.getItem(BEST_SCORE_KEY)
+  const saved = localStorage.getItem(BEST_SCORE_KEY) || localStorage.getItem('sharon_2048_best_score')
   bestScore.value = saved ? Number(saved) : 0
 }
 

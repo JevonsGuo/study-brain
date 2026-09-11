@@ -87,18 +87,18 @@ export const normalizeNoiseType = (raw: string | null): string => {
 export const useTimerStore = defineStore('timer', () => {
   // 1. 基础配置与持久化偏好
   const mode = ref<TimerMode>('pomodoro')
-  const selectedSubject = ref(localStorage.getItem('sharon_timer_subject') || '数学')
+  const selectedSubject = ref(localStorage.getItem('study_timer_subject') || localStorage.getItem('sharon_timer_subject') || '数学')
   const selectedPlanId = ref<number | null>(null)
   const selectedTaskName = ref('')
   const notes = ref('')
 
-  const workDuration = ref(Number(localStorage.getItem('sharon_timer_work_dur')) || 25)
-  const breakDuration = ref(Number(localStorage.getItem('sharon_timer_break_dur')) || 5)
-  const examDuration = ref(Number(localStorage.getItem('sharon_timer_exam_dur')) || 120)
-  const autoStartBreak = ref(localStorage.getItem('sharon_timer_auto_break') !== 'false')
+  const workDuration = ref(Number(localStorage.getItem('study_timer_work_dur') || localStorage.getItem('sharon_timer_work_dur')) || 25)
+  const breakDuration = ref(Number(localStorage.getItem('study_timer_break_dur') || localStorage.getItem('sharon_timer_break_dur')) || 5)
+  const examDuration = ref(Number(localStorage.getItem('study_timer_exam_dur') || localStorage.getItem('sharon_timer_exam_dur')) || 120)
+  const autoStartBreak = ref((localStorage.getItem('study_timer_auto_break') || localStorage.getItem('sharon_timer_auto_break')) !== 'false')
   const isMuted = ref(false)
-  const volume = ref(Number(localStorage.getItem('sharon_timer_volume')) || 0.4)
-  const noiseType = ref(normalizeNoiseType(localStorage.getItem('sharon_timer_noise') || 'none'))
+  const volume = ref(Number(localStorage.getItem('study_timer_volume') || localStorage.getItem('sharon_timer_volume')) || 0.4)
+  const noiseType = ref(normalizeNoiseType(localStorage.getItem('study_timer_noise') || localStorage.getItem('sharon_timer_noise') || 'none'))
   const isZenMode = ref(false)
 
   // 2. 运行状态
@@ -563,16 +563,16 @@ export const useTimerStore = defineStore('timer', () => {
   // 设置保存
   const setSubject = (sub: string) => {
     selectedSubject.value = sub
-    localStorage.setItem('sharon_timer_subject', sub)
+    localStorage.setItem('study_timer_subject', sub)
   }
 
   const setDurations = (work: number, breakTime: number, examTime?: number) => {
     workDuration.value = work
     breakDuration.value = breakTime
     if (examTime) examDuration.value = examTime
-    localStorage.setItem('sharon_timer_work_dur', String(work))
-    localStorage.setItem('sharon_timer_break_dur', String(breakTime))
-    if (examTime) localStorage.setItem('sharon_timer_exam_dur', String(examTime))
+    localStorage.setItem('study_timer_work_dur', String(work))
+    localStorage.setItem('study_timer_break_dur', String(breakTime))
+    if (examTime) localStorage.setItem('study_timer_exam_dur', String(examTime))
     if (!isRunning.value) {
       reset()
     }
@@ -580,7 +580,7 @@ export const useTimerStore = defineStore('timer', () => {
 
   const setVolume = (val: number) => {
     volume.value = val
-    localStorage.setItem('sharon_timer_volume', String(val))
+    localStorage.setItem('study_timer_volume', String(val))
     if (bgAudioElement) bgAudioElement.volume = isMuted.value ? 0 : Math.min(1, val * 0.7)
   }
 
@@ -589,7 +589,7 @@ export const useTimerStore = defineStore('timer', () => {
     const oldType = noiseType.value
     audioError.value = null
     noiseType.value = normalized
-    localStorage.setItem('sharon_timer_noise', normalized)
+    localStorage.setItem('study_timer_noise', normalized)
     if (normalized === 'none') {
       stopSound()
       return
