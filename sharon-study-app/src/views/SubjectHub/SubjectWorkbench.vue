@@ -39,6 +39,7 @@ import {
   FullScreen
 } from '@element-plus/icons-vue'
 import { getVideoHubInfo, type VideoHubInfo } from '../../utils/videoSources'
+import { useAppConfigStore } from '../../stores/appConfig'
 
 const props = defineProps<{
   subject: string
@@ -46,6 +47,7 @@ const props = defineProps<{
 
 const route = useRoute()
 const router = useRouter()
+const appConfig = useAppConfigStore()
 
 // -------------------------------------------------------------
 // 1. 工作台 Tab 切换管理 (核心考点库 vs 错题靶向本)
@@ -91,6 +93,7 @@ interface KnowledgePoint {
   visual_desc: string
   video_url: string
   sort_order: number
+  user_note?: string
 }
 
 interface WrongItem {
@@ -192,6 +195,36 @@ const togglePointExpand = (id: number) => {
 const toggleWrongOnPoint = (id: number) => {
   if (expandedWrongOnPointIds.value.has(id)) expandedWrongOnPointIds.value.delete(id)
   else expandedWrongOnPointIds.value.add(id)
+}
+
+// 学生个人随堂笔记 (与官方考点分离的用户专属数据)
+const editingNotePointId = ref<number | null>(null)
+const tempNoteDraft = ref('')
+const savingNote = ref(false)
+
+const startEditNote = (p: KnowledgePoint) => {
+  editingNotePointId.value = p.id
+  tempNoteDraft.value = p.user_note || ''
+}
+
+const cancelEditNote = () => {
+  editingNotePointId.value = null
+  tempNoteDraft.value = ''
+}
+
+const saveStudentNote = async (p: KnowledgePoint) => {
+  savingNote.value = true
+  try {
+    await api.put(`/knowledge/${p.id}/note`, { note: tempNoteDraft.value.trim() })
+    p.user_note = tempNoteDraft.value.trim()
+    editingNotePointId.value = null
+    ElMessage.success('随堂笔记已保存')
+  } catch (err) {
+    console.error('Failed to save student note', err)
+    ElMessage.error('保存笔记失败')
+  } finally {
+    savingNote.value = false
+  }
 }
 
 const subjectTopics = computed<GaokaoTopic[]>(() => {
@@ -434,6 +467,7 @@ const savePoint = async () => {
     }
     pointDialogVisible.value = false
     await loadAllData()
+    await appConfig.fetchVersion()
   } catch {
     ElMessage.error('保存失败')
   }
@@ -445,6 +479,7 @@ const deletePoint = async (p: KnowledgePoint) => {
     await api.del(`/knowledge/${p.id}`)
     ElMessage.success('考点已删除')
     await loadAllData()
+    await appConfig.fetchVersion()
   } catch {
     // cancelled
   }
@@ -780,6 +815,7 @@ const saveResource = async () => {
     }
     resourceDialogVisible.value = false
     await loadAllData()
+    await appConfig.fetchVersion()
   } catch (err) {
     console.error('Failed to save resource', err)
     ElMessage.error('保存学习资源失败')
@@ -792,6 +828,7 @@ const removeResource = async (r: LearningResource) => {
     await api.del(`/learning-resources/${r.id}`)
     ElMessage.success('已删除资源')
     await loadAllData()
+    await appConfig.fetchVersion()
   } catch {
     // cancelled
   }
@@ -891,7 +928,7 @@ onMounted(() => {
           录入错题
         </el-button>
         <el-button
-          v-else-if="activeTab === 'knowledge'"
+          v-else-if="activeTab === 'knowledge' && appConfig.isMaintenanceMode"
           type="primary"
           size="default"
           :icon="Plus"
@@ -901,7 +938,7 @@ onMounted(() => {
           添加考点
         </el-button>
         <el-button
-          v-else
+          v-else-if="activeTab === 'resources' && appConfig.isMaintenanceMode"
           type="primary"
           size="default"
           :icon="Plus"
@@ -1120,11 +1157,21 @@ onMounted(() => {
                 <el-icon><Check /></el-icon>
               </button>
 
-              <button class="action-icon-btn" @click="openEditPoint(p)" title="编辑考点">
+              <button
+                v-if="appConfig.isMaintenanceMode"
+                class="action-icon-btn"
+                @click="openEditPoint(p)"
+                title="编辑考点"
+              >
                 <el-icon><Edit /></el-icon>
               </button>
 
-              <button class="action-icon-btn delete-btn" @click="deletePoint(p)" title="删除考点">
+              <button
+                v-if="appConfig.isMaintenanceMode"
+                class="action-icon-btn delete-btn"
+                @click="deletePoint(p)"
+                title="删除考点"
+              >
                 <el-icon><Delete /></el-icon>
               </button>
             </div>
@@ -1154,6 +1201,48 @@ onMounted(() => {
             <div v-if="p.visual_desc" class="point-block visual-block">
               <span class="block-title">🧠 具象模型</span>
               <div class="visual-text">{{ p.visual_desc }}</div>
+            </div>
+
+            <!-- 个人随堂笔记与避坑心得 (用户专属数据) -->
+            <div class="point-block student-note-block">
+              <div class="note-block-header">
+                <span class="block-title">📝 我的随堂笔记 & 避坑心得</span>
+                <el-button
+                  v-if="editingNotePointId !== p.id"
+                  size="small"
+                  type="primary"
+                  link
+                  @click="startEditNote(p)"
+                >
+                  {{ p.user_note ? '✏️ 编辑笔记' : '+ 记下我的思路与易错心得' }}
+                </el-button>
+              </div>
+
+              <!-- 编辑态 -->
+              <div v-if="editingNotePointId === p.id" class="note-editor-box">
+                <el-input
+                  v-model="tempNoteDraft"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="写下你自己的理解、老师强调的特殊技巧或容易混淆的坑点..."
+                  maxlength="1000"
+                  show-word-limit
+                />
+                <div class="note-editor-actions">
+                  <el-button size="small" @click="cancelEditNote">取消</el-button>
+                  <el-button size="small" type="primary" :loading="savingNote" @click="saveStudentNote(p)">保存笔记</el-button>
+                </div>
+              </div>
+
+              <!-- 显示态 -->
+              <div v-else class="note-display-box">
+                <div v-if="p.user_note" class="note-content-text">
+                  {{ p.user_note }}
+                </div>
+                <div v-else class="note-empty-text">
+                  暂无个人笔记，点击上方按钮记录你的思考与老师课堂点拨...
+                </div>
+              </div>
             </div>
 
             <!-- 考点名师微课精讲入口 -->
@@ -1486,6 +1575,7 @@ onMounted(() => {
             class="resource-search-input"
           />
           <el-button
+            v-if="appConfig.isMaintenanceMode"
             type="primary"
             plain
             size="default"
@@ -1525,6 +1615,7 @@ onMounted(() => {
                   <el-icon><CopyDocument /></el-icon>
                 </button>
                 <button
+                  v-if="appConfig.isMaintenanceMode"
                   class="res-icon-btn"
                   @click="openEditResourceDialog(res)"
                   title="编辑"
@@ -1532,6 +1623,7 @@ onMounted(() => {
                   <el-icon><Edit /></el-icon>
                 </button>
                 <button
+                  v-if="appConfig.isMaintenanceMode"
                   class="res-icon-btn delete-btn"
                   @click="removeResource(res)"
                   title="删除"
@@ -2603,6 +2695,51 @@ onMounted(() => {
 
 .visual-block .block-title {
   color: #059669;
+}
+
+.student-note-block {
+  background: rgba(147, 51, 234, 0.04);
+  border: 1px dashed rgba(147, 51, 234, 0.3);
+}
+
+.student-note-block .note-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.student-note-block .block-title {
+  color: #7e22ce;
+  margin-bottom: 0;
+}
+
+.student-note-block .note-editor-box {
+  margin-top: 8px;
+}
+
+.student-note-block .note-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.student-note-block .note-display-box {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.student-note-block .note-content-text {
+  color: var(--text-main, #1e293b);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.student-note-block .note-empty-text {
+  color: var(--text-secondary, #94a3b8);
+  font-style: italic;
+  font-size: 12px;
 }
 
 .point-video-row {
@@ -3870,5 +4007,14 @@ onMounted(() => {
   background: #78350f;
   color: #fde68a;
   border-bottom-color: #92400e;
+}
+
+:global(.dark) .student-note-block {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+:global(.dark) .student-note-block .block-title {
+  color: #c084fc;
 }
 </style>

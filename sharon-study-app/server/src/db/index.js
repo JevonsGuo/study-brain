@@ -163,6 +163,14 @@ function initTables() {
     );
     CREATE INDEX IF NOT EXISTS idx_focus_records_completed_at ON focus_records(completed_at);
     CREATE INDEX IF NOT EXISTS idx_focus_records_subject ON focus_records(subject);
+
+    CREATE TABLE IF NOT EXISTS knowledge_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      knowledge_point_id INTEGER NOT NULL UNIQUE,
+      note TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_knowledge_notes_kp_id ON knowledge_notes(knowledge_point_id);
   `)
 
   initDailyConfig()
@@ -176,6 +184,20 @@ function initDailyConfig() {
 }
 
 const MIGRATIONS = [
+  {
+    name: '012_knowledge_notes',
+    up: () => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS knowledge_notes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          knowledge_point_id INTEGER NOT NULL UNIQUE,
+          note TEXT NOT NULL DEFAULT '',
+          updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+        );
+        CREATE INDEX IF NOT EXISTS idx_knowledge_notes_kp_id ON knowledge_notes(knowledge_point_id);
+      `)
+    }
+  },
   {
     name: '011_wrong_items_knowledge_point',
     up: () => {

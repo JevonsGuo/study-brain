@@ -2,13 +2,33 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTimerStore } from './stores/timer'
-import { ElNotification } from 'element-plus'
+import { useAppConfigStore } from './stores/appConfig'
+import CloudSyncModal from './components/CloudSyncModal.vue'
+import { ElNotification, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
 const timerStore = useTimerStore()
+const appConfig = useAppConfigStore()
 const isCollapse = ref(false)
 const isDark = ref(false)
+const showCloudModal = ref(false)
+const isDev = import.meta.env.DEV
+
+const openPinPrompt = async () => {
+  try {
+    const { value } = await ElMessageBox.prompt('请输入开发者维护密码：', '官方数据维护模式', {
+      inputType: 'password',
+      confirmButtonText: '验证进入',
+      cancelButtonText: '取消',
+      inputPattern: /^.+$/,
+      inputErrorMessage: '密码不能为空'
+    })
+    appConfig.unlockMaintenanceMode(value)
+  } catch {
+    // cancelled
+  }
+}
 
 const THEME_KEY = 'sharon_study_theme'
 
@@ -28,6 +48,9 @@ watch(() => timerStore.showCompletionModal, (show) => {
 })
 
 onMounted(() => {
+  appConfig.initLocalVersion()
+  appConfig.checkDatabaseVersion(false)
+
   const queryTheme = new URLSearchParams(window.location.search).get('theme')
   if (queryTheme) {
     isDark.value = queryTheme === 'dark'
@@ -107,6 +130,48 @@ const toggleCollapse = () => {
 
       <!-- 侧边栏底部操作区：左下角主题切换 + 侧栏折叠 -->
       <div class="aside-footer">
+        <!-- 数据库版本常驻角落 (低调淡灰小字) + 坚果云备份入口 -->
+        <div v-show="!isCollapse" class="aside-db-bar">
+          <div
+            class="db-version-text"
+            @click="appConfig.checkDatabaseVersion(true)"
+            title="点击手动检查数据库版本更新"
+          >
+            <span class="db-dot"></span>
+            <span>数据库版本: {{ appConfig.currentDbVersion }}</span>
+          </div>
+          <button
+            type="button"
+            class="aside-cloud-btn"
+            @click="showCloudModal = true"
+            title="坚果云多端备份 (可选)"
+          >
+            ☁️
+          </button>
+        </div>
+
+        <!-- 仅在开发环境（import.meta.env.DEV）展示的维护模式切换按钮 -->
+        <div v-if="isDev && !isCollapse" class="aside-dev-bar">
+          <button
+            v-if="!appConfig.isMaintenanceMode"
+            type="button"
+            class="dev-mode-btn"
+            @click="openPinPrompt"
+            title="输入密码（654321）解锁官方数据维护模式"
+          >
+            🛠️ 题库维护
+          </button>
+          <div
+            v-else
+            class="dev-active-badge"
+            @click="appConfig.exitMaintenanceMode"
+            title="当前处于维护模式，点击退出"
+          >
+            <span class="dev-dot-pulse"></span>
+            <span>维护中(点击退出)</span>
+          </div>
+        </div>
+
         <!-- 切换暗色/亮色模板 -->
         <div class="theme-switch-box" :class="{ 'is-collapsed': isCollapse }">
           <template v-if="!isCollapse">
@@ -188,6 +253,39 @@ const toggleCollapse = () => {
         </button>
       </div>
     </transition>
+
+    <!-- 数据库版本更新提醒弹窗 -->
+    <el-dialog
+      v-model="appConfig.showUpdateModal"
+      title="数据库更新提醒"
+      width="460px"
+      :show-close="false"
+      class="db-update-dialog"
+    >
+      <div class="db-update-content">
+        <div class="update-icon-box">📦</div>
+        <div class="update-text-box">
+          <p class="update-version-title">
+            检测到最新的数据库版本：<b>{{ appConfig.remoteVersionMeta?.database_version }}</b>
+          </p>
+          <p class="update-current-version">
+            当前本地版本：{{ appConfig.currentDbVersion }}
+          </p>
+          <div class="update-safe-tip">
+            💡 说明：本次更新包含最新考点勘误与微课精讲。更新<b>不会影响</b>您的任何错题、背诵进度与个人随堂笔记。
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="appConfig.dismissUpdateModal">稍后再说</el-button>
+        <el-button type="primary" @click="appConfig.confirmDatabaseUpdate">
+          立即确认更新
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 坚果云云端备份弹窗 -->
+    <CloudSyncModal v-model="showCloudModal" />
   </el-container>
 </template>
 
@@ -488,5 +586,150 @@ const toggleCollapse = () => {
 .floater-slide-leave-to {
   opacity: 0;
   transform: translateY(20px) scale(0.85);
+}
+
+/* 数据库版本与坚果云常驻底部栏 */
+.aside-db-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  margin-bottom: 6px;
+}
+
+.db-version-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.db-version-text:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.db-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.aside-cloud-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: 0.6;
+  padding: 2px;
+  transition: all 0.2s;
+}
+
+.aside-cloud-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* 仅开发环境展示的维护模式 */
+.aside-dev-bar {
+  padding: 0 10px 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.dev-mode-btn {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px dashed rgba(245, 158, 11, 0.45);
+  color: #fbbf24;
+  padding: 3px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.dev-mode-btn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fef08a;
+}
+
+.dev-active-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.dev-dot-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+/* 数据库版本更新弹窗 */
+.db-update-content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 10px 0;
+}
+
+.update-icon-box {
+  font-size: 38px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.update-text-box {
+  flex: 1;
+}
+
+.update-version-title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.update-current-version {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+}
+
+.update-safe-tip {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+:global(.dark) .update-safe-tip {
+  background: #1e293b;
+  border-color: #3b82f6;
+  color: #93c5fd;
 }
 </style>

@@ -18,6 +18,7 @@ interface KnowledgePoint {
   visual_desc: string
   video_url: string
   sort_order?: number
+  user_note?: string
 }
 
 const props = defineProps<{
@@ -157,6 +158,15 @@ const triggerVideo = () => {
             <span>思维脑图 & 具象模型</span>
           </div>
           <div class="visual-box">{{ point.visual_desc }}</div>
+        </div>
+
+        <!-- 个人随堂笔记与避坑心得 -->
+        <div v-if="point.user_note" class="section-card note-section">
+          <div class="sec-label">
+            <el-icon class="sec-icon note-icon"><Reading /></el-icon>
+            <span>我的随堂笔记 & 避坑心得</span>
+          </div>
+          <div class="note-box">{{ point.user_note }}</div>
         </div>
 
         <!-- 名师视频精讲按钮 -->
@@ -341,6 +351,23 @@ const triggerVideo = () => {
   color: #065f46;
 }
 
+.note-section {
+  background: rgba(147, 51, 234, 0.05);
+  border-color: rgba(147, 51, 234, 0.25);
+}
+
+.note-icon {
+  color: #7e22ce;
+}
+
+.note-box {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-main, #334155);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .video-cta-card {
   display: flex;
   align-items: center;
@@ -425,6 +452,15 @@ const triggerVideo = () => {
 
 :global(.dark) .visual-box {
   color: #a7f3d0;
+}
+
+:global(.dark) .note-section {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+:global(.dark) .note-box {
+  color: #e9d5ff;
 }
 
 :global(.dark) .video-cta-card {
