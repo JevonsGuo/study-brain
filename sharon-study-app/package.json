@@ -1,10 +1,11 @@
 {
   "name": "sharon-study-app",
   "private": true,
-  "version": "1.0.5",
+  "version": "1.0.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node ../scripts/copy-content-to-public.mjs",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },

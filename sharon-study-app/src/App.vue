@@ -9,6 +9,7 @@ import UserOnboardingModal from './components/UserOnboardingModal.vue'
 import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import { ElNotification, ElMessageBox } from 'element-plus'
 import { Edit } from '@element-plus/icons-vue'
+import { localDB } from './utils/localDatabase'
 
 const router = useRouter()
 const route = useRoute()
@@ -69,6 +70,31 @@ onMounted(() => {
     }
   }
   applyTheme(isDark.value)
+
+  // 坚果云 30 分钟后台定时自动备份机制
+  setInterval(async () => {
+    const autoSync = localStorage.getItem('study_nutstore_auto_sync') === 'true'
+    const email = localStorage.getItem('study_nutstore_email') || ''
+    const pwd = localStorage.getItem('study_nutstore_pwd') || ''
+    if (autoSync && email && pwd) {
+      try {
+        const authHeader = 'Basic ' + btoa(`${email.trim()}:${pwd.trim()}`)
+        const payload = await localDB.exportAllUserData()
+        await fetch('/api/nutstore/我的坚果云/StudyBrain/backup.json', {
+          method: 'PUT',
+          headers: {
+            Authorization: authHeader,
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body: JSON.stringify(payload, null, 2)
+        })
+        const nowStr = new Date().toLocaleString()
+        localStorage.setItem('study_nutstore_last_sync', nowStr)
+      } catch {
+        // 静默运行，不打扰自习状态
+      }
+    }
+  }, 30 * 60 * 1000)
 })
 
 const applyTheme = (dark: boolean) => {

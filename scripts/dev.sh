@@ -32,6 +32,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+node "$ROOT_DIR/scripts/copy-content-to-public.mjs"
 cd "$ROOT_DIR/sharon-study-app/server" && node --watch src/index.js &
 cd "$ROOT_DIR/sharon-study-app" && npx vite &
 
