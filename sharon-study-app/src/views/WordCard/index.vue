@@ -814,7 +814,7 @@ onUnmounted(() => {
     <!-- 阶段一：词汇表选择书架 (Word Lists Hub) -->
     <template v-if="view === 'list'">
       <div class="page-header">
-        <div class="header-badge">📖 Sharon's Vocabulary Studio</div>
+        <div class="header-badge">📖 Vocabulary Studio · 智词工坊</div>
         <h2 class="header-title">英语单词手帐</h2>
         <p class="header-subtitle">艾宾浩斯智能记忆阶梯 · 高考考点精细拆解</p>
       </div>
@@ -1306,7 +1306,7 @@ onUnmounted(() => {
       <div class="stamp-postcard">
         <div class="postcard-washi-tape"></div>
         <div class="postcard-header">
-          <div class="postcard-sub">SHARON'S DAILY GOAL ACHIEVED</div>
+          <div class="postcard-sub">DAILY VOCABULARY GOAL ACHIEVED</div>
           <div class="postcard-title">今日单词打卡达成！🌸</div>
         </div>
 

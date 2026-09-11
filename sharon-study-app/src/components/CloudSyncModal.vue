@@ -62,7 +62,7 @@ const performBackup = async () => {
     const nowStr = new Date().toLocaleString()
     lastSyncTime.value = nowStr
     localStorage.setItem(STORAGE_SYNC_KEY, nowStr)
-    ElMessage.success('已将当前完整数据库安全备份至坚果云：/我的坚果云/SharonStudy/sharon-study.db')
+    ElMessage.success('已将当前完整数据库安全备份至坚果云：/我的坚果云/StudyBrain/study.db')
   } catch (err) {
     ElMessage.error('备份失败，请检查网络或授权密码')
   } finally {
@@ -90,7 +90,7 @@ const performRestore = async () => {
 // 一键导出本地离线备份文件
 const exportLocalBackup = () => {
   const dateStr = new Date().toISOString().slice(0, 10)
-  const filename = `sharon_study_backup_${dateStr}.json`
+  const filename = `study_brain_backup_${dateStr}.json`
   
   // 收集用户所有重要学习状态打包
   const exportPayload = {

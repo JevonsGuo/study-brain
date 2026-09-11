@@ -3,13 +3,18 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTimerStore } from './stores/timer'
 import { useAppConfigStore } from './stores/appConfig'
+import { useUserProfileStore } from './stores/userProfile'
 import CloudSyncModal from './components/CloudSyncModal.vue'
+import UserOnboardingModal from './components/UserOnboardingModal.vue'
+import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import { ElNotification, ElMessageBox } from 'element-plus'
+import { Edit } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
 const timerStore = useTimerStore()
 const appConfig = useAppConfigStore()
+const userProfile = useUserProfileStore()
 const isCollapse = ref(false)
 const isDark = ref(false)
 const showCloudModal = ref(false)
@@ -50,6 +55,7 @@ watch(() => timerStore.showCompletionModal, (show) => {
 onMounted(() => {
   appConfig.initLocalVersion()
   appConfig.checkDatabaseVersion(false)
+  userProfile.fetchProfile()
 
   const queryTheme = new URLSearchParams(window.location.search).get('theme')
   if (queryTheme) {
@@ -111,9 +117,17 @@ const toggleCollapse = () => {
 <template>
   <el-container class="app-container">
     <el-aside :width="isCollapse ? '64px' : '200px'" class="app-aside">
-      <div class="logo-area">
+      <div
+        class="logo-area"
+        :class="{ 'is-clickable': !isCollapse }"
+        @click="!isCollapse && (userProfile.showEditModal = true)"
+        :title="isCollapse ? '智学大脑' : '点击修改空间专属名称与个人档案'"
+      >
         <el-icon :size="24" class="logo-icon"><Star /></el-icon>
-        <span v-show="!isCollapse" class="logo-text">Sharon Study</span>
+        <div v-show="!isCollapse" class="logo-text-wrap">
+          <span class="logo-text">{{ userProfile.appTitle }}</span>
+          <el-icon class="logo-edit-icon" title="修改空间名称"><Edit /></el-icon>
+        </div>
       </div>
       <el-menu
         :default-active="activeMenu"
@@ -286,6 +300,12 @@ const toggleCollapse = () => {
 
     <!-- 坚果云云端备份弹窗 -->
     <CloudSyncModal v-model="showCloudModal" />
+
+    <!-- 首次使用量身定制专属空间引导弹窗 -->
+    <UserOnboardingModal />
+
+    <!-- 随时修改名字与空间信息弹窗 -->
+    <UserProfileEditModal />
   </el-container>
 </template>
 
@@ -311,19 +331,53 @@ const toggleCollapse = () => {
   gap: 8px;
   border-bottom: 1px solid var(--aside-border);
   flex-shrink: 0;
+  padding: 0 10px;
+  user-select: none;
+}
+
+.logo-area.is-clickable {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logo-area.is-clickable:hover {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .logo-icon {
   color: #ffd700;
   filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
+  flex-shrink: 0;
+}
+
+.logo-text-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
 }
 
 .logo-text {
   color: #fff;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 125px;
+}
+
+.logo-edit-icon {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.logo-area:hover .logo-edit-icon {
+  color: #ffd700;
+  transform: scale(1.15);
 }
 
 .app-menu {

@@ -17,6 +17,7 @@ import knowledgeRouter from './routes/knowledge.js'
 import learningResourcesRouter from './routes/learning-resources.js'
 import focusRecordsRouter from './routes/focus-records.js'
 import versionRouter from './routes/version.js'
+import userProfileRouter from './routes/user-profile.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -33,6 +34,7 @@ app.use('/api/knowledge', knowledgeRouter)
 app.use('/api/learning-resources', learningResourcesRouter)
 app.use('/api/focus-records', focusRecordsRouter)
 app.use('/api/version', versionRouter)
+app.use('/api/user-profile', userProfileRouter)
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
@@ -47,5 +49,6 @@ app.get('/{*path}', (req, res) => {
 getDb()
 
 app.listen(PORT, '0.0.0.0',() => {
-  console.log(`Sharon Study running at http://localhost:${PORT} [${process.env.NODE_ENV || 'development'}]`)
+  console.log(`Study Brain server running at http://localhost:${PORT} [${process.env.NODE_ENV || 'development'}]`)
 })
+

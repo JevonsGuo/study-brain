@@ -44,13 +44,19 @@ const modules = [
   { title: '番茄钟', desc: '专注计时，高效学习', icon: 'Timer', color: '#fa8c16', path: '/timer' },
 ]
 
+import { useUserProfileStore } from '../../stores/userProfile'
+import { Edit } from '@element-plus/icons-vue'
+
+const userProfile = useUserProfileStore()
+
 const updateGreeting = () => {
   const hour = currentTime.value.getHours()
-  if (hour < 6) greeting.value = '夜深了，注意休息'
-  else if (hour < 12) greeting.value = '早上好，Sharon'
-  else if (hour < 14) greeting.value = '中午好，Sharon'
-  else if (hour < 18) greeting.value = '下午好，Sharon'
-  else greeting.value = '晚上好，Sharon'
+  const name = userProfile.greetingName
+  if (hour < 6) greeting.value = `夜深了，${name}`
+  else if (hour < 12) greeting.value = `早上好，${name}`
+  else if (hour < 14) greeting.value = `中午好，${name}`
+  else if (hour < 18) greeting.value = `下午好，${name}`
+  else greeting.value = `晚上好，${name}`
 }
 
 const formatDate = (date: Date) => {
@@ -150,7 +156,20 @@ onUnmounted(() => {
     <div class="welcome-section">
       <div class="welcome-top">
         <div class="welcome-text">
-          <h1>{{ greeting }}</h1>
+          <div class="greeting-row">
+            <h1>{{ greeting }}</h1>
+            <button
+              type="button"
+              class="edit-name-btn"
+              @click="userProfile.showEditModal = true"
+              title="修改学生姓名与个人档案"
+            >
+              <el-icon><Edit /></el-icon>
+            </button>
+          </div>
+          <p v-if="userProfile.customQuote" class="quote-text">
+            “{{ userProfile.customQuote }}”
+          </p>
           <p class="date-text">{{ formatDate(currentTime) }}</p>
           <p class="time-text">{{ formatTime(currentTime) }}</p>
         </div>
@@ -337,4 +356,38 @@ onUnmounted(() => {
 .module-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #fff; }
 .module-card h3 { margin: 0 0 8px; font-size: 18px; color: var(--text-main, #303133); }
 .module-card p { color: var(--text-sub, #999); font-size: 14px; margin: 0; }
+
+.greeting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-name-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.edit-name-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1);
+}
+
+.quote-text {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.88);
+  font-style: italic;
+  margin: 4px 0 6px;
+  letter-spacing: 0.3px;
+}
 </style>

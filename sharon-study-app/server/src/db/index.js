@@ -10,7 +10,12 @@ function resolveDbPath() {
   if (process.env.DB_PATH) {
     return path.resolve(PROJECT_ROOT, process.env.DB_PATH)
   }
-  return path.join(PROJECT_ROOT, 'data', 'sharon-study.db')
+  // 优先复用已有数据库文件，全新环境默认采用 study.db
+  const newDefault = path.join(PROJECT_ROOT, 'data', 'study.db')
+  const legacyDefault = path.join(PROJECT_ROOT, 'data', 'sharon-study.db')
+  if (fs.existsSync(newDefault)) return newDefault
+  if (fs.existsSync(legacyDefault)) return legacyDefault
+  return newDefault
 }
 
 let db = null
@@ -171,9 +176,21 @@ function initTables() {
       updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
     CREATE INDEX IF NOT EXISTS idx_knowledge_notes_kp_id ON knowledge_notes(knowledge_point_id);
+
+    CREATE TABLE IF NOT EXISTS user_profile (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_name TEXT NOT NULL DEFAULT '',
+      app_title TEXT NOT NULL DEFAULT '',
+      grade_level TEXT NOT NULL DEFAULT '高三',
+      target_exam TEXT NOT NULL DEFAULT '高考',
+      custom_quote TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    );
   `)
 
   initDailyConfig()
+  initUserProfile()
 }
 
 function initDailyConfig() {
@@ -183,7 +200,35 @@ function initDailyConfig() {
   }
 }
 
+function initUserProfile() {
+  const row = db.prepare('SELECT COUNT(*) as count FROM user_profile').get()
+  if (row.count === 0) {
+    db.prepare("INSERT INTO user_profile (id, user_name, app_title, grade_level, target_exam, custom_quote) VALUES (1, '', '', '高三', '高考', '')").run()
+  }
+}
+
 const MIGRATIONS = [
+  {
+    name: '013_user_profile',
+    up: () => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS user_profile (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_name TEXT NOT NULL DEFAULT '',
+          app_title TEXT NOT NULL DEFAULT '',
+          grade_level TEXT NOT NULL DEFAULT '高三',
+          target_exam TEXT NOT NULL DEFAULT '高考',
+          custom_quote TEXT NOT NULL DEFAULT '',
+          created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+          updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+        );
+      `)
+      const count = db.prepare('SELECT COUNT(*) as count FROM user_profile').get().count
+      if (count === 0) {
+        db.prepare("INSERT INTO user_profile (id, user_name, app_title, grade_level, target_exam, custom_quote) VALUES (1, '', '', '高三', '高考', '')").run()
+      }
+    }
+  },
   {
     name: '012_knowledge_notes',
     up: () => {
