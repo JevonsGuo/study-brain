@@ -73,6 +73,7 @@ const menuItems = [
   { index: '/word-card', icon: 'Postcard', title: '单词卡' },
   { index: '/grade-tracker', icon: 'TrendCharts', title: '成绩追踪' },
   { index: '/timer', icon: 'Timer', title: '番茄钟' },
+  { index: '/brain-gym', icon: 'MagicStick', title: '脑力工坊' },
 ]
 
 const handleSelect = (index: string) => {

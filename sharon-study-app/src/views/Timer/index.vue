@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import * as echarts from 'echarts'
-import { useTimerStore, type SoundCategory } from '../../stores/timer'
+import { useTimerStore, RELIABLE_SOUND_CHANNELS } from '../../stores/timer'
 import { api } from '../../utils/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   VideoPlay, VideoPause, RefreshLeft, Setting, FullScreen,
-  Right, Headset, Notebook, Check, Delete, Calendar, TrendCharts, Plus
+  Right, Notebook, Check, Delete, Calendar, TrendCharts,
+  ArrowDown
 } from '@element-plus/icons-vue'
 
+const route = useRoute()
 const timerStore = useTimerStore()
 
 // 9 大学科色彩与 Emoji 字典
@@ -34,33 +37,15 @@ const examPresets = [
   { label: '⏱️ 课后限时微测', duration: 45, subject: '其他' },
 ]
 
-// 声学分类选项
-const soundCategories: { key: SoundCategory; label: string }[] = [
-  { key: 'all', label: '🌟 全部' },
-  { key: 'space', label: '☕ 空间氛围' },
-  { key: 'music', label: '🎵 治愈轻音' },
-  { key: 'nature', label: '🌿 自然之声' },
-  { key: 'synth', label: '🎧 科学白噪' },
-  { key: 'custom', label: '📻 自定义' }
-]
-
-const currentSoundCategory = ref<SoundCategory>('all')
-
-const filteredSoundTracks = computed(() => {
-  if (currentSoundCategory.value === 'all') {
-    return timerStore.allSoundTracks
-  }
-  return timerStore.allSoundTracks.filter(t => t.category === currentSoundCategory.value || t.id === 'none')
-})
+// 5 大纯净高可用轻音乐渠道
+const reliableChannels = RELIABLE_SOUND_CHANNELS
 
 const currentActiveTrack = computed(() => {
-  return timerStore.allSoundTracks.find(t => t.id === timerStore.noiseType)
+  if (timerStore.noiseType === 'none') {
+    return { id: 'none', name: '静音专注', icon: '🔇', desc: '纯净无声 · 深度心流', badge: '无声' }
+  }
+  return reliableChannels.find(t => t.id === timerStore.noiseType)
 })
-
-const getCategoryCount = (cat: SoundCategory) => {
-  if (cat === 'all') return timerStore.allSoundTracks.length
-  return timerStore.allSoundTracks.filter(t => t.category === cat).length
-}
 
 // 视图标签：专注工作台 vs 统计看板
 const activeTab = ref<'timer' | 'analytics'>('timer')
@@ -159,23 +144,21 @@ const applyExamPreset = (preset: typeof examPresets[0]) => {
   ElMessage.success(`已切换为【${preset.label}】(${preset.duration}分钟)`)
 }
 
-// 切换白噪音/轻音乐
-const selectNoise = (trackId: string) => {
-  if (trackId === 'none') {
+// 选择或切换 5 大轻音乐渠道（下拉菜单选中后触发并自动收起）
+const selectChannel = (channelId: string | number | object) => {
+  const id = String(channelId)
+  timerStore.audioError = null
+  if (id === 'none') {
     timerStore.setNoiseType('none')
     return
   }
-  // 若点击当前正在播放的音轨，则暂停
-  if (timerStore.noiseType === trackId && timerStore.isAudioPlaying) {
-    timerStore.stopSound()
-    return
-  }
-  // 否则切换并立即播放试听
-  timerStore.setNoiseType(trackId, true)
+  // 切换并立即播放该轻音乐渠道
+  timerStore.setNoiseType(id, true)
 }
 
 // 独立试听/播放控制
 const toggleAudioPreview = () => {
+  timerStore.audioError = null
   timerStore.toggleAudioPlay()
 }
 
@@ -185,90 +168,6 @@ watch(() => timerStore.audioError, (err) => {
     ElMessage.error(err)
   }
 })
-
-// 自定义音频源弹窗状态与方法
-const showCustomAudioDialog = ref(false)
-const newAudioName = ref('')
-const newAudioUrl = ref('')
-const newAudioIcon = ref('📻')
-const isTestingAudio = ref(false)
-const testAudioStatus = ref<{ type: 'success' | 'error'; message: string } | null>(null)
-
-const openCustomAudioDialog = () => {
-  newAudioName.value = ''
-  newAudioUrl.value = ''
-  newAudioIcon.value = '📻'
-  testAudioStatus.value = null
-  showCustomAudioDialog.value = true
-}
-
-const testCustomAudio = () => {
-  if (!newAudioUrl.value.trim()) {
-    testAudioStatus.value = { type: 'error', message: '请先输入音频直链 URL' }
-    return
-  }
-  isTestingAudio.value = true
-  testAudioStatus.value = null
-  const testAudio = new Audio(newAudioUrl.value.trim())
-  let resolved = false
-
-  const timer = setTimeout(() => {
-    if (!resolved) {
-      resolved = true
-      isTestingAudio.value = false
-      testAudio.pause()
-      testAudio.src = ''
-      testAudioStatus.value = { type: 'error', message: '连接超时，请检查该音频直链是否可访问' }
-    }
-  }, 6000)
-
-  testAudio.oncanplay = () => {
-    if (!resolved) {
-      resolved = true
-      clearTimeout(timer)
-      isTestingAudio.value = false
-      testAudio.pause()
-      testAudio.src = ''
-      testAudioStatus.value = { type: 'success', message: '✅ 音频流连接测试成功！' }
-    }
-  }
-
-  testAudio.onerror = () => {
-    if (!resolved) {
-      resolved = true
-      clearTimeout(timer)
-      isTestingAudio.value = false
-      testAudio.pause()
-      testAudio.src = ''
-      testAudioStatus.value = { type: 'error', message: '❌ 音频加载失败，请确保是直接指向 mp3/aac/ogg 或流媒体的直链' }
-    }
-  }
-
-  testAudio.load()
-}
-
-const saveCustomAudio = () => {
-  if (!newAudioName.value.trim() || !newAudioUrl.value.trim()) {
-    ElMessage.warning('请填写音频名称和直链 URL')
-    return
-  }
-  const id = timerStore.addCustomTrack(newAudioName.value.trim(), newAudioUrl.value.trim(), newAudioIcon.value.trim() || '📻')
-  showCustomAudioDialog.value = false
-  currentSoundCategory.value = 'custom'
-  selectNoise(id)
-  ElMessage.success('自定义音源添加成功并已选用')
-}
-
-const handleDeleteCustomTrack = (id: string) => {
-  ElMessageBox.confirm('确定要删除该自定义音源吗？', '提示', {
-    confirmButtonText: '确定删除',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    timerStore.removeCustomTrack(id)
-    ElMessage.success('已删除自定义音源')
-  }).catch(() => {})
-}
 
 // 打开设置
 const openSettings = () => {
@@ -465,6 +364,13 @@ onMounted(async () => {
     }
   })
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+  if (route.query.openMusicDropdown === '1') {
+    setTimeout(() => {
+      const btn = document.querySelector('.channel-dropdown-btn') as HTMLElement
+      btn?.click()
+    }, 400)
+  }
 })
 
 onUnmounted(() => {
@@ -733,55 +639,124 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- 3. 声学自习室面板（专注伴学音乐与白噪音） -->
-      <div class="sound-hub-card">
-        <div class="sound-header">
-          <div class="sound-title-group">
-            <div class="sound-title">
-              <el-icon><Headset /></el-icon>
-              <span>声学自习室 · 专注音乐与空间白噪</span>
+      <!-- 3. 5 大纯净轻音乐渠道直达栏 (零多余标签，100%可靠本地轻音) -->
+      <div class="sound-deck-card">
+        <div class="sound-deck-bar">
+          <!-- 左侧：黑胶唱片与当前频道状态 -->
+          <div class="deck-track-meta">
+            <div class="vinyl-record" :class="{ 'is-spinning': timerStore.isAudioPlaying }">
+              <div class="vinyl-inner">
+                <span class="vinyl-icon">{{ currentActiveTrack ? currentActiveTrack.icon : '🔇' }}</span>
+              </div>
             </div>
-            <!-- 正在播放徽章 -->
-            <div v-if="timerStore.isAudioPlaying && currentActiveTrack && currentActiveTrack.id !== 'none'" class="now-playing-badge">
-              <span class="pulse-dot"></span>
-              <span class="playing-track-name">{{ currentActiveTrack.name }}</span>
+
+            <div class="deck-meta-text">
+              <div class="deck-title-row">
+                <span class="deck-title">{{ currentActiveTrack ? currentActiveTrack.name : '静音专注' }}</span>
+                <span v-if="currentActiveTrack?.badge" class="deck-badge">{{ currentActiveTrack.badge }}</span>
+              </div>
+              <div class="deck-sub-row">
+                <span v-if="timerStore.isAudioPlaying" class="status-playing">
+                  <span class="pulse-dot-green"></span> 正在伴读
+                </span>
+                <span v-else class="status-idle">
+                  {{ currentActiveTrack?.desc || '点击渠道一键伴读' }}
+                </span>
+              </div>
             </div>
           </div>
 
-          <!-- 右侧动作控制区 -->
-          <div class="sound-actions">
-            <!-- 独立试听/常驻开关 -->
-            <button
-              type="button"
-              class="sound-btn-pill preview-btn"
-              :class="{ 'is-playing': timerStore.isAudioPlaying }"
-              :title="timerStore.isAudioPlaying ? '点击暂停背景声' : '点击试听/播放背景声'"
-              @click="toggleAudioPreview"
-            >
-              <span v-if="timerStore.isAudioPlaying">⏸️ 暂停声音</span>
-              <span v-else>▶️ 试听 / 播放</span>
-            </button>
-
-            <!-- 添加自定义音频按钮 -->
-            <button
-              type="button"
-              class="sound-btn-pill custom-add-btn"
-              @click="openCustomAudioDialog"
-            >
-              <el-icon size="12"><Plus /></el-icon>
-              <span>自定义</span>
-            </button>
-
-            <!-- 音量控制滑块 -->
-            <div class="sound-volume-ctrl">
+          <!-- 中间：单一下拉选择音乐按钮（点击下拉展示 5 大轻音乐渠道，选择后自动收起） -->
+          <div class="music-channel-selector">
+            <el-dropdown trigger="click" @command="selectChannel">
               <button
                 type="button"
-                class="mute-btn"
+                class="channel-dropdown-btn"
+                :class="{
+                  'is-active': timerStore.noiseType !== 'none',
+                  'is-playing': timerStore.isAudioPlaying && timerStore.noiseType !== 'none'
+                }"
+                title="点击选择轻音乐伴读渠道"
+              >
+                <span class="dropdown-btn-icon">{{ currentActiveTrack ? currentActiveTrack.icon : '🎵' }}</span>
+                <span class="dropdown-btn-name">
+                  {{ currentActiveTrack && timerStore.noiseType !== 'none' ? currentActiveTrack.name : '选择音乐' }}
+                </span>
+                <div v-if="timerStore.isAudioPlaying && timerStore.noiseType !== 'none'" class="dropdown-wave">
+                  <span></span><span></span><span></span>
+                </div>
+                <el-icon class="dropdown-arrow"><ArrowDown /></el-icon>
+              </button>
+
+              <template #dropdown>
+                <el-dropdown-menu class="music-select-dropdown-menu">
+                  <div class="dropdown-menu-title">
+                    <span>🎧 5 个可靠伴读轻音乐渠道</span>
+                  </div>
+                  <el-dropdown-item
+                    v-for="channel in reliableChannels"
+                    :key="channel.id"
+                    :command="channel.id"
+                    class="channel-dropdown-item"
+                    :class="{ 'is-selected': timerStore.noiseType === channel.id }"
+                  >
+                    <div class="dropdown-item-content">
+                      <span class="item-icon">{{ channel.icon }}</span>
+                      <div class="item-details">
+                        <div class="item-title-row">
+                          <span class="item-name">{{ channel.name }}</span>
+                          <span v-if="timerStore.isAudioPlaying && timerStore.noiseType === channel.id" class="item-playing-badge">
+                            ● 正在播放
+                          </span>
+                        </div>
+                        <span class="item-desc">{{ channel.desc }}</span>
+                      </div>
+                      <el-icon v-if="timerStore.noiseType === channel.id" class="item-check"><Check /></el-icon>
+                    </div>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    divided
+                    command="none"
+                    class="channel-dropdown-item mute-option"
+                    :class="{ 'is-selected': timerStore.noiseType === 'none' }"
+                  >
+                    <div class="dropdown-item-content">
+                      <span class="item-icon">🔇</span>
+                      <div class="item-details">
+                        <span class="item-name">静音专注</span>
+                        <span class="item-desc">纯净无声 · 深度心流</span>
+                      </div>
+                      <el-icon v-if="timerStore.noiseType === 'none'" class="item-check"><Check /></el-icon>
+                    </div>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+
+          <!-- 右侧：核心播放控制与音量滑块 -->
+          <div class="deck-right-actions">
+            <!-- 迷你播放/暂停按钮 -->
+            <button
+              type="button"
+              class="deck-play-btn"
+              :class="{ 'is-active': timerStore.isAudioPlaying }"
+              :title="timerStore.isAudioPlaying ? '暂停背景音' : '播放背景音'"
+              @click="toggleAudioPreview"
+            >
+              <span v-if="timerStore.isAudioPlaying">⏸</span>
+              <span v-else>▶</span>
+            </button>
+
+            <!-- 静音切换与音量滑块 -->
+            <div class="deck-volume-box">
+              <button
+                type="button"
+                class="deck-mute-btn"
                 :title="timerStore.isMuted ? '取消静音' : '静音'"
                 @click="timerStore.toggleMute"
               >
-                <span v-if="timerStore.isMuted">🔇</span>
-                <span v-else>🔊</span>
+                {{ timerStore.isMuted ? '🔇' : '🔊' }}
               </button>
               <el-slider
                 v-model="timerStore.volume"
@@ -789,62 +764,11 @@ onUnmounted(() => {
                 :max="1"
                 :step="0.05"
                 :show-tooltip="false"
-                class="volume-slider"
+                class="deck-volume-slider"
                 @input="timerStore.setVolume"
               />
             </div>
           </div>
-        </div>
-
-        <!-- 分类选择胶囊 Tab -->
-        <div class="sound-category-tabs">
-          <button
-            v-for="cat in soundCategories"
-            :key="cat.key"
-            type="button"
-            class="cat-tab-btn"
-            :class="{ active: currentSoundCategory === cat.key }"
-            @click="currentSoundCategory = cat.key"
-          >
-            {{ cat.label }}
-            <span class="cat-count">{{ getCategoryCount(cat.key) }}</span>
-          </button>
-        </div>
-
-        <!-- 音轨网格 -->
-        <div class="noise-track-grid">
-          <button
-            v-for="track in filteredSoundTracks"
-            :key="track.id"
-            type="button"
-            class="noise-pill-btn"
-            :class="{
-              active: timerStore.noiseType === track.id,
-              'is-playing': timerStore.isAudioPlaying && timerStore.noiseType === track.id
-            }"
-            @click="selectNoise(track.id)"
-          >
-            <span class="track-icon">{{ track.icon }}</span>
-            <div class="track-info">
-              <div class="track-title-row">
-                <span class="track-label">{{ track.name }}</span>
-                <span
-                  v-if="track.type === 'custom'"
-                  class="delete-custom-btn"
-                  title="删除此自定义音源"
-                  @click.stop="handleDeleteCustomTrack(track.id)"
-                >
-                  ✕
-                </span>
-              </div>
-              <span v-if="track.desc" class="track-desc">{{ track.desc }}</span>
-            </div>
-
-            <!-- 声波动态跳动效果 -->
-            <div v-if="timerStore.isAudioPlaying && timerStore.noiseType === track.id" class="sound-wave-bars">
-              <span></span><span></span><span></span>
-            </div>
-          </button>
         </div>
       </div>
     </div>
@@ -1058,47 +982,6 @@ onUnmounted(() => {
       </template>
     </el-dialog>
 
-    <!-- 自定义音频源添加弹窗 -->
-    <el-dialog
-      v-model="showCustomAudioDialog"
-      title="📻 添加自定义音频源"
-      width="440px"
-      destroy-on-close
-    >
-      <div class="custom-audio-form">
-        <el-form label-position="top">
-          <el-form-item label="音频源名称">
-            <el-input v-model="newAudioName" placeholder="例如：我的学习电台 / 个人收藏 BGM" maxlength="24" />
-          </el-form-item>
-          <el-form-item label="音频直链 URL (mp3/ogg/aac 或网络音频流)">
-            <el-input v-model="newAudioUrl" placeholder="https://example.com/audio.mp3" clearable />
-          </el-form-item>
-          <el-form-item label="代表图标 (Emoji)">
-            <el-input v-model="newAudioIcon" placeholder="📻" maxlength="4" style="width: 120px;" />
-          </el-form-item>
-        </el-form>
-
-        <div v-if="testAudioStatus" class="test-status-msg" :class="testAudioStatus.type">
-          {{ testAudioStatus.message }}
-        </div>
-      </div>
-
-      <template #footer>
-        <div class="custom-dialog-footer">
-          <el-button :loading="isTestingAudio" @click="testCustomAudio">测试连通性</el-button>
-          <div class="dialog-right-btns">
-            <el-button @click="showCustomAudioDialog = false">取消</el-button>
-            <el-button
-              type="primary"
-              :disabled="!newAudioName.trim() || !newAudioUrl.trim()"
-              @click="saveCustomAudio"
-            >
-              保存并选用
-            </el-button>
-          </div>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -1499,315 +1382,393 @@ onUnmounted(() => {
   color: #6366f1;
 }
 
-/* 3. 声学自习室面板 */
-.sound-hub-card {
+/* 3. 5 大纯净轻音乐渠道直达栏 (Sound Deck Bar) */
+.sound-deck-card {
   background: var(--bg-card, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 16px;
-  padding: 18px 20px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding: 10px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
 }
 
-.sound-header {
+.sound-deck-bar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 12px;
+  flex-wrap: nowrap;
 }
 
-.sound-title-group {
+/* 左侧：黑胶与当前频道状态 */
+.deck-track-meta {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-}
-
-.sound-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-main, #0f172a);
-}
-
-.now-playing-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
-  border-radius: 12px;
-  padding: 2px 10px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #6366f1;
-  animation: pulse 1s infinite;
-}
-
-.sound-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sound-btn-pill {
-  border: 1px solid var(--border-color, #e2e8f0);
-  background: var(--bg-page, #f8fafc);
-  border-radius: 14px;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--text-regular, #475569);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s;
-}
-
-.sound-btn-pill:hover {
-  border-color: #6366f1;
-  color: #6366f1;
-}
-
-.sound-btn-pill.preview-btn.is-playing {
-  background: #6366f1;
-  border-color: #6366f1;
-  color: #ffffff;
-  font-weight: 500;
-}
-
-.sound-volume-ctrl {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 140px;
-}
-
-.mute-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.volume-slider {
-  flex: 1;
-}
-
-/* 分类标签栏 */
-.sound-category-tabs {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 12px;
-}
-
-.cat-tab-btn {
-  border: 1px solid transparent;
-  background: var(--bg-page, #f1f5f9);
-  border-radius: 14px;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--text-regular, #64748b);
-  cursor: pointer;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s;
-}
-
-.cat-tab-btn:hover {
-  color: #6366f1;
-  background: rgba(99, 102, 241, 0.08);
-}
-
-.cat-tab-btn.active {
-  background: #6366f1;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.cat-count {
-  font-size: 10px;
-  opacity: 0.8;
-}
-
-/* 音轨网格卡片 */
-.noise-track-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
-  gap: 8px;
-}
-
-.noise-pill-btn {
-  border: 1px solid var(--border-color, #e2e8f0);
-  background: var(--bg-page, #f8fafc);
-  border-radius: 10px;
-  padding: 8px 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--text-regular, #475569);
-  transition: all 0.2s;
-  position: relative;
-  text-align: left;
-}
-
-.noise-pill-btn:hover {
-  border-color: #6366f1;
-  transform: translateY(-1px);
-}
-
-.noise-pill-btn.active {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.06);
-  color: #6366f1;
-  font-weight: 600;
-}
-
-.noise-pill-btn.is-playing {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 1px #6366f1 inset;
-}
-
-.track-icon {
-  font-size: 16px;
-  line-height: 1.2;
+  user-select: none;
+  min-width: 140px;
   flex-shrink: 0;
 }
 
-.track-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.track-title-row {
+.vinyl-record {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #334155 25%, #1e293b 65%, #0f172a 100%);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 4px;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
 
-.track-label {
-  font-size: 12px;
+.vinyl-record.is-spinning {
+  animation: spinVinyl 12s linear infinite;
+}
+
+@keyframes spinVinyl {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.vinyl-inner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vinyl-icon {
+  font-size: 9px;
+}
+
+.deck-meta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.deck-title-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.deck-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.track-desc {
-  font-size: 10px;
-  color: var(--text-secondary, #94a3b8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 400;
-}
-
-.delete-custom-btn {
-  font-size: 11px;
-  color: #94a3b8;
-  padding: 0 2px;
+.deck-badge {
+  font-size: 9px;
+  padding: 1px 4px;
   border-radius: 4px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  font-weight: 600;
 }
 
-.delete-custom-btn:hover {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+.deck-sub-row {
+  font-size: 11px;
+  white-space: nowrap;
 }
 
-/* 均衡器跳动声波 */
-.sound-wave-bars {
+.status-playing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.pulse-dot-green {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulseDot 1.2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.status-idle {
+  color: var(--text-secondary, #94a3b8);
+}
+
+/* 中间：单一音乐下拉选择按钮 (Music Channel Dropdown Trigger) */
+.music-channel-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.channel-dropdown-btn {
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-page, #f8fafc);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  user-select: none;
+}
+
+.channel-dropdown-btn:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.12);
+}
+
+.channel-dropdown-btn.is-active {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+.channel-dropdown-btn.is-playing {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.12));
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+}
+
+.dropdown-btn-icon {
+  font-size: 15px;
+}
+
+.dropdown-btn-name {
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: var(--text-secondary, #94a3b8);
+  transition: transform 0.2s;
+}
+
+.channel-dropdown-btn:hover .dropdown-arrow {
+  color: #6366f1;
+}
+
+/* 按钮内跳动小音波 */
+.dropdown-wave {
   display: flex;
   align-items: flex-end;
   gap: 2px;
-  height: 12px;
-  margin-top: 3px;
-  flex-shrink: 0;
+  height: 10px;
+  margin-left: 1px;
 }
 
-.sound-wave-bars span {
-  width: 2.5px;
+.dropdown-wave span {
+  width: 2px;
   background: #6366f1;
   border-radius: 1px;
   animation: soundBarPulse 0.8s ease-in-out infinite alternate;
 }
 
-.sound-wave-bars span:nth-child(1) {
-  height: 4px;
-  animation-delay: 0.1s;
-}
-
-.sound-wave-bars span:nth-child(2) {
-  height: 12px;
-  animation-delay: 0.3s;
-}
-
-.sound-wave-bars span:nth-child(3) {
-  height: 8px;
-  animation-delay: 0.2s;
-}
+.dropdown-wave span:nth-child(1) { height: 4px; animation-delay: 0.1s; }
+.dropdown-wave span:nth-child(2) { height: 10px; animation-delay: 0.3s; }
+.dropdown-wave span:nth-child(3) { height: 6px; animation-delay: 0.2s; }
 
 @keyframes soundBarPulse {
-  0% {
-    height: 3px;
-  }
-  100% {
-    height: 12px;
-  }
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
 }
 
-/* 自定义音频弹窗样式 */
-.custom-audio-form {
-  padding: 4px 0;
+/* 下拉菜单弹出层容器 */
+:deep(.music-select-dropdown-menu) {
+  min-width: 280px;
+  padding: 6px 4px;
+  border-radius: 14px;
 }
 
-.test-status-msg {
-  font-size: 12px;
+:deep(.dropdown-menu-title) {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary, #94a3b8);
+  padding: 6px 12px 8px;
+  border-bottom: 1px dashed var(--border-color, #e2e8f0);
+  margin-bottom: 4px;
+}
+
+:deep(.channel-dropdown-item) {
   padding: 8px 12px;
-  border-radius: 8px;
-  margin-top: 8px;
+  border-radius: 10px;
+  margin: 2px 0;
+  transition: all 0.2s;
 }
 
-.test-status-msg.success {
-  background: #ecfdf5;
-  color: #059669;
-}
-
-.test-status-msg.error {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.custom-dialog-footer {
+:deep(.dropdown-item-content) {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
   width: 100%;
 }
 
-.dialog-right-btns {
+:deep(.dropdown-item-content .item-icon) {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+:deep(.dropdown-item-content .item-details) {
+  flex: 1;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+:deep(.dropdown-item-content .item-title-row) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+:deep(.dropdown-item-content .item-name) {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+}
+
+:deep(.dropdown-item-content .item-playing-badge) {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  font-weight: 600;
+}
+
+:deep(.dropdown-item-content .item-desc) {
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+:deep(.dropdown-item-content .item-check) {
+  color: #6366f1;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+:deep(.channel-dropdown-item.is-selected) {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+:deep(.channel-dropdown-item.is-selected .item-name) {
+  color: #6366f1;
+}
+
+/* 右侧：播放开关与音量控制 */
+.deck-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.deck-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(99, 102, 241, 0.3);
+  transition: all 0.2s;
+}
+
+.deck-play-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 5px 14px rgba(99, 102, 241, 0.4);
+}
+
+.deck-play-btn.is-active {
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+  box-shadow: 0 3px 10px rgba(236, 72, 153, 0.3);
+}
+
+.deck-volume-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 105px;
+}
+
+.deck-mute-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary, #94a3b8);
+  transition: color 0.2s;
+}
+
+.deck-mute-btn:hover {
+  color: #6366f1;
+}
+
+.deck-volume-slider {
+  flex: 1;
+}
+
+/* 暗色模式专属微调 */
+:deep(.dark) .sound-deck-card,
+.dark .sound-deck-card {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+:deep(.dark) .channel-dropdown-btn,
+.dark .channel-dropdown-btn {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:deep(.dark) .channel-dropdown-btn:hover,
+.dark .channel-dropdown-btn:hover {
+  border-color: #818cf8;
+  color: #c7d2fe;
+  background: rgba(99, 102, 241, 0.15);
+}
+
+:deep(.dark) .channel-dropdown-btn.is-active,
+.dark .channel-dropdown-btn.is-active {
+  border-color: #818cf8;
+  color: #c7d2fe;
+}
+
+:deep(.dark) .channel-dropdown-btn.is-playing,
+.dark .channel-dropdown-btn.is-playing {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.25));
+  border-color: #818cf8;
 }
 
 /* 学情看板布局 */

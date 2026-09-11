@@ -42,6 +42,15 @@ const router = createRouter({
       name: 'Timer',
       component: () => import('../views/Timer/index.vue'),
     },
+    {
+      path: '/brain-gym',
+      name: 'BrainGym',
+      component: () => import('../views/BrainGym/index.vue'),
+    },
+    {
+      path: '/games',
+      redirect: '/brain-gym',
+    },
 
     // 历史路径平滑重定向 (保证老链接与书签 100% 兼容)
     {
