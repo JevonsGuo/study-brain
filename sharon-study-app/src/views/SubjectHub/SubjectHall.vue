@@ -141,7 +141,7 @@ onMounted(fetchData)
       <div class="sync-banner-content">
         <span class="sync-banner-emblem">📚</span>
         <div class="sync-banner-info">
-          <div class="sync-banner-title">正在从官方云端下载 9 大学科核心考点库...</div>
+          <div class="sync-banner-title">正在加载 9 大学科核心考点库...</div>
           <div class="sync-banner-sub">收录 {{ allPoints.length || 235 }} 个高考必考考点与核心提分思维导图，仅首次进入需要同步，完成后离线秒开！</div>
         </div>
       </div>

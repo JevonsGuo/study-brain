@@ -241,24 +241,24 @@ onUnmounted(() => {
       <div class="footer-inner">
         <div class="footer-meta-line">
           <span class="footer-brand">🎯 智学大脑 · Study Brain</span>
-          <span class="footer-badge">上海新高考自律智学系统</span>
+          <span class="footer-badge">个人自律学习助手</span>
           <span class="footer-sep">·</span>
-          <span class="footer-ver">应用系统 v1.0.6</span>
+          <span class="footer-ver">应用版本 v1.0.0</span>
           <span class="footer-sep">·</span>
           <span class="footer-db">考点词库 v{{ appConfig.currentDbVersion }}</span>
           <span class="footer-sep">·</span>
           <button type="button" class="footer-link-btn" @click="showAboutModal = true">
-            关于系统
+            关于
           </button>
         </div>
 
         <div class="footer-copy-line">
-          <span class="footer-copy">Copyright © 2026 GYFolk / Sharon Study. All Rights Reserved.</span>
+          <span class="footer-copy">Copyright © 2026 GYFolk / Study Brain. All Rights Reserved.</span>
           <span class="footer-sep">·</span>
           <span class="footer-contact">
-            技术反馈与交流：
-            <a href="mailto:Guo.Qihua@GYFolk.com" class="footer-email-link" title="点击直接发送邮件">
-              Guo.Qihua@GYFolk.com
+            反馈与交流：
+            <a href="mailto:Jevons@GYFolk.com" class="footer-email-link" title="点击直接发送邮件">
+              Jevons@GYFolk.com
             </a>
           </span>
         </div>

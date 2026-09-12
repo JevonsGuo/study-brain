@@ -22,13 +22,13 @@ const emit = defineEmits<{
 
 const appConfig = useAppConfigStore()
 const copied = ref(false)
-const contactEmail = "Guo.Qihua@GYFolk.com"
+const contactEmail = "Jevons@GYFolk.com"
 
 const copyEmail = async () => {
   try {
     await navigator.clipboard.writeText(contactEmail)
     copied.value = true
-    ElMessage.success("联系邮箱已复制到剪贴板：Guo.Qihua@GYFolk.com")
+    ElMessage.success("联系邮箱已复制到剪贴板：Jevons@GYFolk.com")
     setTimeout(() => {
       copied.value = false
     }, 2500)
@@ -41,7 +41,7 @@ const copyEmail = async () => {
     document.execCommand("copy")
     document.body.removeChild(input)
     copied.value = true
-    ElMessage.success("联系邮箱已复制到剪贴板：Guo.Qihua@GYFolk.com")
+    ElMessage.success("联系邮箱已复制到剪贴板：Jevons@GYFolk.com")
     setTimeout(() => {
       copied.value = false
     }, 2500)
@@ -71,10 +71,10 @@ const sendMail = () => {
         <div class="hero-brand-info">
           <div class="hero-title-row">
             <h2 class="hero-title">智学大脑 · Study Brain</h2>
-            <span class="hero-badge">上海新高考自律智学系统</span>
+            <span class="hero-badge">个人自律学习助手</span>
           </div>
           <p class="hero-tagline">
-            赋能学生自主闭环学习，以纯客户端离线引擎守护真实提分与思维成长。
+            个人独立开发的高考自律学习小工具，纯本地私有离线运行，简单自律、踏实提分。
           </p>
         </div>
       </div>
@@ -84,10 +84,10 @@ const sendMail = () => {
         <div class="spec-card">
           <div class="spec-header">
             <el-icon class="spec-icon"><Cpu /></el-icon>
-            <span class="spec-name">应用系统版本</span>
+            <span class="spec-name">应用版本</span>
           </div>
           <div class="spec-val">
-            <span class="spec-badge blue">v1.0.6</span>
+            <span class="spec-badge blue">v1.0.0</span>
             <span class="spec-sub">Web 现代化前端</span>
           </div>
         </div>
@@ -118,7 +118,7 @@ const sendMail = () => {
           <span class="privacy-title">纯客户端本地私有数据引擎</span>
         </div>
         <p class="privacy-desc">
-          本平台零集中式服务器数据库。学生的每日计划、自律座右铭、个人错题、历次成绩追踪与背诵专注打卡，
+          零商业服务器与第三方数据库。学生的每日计划、自律座右铭、个人错题、历次成绩追踪与背诵专注打卡，
           严格保存在当前设备的浏览器私有 <code>IndexedDB</code> 中。
           支持通过坚果云 WebDAV 或全量 JSON 文件自主备份迁移，个人学科学情绝对私密、离线秒开。
         </p>
@@ -128,12 +128,12 @@ const sendMail = () => {
       <div class="about-copyright-deck">
         <div class="copyright-row">
           <span class="copyright-label">版权所有</span>
-          <span class="copyright-val">Copyright © 2026 GYFolk / Sharon Study. All Rights Reserved.</span>
+          <span class="copyright-val">Copyright © 2026 GYFolk / Study Brain. All Rights Reserved.</span>
         </div>
         
         <div class="contact-row">
           <div class="contact-meta">
-            <span class="contact-label">技术反馈与联系方式</span>
+            <span class="contact-label">作者联系与反馈交流</span>
             <div class="contact-email-badge">
               <el-icon class="email-icon"><Message /></el-icon>
               <span class="email-text">{{ contactEmail }}</span>

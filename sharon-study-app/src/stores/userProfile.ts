@@ -61,7 +61,7 @@ export const useUserProfileStore = defineStore('userProfile', () => {
   // 同步更新浏览器标签页标题
   const syncDocumentTitle = () => {
     const title = appTitle.value
-    document.title = `${title} - 高考自律智学系统`
+    document.title = `${title} - 智学大脑`
   }
 
   // 加载用户档案
