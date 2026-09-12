@@ -4105,14 +4105,50 @@ onMounted(() => {
 }
 
 
-/* 学科工作台移动端与 Pad 端适配 */
-@media (max-width: 768px) {
+/* ========================================================== */
+/* 学科工作台移动端 (Phone) 与平板端 (iPad) 深度交互优化架构   */
+/* 覆盖 <= 1024px：彻底解锁垂直滑动，重构紧凑内容排版         */
+/* ========================================================== */
+@media (max-width: 1024px) {
+  /* 1. 彻底解除外层锁定，启用全屏原生顺滑手势滚动 */
+  :global(.app-main:has(.workbench-container)) {
+    overflow-y: auto !important;
+    height: 100vh !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .workbench-container {
     height: auto !important;
     min-height: calc(100vh - 120px) !important;
     overflow: visible !important;
+    gap: 10px !important;
+    padding-bottom: 60px !important;
   }
 
+  .knowledge-tab-content {
+    height: auto !important;
+    overflow: visible !important;
+    flex: none !important;
+  }
+
+  .points-stream {
+    height: auto !important;
+    overflow: visible !important;
+    flex: none !important;
+    padding-right: 0 !important;
+    padding-bottom: 50px !important;
+    gap: 10px !important;
+  }
+
+  .wrong-tab-content,
+  .wrong-list {
+    height: auto !important;
+    overflow: visible !important;
+    flex: none !important;
+    padding-bottom: 50px !important;
+  }
+
+  /* 2. 顶栏导航紧凑响应 */
   .workbench-top-nav {
     padding: 8px 12px !important;
     gap: 8px !important;
@@ -4147,13 +4183,136 @@ onMounted(() => {
   }
 
   .topics-tags-panel {
-    padding: 10px 12px !important;
+    padding: 8px 10px !important;
   }
 
   .tag-panel-header {
     flex-direction: column !important;
     align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .tags-cloud-container {
+    max-height: 90px !important;
+    gap: 6px !important;
+  }
+
+  .topic-tag-pill {
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+  }
+
+  /* 3. 考点卡片头部紧凑排版：解决按钮拥挤折行问题 */
+  .knowledge-card {
+    padding: 10px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .card-top-row {
     gap: 8px !important;
+  }
+
+  .point-title {
+    font-size: 14.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  .linked-wrong-empty {
+    display: none !important; /* 移动端隐藏无错题时的占位框 */
+  }
+
+  .linked-wrong-badge {
+    padding: 2px 6px !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
+  }
+
+  .unmastered-dot,
+  .mastered-dot {
+    display: none !important; /* 移动端简化徽章文字 */
+  }
+
+  .action-icon-btn {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 12px !important;
+  }
+
+  /* 4. 解决“打开一个后，内容 也是 很像的 非常长”的痛点：
+     打破千篇一律的大厚框堆砌，重塑通透分明的现代精炼流 */
+  .point-body-content {
+    margin-top: 8px !important;
+    padding-top: 10px !important;
+    gap: 8px !important;
+  }
+
+  .point-block {
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    font-size: 12.5px !important;
+  }
+
+  .block-title {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* 核心公式：重点突出，居中排版 */
+  .formula-block {
+    padding: 10px 12px !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  }
+
+  .formula-block .math-content {
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* 知识精析：去除非必要厚重灰色框，作为通透正文呈现 */
+  .content-block {
+    background: transparent !important;
+    border: none !important;
+    border-left: 3px solid #6366f1 !important;
+    border-radius: 0 6px 6px 0 !important;
+    padding: 4px 10px !important;
+  }
+
+  .content-block .block-title {
+    color: #6366f1 !important;
+  }
+
+  /* 避坑大招与具象模型：紧凑轻便 */
+  .tips-block {
+    padding: 6px 10px !important;
+  }
+
+  .visual-block {
+    padding: 6px 10px !important;
+  }
+
+  /* 随堂笔记：若为空，在手机端绝不显示庞大的空占位框！ */
+  .student-note-block:has(.note-empty-text) .note-display-box {
+    display: none !important;
+  }
+
+  .student-note-block:has(.note-empty-text) {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .student-note-block:has(.note-empty-text) .note-block-header {
+    margin-bottom: 0 !important;
+  }
+
+  .student-note-block:has(.note-empty-text) .block-title {
+    display: none !important;
+  }
+
+  /* 微课精讲按钮：紧凑单行行内展示 */
+  .point-video-row {
+    margin-top: 2px !important;
   }
 }
 

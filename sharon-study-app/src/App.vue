@@ -1469,10 +1469,12 @@ const toggleCollapse = () => {
   }
 
   .app-main {
-    padding: calc(50px + 12px) 12px calc(58px + env(safe-area-inset-bottom) + 12px) 12px !important;
+    padding: calc(50px + 10px) 12px calc(58px + env(safe-area-inset-bottom) + 28px) 12px !important;
     overflow-x: hidden;
-    height: 100vh;
+    overflow-y: auto !important;
+    height: 100vh !important;
     box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
   }
 
   .global-timer-floater {
