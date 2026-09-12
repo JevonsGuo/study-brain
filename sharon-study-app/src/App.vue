@@ -8,7 +8,7 @@ import CloudSyncModal from './components/CloudSyncModal.vue'
 import UserOnboardingModal from './components/UserOnboardingModal.vue'
 import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import DataConsoleModal from './components/DataConsoleModal.vue'
-import { ElNotification, ElMessageBox } from 'element-plus'
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
 import { Edit } from '@element-plus/icons-vue'
 import { localDB } from './utils/localDatabase'
 
@@ -83,24 +83,30 @@ const isLocal = computed(() => {
   return import.meta.env.DEV || isLocalEnv()
 })
 
+const showEditModeModal = ref(false)
+
 const openPinPrompt = async () => {
   if (!isLocal.value) return
   try {
-    const { value } = await ElMessageBox.prompt('请输入管理员维护密码：', '🛠️ 公共数据库维护模式 (学科考点与单词库)', {
+    const { value } = await ElMessageBox.prompt('请输入管理员密码进入编辑模式：', '🛠️ 公共数据库', {
       inputType: 'password',
-      confirmButtonText: '验证解锁',
+      confirmButtonText: '验证进入',
       cancelButtonText: '取消',
-      inputPlaceholder: '输入密码 654321 解锁公共数据编辑权限',
+      inputPlaceholder: '请输入密码解锁编辑权限',
       inputPattern: /^.+$/,
       inputErrorMessage: '密码不能为空'
     })
-    const ok = appConfig.unlockMaintenanceMode(value)
-    if (ok) {
-      appConfig.showDataConsole = true
-    }
+    // 验证成功直接进入编辑模式，不弹出遮挡视线的控制台
+    appConfig.unlockMaintenanceMode(value)
   } catch {
     // cancelled
   }
+}
+
+const confirmExitEdit = () => {
+  appConfig.exitMaintenanceMode()
+  showEditModeModal.value = false
+  ElMessage.info('已退出编辑模式')
 }
 
 const THEME_KEY = 'study_theme'
@@ -310,26 +316,48 @@ const toggleCollapse = () => {
           </button>
         </div>
 
-        <!-- 本地专属：题库数据维护模式入口（仅在本地 localhost 开发环境显示，线上生产环境彻底隐藏） -->
-        <div v-if="isLocal && !isCollapse" class="aside-dev-bar">
-          <button
-            v-if="!appConfig.isMaintenanceMode"
-            type="button"
-            class="dev-mode-btn"
-            @click="openPinPrompt"
-            title="输入密码（654321）解锁公共数据库维护（包含学科中心考点与全套英语词库）"
-          >
-            🛠️ 公共数据库
-          </button>
-          <div
-            v-else
-            class="dev-active-badge"
-            @click="appConfig.showDataConsole = true"
-            title="当前处于本地维护模式，点击打开数据管理面板"
-          >
-            <span class="dev-dot-pulse"></span>
-            <span>🛠️ 公共数据库(管理/退出)</span>
-          </div>
+        <!-- 本地专属：公共数据库维护入口（仅在本地 localhost 开发环境显示，线上生产环境彻底隐藏） -->
+        <div v-if="isLocal" class="aside-dev-bar" :class="{ 'is-collapsed': isCollapse }">
+          <template v-if="!isCollapse">
+            <button
+              v-if="!appConfig.isMaintenanceMode"
+              type="button"
+              class="dev-mode-btn"
+              @click="openPinPrompt"
+              title="点击解锁公共数据库编辑模式（包含学科中心考点与单词词库）"
+            >
+              🛠️ 公共数据库
+            </button>
+            <div
+              v-else
+              class="dev-active-badge"
+              @click="showEditModeModal = true"
+              title="当前处于编辑模式，点击弹出管理或退出编辑"
+            >
+              <span class="dev-dot-pulse"></span>
+              <span>🛠️ 编辑模式中</span>
+            </div>
+          </template>
+          <template v-else>
+            <button
+              v-if="!appConfig.isMaintenanceMode"
+              type="button"
+              class="dev-mode-btn-icon"
+              @click="openPinPrompt"
+              title="点击解锁公共数据库编辑模式"
+            >
+              🛠️
+            </button>
+            <div
+              v-else
+              class="dev-active-badge-icon"
+              @click="showEditModeModal = true"
+              title="当前处于编辑模式，点击弹出管理或退出编辑"
+            >
+              <span class="dev-dot-pulse"></span>
+              <span>🛠️</span>
+            </div>
+          </template>
         </div>
 
         <!-- 切换暗色/亮色模板 -->
@@ -456,6 +484,46 @@ const toggleCollapse = () => {
 
     <!-- 随时修改名字与空间信息弹窗 -->
     <UserProfileEditModal />
+
+    
+    <!-- 公共数据库编辑模式管理与退出弹窗 -->
+    <el-dialog
+      v-model="showEditModeModal"
+      title="🛠️ 公共数据库编辑模式"
+      width="430px"
+      destroy-on-close
+      class="edit-mode-popup"
+    >
+      <div class="edit-mode-dialog-body">
+        <div class="edit-mode-badge-row">
+          <span class="pulse-green-dot"></span>
+          <span class="edit-mode-status-text">当前正处于编辑模式</span>
+        </div>
+        <p class="edit-mode-tip-text">
+          学科考点、题型解析与英语单词卡已开启编辑权限。修改后秒级自动写回本地 <code>content/*.json</code> 文件，可通过 IDE 的 Source Control 审查并提交代码。
+        </p>
+        <div class="edit-mode-extra-action">
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            @click="showEditModeModal = false; appConfig.showDataConsole = true"
+          >
+            📦 打开公共数据控制台 (查看统计)
+          </el-button>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="showEditModeModal = false">继续编辑</el-button>
+        <el-button
+          type="danger"
+          @click="confirmExitEdit"
+          class="exit-btn-main"
+        >
+          🚪 退出编辑
+        </el-button>
+      </template>
+    </el-dialog>
 
     <!-- 官方题库与公共数据发布控制台 -->
     <DataConsoleModal v-model="appConfig.showDataConsole" />
@@ -909,6 +977,43 @@ const toggleCollapse = () => {
 }
 
 /* 仅开发环境展示的维护模式 */
+.aside-dev-bar.is-collapsed {
+  padding: 0 6px 8px;
+}
+
+.dev-mode-btn-icon {
+  width: 38px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px dashed rgba(245, 158, 11, 0.45);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dev-mode-btn-icon:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+}
+
+.dev-active-badge-icon {
+  width: 38px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 12px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 .aside-dev-bar {
   padding: 0 10px 8px;
   display: flex;
@@ -1103,6 +1208,57 @@ const toggleCollapse = () => {
 .page-fade-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+
+.edit-mode-dialog-body {
+  padding: 4px 0;
+}
+
+.edit-mode-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #15803d;
+  margin-bottom: 8px;
+}
+
+:global(.dark) .edit-mode-badge-row {
+  color: #4ade80;
+}
+
+.pulse-green-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 8px #16a34a;
+  animation: nav-pulse 0.8s infinite alternate;
+}
+
+.edit-mode-tip-text {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-muted, #64748b);
+  margin: 0 0 16px;
+}
+
+.edit-mode-tip-text code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.edit-mode-btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.exit-btn-main {
+  font-weight: 600;
 }
 
 </style>
