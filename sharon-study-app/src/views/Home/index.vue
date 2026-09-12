@@ -319,7 +319,7 @@ onUnmounted(() => {
 
     <!-- 主功能模块入口网格 -->
     <el-row :gutter="20" class="module-cards">
-      <el-col :xs="24" :sm="12" :md="8" v-for="mod in modules" :key="mod.title">
+      <el-col :xs="12" :sm="12" :md="8" v-for="mod in modules" :key="mod.title">
         <el-card shadow="hover" class="module-card" @click="$router.push(mod.path)">
           <div class="module-icon" :style="{ background: mod.color }">
             <el-icon :size="32"><component :is="mod.icon" /></el-icon>
@@ -839,56 +839,144 @@ onUnmounted(() => {
   }
 }
 
-/* 手机端深度精细化适配 (< 768px) */
+/* 手机端深度精简与去繁化简适配 (< 768px) */
 @media (max-width: 768px) {
   .welcome-section {
-    padding: 18px 14px;
+    padding: 16px 14px 14px;
     border-radius: 16px;
     margin-bottom: 16px;
   }
 
-  .greeting-title {
-    font-size: 20px;
-  }
-
+  /* 隐藏居中大时钟：手机系统顶栏已有时间，省出核心视口高度 */
   .banner-center {
-    padding: 10px 0;
+    display: none !important;
   }
 
-  .clock-time {
-    font-size: clamp(28px, 8.5vw, 36px);
-    letter-spacing: -0.5px;
+  .welcome-banner-grid {
+    gap: 12px !important;
+  }
+
+  .greeting-title {
+    font-size: 19px;
+  }
+
+  .quote-text {
+    font-size: 12px;
+    margin-bottom: 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .today-discipline-deck {
-    padding: 8px 10px;
+    padding: 6px 10px;
     gap: 8px;
+    border-radius: 10px;
   }
 
   .disc-val {
-    font-size: 13px;
+    font-size: 12.5px;
   }
 
   .disc-label {
     font-size: 10px;
   }
 
-  .gaokao-days-num {
-    font-size: 32px;
+  .banner-right {
+    gap: 8px !important;
   }
 
-  .module-card {
+  .gaokao-countdown-card {
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .gaokao-days-num {
+    font-size: 28px !important;
+  }
+
+  .gaokao-slogan {
+    font-size: 11px !important;
+  }
+
+  /* 隐藏天气卡片的多余湿度、风速和明日预报，只保留紧凑单行 */
+  .weather-compact-card {
+    padding: 6px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .weather-sub-row {
+    display: none !important;
+  }
+
+  .weather-top-row {
+    gap: 6px !important;
+    font-size: 12px !important;
+  }
+
+  .weather-temp-bold {
+    font-size: 14px !important;
+  }
+
+  /* 手机端两列紧凑模块卡片 */
+  .module-cards {
+    margin: 0 -6px !important;
+  }
+
+  .module-cards .el-col {
+    padding: 0 6px !important;
     margin-bottom: 12px;
   }
 
-  .footer-inner {
-    gap: 8px;
+  .module-card {
+    padding: 14px 10px !important;
+    border-radius: 14px !important;
   }
 
-  .footer-meta-line,
+  .module-card :deep(.el-card__body) {
+    padding: 0 !important;
+  }
+
+  .module-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .module-icon .el-icon {
+    font-size: 22px !important;
+  }
+
+  .module-card h3 {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .module-card p {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* 手机端精简页脚：仅保留单行紧凑版权 */
+  .home-footer {
+    margin-top: 14px !important;
+    padding-top: 10px !important;
+  }
+
+  .footer-meta-line {
+    display: none !important;
+  }
+
   .footer-copy-line {
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    font-size: 11px;
     text-align: center;
   }
 

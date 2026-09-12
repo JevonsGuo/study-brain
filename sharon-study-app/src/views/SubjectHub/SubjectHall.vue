@@ -943,4 +943,67 @@ onMounted(fetchData)
   100% { left: 100%; }
 }
 
+
+/* ========================================================== */
+/* 学科大厅移动端与小屏精简适配 (< 768px)                      */
+/* ========================================================== */
+@media (max-width: 768px) {
+  .hall-hero {
+    padding: 16px 14px !important;
+    border-radius: 16px !important;
+    margin-bottom: 14px !important;
+  }
+
+  /* 隐藏非核心副标题与长描述文字，首屏直达学科入口 */
+  .hero-subbadge,
+  .hero-desc {
+    display: none !important;
+  }
+
+  .hero-title {
+    font-size: 18px !important;
+    margin: 4px 0 10px !important;
+  }
+
+  .dual-overview-deck {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .overview-capsule {
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .capsule-icon-box {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .capsule-title {
+    font-size: 12px !important;
+  }
+
+  .metric-num {
+    font-size: 15px !important;
+  }
+
+  .metric-label,
+  .metric-sub {
+    font-size: 11px !important;
+  }
+
+  .overview-actions {
+    width: 100% !important;
+  }
+
+  .quick-record-btn {
+    width: 100% !important;
+  }
+
+  .subjects-grid {
+    gap: 12px !important;
+  }
+}
+
 </style>

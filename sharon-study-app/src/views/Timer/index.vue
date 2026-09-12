@@ -2054,4 +2054,138 @@ onUnmounted(() => {
 .zen-fade-leave-to {
   opacity: 0;
 }
+
+/* ========================================================== */
+/* 番茄钟移动端精简与去繁化简适配 (< 768px)                     */
+/* ========================================================== */
+@media (max-width: 768px) {
+  /* 1. 顶栏导航去繁化简 */
+  .timer-header-nav {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .nav-left-modes {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  .mode-tab-btn {
+    flex: 1 !important;
+    padding: 6px 8px !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+  }
+
+  .nav-right-actions {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  /* 手机端隐藏非必要全屏按钮（手机端本身即全屏） */
+  .icon-tool-btn[title*="全屏"] {
+    display: none !important;
+  }
+
+  /* 2. 10 大学科胶囊：由换行平铺改为极度优雅的单行横向滚动条 */
+  .subject-bar-card {
+    padding: 10px 12px !important;
+    margin-bottom: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .subject-capsules {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .subject-capsules::-webkit-scrollbar {
+    height: 3px !important;
+  }
+
+  .subject-pill {
+    flex-shrink: 0 !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  /* 绑定任务行简化 */
+  .plan-linkage-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  .plan-selector {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  .task-quick-input {
+    width: 100% !important;
+  }
+
+  /* 3. 核心大表盘卡片深度紧凑化：无需向下滚动即可看到主操作按钮 */
+  .timer-hero-card {
+    padding: 16px 12px 14px !important;
+    margin-bottom: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .hero-status-pill {
+    margin-bottom: 4px !important;
+    font-size: 12px !important;
+    padding: 3px 10px !important;
+  }
+
+  .ring-stage {
+    width: 200px !important;
+    height: 200px !important;
+    margin: 4px auto 12px !important;
+  }
+
+  .clock-digit {
+    font-size: 38px !important;
+  }
+
+  .clock-colon {
+    font-size: 32px !important;
+  }
+
+  .clock-sublabel {
+    font-size: 11px !important;
+    margin-top: 2px !important;
+  }
+
+  .control-actions-row {
+    gap: 8px !important;
+  }
+
+  .btn-primary-action {
+    height: 40px !important;
+    padding: 0 18px !important;
+    font-size: 13.5px !important;
+  }
+
+  .btn-tool-action {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  /* 4. 双栏堆叠自适应 */
+  .timer-lower-deck {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
 </style>
