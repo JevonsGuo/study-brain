@@ -513,6 +513,18 @@ export const BIO_GAOKAO_TOPICS: GaokaoTopic[] = [
 
 export const CHI_GAOKAO_TOPICS: GaokaoTopic[] = [
   {
+    id: 'chi-t0',
+    subject: '语文',
+    name: '专题：古诗文名篇必背与情境默写',
+    shortName: '古诗文名篇必背',
+    tag: '高考必背6分',
+    icon: '🎙️',
+    color: '#e11d48',
+    bgGradient: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)',
+    desc: '上海统编教材全套21篇名篇名句背诵库 · 高频情境题眼雷达 · 易错生僻字避坑字库 · 思维脉络图解',
+    match: p => p.chapter.includes('必背') || p.title.includes('背诵') || p.title.includes('题眼避坑')
+  },
+  {
     id: 'chi-t1',
     subject: '语文',
     name: '专题一：古代诗歌鉴赏与名篇意象',
@@ -521,8 +533,8 @@ export const CHI_GAOKAO_TOPICS: GaokaoTopic[] = [
     icon: '📜',
     color: '#8b5cf6',
     bgGradient: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
-    desc: '李白杜甫唐诗巅峰赏析 · 屈原离骚香草美人精神 · 古代诗歌意象密码体系与名句名篇默写',
-    match: p => p.chapter.includes('唐诗高峰') || p.chapter.includes('诗歌意象') || p.chapter.includes('古代诗歌专题') || p.title.includes('诗') || p.title.includes('离骚') || p.title.includes('名句')
+    desc: '李白杜甫唐诗巅峰赏析 · 屈原离骚香草美人精神 · 古代诗歌意象密码体系',
+    match: p => !p.chapter.includes('必背') && (p.chapter.includes('唐诗高峰') || p.chapter.includes('诗歌意象') || p.chapter.includes('古代诗歌专题') || p.title.includes('诗') || p.title.includes('离骚') || p.title.includes('名句'))
   },
   {
     id: 'chi-t2',
@@ -534,7 +546,7 @@ export const CHI_GAOKAO_TOPICS: GaokaoTopic[] = [
     color: '#3b82f6',
     bgGradient: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
     desc: '荀子劝学韩愈师说论证逻辑 · 苏轼赤壁赋主客问答 · 鸿门宴叙事波澜与史传文学史家笔法',
-    match: p => p.chapter.includes('劝学') || p.chapter.includes('赤壁赋') || p.chapter.includes('鸿门宴') || p.chapter.includes('侍坐') || p.chapter.includes('先秦诸子') || p.chapter.includes('史传文学') || p.chapter.includes('项脊轩志') || p.title.includes('劝学') || p.title.includes('赤壁赋') || p.title.includes('鸿门宴') || p.title.includes('先秦诸子') || p.title.includes('过秦论') || p.title.includes('项脊轩志')
+    match: p => !p.chapter.includes('必背') && (p.chapter.includes('劝学') || p.chapter.includes('赤壁赋') || p.chapter.includes('鸿门宴') || p.chapter.includes('侍坐') || p.chapter.includes('先秦诸子') || p.chapter.includes('史传文学') || p.chapter.includes('项脊轩志') || p.title.includes('劝学') || p.title.includes('赤壁赋') || p.title.includes('鸿门宴') || p.title.includes('先秦诸子') || p.title.includes('过秦论') || p.title.includes('项脊轩志'))
   },
   {
     id: 'chi-t3',
