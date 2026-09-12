@@ -22,8 +22,9 @@ export interface LocalWrongItem {
   id?: number
   subject: string
   question: string
-  answer: string
+  answer?: string
   wrong_reason?: string
+  reason?: string
   mastery_status: string
   review_count: number
   tags?: string
@@ -321,20 +322,24 @@ class LocalDatabase {
     // 为 seed points 分配稳定数字 ID (1, 2, 3...)
     const list: any[] = seedPoints.map((item, index) => {
       const id = index + 1
+      const note = noteMap.get(id) || ''
       return {
         ...item,
         id,
         origin: 'seed',
-        student_note: noteMap.get(id) || ''
+        student_note: note,
+        user_note: note
       }
     })
 
     // 合并用户自定义考点 (ID 从 10000+ 开始)
     for (const cp of customPoints) {
+      const note = noteMap.get(cp.id) || ''
       list.push({
         ...cp,
         origin: 'user',
-        student_note: noteMap.get(cp.id) || ''
+        student_note: note,
+        user_note: note
       })
     }
 
@@ -443,15 +448,24 @@ class LocalDatabase {
       filtered = filtered.filter(w => w.subject === subject)
     }
     filtered.sort((a, b) => (b.id || 0) - (a.id || 0))
-    return filtered
+    return filtered.map(w => {
+      const r = w.reason || w.wrong_reason || ''
+      return {
+        ...w,
+        reason: r,
+        wrong_reason: r
+      }
+    })
   }
 
-  async createWrongItem(payload: Partial<LocalWrongItem>): Promise<LocalWrongItem> {
+  async createWrongItem(payload: Partial<LocalWrongItem> & { reason?: string }): Promise<LocalWrongItem> {
+    const r = payload.reason || payload.wrong_reason || ''
     const item: LocalWrongItem = {
       subject: payload.subject || '数学',
       question: payload.question || '',
       answer: payload.answer || '',
-      wrong_reason: payload.wrong_reason || '',
+      wrong_reason: r,
+      reason: r,
       mastery_status: payload.mastery_status || 'unmastered',
       review_count: payload.review_count || 0,
       tags: payload.tags || '',
@@ -464,13 +478,16 @@ class LocalDatabase {
     return { ...item, id: Number(id) }
   }
 
-  async updateWrongItem(id: number, payload: Partial<LocalWrongItem>): Promise<LocalWrongItem> {
+  async updateWrongItem(id: number, payload: Partial<LocalWrongItem> & { reason?: string }): Promise<LocalWrongItem> {
     const existing = await this.getByKey<LocalWrongItem>('wrong_items', Number(id))
     if (!existing) throw new Error('Wrong item not found')
 
+    const r = payload.reason !== undefined ? payload.reason : (payload.wrong_reason !== undefined ? payload.wrong_reason : (existing.reason || existing.wrong_reason || ''))
     const updated: LocalWrongItem = {
       ...existing,
       ...payload,
+      wrong_reason: r,
+      reason: r,
       id: Number(id),
       updated_at: new Date().toISOString()
     }
@@ -570,10 +587,20 @@ class LocalDatabase {
     return { ...grade, id: Number(id) }
   }
 
-  async batchCreateGrades(records: Partial<LocalGrade>[]): Promise<LocalGrade[]> {
+  async batchCreateGrades(records: any): Promise<LocalGrade[]> {
+    const items = Array.isArray(records) ? records : (records?.items || records?.records || [])
+    const exam = records?.exam || '模拟考'
+    const date = records?.date || new Date().toISOString().slice(0, 10)
     const created: LocalGrade[] = []
-    for (const r of records) {
-      const res = await this.createGrade(r)
+    for (const r of items) {
+      const gradeItem = {
+        subject: r.subject || '语文',
+        exam: r.exam || exam,
+        date: r.date || date,
+        score: r.score !== null && r.score !== undefined ? Number(r.score) : 0,
+        full_score: r.full_score !== null && r.full_score !== undefined ? Number(r.full_score) : 150
+      }
+      const res = await this.createGrade(gradeItem)
       created.push(res)
     }
     return created
@@ -849,30 +876,28 @@ class LocalDatabase {
     }
   }
 
+  private resolveWordAndList(idOrWord: number | string): { word: string; word_list: string } {
+    const str = String(idOrWord).trim()
+    const numId = Number(str)
+
+    // 若为纯数字 ID，优先从 idToWordMap 寻找
+    if (!isNaN(numId) && this.idToWordMap.has(numId)) {
+      return this.idToWordMap.get(numId)!
+    }
+
+    // 遍历兜底
+    if (!isNaN(numId)) {
+      for (const [id, val] of this.idToWordMap.entries()) {
+        if (id === numId) return val
+      }
+    }
+
+    // 若传入的就是英文单词本身
+    return { word: str, word_list: 'default' }
+  }
+
   async rememberWord(idOrWord: number | string) {
-    let wordStr = ''
-    let wordList = 'default'
-
-    if (typeof idOrWord === 'number') {
-      const mapped = this.idToWordMap.get(idOrWord)
-      if (mapped) {
-        wordStr = mapped.word
-        wordList = mapped.word_list
-      }
-    } else {
-      wordStr = idOrWord
-    }
-
-    if (!wordStr) {
-      const allWords = Array.from(this.idToWordMap.entries())
-      const found = allWords.find(([id]) => id === Number(idOrWord))
-      if (found) {
-        wordStr = found[1].word
-        wordList = found[1].word_list
-      } else {
-        wordStr = String(idOrWord)
-      }
-    }
+    const { word: wordStr, word_list: wordList } = this.resolveWordAndList(idOrWord)
 
     const today = new Date().toISOString().slice(0, 10)
     const existing = await this.getByKey<LocalWordProgress>('word_progress', wordStr)
@@ -911,29 +936,7 @@ class LocalDatabase {
   }
 
   async forgetWord(idOrWord: number | string) {
-    let wordStr = ''
-    let wordList = 'default'
-
-    if (typeof idOrWord === 'number') {
-      const mapped = this.idToWordMap.get(idOrWord)
-      if (mapped) {
-        wordStr = mapped.word
-        wordList = mapped.word_list
-      }
-    } else {
-      wordStr = idOrWord
-    }
-
-    if (!wordStr) {
-      const allWords = Array.from(this.idToWordMap.entries())
-      const found = allWords.find(([id]) => id === Number(idOrWord))
-      if (found) {
-        wordStr = found[1].word
-        wordList = found[1].word_list
-      } else {
-        wordStr = String(idOrWord)
-      }
-    }
+    const { word: wordStr, word_list: wordList } = this.resolveWordAndList(idOrWord)
 
     const today = new Date().toISOString().slice(0, 10)
     const nextDate = new Date()

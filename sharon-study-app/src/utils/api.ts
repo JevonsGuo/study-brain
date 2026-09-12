@@ -120,7 +120,7 @@ async function handleLocalRequest(method: string, rawUrl: string, body?: any): P
     if (method === 'PUT') return await localDB.saveGradeGoals(body)
   }
   if (path === '/grades/batch' && method === 'POST') {
-    return await localDB.batchCreateGrades(body?.records || body)
+    return await localDB.batchCreateGrades(body)
   }
   if (path === '/grades' && method === 'GET') {
     return await localDB.getGrades()
