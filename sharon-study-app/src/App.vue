@@ -53,6 +53,25 @@ watch(() => timerStore.showCompletionModal, (show) => {
   }
 })
 
+const displayDbText = computed(() => {
+  if (appConfig.dbSyncStatus === 'downloading') {
+    return appConfig.dbSyncMessage || '下载中...'
+  }
+  if (appConfig.dbSyncStatus === 'syncing') {
+    return appConfig.dbSyncMessage || '同步中...'
+  }
+  if (appConfig.dbSyncStatus === 'checking') {
+    return '检查更新中...'
+  }
+  if (appConfig.dbSyncStatus === 'update_available') {
+    return '新版本(点击更新)'
+  }
+  if (appConfig.dbSyncStatus === 'offline') {
+    return '本地离线就绪'
+  }
+  return `数据库: v${appConfig.currentDbVersion}`
+})
+
 onMounted(() => {
   appConfig.initLocalVersion()
   appConfig.checkDatabaseVersion(false)
@@ -147,12 +166,15 @@ const toggleCollapse = () => {
         class="logo-area"
         :class="{ 'is-clickable': !isCollapse }"
         @click="!isCollapse && (userProfile.showEditModal = true)"
-        :title="isCollapse ? '智学大脑' : '点击修改空间专属名称与个人档案'"
+        :title="isCollapse ? '智学大脑' : '点击修改专属名称与个人档案'"
       >
-        <el-icon :size="24" class="logo-icon"><Star /></el-icon>
-        <div v-show="!isCollapse" class="logo-text-wrap">
-          <span class="logo-text">{{ userProfile.appTitle }}</span>
-          <el-icon class="logo-edit-icon" title="修改空间名称"><Edit /></el-icon>
+        <el-icon :size="22" class="logo-icon"><Star /></el-icon>
+        <div v-show="!isCollapse" class="logo-text-wrap two-lines">
+          <div class="logo-title-row">
+            <span class="logo-name-text">{{ userProfile.userName || '智学' }}</span>
+            <el-icon class="logo-edit-icon" title="修改空间名称与个人档案"><Edit /></el-icon>
+          </div>
+          <span class="logo-sub-text">学习大脑</span>
         </div>
       </div>
       <el-menu
@@ -175,10 +197,10 @@ const toggleCollapse = () => {
           <div
             class="db-version-text"
             @click="appConfig.checkDatabaseVersion(true)"
-            title="点击手动检查数据库版本更新"
+            :title="`数据库状态: ${appConfig.dbSyncMessage} (点击检查更新)`"
           >
-            <span class="db-dot"></span>
-            <span>数据库版本: {{ appConfig.currentDbVersion }}</span>
+            <span class="db-dot" :class="appConfig.dbSyncStatus"></span>
+            <span class="db-status-label">{{ displayDbText }}</span>
           </div>
           <button
             type="button"
@@ -350,14 +372,14 @@ const toggleCollapse = () => {
 }
 
 .logo-area {
-  height: 60px;
+  height: 66px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 10px;
   border-bottom: 1px solid var(--aside-border);
   flex-shrink: 0;
-  padding: 0 10px;
+  padding: 0 14px;
   user-select: none;
 }
 
@@ -372,31 +394,39 @@ const toggleCollapse = () => {
 
 .logo-icon {
   color: #ffd700;
-  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
   flex-shrink: 0;
 }
 
-.logo-text-wrap {
+.logo-text-wrap.two-lines {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
   overflow: hidden;
 }
 
-.logo-text {
-  color: #fff;
+.logo-title-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 128px;
+}
+
+.logo-name-text {
+  color: #ffffff;
   font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 125px;
 }
 
 .logo-edit-icon {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 13px;
+  font-size: 12px;
   flex-shrink: 0;
   transition: all 0.2s;
 }
@@ -404,6 +434,16 @@ const toggleCollapse = () => {
 .logo-area:hover .logo-edit-icon {
   color: #ffd700;
   transform: scale(1.15);
+}
+
+.logo-sub-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #ffd700, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .app-menu {
@@ -699,6 +739,53 @@ const toggleCollapse = () => {
   background: #10b981;
   display: inline-block;
   box-shadow: 0 0 6px #10b981;
+  flex-shrink: 0;
+}
+
+.db-dot.latest {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+}
+
+.db-dot.downloading {
+  background: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+  animation: db-pulse 1s infinite alternate;
+}
+
+.db-dot.syncing {
+  background: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+  animation: db-pulse 1s infinite alternate;
+}
+
+.db-dot.checking {
+  background: #a855f7;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+  animation: db-pulse 0.8s infinite alternate;
+}
+
+.db-dot.update_available {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+  animation: db-pulse 0.8s infinite alternate;
+}
+
+.db-dot.offline {
+  background: #94a3b8;
+  box-shadow: none;
+}
+
+.db-status-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+@keyframes db-pulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.3); opacity: 1; }
 }
 
 .aside-cloud-btn {

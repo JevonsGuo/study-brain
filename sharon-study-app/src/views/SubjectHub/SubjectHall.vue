@@ -128,6 +128,20 @@ onMounted(fetchData)
 <template>
   <div class="subject-hall-root" v-loading="loading">
     <!-- 英雄大顶栏：标题与双指标总览 -->
+    <!-- 首次载入 / 数据同步中加载提示条 -->
+    <div v-if="loading && allPoints.length === 0" class="hall-sync-banner">
+      <div class="sync-banner-content">
+        <span class="sync-banner-emblem">📚</span>
+        <div class="sync-banner-info">
+          <div class="sync-banner-title">正在从官方云端下载 9 大学科核心考点库...</div>
+          <div class="sync-banner-sub">收录 215 个高考必考考点与核心提分思维导图，仅首次进入需要同步，完成后离线秒开！</div>
+        </div>
+      </div>
+      <div class="sync-banner-progress">
+        <div class="sync-progress-bar"></div>
+      </div>
+    </div>
+
     <header class="hall-hero">
       <div class="hero-main-content">
         <div class="hero-badge-row">
@@ -849,4 +863,76 @@ onMounted(fetchData)
   background: rgba(255, 255, 255, 0.06);
   color: #94a3b8;
 }
+
+/* 首次同步加载条美化 */
+.hall-sync-banner {
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sync-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sync-banner-emblem {
+  font-size: 28px;
+  animation: sync-bounce 2s infinite ease-in-out;
+}
+
+.sync-banner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sync-banner-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+}
+
+.sync-banner-sub {
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+}
+
+.sync-banner-progress {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(99, 102, 241, 0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+.sync-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  background: linear-gradient(90deg, #6366f1, #ec4899);
+  border-radius: 2px;
+  animation: sync-slide 1.8s infinite ease-in-out;
+}
+
+@keyframes sync-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes sync-slide {
+  0% { left: -35%; }
+  100% { left: 100%; }
+}
+
 </style>

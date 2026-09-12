@@ -819,7 +819,17 @@ onUnmounted(() => {
         <p class="header-subtitle">艾宾浩斯智能记忆阶梯 · 高考考点精细拆解</p>
       </div>
 
-      <div class="wl-grid">
+      <div v-if="wordLists.length === 0" class="wl-loading-container">
+        <div class="word-loading-spinner-halo">
+          <span class="word-loading-emblem">📖</span>
+        </div>
+        <div class="word-loading-title">正在下载官方多语种词库书架...</div>
+        <div class="word-loading-desc">正在同步高考核心、考纲拓展、四六级、托福、雅思与 GRE 精选词库</div>
+        <div class="word-loading-bar-wrap">
+          <div class="word-loading-bar-inner"></div>
+        </div>
+      </div>
+      <div v-else class="wl-grid">
         <div
           v-for="wl in wordLists"
           :key="wl.word_list"
@@ -1284,6 +1294,21 @@ onUnmounted(() => {
             </template>
           </el-table-column>
         </el-table>
+      </div>
+
+      <!-- 首次载入 / 数据同步中加载提示 -->
+      <div v-else-if="loading && words.length === 0" class="word-loading-state-box">
+        <div class="word-loading-spinner-halo">
+          <span class="word-loading-emblem">⏳</span>
+        </div>
+        <div class="word-loading-title">正在下载并装载最新官方词库...</div>
+        <div class="word-loading-desc">
+          涵盖高中考纲、词形变形、搭配例句与四选一真题库。<br>
+          首次进入需同步数据，完成后将离线缓存在您的本地设备中，后续秒开！
+        </div>
+        <div class="word-loading-bar-wrap">
+          <div class="word-loading-bar-inner"></div>
+        </div>
       </div>
 
       <!-- 暂无单词提示 -->
@@ -2707,4 +2732,94 @@ html.dark .accent-btn.active {
 :global(html.dark) .card-hint-text {
   color: #94a3b8 !important;
 }
+
+/* 初始加载状态美化 */
+.word-loading-state-box,
+.wl-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  background: var(--bg-card, #ffffff);
+  border-radius: 20px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.08);
+  margin: 20px auto;
+  max-width: 560px;
+}
+
+.word-loading-spinner-halo {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  position: relative;
+  animation: halo-pulse 2s infinite ease-in-out;
+}
+
+.word-loading-emblem {
+  font-size: 32px;
+  animation: emblem-rotate 3s infinite linear;
+}
+
+.word-loading-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+
+.word-loading-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary, #64748b);
+  max-width: 440px;
+  margin-bottom: 20px;
+}
+
+.word-loading-bar-wrap {
+  width: 200px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(99, 102, 241, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.word-loading-bar-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  animation: bar-slide 1.5s infinite ease-in-out;
+}
+
+@keyframes halo-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 14px rgba(99, 102, 241, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+@keyframes emblem-rotate {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes bar-slide {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
+
 </style>

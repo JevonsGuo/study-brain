@@ -82,7 +82,26 @@ export interface LocalStudyRecord {
   date: string
 }
 
+export type DbSyncState = 'idle' | 'checking' | 'downloading' | 'syncing' | 'latest' | 'update_available' | 'offline'
+
 class LocalDatabase {
+  private syncListeners: ((state: DbSyncState, message: string) => void)[] = []
+  private currentSyncState: DbSyncState = 'latest'
+  private currentSyncMessage: string = '数据库就绪'
+
+  onSyncStateChange(fn: (state: DbSyncState, message: string) => void) {
+    this.syncListeners.push(fn)
+    fn(this.currentSyncState, this.currentSyncMessage)
+  }
+
+  setSyncState(state: DbSyncState, message: string) {
+    this.currentSyncState = state
+    this.currentSyncMessage = message
+    this.syncListeners.forEach(fn => {
+      try { fn(state, message) } catch {}
+    })
+  }
+
   private dbPromise: Promise<IDBDatabase> | null = null
   private contentCache: Map<string, any> = new Map()
   private wordCache: Map<string, any[]> = new Map()

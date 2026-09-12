@@ -1305,7 +1305,17 @@ onMounted(() => {
           </div>
         </div>
 
-        <div v-if="filteredPoints.length === 0" class="empty-points">
+        <div v-if="loadingPoints && points.length === 0" class="workbench-loading-card">
+          <div class="wb-loading-halo">
+            <span class="wb-loading-emblem">📖</span>
+          </div>
+          <div class="wb-loading-title">正在下载【{{ subject }}】核心考点与重难点知识库...</div>
+          <div class="wb-loading-sub">首次进入正在同步官方考点数据，请稍候...</div>
+          <div class="wb-loading-bar-track">
+            <div class="wb-loading-bar-thumb"></div>
+          </div>
+        </div>
+        <div v-else-if="filteredPoints.length === 0" class="empty-points">
           <span>暂无符合条件的考点</span>
         </div>
       </div>
@@ -4017,4 +4027,68 @@ onMounted(() => {
 :global(.dark) .student-note-block .block-title {
   color: #c084fc;
 }
+
+.workbench-loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-card, #ffffff);
+  border-radius: 18px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  margin: 20px 0;
+}
+
+.wb-loading-halo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  animation: halo-pulse 2s infinite ease-in-out;
+}
+
+.wb-loading-emblem {
+  font-size: 28px;
+}
+
+.wb-loading-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+  margin-bottom: 6px;
+}
+
+.wb-loading-sub {
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+  margin-bottom: 16px;
+}
+
+.wb-loading-bar-track {
+  width: 180px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(99, 102, 241, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.wb-loading-bar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(90deg, #6366f1, #3b82f6);
+  border-radius: 2px;
+  animation: bar-slide 1.5s infinite ease-in-out;
+}
+
 </style>
