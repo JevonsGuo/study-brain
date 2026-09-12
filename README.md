@@ -1,370 +1,242 @@
-# Study Brain
+# 智学大脑 (Study Brain) 🧠
 
-为 上海 高中学习打造的辅助工具，包含学习计划、错题本、单词卡、成绩追踪、番茄钟、知识库等功能。
+> **面向高考与自律提升的个人全功能智学空间 · 跨平台私有化学习工作台**  
+> 纯客户端零成本运行（IndexedDB 本地私有数据引擎） + 集中式双模架构（Express + SQLite）  
+> 一次代码提交，多端全自动同步部署（GitHub Pages / Cloudflare Pages / Google Cloud / Ubuntu VPS）
 
-## 技术栈
+[![GitHub Pages Deployment](https://github.com/JevonsGuo/study-brain/actions/workflows/deploy.yml/badge.svg)](https://github.com/JevonsGuo/study-brain/actions/workflows/deploy.yml)
+[![Version](https://img.shields.io/badge/version-1.0.6-blue.svg)](sharon-study-app/package.json)
+[![Vue](https://img.shields.io/badge/Vue-3.5-brightgreen.svg)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-8.2-646CFF.svg)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg)](https://www.typescriptlang.org/)
+[![IndexedDB](https://img.shields.io/badge/Storage-IndexedDB%20%2B%20SQLite-orange.svg)]()
 
-- **前端**：Vue 3 + TypeScript + Vite + Element Plus
-- **后端**：Express + better-sqlite3
-- **数据库**：SQLite（文件存储，零运维）
+---
 
-## 项目结构
+## 🌟 核心特性
+
+- 🛡️ **私有化与零服务器成本**：
+  内置自主研发的 **IndexedDB 本地私有数据引擎**（`localDatabase.ts`），错题、计划、笔记、成绩、专注打卡与词汇进度 100% 存储于学生本地浏览器，无需租用云数据库，保护个人隐私，发一个链接人人开箱即用。
+- ⚡ **多端极速秒级并发部署**：
+  配置 GitHub Actions CI/CD 流水线，一次提交，自动并发分发至：
+  - **GitHub Pages**：`https://jevonsguo.github.io/study-brain/#/home`
+  - **Cloudflare Pages**：全球 Anycast 边缘 CDN 加速 + 专有 Worker 反代
+  - **Google Cloud Platform (GCP)**：生产级 Nginx 静态优化与 Gzip 深度压缩
+  - **自建 Ubuntu 服务器**：自动化拉取、生产备份与热重载
+- 🔄 **坚果云 WebDAV 跨设备云端备份**：
+  支持直连坚果云 WebDAV（自动突破浏览器 CORS 限制），后台每 30 分钟静默同步至 `/我的坚果云/StudyBrain/backup.json`；同时支持全量学习数据一键导出与导入 JSON 文件。
+- 🎨 **学生量身定制系统**：
+  新用户首次访问智能呼出入驻向导，输入学生昵称、学段与励志座右铭，全站动态生成专属空间名称（如“子涵 的学习大脑”），随处支持一键 ✏️ 即时修改。
+- 📚 **权威分层学科与词汇体系**：
+  汇聚高考 9 大学科核心考点大纲、仿真真实课本装订的 3D 教材书架、开阔双栏阅读器；配备从高考核心到 GRE 核心三千词的 6 大词库（22,000+ 词条），全面支持艾宾浩斯间隔记忆。
+- 🎮 **沉浸式脑力工坊 (Brain Gym)**：
+  纯原生 Vue 3 构建的 8 款高品质自研益智对局（零外部广告/零网络风险）：舒尔特方格、2048、经典数独、数字华容道、见缝插针、经典扫雷、记忆翻牌与汉诺塔。
+
+---
+
+## 🛠️ 技术栈
+
+| 层次 | 技术选型 | 说明 |
+|------|----------|------|
+| **前端核心** | Vue 3 + TypeScript + Vite 8 | 极速构建、组合式 API (Composition API)、强类型保障 |
+| **状态管理** | Pinia 4 | 响应式状态管理（Timer、AppConfig、UserProfile 等） |
+| **路由导航** | Vue Router 4 (Hash 模式) | 完美兼容各大静态托管平台（GitHub/Cloudflare/Gitee）防 404 |
+| **UI 组件库** | Element Plus + Icons Vue | 现代化沉浸式界面，全深色/浅色自适应主题 |
+| **公式与图表** | KaTeX + ECharts 6 | 学科公式实时排版、模拟考试多维雷达图与成绩趋势线 |
+| **客户端数据库** | 原生 IndexedDB (`StudyBrainDB`) | 10 大表本地持久化引擎，毫秒级就地读取 |
+| **服务端 (可选)**| Express 5 + better-sqlite3 | 支持私有 NAS / Linux 云主机集中部署双模切换 |
+| **CI/CD** | GitHub Actions + Cloudflare Workers | 自动化编译打包、多端分发与 WebDAV 跨域反代 |
+
+---
+
+## 📁 项目结构
 
 ```
-sharon-study/
-├── sharon-study-app/         # 前端 + 后端项目
+study-brain/
+├── .github/workflows/
+│   └── deploy.yml            # GitHub Actions 多端自动化流水线 (支持 master/main)
+├── sharon-study-app/         # Web 核心应用
 │   ├── src/
-│   │   ├── views/            # 页面组件
-│   │   ├── router/           # 路由配置
-│   │   ├── utils/            # 工具函数（API 请求等）
-│   │   └── App.vue           # 主布局（侧边栏导航）
-│   ├── server/               # 后端项目
-│   │   └── src/
-│   │       ├── index.js      # Express 入口
-│   │       ├── db/index.js   # SQLite 初始化 + 迁移机制
-│   │       └── routes/       # REST API 路由
-│   ├── data/                 # SQLite 数据库文件（不入git，自动创建）
-│   ├── .env.example          # 环境变量模板（入git）
-│   ├── .env.local            # 本地开发环境（不入git）
-│   └── .env.production       # 生产环境（不入git）
-├── content/                  # 内容数据（入git，随版本发布）
-│   ├── words-default.json    # 高考核心词汇（763词，含词形/同反义/搭配/词根/辨析）
-│   ├── words-shanghai.json   # 上海高考专属词汇（3669词，全域乱序版）
-│   ├── words-cet6.json       # 六级拓展词汇（1183词，含词形/同反义/搭配/词根/辨析）
-│   ├── words-gre.json        # GRE核心三千词（3036词，全域乱序版，含词根/例句/同反义）
-│   ├── words-toefl.json      # 托福核心词汇（6959词，全域乱序版，含学术例句与拓展）
-│   ├── words-ielts.json      # 雅思核心词汇（4974词，全域乱序版，含英联邦考试语境）
-│   ├── knowledge.json        # 知识库内容（81个考点，分册分章节）
-│   └── learning-resources.json # 学习资源（25条）
-├── scripts/
-│   ├── deploy.sh             # 服务器部署脚本（备份+内容同步+重启）
-│   ├── publish.sh            # 本地一键发布脚本
-│   ├── sync-content.mjs      # content/ -> 数据库 幂等内容同步
-│   ├── export-content.mjs    # 数据库 -> content/ 内容导出（一次性/特殊场景）
-│   ├── reset-production.sh   # 生产库重置（备份->清空->重建->灌内容）
-│   └── seed-grades.js        # 测试成绩数据（仅限本地开发）
+│   │   ├── views/            # 核心业务页面 (Home, StudyPlan, SubjectHub, WordCard, Timer, BrainGym 等)
+│   │   ├── router/           # 路由配置 (Hash 模式，静态平台刷新无 404)
+│   │   ├── stores/           # Pinia 状态树 (userProfile, timer, appConfig)
+│   │   ├── utils/            # 核心工具集
+│   │   │   ├── localDatabase.ts # IndexedDB 本地私有数据引擎 (1000+ 行全功能客户端存储)
+│   │   │   ├── api.ts        # 统一客户端 API 路由层 (无感拦截，零延迟就地响应)
+│   │   │   └── textbookCatalog.ts # 沪教版等高中教材目录与章节索引
+│   │   ├── components/       # 通用组件 (CloudSyncModal, UserOnboardingModal, UserProfileEditModal 等)
+│   │   └── App.vue           # 响应式侧边栏布局、全局主题切换与自动备份调度
+│   ├── functions/api/nutstore/ # Cloudflare Pages Functions (坚果云 WebDAV 跨域反代)
+│   ├── public/               # 静态资源 (音频、高清书皮封面、favicon)
+│   └── vite.config.ts        # Vite 编译配置 (base: './' 兼容多级子路径)
+├── content/                  # 内容数据源 (内容即代码，入 git)
+│   ├── words-default.json    # 高考核心词汇 (763 词)
+│   ├── words-shanghai.json   # 上海高考专属词汇 (3669 词，全域真乱序版)
+│   ├── words-cet6.json       # 大学英语六级拓展词汇 (1183 词)
+│   ├── words-ielts.json      # 雅思核心真题词汇 (4974 词)
+│   ├── words-toefl.json      # 托福学术高频词汇 (6959 词)
+│   ├── words-gre.json        # GRE 核心三千词 (3036 词)
+│   ├── knowledge.json        # 9 大学科知识库考点大纲 (81 个考点，分册分章节)
+│   ├── learning-resources.json # 精品学科学习工具与名校资源 (25 条)
+│   └── version.json          # 数据库版本元数据
+└── scripts/
+    ├── copy-content-to-public.mjs # 自动化同步 content/ 到 public/content/ 并生成索引
+    ├── dev.sh                # 本地一键启动前后端开发环境
+    ├── nginx-gcp.conf        # Google Cloud VM Nginx 生产环境模板配置
+    ├── deploy.sh             # Ubuntu 传统服务器部署脚本 (备份 + 同步 + 重启)
+    ├── publish.sh            # 本地一键发布到远端 Linux 服务器
+    └── sync-content.mjs      # content/ -> SQLite 数据库幂等内容同步
 ```
 
-## 功能模块
+---
 
-| 模块 | 路径 | 说明 |
-|------|------|------|
-| 首页 | /home | 问候语、实时时钟、模块导航卡片 |
-| 学习计划 | /study-plan | 日期导航、快速录入、按科目分组、进度追踪、日历弹窗 |
-| 错题本 | /wrong-book | 记录错题与原因，按科目筛选 |
-| 单词卡 | /word-card | 多词汇表、3D翻转卡片、间隔重复、折叠面板展示词形/搭配/辨析/同反义/词根 |
-| 知识库 | /knowledge | 多栏工作台（学科导航+教材分册/章节+知识点卡片流+学习资源）、KaTeX公式、B站视频嵌入 |
-| 成绩追踪 | /grade-tracker | ECharts图表、趋势线/雷达/柱状图、科目详情、红涨绿跌 |
-| 番茄钟 | /timer | SVG进度环、背景音乐、可调时长、自动轮换 |
+## 🧭 功能模块详述
 
-### 单词卡
+### 1. 智学首页 (`/#/home`)
+- **个性化问候**：根据作息时间动态问候（“早上好，子涵”、“晚安，浩然”），直观展示高考倒计时与天气；
+- **自律座右铭**：常驻呈现学生专属冲刺目标与励志格言，支持点击 ✏️ 铅笔随时在线修改；
+- **六大模块快捷入口**：高饱和拟态卡片，支持流畅悬浮缩放动效。
 
-- **多词汇表**：支持多个词库（高考词汇/六级词汇），按 `words-{word_list}.json` 自动发现
-- **间隔重复**：1→2→4→7→15→30天复习周期，掌握度三级（新词/学习中/已掌握）
-- **丰富字段**（迁移 006）：词形变化、同义词/反义词、搭配、词根词缀、易混辨析
-- **折叠面板 UI**：卡片背面用 el-collapse 手风琴模式渐进展示，空字段不生成面板
-- **交互**：键盘快捷键（空格翻转/←→切换/1不认识/2认识）、滑动操作、发音、乱序
+### 2. 学科中心 (`/#/subjects`)
+- **学科大厅 (Subject Hall)**：涵盖高中 9 大学科（数学、物理、化学、生物、语文、英语、历史、地理、政治），动态统计考点收录量与错题靶向数；
+- **仿真教材书架 (BookShelf)**：立体书脊阴影装订仿真卡片，直观呈现沪教版、统编版等教材分册（高一/高二/高三）；
+- **宽屏沉浸双栏阅读器 (Book Reader)**：
+  - **左侧（260px）**：结构化章节目录树导航；
+  - **右侧（自适应宽栏）**：核心考点流式卡片，KaTeX 矢量公式高清排版、易错技巧 Tips、形象思维图景 Visual Desc，以及 B 站名师精讲视频一键展开播放；
+  - **考点笔记与错题互联**：每一条考点均可撰写私有心得笔记，一键联动对应错题；
+  - **右上角资源抽屉 (Drawer)**：平滑滑出 420px 专属学习工具侧栏，包含组卷网、GeoGebra、化学方程式配平等优质站点。
 
-### 知识库
+### 3. 智词工坊 (`/#/word-card`)
+- **6 大分层词库（22,000+ 词条）**：覆盖从高考核心、上海考纲、大学六级到出国留学（雅思/托福/GRE）；
+- **丰富 Enrichment 词汇卡片**：音标、中英释义、真题例句、词形变化、同义/反义词、高频搭配、词根词缀剖析与易混辨析；
+- **艾宾浩斯间隔复习算法**：1 → 2 → 4 → 7 → 15 → 30 天记忆周期，掌握度智能晋级；
+- **全键盘与触屏交互**：`Space` 3D 翻转卡片、`←` / `→` 切换前后词、`1`（不认识）/ `2`（已掌握），支持真人原生发音与全库乱序打散。
 
-- **教材书架 + 沉浸式宽屏阅读两阶段架构**：
-  - **教材书架（BookShelf）**：左侧学科导航，主区域按年级陈列高度仿真真实实体课本封面的教材卡片（含书脊立体装订阴影、版署标识、分册艺术纹样与考点进度徽章）
-  - **宽屏双栏阅读器（Book Reader）**：点击进入某册教材专心阅读：
-    - **左边栏（260px）**：目录章节树（章级大纲 + 细分小节考点数）
-    - **右边栏（宽栏 flex: 1）**：开阔舒适展示考点卡片流（KaTeX 公式排版、易错技巧 Tips、思维图景 Visual Desc、B站精讲视频）
-  - **学习资源抽屉（Drawer）**：平时隐藏，点击右上角快捷按钮在右侧平滑滑出，完全不侵占阅读视界
-- 知识点支持 `grade`（年级）与 `book`（分册）结构化存储（迁移 007）
+### 4. 番茄钟与专注自习 (`/#/timer`)
+- **三种专注模式**：25 分钟经典番茄钟、自定义深度自习、高考全真模拟试卷计时；
+- **5 大 100% 绝对可用本地轻音乐渠道**：
+  - 🎹 星空钢琴（纯琴静心 · 舒缓减压）
+  - 🎵 治愈 Lofi（温暖慢调 · 轻松自习）
+  - 🌿 空灵微风（木吉他清音 · 空灵专注）
+  - 🌙 夜色沉思（极简慢板 · 深度心流）
+  - ☕ 街角咖啡（轻语暖调 · 伴读白噪）
+- **单按钮下拉曲库面板**：折叠收纳，界面干净极简，自习结束后自动弹出学情成果，打卡记录写入专注档案。
 
-## 环境隔离
+### 5. 错题靶向本 (`/#/wrong-items`)
+- 按学科精准收录疑难错题，记录失分原因与详细解析，支持关联考点、重要程度星标与“已掌握/复习中”状态流转。
 
-项目通过 `.env` 文件区分开发与生产环境，环境变量不入git。
+### 6. 成绩追踪与分析 (`/#/grade-tracker`)
+- 模考多科分数录入，ECharts 绘制总分趋势走势图、各科均衡度雷达图；
+- 紧盯目标院校分数线，分差红涨绿跌一览无余。
 
-| | 开发环境 (MacBook) | 生产环境 (Ubuntu/NAS) |
+### 7. 脑力工坊 (`/#/brain-gym`)
+课间高能思维放松，8 款原创益智对局，纯 Web Audio 音效，支持深浅主题：
+1. ⚡ **舒尔特方格 (Schulte Grid)**：3×3 至 5×5 视觉注意力极速训练；
+2. 🔢 **2048 经典数字**：经典平滑滑动合成与历史最高分追踪；
+3. 🧩 **经典数独 (Sudoku)**：4×4 入门至 9×9 进阶题库，辅助候选数标记；
+4. 🔲 **数字华容道 (Klotski)**：3×3 与 4×4 还原挑战，步数与计时双轨追踪；
+5. 🎯 **见缝插针 (Arrow Wheel)**：动态变速旋转与防碰撞射击；
+6. 💣 **经典扫雷 (Minesweeper)**：首击绝对安全保证、空白连锁揭开、标记插旗与复古数显仪表盘；
+7. 🎴 **记忆翻牌 (Memory Match)**：几何 📐、化学 🧪、双螺旋 🧬 等学霸专属 Emoji 3D 翻牌；
+8. 🗼 **汉诺塔 (Tower of Hanoi)**：3~6 阶多盘堆叠，防呆校验，比对理论最优极限步数 ($2^n - 1$)。
+
+---
+
+## 🚀 部署与发布指南
+
+项目支持两大运行部署模式：
+
+### 模式一：静态云托管部署（推荐 · 零成本 · 免服务器）
+
+#### 1. 部署到 GitHub Pages
+1. 将代码推送到 GitHub 仓库（已配置好自动化 Actions 流水线）；
+2. 打开 GitHub 仓库页面：`Settings -> Pages`；
+3. 将 **Source** 选项设为 **`GitHub Actions`**；
+4. 提交任何代码或点击 `Re-run`，即可自动上线：
+   `https://<你的用户名>.github.io/study-brain/#/home`
+
+#### 2. 部署到 Cloudflare Pages
+1. 登录 [Cloudflare 控制台](https://dash.cloudflare.com/)，进入 **Workers 和 Pages** -> **创建应用程序** -> **Pages** -> **连接到 Git**；
+2. 选中仓库 `study-brain`；
+3. 构建配置：
+   - **构建命令**：`cd sharon-study-app && npm run build`
+   - **输出目录**：`sharon-study-app/dist`
+   - **环境变量**：添加 `NODE_VERSION: 20`
+4. 点击部署，获得全球边缘加速并自动激活坚果云 WebDAV 反代能力。
+
+#### 3. 部署到 Google Cloud VM (GCP Nginx)
+1. 运行 `npm run build`，将生成的 `sharon-study-app/dist` 上传至 GCP 服务器目录 `/var/www/study-brain/dist`；
+2. 将 `scripts/nginx-gcp.conf` 复制到 `/etc/nginx/conf.d/study-brain.conf`；
+3. 执行 `sudo nginx -t && sudo systemctl reload nginx` 完成上线。
+
+---
+
+### 模式二：自建 Linux / Ubuntu 服务器部署 (Nginx 纯静态高性能托管)
+
+统一采用生产级 Nginx 静态托管架构，零 Node.js 后端守护进程，零数据库维护：
+
+#### 1. 首次配置 Nginx (Ubuntu)
+```bash
+# 1. 创建静态 Web 根目录
+sudo mkdir -p /var/www/study-brain/dist
+
+# 2. 复制模板配置
+sudo cp scripts/nginx-ubuntu.conf /etc/nginx/sites-available/study-brain.conf
+sudo ln -s /etc/nginx/sites-available/study-brain.conf /etc/nginx/sites-enabled/
+
+# 3. 检查并重载
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+#### 2. 本地一键远程更新发布
+本地只需要执行一行命令：
+```bash
+./scripts/publish.sh <服务器IP> [SSH用户名]
+```
+脚本自动提交推送并在远程服务器执行构建同步与 Nginx 平滑重载！
+
+---
+
+### 本地极速开发 (0 秒后端，即开即测)
+```bash
+# 一键启动本地开发 (自动同步学科数据，启动 Vite 5173 极速热更新)
+./scripts/dev.sh
+```
+
+---
+
+## 🗄️ 客户端私有数据库引擎 (`StudyBrainDB`)
+
+系统内置工业级原生 IndexedDB 引擎（`localDatabase.ts`），全面承载学生的自律私有数据：
+
+| 对象仓库 (Object Store) | 存储内容 | 索引与特性 |
 |---|---|---|
-| 配置文件 | `.env.local` | `.env.production` |
-| 数据库 | `data/sharon-study.db` | `/data/sharon-study/production.db` |
-| NODE_ENV | `development` | `production` |
-| 端口 | 3000 | 3000 |
+| `user_profile` | 学生称呼、学段、自定义空间名、自律座右铭 | 单例记录，支持随处 ✏️ 即时修改 |
+| `wrong_items` | 各学科错题本、错因剖析、详细解析 | 支持学科索引、重要性星标与掌握状态流转 |
+| `student_notes` | 学科核心考点对应的个人私有笔记心得 | 考点 ID 唯一索引，与考点双向联动 |
+| `study_plans` | 每日学习任务清单、预估/实际耗时、完成打卡 | 按日期索引，日历视图快速穿透 |
+| `focus_records` | 番茄钟与专注自习计时打卡档案 | 关联学习计划，统计专注总时长与学科分布 |
+| `grades` & `grade_goals` | 模考成绩记录、目标院校与各科目标分差距 | ECharts 趋势图与雷达图多维透视 |
+| `word_progress` & `study_records` | 6 大词库的掌握级别、复习间隔与艾宾浩斯复习流 | 1→2→4→7→15→30 天记忆算法动态调度 |
+| `daily_config` | 每日背词目标与复习上限配置 | 默认每日新词 20、复习 40 |
+| `custom_knowledge` & `resources` | 学生在题库维护模式下自定义增补的考点与资源 | 完美融合官方大纲与个人拓展 |
 
-### 环境变量说明
+---
 
-```bash
-# 数据库路径（相对于 sharon-study-app/ 目录，生产环境用绝对路径）
-DB_PATH=data/sharon-study.db
+## 🤝 Git 多端推送技巧 (GitHub + Gitee)
 
-# 服务端口
-PORT=3000
-
-# 运行环境
-NODE_ENV=development
-```
-
-### 新环境初始化
+若同时维护 GitHub 与 Gitee，本地 `origin` 已配置为双推。在终端或 IDE 界面中直接执行一次操作即可两端同步：
 
 ```bash
-cd sharon-study-app
-cp .env.example .env.local     # 开发环境
-# 或
-cp .env.example .env.production  # 生产环境，修改DB_PATH为绝对路径
+# 检查远端推送地址
+git remote -v
+
+# 一键推送至两端
+git push
 ```
 
-## 数据库迁移
+---
 
-项目使用 `_migrations` 表自动追踪迁移记录。启动时自动执行未运行的迁移。
+## 📄 开源许可证
 
-### 当前迁移记录
-
-| 迁移 | 说明 |
-|------|------|
-| 001 | words 表加 example_en/example_cn/mastery_level/interval_days/next_review |
-| 002 | knowledge_points 表加 visual_desc/video_url |
-| 003 | study_plans 表加 estimated_minutes |
-| 004 | 内容三表加 origin/user_modified，去重，建唯一索引 |
-| 005 | words 表加 word_list 列，索引改为 (word, word_list) 复合唯一 |
-| 006 | words 表加 forms/synonyms/antonyms/collocations/etymology/distinction |
-| 007 | knowledge_points 表加 grade/book 列，支持高中年级与教材分册 |
-
-新增迁移：编辑 `server/src/db/index.js`，在 `MIGRATIONS` 数组中添加：
-
-```js
-{
-  name: '007_description',
-  up: () => {
-    // ALTER TABLE 等操作
-  }
-}
-```
-
-迁移按顺序执行，已执行的不会重复运行。注意：索引创建等操作必须在条件分支外执行，避免新库跳过整个分支。
-
-## 版本号
-
-版本号定义在 `sharon-study-app/package.json` 的 `version` 字段，当前版本：**1.0.1**
-
-每次发布前更新版本号。
-
-## 本地开发
-
-### 安装依赖
-
-```bash
-cd sharon-study-app
-npm install --cache /tmp/npm-cache
-cd server && npm install --cache /tmp/npm-cache
-```
-
-### 启动开发服务
-
-```bash
-# 终端1：后端
-cd sharon-study-app/server
-NODE_ENV=development node src/index.js
-
-# 终端2：前端（热更新）
-cd sharon-study-app
-npm run dev
-```
-
-| 服务 | 地址 | 说明 |
-|------|------|------|
-| 前端 | http://localhost:5173 | Vite 开发服务器，修改代码自动刷新 |
-| 后端 | http://localhost:3000 | Express API + SQLite |
-
-浏览器访问 **http://localhost:5173**，前端 API 请求会自动代理到后端 3000 端口。
-
-### 内容数据与测试数据
-
-内容数据（单词字典/知识库/学习资源）统一放在 `content/*.json`，随 git 版本管理。数据库文件（`sharon-study-app/data/`）不入git，**全新克隆后先执行一次 sync-content**（自动建库+建表+灌入内容），直接启动服务只会得到空库。
-
-### 内容数据同步（sync-content.mjs）
-
-同一个脚本，根据 `NODE_ENV` 自动判断环境，读取对应的 `.env` 文件连接数据库。幂等执行，按自然键 upsert，重复执行不会产生冗余数据。
-
-| 命令 | 环境 | 读取配置 | 目标数据库 |
-|------|------|---------|-----------|
-| `node scripts/sync-content.mjs` | 开发 | `.env.local` | `data/sharon-study.db` |
-| `NODE_ENV=production node scripts/sync-content.mjs` | 生产 | `.env.production` | `/data/sharon-study/production.db` |
-
-也可用 `DB_PATH` 环境变量覆盖，直接指定数据库路径（不依赖 env 文件）：
-
-```bash
-DB_PATH=/tmp/scratch.db node scripts/sync-content.mjs
-```
-
-```bash
-# 开发环境灌入内容
-node scripts/sync-content.mjs
-
-# 生产环境灌入内容
-NODE_ENV=production node scripts/sync-content.mjs
-
-# 灌入测试成绩数据（仅限本地，脚本会拒绝指向非本地地址）
-node scripts/seed-grades.js
-```
-
-更新内容的流程：修改 `content/*.json` -> commit -> 发布（deploy.sh 自动执行 sync-content）。
-
-#### 单词字典文件命名
-
-`content/words-{word_list}.json`，文件名中 `word_list` 部分即词汇表标识：
-- `words-default.json` → 高考核心词汇（word_list = "default"）
-- `words-shanghai.json` → 上海高考专属词汇（word_list = "shanghai"）
-- `words-cet6.json` → 六级拓展词汇（word_list = "cet6"）
-- `words-gre.json` → GRE核心三千词（word_list = "gre"）
-- `words-toefl.json` → 托福核心词汇（word_list = "toefl"）
-- `words-ielts.json` → 雅思核心词汇（word_list = "ielts"）
-
-sync-content 自动发现所有 `words-*.json` 文件。新增词汇表只需新建文件 + sync。
-
-#### 单词 enrichment 字段
-
-每个单词条目可选包含以下丰富字段：
-
-```json
-{
-  "word": "abandon",
-  "phonetic": "/əˈbændən/",
-  "meaning": "v. 放弃；遗弃",
-  "example_en": "He abandoned his old car.",
-  "example_cn": "他丢弃了旧车。",
-  "forms": { "past": "abandoned", "past_participle": "abandoned", "present_participle": "abandoning", "noun": "abandonment" },
-  "synonyms": ["desert", "forsake"],
-  "antonyms": ["retain", "keep"],
-  "collocations": [{ "phrase": "abandon hope", "meaning": "放弃希望" }],
-  "etymology": "a-(away) + bandon(control)，源自古法语",
-  "distinction": [{ "word": "desert", "diff": "desert强调违背责任的抛弃" }]
-}
-```
-
-## 生产部署 (Ubuntu)
-
-### 首次部署
-
-```bash
-# 1. 克隆仓库
-git clone https://gitee.com/jevonsguo/sharon-study.git /opt/sharon-study
-cd /opt/sharon-study
-
-# 2. 安装依赖
-cd sharon-study-app && npm install --cache /tmp/npm-cache
-cd server && npm install --cache /tmp/npm-cache
-
-# 3. 配置环境
-cp .env.example .env.production
-# 编辑 .env.production:
-#   DB_PATH=/data/sharon-study/production.db
-#   PORT=3000
-#   NODE_ENV=production
-
-# 4. 创建数据目录
-mkdir -p /data/sharon-study/backups
-
-# 5. 构建前端
-cd /opt/sharon-study/sharon-study-app
-npm run build --cache /tmp/npm-cache
-
-# 6. 启动服务（pm2）
-npm install -g pm2
-cd /opt/sharon-study/sharon-study-app/server
-NODE_ENV=production pm2 start src/index.js --name sharon-study
-pm2 save
-pm2 startup
-```
-
-### 一键发布
-
-本地 MacBook 执行：
-
-```bash
-./scripts/publish.sh <服务器IP> [用户名]
-# 例如：
-./scripts/publish.sh 192.168.1.100
-./scripts/publish.sh my-nas jevons
-```
-
-该脚本自动完成：
-1. Git commit + push
-2. SSH 到服务器执行 `deploy.sh`（git fetch + reset + npm install + build + 备份数据库 + 内容同步 + restart）
-
-### 服务器手动部署
-
-```bash
-cd /opt/sharon-study
-bash scripts/deploy.sh
-```
-
-### 其他设备访问
-
-在局域网内其他 Mac/PC 的 hosts 文件中添加：
-
-```bash
-# Mac/Linux: /etc/hosts
-# Windows: C:\Windows\System32\drivers\etc\hosts
-<Ubuntu服务器IP>  sharon
-```
-
-然后浏览器访问 `http://sharon/`。Nginx 反向代理 80→3000。
-
-## 数据管理策略
-
-数据按"能否重建"分为两类，维护方式完全不同：
-
-| 类别 | 包含内容 | 来源 | 维护方式 |
-|------|---------|------|---------|
-| **内容数据**（可重建） | 单词字典、知识库、学习资源 | `content/*.json`（入git） | 改 JSON -> 发布，`sync-content.mjs` 幂等灌入 |
-| **用户数据**（不可重建） | 学习计划、错题、成绩、背诵进度、用户对内容条目的修改 | 用户在页面上的操作 | 只存在于生产库，靠备份保护 |
-
-### 归属标记
-
-三张内容表（words / knowledge_points / learning_resources）每行带两个标记：
-
-- `origin`：`seed`（来自 content/）或 `user`（用户在页面创建）
-- `user_modified`：用户在页面编辑过则为 1，内容同步永远跳过这些行
-
-内容同步只更新内容字段，不碰背诵进度（mastery_level / next_review 等），因此更新字典不会影响学习进度。
-
-### 数据备份
-
-deploy.sh 每次发布前自动备份到 `/data/sharon-study/backups/pre-deploy-<时间戳>.db`。
-
-生产服务器建议配置每日定时备份（crontab）：
-
-```bash
-# 每天凌晨3点备份（.backup 方式对 WAL 模式安全）
-0 3 * * * cd /opt/sharon-study/sharon-study-app/server && node -e "require('better-sqlite3')('/data/sharon-study/production.db').backup('/data/sharon-study/backups/daily-' + new Date().toISOString().slice(0,10) + '.db').then(()=>process.exit(0))"
-```
-
-备份应定期复制到另一台机器，防止单机故障。
-
-### 生产库重置（一次性）
-
-1.0.0 的生产库是从测试库拷贝的，包含测试数据。1.0.1 发布后在服务器上执行一次：
-
-```bash
-cd /opt/sharon-study
-bash scripts/reset-production.sh --confirm
-```
-
-脚本会：备份 -> 停服 -> 删库 -> 重建表结构 -> 从 content/ 灌入内容 -> 重启。执行后生产库为干净的初始态（内容数据齐全，用户数据为空）。
-
-## 目录规划 (Ubuntu 服务器)
-
-```
-/opt/sharon-study/              # Git 仓库（代码）
-  sharon-study-app/             # 前端 + 后端源码
-  scripts/                      # 部署脚本
-
-/data/sharon-study/             # 数据目录（不入git）
-  production.db                 # 生产数据库
-  backups/                      # SQL 备份
-```
-
-## 注意事项
-
-- npm cache 可能遇到权限问题，使用 `--cache /tmp/npm-cache`
-- SQLite 中 `date()` 在 better-sqlite3 的 prepare() 里需用单引号 `date('now')`
-- Express 5 路由通配符用 `{*path}` 而非 `*`
-- 成绩趋势颜色：红涨绿跌（中国股市惯例）
-- 数据库文件（.db / .db-shm / .db-wal）已在 .gitignore 中，不入版本控制
-- 迁移中的索引创建必须在条件分支外执行，否则新库（CREATE TABLE 已含列）会跳过分支导致索引缺失
-- `sharon.study` 域名因 HSTS preload 无法在浏览器使用，改用 `sharon`（通过 hosts 文件映射）
+本项目基于 [MIT License](LICENSE) 协议发布，欢迎用于个人学习、高中冲刺及班级自律备考分享。

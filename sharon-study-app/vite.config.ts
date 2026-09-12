@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      '/api/nutstore': {
+        target: 'https://dav.jianguoyun.com/dav',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/nutstore/, ''),
       },
     },
   },

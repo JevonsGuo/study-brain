@@ -4,7 +4,7 @@ set -e
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "====== 启动开发模式 ======"
+echo "====== 启动智学大脑 (Study Brain) 开发模式 ======"
 
 kill_port() {
   local pid
@@ -17,12 +17,10 @@ kill_port() {
 }
 
 kill_port 5173
-kill_port 3000
 
-echo "前端: http://localhost:5173 (Vite 热更新)"
-echo "后端: http://localhost:3000 (API + SQLite)"
-echo "按 Ctrl+C 同时停止两个服务"
-echo "=========================="
+echo "前端: http://localhost:5173 (Vite 极速热更新)"
+echo "引擎: IndexedDB 本地私有数据引擎 (零后端进程)"
+echo "================================================"
 
 cleanup() {
   echo ""
@@ -32,8 +30,8 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+# 自动同步学科数据到 public/content/
 node "$ROOT_DIR/scripts/copy-content-to-public.mjs"
-cd "$ROOT_DIR/sharon-study-app/server" && node --watch src/index.js &
-cd "$ROOT_DIR/sharon-study-app" && npx vite &
 
-wait
+# 启动 Vite 开发服务
+cd "$ROOT_DIR/sharon-study-app" && npx vite
