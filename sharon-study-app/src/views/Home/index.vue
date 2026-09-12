@@ -127,8 +127,8 @@ const fetchTodayStats = async () => {
   try {
     const today = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`
     const plans = await api.get('/study-plans')
-    const todayPlans = (plans as { date: string; done: boolean }[]).filter(p => p.date === today)
-    todayStats.value = { total: todayPlans.length, done: todayPlans.filter(p => p.done).length }
+    const todayPlans = (plans as any[]).filter(p => p.date === today)
+    todayStats.value = { total: todayPlans.length, done: todayPlans.filter(p => p.done || p.status === "done").length }
   } catch {
     todayStats.value = { total: 0, done: 0 }
   }

@@ -8,6 +8,7 @@ interface PlanItem {
   subject: string
   content: string
   date: string
+  status?: string
   done: boolean
   estimated_minutes: number
 }
@@ -83,12 +84,12 @@ const dateLabel = computed(() => dateLabelStr(selectedDate.value))
 
 const dayPlans = computed(() => plans.value.filter(p => p.date === selectedDate.value))
 const pendingPlans = computed(() => {
-  let items = dayPlans.value.filter(p => !p.done)
+  let items = dayPlans.value.filter(p => !p.done && p.status !== 'done')
   if (activeFilter.value) items = items.filter(p => p.subject === activeFilter.value)
   return items
 })
 const donePlans = computed(() => {
-  let items = dayPlans.value.filter(p => p.done)
+  let items = dayPlans.value.filter(p => p.done || p.status === 'done')
   if (activeFilter.value) items = items.filter(p => p.subject === activeFilter.value)
   return items
 })
@@ -214,7 +215,7 @@ const computeDayStats = () => {
   for (const p of plans.value) {
     if (!map[p.date]) map[p.date] = { total: 0, done: 0 }
     map[p.date].total++
-    if (p.done) map[p.date].done++
+    if (p.done || p.status === 'done') map[p.date].done++
   }
   dayStatsMap.value = map
 }
@@ -222,7 +223,11 @@ const computeDayStats = () => {
 const fetchPlans = async () => {
   loading.value = true
   try {
-    plans.value = await api.get('/study-plans')
+    const res = (await api.get('/study-plans')) as any[]
+    plans.value = (res || []).map(p => ({
+      ...p,
+      done: p.done !== undefined ? Boolean(p.done) : p.status === 'done'
+    }))
     computeDayStats()
   } catch {
     ElMessage.error('加载失败')
@@ -278,13 +283,22 @@ const toggleDone = async (item: PlanItem) => {
   let startY = 0
   if (el) startY = el.getBoundingClientRect().top
 
+  const willBeDone = !(item.done || item.status === 'done')
   movingId.value = item.id
-  movingDir.value = item.done ? 'undone' : 'done'
+  movingDir.value = willBeDone ? 'done' : 'undone'
+
+  // 立即乐观更新内存状态，实现零延迟顺畅勾选
+  item.done = willBeDone
+  item.status = willBeDone ? 'done' : 'pending'
+  computeDayStats()
 
   try {
     await api.put(`/study-plans/${item.id}/toggle`)
     await fetchPlans()
   } catch {
+    item.done = !willBeDone
+    item.status = !willBeDone ? 'done' : 'pending'
+    computeDayStats()
     ElMessage.error('操作失败')
     movingId.value = null
     return
@@ -455,16 +469,18 @@ onMounted(fetchPlans)
               :data-plan-id="item.id"
               :class="['plan-item', 'pending', { 'just-moved': movingId === item.id && movingDir === 'undone' }]"
               :style="{ borderLeftColor: subjectColors[item.subject] || '#909399', background: subjectLightBg[item.subject] || '#f8f9fb' }"
+              @click="toggleDone(item)"
+              title="点击标记为已完成"
             >
-              <button class="check-btn" @click="toggleDone(item)"></button>
+              <button class="check-btn" @click.stop="toggleDone(item)" title="点击完成"></button>
               <div class="item-content">
                 {{ item.content }}
                 <span v-if="item.estimated_minutes" class="item-time">{{ item.estimated_minutes }}′</span>
               </div>
-              <button class="del-btn" @click="removePlan(item.id)">
+              <button class="del-btn" @click.stop="removePlan(item.id)" title="删除计划">
                 <el-icon size="12"><Delete /></el-icon>
               </button>
-              <button class="edit-btn" @click="openEdit(item)">
+              <button class="edit-btn" @click.stop="openEdit(item)" title="编辑计划">
                 <el-icon size="12"><Edit /></el-icon>
               </button>
             </div>
@@ -705,7 +721,8 @@ onMounted(fetchPlans)
 .group-count { font-size: 11px; background: rgba(0,0,0,0.06); padding: 1px 7px; border-radius: 8px; color: var(--text-sub, #909399); font-weight: 500; }
 .group-time { font-size: 11px; color: var(--text-sub, #909399); margin-left: 4px; }
 
-.plan-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; border-left: 3px solid; background: var(--bg-card, #ffffff); transition: all 0.2s; }
+.plan-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; border-left: 3px solid; background: var(--bg-card, #ffffff); transition: all 0.2s; cursor: pointer; user-select: none; }
+.plan-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
 .plan-item.pending:hover { transform: translateX(3px); }
 .plan-item.done { border-left-color: #52c41a; background: #f0f9eb !important; }
 .plan-item.done .item-content { text-decoration: line-through; color: #b0b5bd; }

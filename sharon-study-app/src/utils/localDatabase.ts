@@ -39,6 +39,7 @@ export interface LocalStudyPlan {
   content: string
   date: string
   status: 'pending' | 'done'
+  done?: boolean
   estimated_minutes?: number
   actual_minutes?: number
   created_at?: string
@@ -483,22 +484,27 @@ class LocalDatabase {
   }
 
   // ================= 模块 6: 每日计划 (Study Plans) =================
-  async getStudyPlans(date?: string): Promise<LocalStudyPlan[]> {
+  async getStudyPlans(date?: string): Promise<(LocalStudyPlan & { done: boolean })[]> {
     const all = await this.getAll<LocalStudyPlan>('study_plans')
     let filtered = all
     if (date) {
       filtered = filtered.filter(p => p.date === date)
     }
     filtered.sort((a, b) => (b.id || 0) - (a.id || 0))
-    return filtered
+    return filtered.map(p => ({
+      ...p,
+      done: p.status === 'done' || (p as any).done === true
+    }))
   }
 
-  async createStudyPlan(payload: Partial<LocalStudyPlan>): Promise<LocalStudyPlan> {
-    const plan: LocalStudyPlan = {
+  async createStudyPlan(payload: Partial<LocalStudyPlan> & { done?: boolean }): Promise<LocalStudyPlan & { done: boolean }> {
+    const isDone = payload.status === 'done' || payload.done === true
+    const plan: LocalStudyPlan & { done: boolean } = {
       subject: payload.subject || '通用',
       content: payload.content || '',
       date: payload.date || new Date().toISOString().slice(0, 10),
-      status: payload.status || 'pending',
+      status: isDone ? 'done' : 'pending',
+      done: isDone,
       estimated_minutes: payload.estimated_minutes || 30,
       actual_minutes: payload.actual_minutes || 0,
       created_at: new Date().toISOString()
@@ -507,18 +513,34 @@ class LocalDatabase {
     return { ...plan, id: Number(id) }
   }
 
-  async toggleStudyPlan(id: number): Promise<LocalStudyPlan> {
+  async toggleStudyPlan(id: number): Promise<LocalStudyPlan & { done: boolean }> {
     const plan = await this.getByKey<LocalStudyPlan>('study_plans', Number(id))
     if (!plan) throw new Error('Plan not found')
-    plan.status = plan.status === 'done' ? 'pending' : 'done'
+    const currentDone = plan.status === 'done' || (plan as any).done === true
+    const nextDone = !currentDone
+    plan.status = nextDone ? 'done' : 'pending'
+    ;(plan as any).done = nextDone
     await this.putItem('study_plans', plan)
-    return plan
+    return { ...plan, done: nextDone }
   }
 
-  async updateStudyPlan(id: number, payload: Partial<LocalStudyPlan>): Promise<LocalStudyPlan> {
+  async updateStudyPlan(id: number, payload: Partial<LocalStudyPlan> & { done?: boolean }): Promise<LocalStudyPlan & { done: boolean }> {
     const plan = await this.getByKey<LocalStudyPlan>('study_plans', Number(id))
     if (!plan) throw new Error('Plan not found')
-    const updated = { ...plan, ...payload, id: Number(id) }
+    const isDone = payload.status !== undefined
+      ? payload.status === 'done'
+      : payload.done !== undefined
+      ? Boolean(payload.done)
+      : (plan.status === 'done' || (plan as any).done === true)
+
+    const planStatus: 'done' | 'pending' = isDone ? 'done' : 'pending'
+    const updated: LocalStudyPlan & { done: boolean } = {
+      ...plan,
+      ...payload,
+      id: Number(id),
+      status: planStatus,
+      done: isDone
+    }
     await this.putItem('study_plans', updated)
     return updated
   }
