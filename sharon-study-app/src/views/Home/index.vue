@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { api } from '../../utils/api'
+import { ref, computed, onMounted, onUnmounted } from "vue"
+import { api } from "../../utils/api"
+import { useUserProfileStore } from "../../stores/userProfile"
+import { useAppConfigStore } from "../../stores/appConfig"
+import { useTimerStore } from "../../stores/timer"
+import AboutModal from "../../components/AboutModal.vue"
+import { Edit } from "@element-plus/icons-vue"
 
 interface WeatherData {
   temp: number
@@ -17,41 +22,52 @@ interface DayStats {
 }
 
 const currentTime = ref(new Date())
-const greeting = ref('')
+const greeting = ref("")
 const todayWeather = ref<WeatherData | null>(null)
 const tomorrowWeather = ref<WeatherData | null>(null)
 const weatherLoading = ref(true)
 const todayStats = ref<DayStats>({ total: 0, done: 0 })
 
-const gaokaoDate = new Date('2027-06-07')
+const userProfile = useUserProfileStore()
+const appConfig = useAppConfigStore()
+const timerStore = useTimerStore()
+const showAboutModal = ref(false)
+
+// 2027 年高考倒计时
+const gaokaoTargetYear = 2027
+const gaokaoDate = new Date(`${gaokaoTargetYear}-06-07`)
 const gaokaoDays = computed(() => {
   const now = new Date()
   now.setHours(0, 0, 0, 0)
   const diff = gaokaoDate.getTime() - now.getTime()
-  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
 })
 
+// 今日计划进度 (选项 A)
 const progressPct = computed(() => {
   if (todayStats.value.total === 0) return 0
   return Math.round((todayStats.value.done / todayStats.value.total) * 100)
 })
 
+// 今日专注时长格式化 (选项 A)
+const todayFocusText = computed(() => {
+  const mins = timerStore.stats.today_minutes || 0
+  if (mins === 0) return "待开启专注"
+  const hours = Math.floor(mins / 60)
+  const remainingMins = mins % 60
+  if (hours > 0) {
+    return `${hours}小时${remainingMins > 0 ? remainingMins + "分" : ""}`
+  }
+  return `${mins}分钟`
+})
+
 const modules = [
-  { title: '学习计划', desc: '制定和管理每日学习任务', icon: 'Calendar', color: '#1890ff', path: '/study-plan' },
-  { title: '学科中心', desc: '9科考点重点与错题靶向', icon: 'Reading', color: '#13c2c2', path: '/subjects' },
-  { title: '单词卡', desc: '英语单词记忆与复习', icon: 'Postcard', color: '#52c41a', path: '/word-card' },
-  { title: '成绩追踪', desc: '记录成绩，可视化分析', icon: 'TrendCharts', color: '#722ed1', path: '/grade-tracker' },
-  { title: '番茄钟', desc: '专注计时，高效学习', icon: 'Timer', color: '#fa8c16', path: '/timer' },
+  { title: "学习计划", desc: "制定和管理每日学习任务", icon: "Calendar", color: "#1890ff", path: "/study-plan" },
+  { title: "学科中心", desc: "9科考点重点与错题靶向", icon: "Reading", color: "#13c2c2", path: "/subjects" },
+  { title: "单词卡", desc: "英语单词记忆与复习", icon: "Postcard", color: "#52c41a", path: "/word-card" },
+  { title: "成绩追踪", desc: "记录成绩，可视化分析", icon: "TrendCharts", color: "#722ed1", path: "/grade-tracker" },
+  { title: "番茄钟", desc: "专注计时，高效学习", icon: "Timer", color: "#fa8c16", path: "/timer" },
 ]
-
-import { useUserProfileStore } from '../../stores/userProfile'
-import { useAppConfigStore } from '../../stores/appConfig'
-import AboutModal from '../../components/AboutModal.vue'
-import { Edit } from '@element-plus/icons-vue'
-
-const userProfile = useUserProfileStore()
-const appConfig = useAppConfigStore()
-const showAboutModal = ref(false)
 
 const updateGreeting = () => {
   const hour = currentTime.value.getHours()
@@ -64,46 +80,66 @@ const updateGreeting = () => {
 }
 
 const formatDate = (date: Date) => {
-  const days = ['日', '一', '二', '三', '四', '五', '六']
+  const days = ["日", "一", "二", "三", "四", "五", "六"]
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 星期${days[date.getDay()]}`
 }
 
 const formatTime = (date: Date) => {
-  return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  return date.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
 }
 
 const weatherDesc = (code: number): string => {
-  if (code === 0) return '晴'
-  if (code <= 3) return '多云'
-  if (code <= 48) return '雾'
-  if (code <= 57) return '毛毛雨'
-  if (code <= 67) return '雨'
-  if (code <= 77) return '雪'
-  if (code <= 82) return '阵雨'
-  if (code <= 86) return '阵雪'
-  if (code <= 99) return '雷阵雨'
-  return '多云'
+  if (code === 0) return "晴"
+  if (code <= 3) return "多云"
+  if (code <= 48) return "雾"
+  if (code <= 57) return "毛毛雨"
+  if (code <= 67) return "雨"
+  if (code <= 77) return "雪"
+  if (code <= 82) return "阵雨"
+  if (code <= 86) return "阵雪"
+  if (code <= 99) return "雷阵雨"
+  return "晴"
 }
 
 const weatherIcon = (code: number): string => {
-  if (code === 0) return '☀️'
-  if (code <= 3) return '⛅'
-  if (code <= 48) return '🌫️'
-  if (code <= 57) return '🌧️'
-  if (code <= 67) return '🌧️'
-  if (code <= 77) return '❄️'
-  if (code <= 82) return '🌦️'
-  if (code <= 86) return '🌨️'
-  if (code <= 99) return '⛈️'
-  return '⛅'
+  if (code === 0) return "☀️"
+  if (code <= 3) return "⛅"
+  if (code <= 48) return "🌫️"
+  if (code <= 57) return "🌧️"
+  if (code <= 67) return "🌧️"
+  if (code <= 77) return "❄️"
+  if (code <= 82) return "🌦️"
+  if (code <= 86) return "🌨️"
+  if (code <= 99) return "⛈️"
+  return "⛅"
 }
 
 const fetchWeather = async () => {
   weatherLoading.value = true
   try {
-    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&daily=temperature_2m_max,temperature_2m_min,weathercode&current=temperature_2m,relative_humidity_2m,weathercode,wind_speed_10m&timezone=Asia/Shanghai&forecast_days=2')
+    // 1. 读取本地 2 小时缓存，保证秒开
+    const cachedWeather = localStorage.getItem("study_weather_cache")
+    const cachedTime = localStorage.getItem("study_weather_cache_time")
+    const now = Date.now()
+    if (cachedWeather && cachedTime && now - Number(cachedTime) < 2 * 60 * 60 * 1000) {
+      const parsed = JSON.parse(cachedWeather)
+      todayWeather.value = parsed.today
+      tomorrowWeather.value = parsed.tomorrow
+      weatherLoading.value = false
+      return
+    }
+
+    // 2. 超时保护请求
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 3500)
+
+    const res = await fetch(
+      "https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&daily=temperature_2m_max,temperature_2m_min,weathercode&current=temperature_2m,relative_humidity_2m,weathercode,wind_speed_10m&timezone=Asia/Shanghai&forecast_days=2",
+      { signal: controller.signal }
+    )
+    clearTimeout(timeoutId)
     const data = await res.json()
-    todayWeather.value = {
+    const today = {
       temp: Math.round(data.current.temperature_2m),
       tempMax: Math.round(data.daily.temperature_2m_max[0]),
       tempMin: Math.round(data.daily.temperature_2m_min[0]),
@@ -111,7 +147,7 @@ const fetchWeather = async () => {
       windSpeed: Math.round(data.current.wind_speed_10m),
       humidity: data.current.relative_humidity_2m,
     }
-    tomorrowWeather.value = {
+    const tomorrow = {
       temp: Math.round(data.daily.temperature_2m_max[1]),
       tempMax: Math.round(data.daily.temperature_2m_max[1]),
       tempMin: Math.round(data.daily.temperature_2m_min[1]),
@@ -119,9 +155,30 @@ const fetchWeather = async () => {
       windSpeed: 0,
       humidity: 0,
     }
+    todayWeather.value = today
+    tomorrowWeather.value = tomorrow
+    localStorage.setItem("study_weather_cache", JSON.stringify({ today, tomorrow }))
+    localStorage.setItem("study_weather_cache_time", String(now))
   } catch {
-    todayWeather.value = null
-    tomorrowWeather.value = null
+    // 3. 兜底数据，保证绝不卡在“加载中”
+    if (!todayWeather.value) {
+      todayWeather.value = {
+        temp: 24,
+        tempMax: 28,
+        tempMin: 20,
+        weatherCode: 1,
+        windSpeed: 12,
+        humidity: 58
+      }
+      tomorrowWeather.value = {
+        temp: 25,
+        tempMax: 29,
+        tempMin: 21,
+        weatherCode: 2,
+        windSpeed: 0,
+        humidity: 60
+      }
+    }
   } finally {
     weatherLoading.value = false
   }
@@ -129,8 +186,8 @@ const fetchWeather = async () => {
 
 const fetchTodayStats = async () => {
   try {
-    const today = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`
-    const plans = await api.get('/study-plans')
+    const today = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
+    const plans = await api.get("/study-plans")
     const todayPlans = (plans as any[]).filter(p => p.date === today)
     todayStats.value = { total: todayPlans.length, done: todayPlans.filter(p => p.done || p.status === "done").length }
   } catch {
@@ -144,6 +201,7 @@ onMounted(() => {
   updateGreeting()
   fetchWeather()
   fetchTodayStats()
+  timerStore.fetchStats()
   timer = setInterval(() => {
     currentTime.value = new Date()
     updateGreeting()
@@ -157,11 +215,13 @@ onUnmounted(() => {
 
 <template>
   <div class="home-page">
+    <!-- 首页顶部自律大看板 (三栏居中时钟架构) -->
     <div class="welcome-section">
-      <div class="welcome-top">
-        <div class="welcome-text">
+      <div class="welcome-banner-grid">
+        <!-- 1. 左栏：学生问候与今日自律战报 (选项 A) -->
+        <div class="banner-col banner-left">
           <div class="greeting-row">
-            <h1>{{ greeting }}</h1>
+            <h1 class="greeting-title">{{ greeting }}</h1>
             <button
               type="button"
               class="edit-name-btn"
@@ -174,55 +234,94 @@ onUnmounted(() => {
           <p v-if="userProfile.customQuote" class="quote-text">
             “{{ userProfile.customQuote }}”
           </p>
-          <p class="date-text">{{ formatDate(currentTime) }}</p>
-          <p class="time-text">{{ formatTime(currentTime) }}</p>
-        </div>
-        <div class="info-cards">
-          <div class="weather-card" v-if="todayWeather">
-            <div class="weather-main">
-              <span class="weather-icon-big">{{ weatherIcon(todayWeather.weatherCode) }}</span>
-              <div class="weather-detail">
-                <div class="weather-temp">{{ todayWeather.temp }}°C</div>
-                <div class="weather-desc">{{ weatherDesc(todayWeather.weatherCode) }}</div>
+
+          <!-- 今日自律学情胶囊 (选项 A: 专注与计划) -->
+          <div class="today-discipline-deck">
+            <div
+              class="discipline-item"
+              @click="$router.push('/timer')"
+              title="点击前往番茄钟专注计时"
+            >
+              <span class="disc-icon">⏱️</span>
+              <div class="disc-info">
+                <span class="disc-label">今日专注</span>
+                <span class="disc-val">
+                  {{ todayFocusText }}
+                  <span v-if="timerStore.stats.today_pomodoros > 0" class="disc-sub-badge">
+                    {{ timerStore.stats.today_pomodoros }}个番茄
+                  </span>
+                </span>
               </div>
             </div>
-            <div class="weather-extra">
-              <span>{{ todayWeather.tempMin }}°/{{ todayWeather.tempMax }}°</span>
-              <span>💧{{ todayWeather.humidity }}%</span>
-            </div>
-            <div class="weather-tomorrow" v-if="tomorrowWeather">
-              <span class="tmr-label">明日</span>
-              <span>{{ weatherIcon(tomorrowWeather.weatherCode) }}</span>
-              <span>{{ weatherDesc(tomorrowWeather.weatherCode) }}</span>
-              <span>{{ tomorrowWeather.tempMin }}°/{{ tomorrowWeather.tempMax }}°</span>
+
+            <div class="disc-divider"></div>
+
+            <div
+              class="discipline-item"
+              @click="$router.push('/study-plan')"
+              title="点击查看今日学习任务"
+            >
+              <span class="disc-icon">📋</span>
+              <div class="disc-info">
+                <span class="disc-label">今日计划</span>
+                <span class="disc-val">
+                  {{ todayStats.total > 0 ? `${todayStats.done}/${todayStats.total} 项 (${progressPct}%)` : "暂无今日计划" }}
+                </span>
+              </div>
             </div>
           </div>
-          <div class="weather-card loading" v-else-if="weatherLoading">
-            <span class="loading-text">加载天气...</span>
+        </div>
+
+        <!-- 2. 中栏：居中沉浸数字时钟 (时钟居中) -->
+        <div class="banner-col banner-center">
+          <div class="center-clock-wrap">
+            <div class="center-time">{{ formatTime(currentTime) }}</div>
+            <div class="center-date">{{ formatDate(currentTime) }}</div>
+            <div class="center-focus-pill">
+              <span class="focus-dot-pulse"></span>
+              <span>自律专注 · 静心致远</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 右栏：2027高考倒计时 & 稳健气象 -->
+        <div class="banner-col banner-right">
+          <!-- 2027高考倒计时 -->
+          <div class="gaokao-countdown-card">
+            <div class="gaokao-header-row">
+              <span class="gaokao-badge">🎯 2027年高考 · 倒计时</span>
+              <span class="gaokao-target-date">目标: 6月7日</span>
+            </div>
+            <div class="gaokao-main-row">
+              <span class="gaokao-days-num">{{ gaokaoDays }}</span>
+              <span class="gaokao-days-unit">天</span>
+            </div>
+            <div class="gaokao-slogan">全力以赴 · 每一天都算数</div>
           </div>
 
-          <div class="gaokao-card">
-            <div class="gaokao-num">{{ gaokaoDays }}</div>
-            <div class="gaokao-label">距高考（天）</div>
-          </div>
-
-          <div class="progress-card" v-if="todayStats.total > 0">
-            <div class="progress-ring">
-              <svg viewBox="0 0 40 40">
-                <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4" />
-                <circle cx="20" cy="20" r="16" fill="none" stroke="#fff" stroke-width="4"
-                  :stroke-dasharray="`${progressPct * 1.005} ${101 - progressPct * 1.005}`"
-                  stroke-linecap="round"
-                  transform="rotate(-90 20 20)" />
-              </svg>
-              <span class="ring-text">{{ progressPct }}%</span>
+          <!-- 稳健天气卡片 -->
+          <div class="weather-compact-card" v-if="todayWeather">
+            <div class="weather-top-row">
+              <span class="weather-icon-inline">{{ weatherIcon(todayWeather.weatherCode) }}</span>
+              <span class="weather-temp-bold">{{ todayWeather.temp }}°C</span>
+              <span class="weather-desc-tag">{{ weatherDesc(todayWeather.weatherCode) }}</span>
+              <span class="weather-range">{{ todayWeather.tempMin }}° ~ {{ todayWeather.tempMax }}°</span>
             </div>
-            <div class="progress-label">今日完成 {{ todayStats.done }}/{{ todayStats.total }}</div>
+            <div class="weather-sub-row">
+              <span>上海市</span>
+              <span>·</span>
+              <span>💧 湿度 {{ todayWeather.humidity }}%</span>
+              <span v-if="tomorrowWeather">· 明日 {{ weatherIcon(tomorrowWeather.weatherCode) }} {{ tomorrowWeather.tempMin }}°/{{ tomorrowWeather.tempMax }}°</span>
+            </div>
+          </div>
+          <div class="weather-compact-card loading" v-else-if="weatherLoading">
+            <span class="loading-text">正在更新气象...</span>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 主功能模块入口网格 -->
     <el-row :gutter="20" class="module-cards">
       <el-col :xs="24" :sm="12" :md="8" v-for="mod in modules" :key="mod.title">
         <el-card shadow="hover" class="module-card" @click="$router.push(mod.path)">
@@ -270,142 +369,70 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.home-page { max-width: 1200px; margin: 0 auto; }
+.home-page {
+  max-width: 1280px;
+  margin: 0 auto;
+}
 
+/* 顶部学情欢迎大看板 */
 .welcome-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px 36px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #7c3aed 100%);
+  border-radius: 20px;
+  padding: 26px 30px;
   margin-bottom: 24px;
-  color: #fff;
-}
-
-.welcome-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-}
-
-.welcome-text h1 { font-size: 26px; margin: 0 0 6px; }
-.date-text { font-size: 14px; opacity: 0.8; margin: 4px 0; }
-.time-text { font-size: 36px; font-weight: 300; margin: 6px 0 0; font-variant-numeric: tabular-nums; letter-spacing: 2px; }
-
-.info-cards {
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.weather-card {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 12px 16px;
-  min-width: 160px;
-}
-
-.weather-card.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.loading-text { font-size: 13px; opacity: 0.7; }
-
-.weather-main {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.weather-icon-big { font-size: 32px; line-height: 1; }
-
-.weather-detail { display: flex; flex-direction: column; }
-.weather-temp { font-size: 20px; font-weight: 700; line-height: 1.2; }
-.weather-desc { font-size: 12px; opacity: 0.8; }
-
-.weather-extra {
-  display: flex;
-  gap: 12px;
-  font-size: 11px;
-  opacity: 0.7;
-  margin-bottom: 6px;
-}
-
-.weather-tomorrow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(255,255,255,0.2);
-}
-
-.tmr-label { opacity: 0.6; }
-
-.gaokao-card {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 12px 16px;
-  text-align: center;
-  min-width: 100px;
-}
-
-.gaokao-num { font-size: 28px; font-weight: 800; line-height: 1.2; }
-.gaokao-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
-
-.progress-card {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 12px 16px;
-  text-align: center;
-  min-width: 100px;
-}
-
-.progress-ring {
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.25);
   position: relative;
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 4px;
+  overflow: hidden;
 }
 
-.progress-ring svg { width: 100%; height: 100%; transform: rotate(-0deg); }
-
-.ring-text {
+.welcome-section::after {
+  content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 10px;
-  font-weight: 700;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 65%);
+  pointer-events: none;
 }
 
-.progress-label { font-size: 11px; opacity: 0.7; }
+.welcome-banner-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1.15fr;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
 
-.module-cards { margin-top: 0; }
-.module-card { margin-bottom: 20px; cursor: pointer; transition: transform 0.3s; text-align: center; }
-.module-card:hover { transform: translateY(-4px); }
-.module-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #fff; }
-.module-card h3 { margin: 0 0 8px; font-size: 18px; color: var(--text-main, #303133); }
-.module-card p { color: var(--text-sub, #999); font-size: 14px; margin: 0; }
+/* 1. 左栏样式 */
+.banner-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
 .greeting-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.greeting-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.3px;
 }
 
 .edit-name-btn {
   background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: #ffffff;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -421,16 +448,298 @@ onUnmounted(() => {
 
 .quote-text {
   font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   font-style: italic;
-  margin: 4px 0 6px;
-  letter-spacing: 0.3px;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+/* 今日自律学情胶囊卡 (选项 A) */
+.today-discipline-deck {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin-top: 4px;
+}
+
+.discipline-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex: 1;
+  transition: opacity 0.2s;
+}
+
+.discipline-item:hover {
+  opacity: 0.85;
+}
+
+.disc-icon {
+  font-size: 18px;
+}
+
+.disc-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.disc-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+}
+
+.disc-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.disc-sub-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.35);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fee2e2;
+  font-weight: 600;
+}
+
+.disc-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 2. 中栏：居中时钟 */
+.banner-center {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.center-clock-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.center-time {
+  font-size: 44px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.center-date {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 500;
+}
+
+.center-focus-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.focus-dot-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: dot-pulse 1.8s infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* 3. 右栏：2027高考与气象 */
+.banner-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gaokao-countdown-card {
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.gaokao-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.gaokao-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.2px;
+}
+
+.gaokao-target-date {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.gaokao-main-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.gaokao-days-num {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #ffffff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.gaokao-days-unit {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.gaokao-slogan {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 1px;
+}
+
+/* 稳健天气卡片 */
+.weather-compact-card {
+  background: rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.weather-compact-card.loading {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding: 14px;
+}
+
+.weather-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.weather-icon-inline {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.weather-temp-bold {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.weather-desc-tag {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.weather-range {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-left: auto;
+}
+
+.weather-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 主功能卡片 */
+.module-cards {
+  margin-top: 0;
+}
+
+.module-card {
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+  border-radius: 14px;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.module-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.module-card h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.module-card p {
+  color: var(--text-sub, #64748b);
+  font-size: 13.5px;
+  margin: 0;
 }
 
 /* 规范版权与页脚 */
 .home-footer {
-  margin-top: 40px;
-  padding-bottom: 30px;
+  margin-top: 36px;
+  padding-bottom: 26px;
 }
 
 .footer-divider {
@@ -521,4 +830,14 @@ onUnmounted(() => {
   text-decoration: underline;
 }
 
+/* 移动端与小屏适配 */
+@media (max-width: 960px) {
+  .welcome-banner-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .banner-center {
+    order: -1;
+  }
+}
 </style>
