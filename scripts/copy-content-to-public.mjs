@@ -84,7 +84,7 @@ export function syncContentAndVersion() {
     "utf8"
   )
 
-  const contentHash = hash.digest("hex").slice(0, 8)
+  const contentHash = hash.digest("hex").slice(0, 6)
   const now = new Date()
   const yyyymmdd = now.toISOString().slice(0, 10).replace(/-/g, "")
   const timeStr = now.getFullYear() + "-" +

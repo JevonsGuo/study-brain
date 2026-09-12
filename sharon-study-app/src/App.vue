@@ -134,15 +134,15 @@ const displayDbText = computed(() => {
     return appConfig.dbSyncMessage || '同步中...'
   }
   if (appConfig.dbSyncStatus === 'checking') {
-    return '检查更新中...'
+    return '检查中...'
   }
   if (appConfig.dbSyncStatus === 'update_available') {
-    return '新版本(点击更新)'
+    return '有新版本'
   }
   if (appConfig.dbSyncStatus === 'offline') {
-    return '本地离线就绪'
+    return '离线模式'
   }
-  return `数据库: v${appConfig.currentDbVersion}`
+  return `v${appConfig.currentDbVersion}`
 })
 
 onMounted(() => {
@@ -320,7 +320,7 @@ const toggleCollapse = () => {
           <div
             class="db-version-text"
             @click="appConfig.checkDatabaseVersion(true)"
-            :title="`数据库状态: ${appConfig.dbSyncMessage} (点击检查更新)`"
+            :title="`公共数据库: v${appConfig.currentDbVersion} (${appConfig.dbSyncMessage || '已是最新'}) (点击检查更新)`"
           >
             <span class="db-dot" :class="appConfig.dbSyncStatus"></span>
             <span class="db-status-label">{{ displayDbText }}</span>
@@ -907,21 +907,24 @@ const toggleCollapse = () => {
   justify-content: space-between;
   padding: 4px 10px;
   margin-bottom: 6px;
+  gap: 6px;
 }
 
 .db-version-text {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   user-select: none;
   transition: color 0.2s;
+  flex: 1;
+  min-width: 0;
 }
 
 .db-version-text:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .db-dot {
@@ -972,7 +975,9 @@ const toggleCollapse = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: -0.3px;
 }
 
 @keyframes db-pulse {

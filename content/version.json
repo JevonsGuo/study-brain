@@ -1,10 +1,10 @@
 {
-  "database_version": "20260912.0172a1d6",
-  "content_hash": "0172a1d6",
-  "updated_at": "2026-09-12 18:10:21",
-  "description": "公共数据库自动版本同步 (收录215个考点、66项学科神器与20584个单词)",
+  "database_version": "20260912.270e25",
+  "content_hash": "270e25",
+  "updated_at": "2026-09-12 18:58:24",
+  "description": "公共数据库自动版本同步 (收录214个考点、66项学科神器与20584个单词)",
   "stats": {
-    "knowledge_points": 215,
+    "knowledge_points": 214,
     "learning_resources": 66,
     "total_words": 20584,
     "word_lists": 6
