@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "npm run dev --prefix sharon-study-app",
     "build": "npm run build --prefix sharon-study-app",
-    "preview": "npm run preview --prefix sharon-study-app"
+    "preview": "npm run preview --prefix sharon-study-app",
+    "deploy:cf": "npm run build && npx wrangler pages deploy sharon-study-app/dist --project-name=study-brain"
   }
 }
