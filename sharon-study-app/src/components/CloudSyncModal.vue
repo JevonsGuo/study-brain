@@ -157,7 +157,7 @@ const exportLocalBackup = async () => {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    ElMessage.success('已成功导出本地完整备份文件！包含所有错题、笔记、专注记录与背词进度')
+    ElMessage.success('已成功导出本地完整备份文件！包含错题本、计划、笔记、脑力工坊战绩、专注记录与背词进度')
   } catch (err) {
     ElMessage.error('导出备份文件失败')
   }
@@ -208,7 +208,7 @@ const handleFileImport = async (e: Event) => {
     <div class="sync-intro-banner">
       <el-icon><InfoFilled /></el-icon>
       <span>
-        本系统采用<b>纯前端本地优先引擎</b>，您的错题、笔记与计划绝对私有。配置坚果云可支持多端免密同步；也可使用离线文件一键导入导出。
+        本系统采用<b>纯前端本地优先引擎</b>，您的错题、笔记、计划与脑力战报绝对私有。配置坚果云可支持多端免密同步；也可使用离线文件一键导入导出。
       </span>
     </div>
 
@@ -266,7 +266,7 @@ const handleFileImport = async (e: Event) => {
 
       <div class="offline-export-box">
         <div class="export-desc">
-          <span>无需任何网盘账号，随时可将本地错题、笔记与背词战果一键导出保存，或在更换设备时导入恢复。</span>
+          <span>无需任何网盘账号，随时可将本地错题、笔记、脑力工坊战绩与背词战果一键导出保存，或在更换设备时导入恢复。</span>
         </div>
         <div class="offline-btns">
           <el-button type="success" plain :icon="Document" @click="exportLocalBackup">

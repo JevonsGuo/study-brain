@@ -994,6 +994,45 @@ class LocalDatabase {
     const custom_knowledge = await this.getAll('custom_knowledge')
     const custom_resources = await this.getAll('custom_resources')
 
+    // 收集脑力工坊全部游戏最佳纪录与训练统计
+    const braingym_records: Record<string, any> = {}
+    const points_mastery: Record<string, any> = {}
+    if (typeof localStorage !== 'undefined') {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (!key) continue
+        if (
+          key.startsWith('study_braingym_') ||
+          key.startsWith('study_schulte_') ||
+          key.startsWith('study_2048_') ||
+          key.startsWith('study_sudoku_') ||
+          key.startsWith('study_klotski_') ||
+          key.startsWith('study_arrow_') ||
+          key.startsWith('study_minesweeper_') ||
+          key.startsWith('study_memory_') ||
+          key.startsWith('study_hanoi_') ||
+          key.startsWith('sharon_braingym_') ||
+          key.startsWith('sharon_schulte_') ||
+          key.startsWith('sharon_2048_') ||
+          key.startsWith('sharon_sudoku_') ||
+          key.startsWith('sharon_klotski_') ||
+          key.startsWith('sharon_arrow_') ||
+          key.startsWith('sharon_minesweeper_') ||
+          key.startsWith('sharon_memory_') ||
+          key.startsWith('sharon_hanoi_')
+        ) {
+          braingym_records[key] = localStorage.getItem(key)
+        } else if (
+          key === 'study_starred_points' ||
+          key === 'study_mastered_points' ||
+          key === 'sharon_starred_points' ||
+          key === 'sharon_mastered_points'
+        ) {
+          points_mastery[key] = localStorage.getItem(key)
+        }
+      }
+    }
+
     return {
       brand: 'StudyBrain',
       version: 1,
@@ -1009,7 +1048,9 @@ class LocalDatabase {
       study_records,
       daily_config,
       custom_knowledge,
-      custom_resources
+      custom_resources,
+      braingym_records,
+      points_mastery
     }
   }
 
@@ -1050,6 +1091,32 @@ class LocalDatabase {
     }
     if (Array.isArray(backup.custom_resources)) {
       for (const item of backup.custom_resources) await this.putItem('custom_resources', item)
+    }
+
+    // 恢复脑力工坊各游戏历史最佳纪录与统计
+    if (backup.braingym_records && typeof backup.braingym_records === 'object' && typeof localStorage !== 'undefined') {
+      for (const [key, val] of Object.entries(backup.braingym_records)) {
+        if (val !== null && val !== undefined) {
+          localStorage.setItem(key, String(val))
+          if (key.startsWith('sharon_')) {
+            const studyKey = 'study_' + key.slice('sharon_'.length)
+            localStorage.setItem(studyKey, String(val))
+          }
+        }
+      }
+    }
+
+    // 恢复学科中心收藏与已掌握知识点
+    if (backup.points_mastery && typeof backup.points_mastery === 'object' && typeof localStorage !== 'undefined') {
+      for (const [key, val] of Object.entries(backup.points_mastery)) {
+        if (val !== null && val !== undefined) {
+          localStorage.setItem(key, String(val))
+          if (key.startsWith('sharon_')) {
+            const studyKey = 'study_' + key.slice('sharon_'.length)
+            localStorage.setItem(studyKey, String(val))
+          }
+        }
+      }
     }
 
     return { ok: true, imported_at: new Date().toISOString() }

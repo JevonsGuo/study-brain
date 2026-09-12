@@ -13,6 +13,63 @@ import { localDB } from './utils/localDatabase'
 
 const router = useRouter()
 const route = useRoute()
+
+// 模块切换流畅体验引擎 (TopLoader + 即时激活 + 深度过渡)
+const navigatingTarget = ref<string | null>(null)
+const isPageLoading = ref(false)
+const pageProgress = ref(0)
+const targetModuleName = ref('')
+const showSlowLoadingIndicator = ref(false)
+let progressTimer: any = null
+let slowTimer: any = null
+
+const getModuleTitle = (path: string): string => {
+  if (path.startsWith('/subjects')) return '学科中心'
+  if (path.startsWith('/study-plan')) return '学习计划'
+  if (path.startsWith('/word-card')) return '单词卡'
+  if (path.startsWith('/grade-tracker')) return '成绩追踪'
+  if (path.startsWith('/timer')) return '番茄钟'
+  if (path.startsWith('/brain-gym') || path.startsWith('/games')) return '脑力工坊'
+  if (path.startsWith('/home')) return '首页'
+  return ''
+}
+
+router.beforeEach((to, from, next) => {
+  if (to.path !== from.path) {
+    isPageLoading.value = true
+    pageProgress.value = 25
+    targetModuleName.value = getModuleTitle(to.path)
+
+    clearInterval(progressTimer)
+    clearTimeout(slowTimer)
+
+    progressTimer = setInterval(() => {
+      if (pageProgress.value < 85) {
+        pageProgress.value += Math.random() * 18 + 6
+      }
+    }, 110)
+
+    // 超过 140ms 未就绪（网络慢或组件包大），弹出平滑毛玻璃胶囊提示
+    slowTimer = setTimeout(() => {
+      if (isPageLoading.value) {
+        showSlowLoadingIndicator.value = true
+      }
+    }, 140)
+  }
+  next()
+})
+
+router.afterEach(() => {
+  clearInterval(progressTimer)
+  clearTimeout(slowTimer)
+  pageProgress.value = 100
+  setTimeout(() => {
+    isPageLoading.value = false
+    showSlowLoadingIndicator.value = false
+    navigatingTarget.value = null
+    pageProgress.value = 0
+  }, 200)
+})
 const timerStore = useTimerStore()
 const appConfig = useAppConfigStore()
 const userProfile = useUserProfileStore()
@@ -136,6 +193,10 @@ const toggleTheme = () => {
 }
 
 const activeMenu = computed(() => {
+  if (navigatingTarget.value) {
+    if (navigatingTarget.value.startsWith('/subjects')) return '/subjects'
+    return navigatingTarget.value
+  }
   if (route.path.startsWith('/subjects')) return '/subjects'
   return route.path
 })
@@ -151,7 +212,15 @@ const menuItems = [
 ]
 
 const handleSelect = (index: string) => {
-  router.push(index)
+  if (route.path === index) return
+  navigatingTarget.value = index
+  router.push(index).catch(() => {}).finally(() => {
+    setTimeout(() => {
+      if (navigatingTarget.value === index) {
+        navigatingTarget.value = null
+      }
+    }, 800)
+  })
 }
 
 const toggleCollapse = () => {
@@ -161,6 +230,22 @@ const toggleCollapse = () => {
 
 <template>
   <el-container class="app-container">
+    <!-- 顶部 TopLoader 极细渐变加载进度条 -->
+    <div
+      v-if="isPageLoading"
+      class="top-progress-bar"
+      :style="{ width: `${pageProgress}%` }"
+    >
+      <div class="top-progress-glow"></div>
+    </div>
+
+    <!-- 模块切换感知微胶囊 (异步加载超过 140ms 时优雅滑入) -->
+    <transition name="capsule-drop">
+      <div v-if="showSlowLoadingIndicator" class="route-loading-capsule">
+        <span class="capsule-spin">⚡</span>
+        <span>正在载入{{ targetModuleName ? `【${targetModuleName}】` : '模块' }}...</span>
+      </div>
+    </transition>
     <el-aside :width="isCollapse ? '64px' : '200px'" class="app-aside">
       <div
         class="logo-area"
@@ -186,7 +271,10 @@ const toggleCollapse = () => {
       >
         <el-menu-item v-for="item in menuItems" :key="item.index" :index="item.index">
           <el-icon><component :is="item.icon" /></el-icon>
-          <template #title>{{ item.title }}</template>
+          <template #title>
+            <span class="menu-item-text">{{ item.title }}</span>
+            <span v-if="navigatingTarget === item.index" class="nav-loading-indicator" title="加载中..."></span>
+          </template>
         </el-menu-item>
       </el-menu>
 
@@ -287,7 +375,11 @@ const toggleCollapse = () => {
       </div>
     </el-aside>
     <el-main class="app-main">
-      <router-view />
+      <router-view v-slot="{ Component, route: currentRoute }">
+        <transition name="page-fade" mode="out-in">
+          <component :is="Component" :key="currentRoute.path" />
+        </transition>
+      </router-view>
     </el-main>
 
     <!-- 全局悬浮计时小药丸：离开番茄钟页面但正在计时时常驻右下角 -->
@@ -899,4 +991,105 @@ const toggleCollapse = () => {
   border-color: #3b82f6;
   color: #93c5fd;
 }
+
+/* 顶部 TopLoader 纤细渐变进度条 */
+.top-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #ec4899, #06b6d4, #10b981);
+  z-index: 99999;
+  transition: width 0.15s ease-out;
+  pointer-events: none;
+}
+
+.top-progress-glow {
+  position: absolute;
+  right: 0;
+  top: -2px;
+  bottom: -2px;
+  width: 80px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.9) 0%, rgba(99, 102, 241, 0) 70%);
+  filter: blur(2px);
+}
+
+/* 模块切换感知微胶囊 */
+.route-loading-capsule {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 12px rgba(99, 102, 241, 0.3);
+  pointer-events: none;
+  user-select: none;
+}
+
+.capsule-spin {
+  font-size: 14px;
+  animation: pulse-spin 1.2s infinite ease-in-out;
+}
+
+.capsule-drop-enter-active,
+.capsule-drop-leave-active {
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.capsule-drop-enter-from,
+.capsule-drop-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -18px) scale(0.9);
+}
+
+/* 侧边栏点击即刻反馈小光点 */
+.nav-loading-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffd700;
+  margin-left: 8px;
+  display: inline-block;
+  box-shadow: 0 0 8px #ffd700;
+  animation: nav-pulse 0.8s infinite alternate;
+}
+
+@keyframes nav-pulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 1; }
+}
+
+@keyframes pulse-spin {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(15deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* 页面切换平滑淡入微滑 */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 </style>
