@@ -1,8 +1,13 @@
+export const isLocalEnv = (): boolean => {
+  if (typeof window === 'undefined') return false
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')
+}
+
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api, localDB } from '../utils/api'
 import type { DbSyncState } from '../utils/localDatabase'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const DB_VERSION_KEY = 'study_database_version'
 
@@ -16,7 +21,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   const currentDbVersion = ref<string>('20260911-001')
   const remoteVersionMeta = ref<VersionMeta | null>(null)
   const showUpdateModal = ref(false)
-  const isMaintenanceMode = ref(typeof sessionStorage !== 'undefined' && sessionStorage.getItem('study_admin_unlocked') === 'true')
+  const isMaintenanceMode = ref(isLocalEnv() && typeof sessionStorage !== 'undefined' && sessionStorage.getItem('study_admin_unlocked') === 'true')
   const showDataConsole = ref(false)
 
   // 动态数据库实时状态
@@ -101,12 +106,20 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   }
 
   const unlockMaintenanceMode = (pin: string): boolean => {
+    if (!isLocalEnv()) {
+      ElMessageBox.alert(
+        '当前为【云端生产环境 (study.gyfolk.com)】，托管于云端静态 CDN，无法连接修改您本地电脑的磁盘代码。\n\n💡 如需维护题库并联动 IDE Source Control 审查提交：\n请在本地终端运行「./scripts/dev.sh」，打开「http://localhost:5173」进行可视化编辑与秒级直写！',
+        '线上只读环境提示',
+        { type: 'info', confirmButtonText: '我知道了' }
+      )
+      return false
+    }
     if (pin.trim() === '654321') {
       isMaintenanceMode.value = true
       if (typeof sessionStorage !== 'undefined') {
         sessionStorage.setItem('study_admin_unlocked', 'true')
       }
-      ElMessage.success('已解锁【官方数据维护模式】，可直接编辑考点与工具')
+      ElMessage.success('已解锁【本地题库维护模式】，页面修改将直接写回本地磁盘 content 目录！')
       return true
     }
     ElMessage.error('维护密码错误，验证失败')
