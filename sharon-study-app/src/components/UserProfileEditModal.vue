@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useUserProfileStore } from '../stores/userProfile'
 import { ElMessage } from 'element-plus'
+import { getGaokaoTarget } from '../utils/gaokaoDate'
 
 const userProfile = useUserProfileStore()
 
@@ -105,6 +106,10 @@ const handleSave = async () => {
             {{ g }}
           </button>
         </div>
+        <div class="field-hint gaokao-calc-hint">
+          🎯 智能推算高考年份：<b>{{ getGaokaoTarget(formGrade).targetYear }}年6月7日</b>
+          （倒计时 <b>{{ getGaokaoTarget(formGrade).diffDays }}</b> 天 · {{ getGaokaoTarget(formGrade).stageDesc }}）
+        </div>
       </div>
 
       <div class="form-row">
@@ -206,4 +211,18 @@ const handleSave = async () => {
   justify-content: flex-end;
   gap: 10px;
 }
+
+.gaokao-calc-hint {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #4f46e5;
+  font-size: 12px;
+}
+.gaokao-calc-hint b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 </style>

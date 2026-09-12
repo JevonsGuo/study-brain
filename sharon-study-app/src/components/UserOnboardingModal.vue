@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useUserProfileStore } from '../stores/userProfile'
 import { ElMessage } from 'element-plus'
+import { getGaokaoTarget } from '../utils/gaokaoDate'
 
 const userProfile = useUserProfileStore()
 
@@ -117,6 +118,10 @@ const handleSkip = async () => {
             >
               {{ g }}
             </button>
+          </div>
+          <div class="onboard-gaokao-hint">
+            🎯 智能推算高考年份：<b>{{ getGaokaoTarget(formGrade).targetYear }}年6月7日</b>
+            （倒计时 <b>{{ getGaokaoTarget(formGrade).diffDays }}</b> 天 · {{ getGaokaoTarget(formGrade).stageDesc }}）
           </div>
         </div>
 
@@ -364,4 +369,18 @@ const handleSkip = async () => {
   0% { transform: scale(0.95); opacity: 0.6; }
   100% { transform: scale(1.08); opacity: 0.9; }
 }
+
+.onboard-gaokao-hint {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #4f46e5;
+  font-size: 11.5px;
+}
+.onboard-gaokao-hint b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 </style>

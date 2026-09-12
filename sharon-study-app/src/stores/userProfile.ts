@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api } from '../utils/api'
+import { getGaokaoTarget, type GaokaoTargetInfo } from '../utils/gaokaoDate'
 import { ElMessage } from 'element-plus'
 
 const USER_PROFILE_CACHE_KEY = 'study_user_profile_cache'
@@ -56,6 +57,11 @@ export const useUserProfileStore = defineStore('userProfile', () => {
   // 问候语中的名字
   const greetingName = computed(() => {
     return userName.value.trim() || '同学'
+  })
+
+  // 根据当前年级智能推算高考年份与倒计时天数
+  const gaokaoTarget = computed<GaokaoTargetInfo>(() => {
+    return getGaokaoTarget(gradeLevel.value)
   })
 
   // 同步更新浏览器标签页标题
@@ -172,6 +178,7 @@ export const useUserProfileStore = defineStore('userProfile', () => {
     showEditModal,
     appTitle,
     greetingName,
+    gaokaoTarget,
     fetchProfile,
     saveProfile,
     syncDocumentTitle

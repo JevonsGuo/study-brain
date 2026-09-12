@@ -33,15 +33,7 @@ const appConfig = useAppConfigStore()
 const timerStore = useTimerStore()
 const showAboutModal = ref(false)
 
-// 2027 年高考倒计时
-const gaokaoTargetYear = 2027
-const gaokaoDate = new Date(`${gaokaoTargetYear}-06-07`)
-const gaokaoDays = computed(() => {
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-  const diff = gaokaoDate.getTime() - now.getTime()
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
-})
+// 智能高考倒计时联动 userProfile.gaokaoTarget（根据年级动态推算）
 
 // 今日计划进度 (选项 A)
 const progressPct = computed(() => {
@@ -286,17 +278,21 @@ onUnmounted(() => {
 
         <!-- 3. 右栏：2027高考倒计时 & 稳健气象 -->
         <div class="banner-col banner-right">
-          <!-- 2027高考倒计时 -->
-          <div class="gaokao-countdown-card">
+          <!-- 动态高考倒计时（根据所选年级推算目标年份） -->
+          <div
+            class="gaokao-countdown-card is-clickable"
+            @click="userProfile.showEditModal = true"
+            title="点击修改学生年级或目标"
+          >
             <div class="gaokao-header-row">
-              <span class="gaokao-badge">🎯 2027年高考 · 倒计时</span>
+              <span class="gaokao-badge">🎯 {{ userProfile.gaokaoTarget.targetYear }}年高考 · 倒计时</span>
               <span class="gaokao-target-date">目标: 6月7日</span>
             </div>
             <div class="gaokao-main-row">
-              <span class="gaokao-days-num">{{ gaokaoDays }}</span>
+              <span class="gaokao-days-num">{{ userProfile.gaokaoTarget.diffDays }}</span>
               <span class="gaokao-days-unit">天</span>
             </div>
-            <div class="gaokao-slogan">全力以赴 · 每一天都算数</div>
+            <div class="gaokao-slogan">【{{ userProfile.gradeLevel }}】{{ userProfile.gaokaoTarget.stageDesc }} · 每一天都算数</div>
           </div>
 
           <!-- 稳健天气卡片 -->
@@ -584,6 +580,8 @@ onUnmounted(() => {
   gap: 10px;
 }
 
+.gaokao-countdown-card.is-clickable { cursor: pointer; transition: transform 0.2s, background 0.2s; }
+.gaokao-countdown-card.is-clickable:hover { background: rgba(0, 0, 0, 0.26); transform: translateY(-1px); }
 .gaokao-countdown-card {
   background: rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(12px);
