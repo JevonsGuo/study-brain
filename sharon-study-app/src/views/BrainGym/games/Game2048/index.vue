@@ -135,18 +135,7 @@ const slideRowLeft = (row: number[]): { newRow: number[]; gainedScore: number; m
   return { newRow, gainedScore, mergedValues }
 }
 
-// 旋转棋盘：顺时针 90 度
-const rotateClockwise = (b: number[][]): number[][] => {
-  const res = createEmptyBoard()
-  for (let r = 0; r < GRID_SIZE; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      res[c][GRID_SIZE - 1 - r] = b[r][c]
-    }
-  }
-  return res
-}
-
-// 4 方向统一滑动处理
+// 4 方向统一滑动处理 (直观行列投影算法，杜绝多层旋转坐标错位)
 type Direction = 'left' | 'right' | 'up' | 'down'
 
 const move = (dir: Direction) => {
@@ -156,41 +145,53 @@ const move = (dir: Direction) => {
   const backupBoard = cloneBoard(board.value)
   const backupScore = score.value
 
-  let rotated = cloneBoard(board.value)
-  let rotations = 0
-
-  // 统一通过旋转转化为向左滑动
-  if (dir === 'up') {
-    rotated = rotateClockwise(rotateClockwise(rotateClockwise(rotated))) // 270度
-    rotations = 1
-  } else if (dir === 'right') {
-    rotated = rotateClockwise(rotateClockwise(rotated)) // 180度
-    rotations = 2
-  } else if (dir === 'down') {
-    rotated = rotateClockwise(rotated) // 90度
-    rotations = 3
-  }
-
+  const nextBoard = cloneBoard(board.value)
   let moved = false
   let turnScore = 0
   let maxMergedVal = 0
 
-  for (let r = 0; r < GRID_SIZE; r++) {
-    const { newRow, gainedScore, mergedValues } = slideRowLeft(rotated[r])
-    if (newRow.some((val, idx) => val !== rotated[r][idx])) {
-      moved = true
+  if (dir === 'left') {
+    for (let r = 0; r < GRID_SIZE; r++) {
+      const row = nextBoard[r]
+      const { newRow, gainedScore, mergedValues } = slideRowLeft(row)
+      if (newRow.some((val, idx) => val !== row[idx])) moved = true
+      nextBoard[r] = newRow
+      turnScore += gainedScore
+      if (mergedValues.length > 0) maxMergedVal = Math.max(maxMergedVal, ...mergedValues)
     }
-    rotated[r] = newRow
-    turnScore += gainedScore
-    if (mergedValues.length > 0) {
-      maxMergedVal = Math.max(maxMergedVal, ...mergedValues)
+  } else if (dir === 'right') {
+    for (let r = 0; r < GRID_SIZE; r++) {
+      const row = [...nextBoard[r]].reverse()
+      const { newRow, gainedScore, mergedValues } = slideRowLeft(row)
+      const reversedBack = newRow.reverse()
+      if (reversedBack.some((val, idx) => val !== nextBoard[r][idx])) moved = true
+      nextBoard[r] = reversedBack
+      turnScore += gainedScore
+      if (mergedValues.length > 0) maxMergedVal = Math.max(maxMergedVal, ...mergedValues)
     }
-  }
-
-  // 逆旋转还原
-  const backRotations = (4 - rotations) % 4
-  for (let k = 0; k < backRotations; k++) {
-    rotated = rotateClockwise(rotated)
+  } else if (dir === 'up') {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      const col = [nextBoard[0][c], nextBoard[1][c], nextBoard[2][c], nextBoard[3][c]]
+      const { newRow, gainedScore, mergedValues } = slideRowLeft(col)
+      for (let r = 0; r < GRID_SIZE; r++) {
+        if (newRow[r] !== nextBoard[r][c]) moved = true
+        nextBoard[r][c] = newRow[r]
+      }
+      turnScore += gainedScore
+      if (mergedValues.length > 0) maxMergedVal = Math.max(maxMergedVal, ...mergedValues)
+    }
+  } else if (dir === 'down') {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      const col = [nextBoard[3][c], nextBoard[2][c], nextBoard[1][c], nextBoard[0][c]]
+      const { newRow, gainedScore, mergedValues } = slideRowLeft(col)
+      for (let r = 0; r < GRID_SIZE; r++) {
+        const targetRow = 3 - r
+        if (newRow[r] !== nextBoard[targetRow][c]) moved = true
+        nextBoard[targetRow][c] = newRow[r]
+      }
+      turnScore += gainedScore
+      if (mergedValues.length > 0) maxMergedVal = Math.max(maxMergedVal, ...mergedValues)
+    }
   }
 
   if (moved) {
@@ -198,7 +199,7 @@ const move = (dir: Direction) => {
     prevScore.value = backupScore
     canUndo.value = true
 
-    board.value = rotated
+    board.value = nextBoard
     score.value += turnScore
     saveBestScore()
 
