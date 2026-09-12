@@ -1,3 +1,36 @@
+
+/**
+ * 本地开发环境公共数据直写：
+ * 当在维护模式下修改/添加/删除考点或资源时，直接通过 Vite 中间件更新本地 content/*.json，
+ * 开发者可直接在 IDE Source Control 面板审查并提交。
+ */
+async function syncToBackendIfDev(type: 'knowledge' | 'resources') {
+  try {
+    const jsonStr = type === 'knowledge'
+      ? await localDB.exportConsolidatedKnowledgeJson()
+      : await localDB.exportConsolidatedResourcesJson()
+    const fileName = type === 'knowledge' ? 'knowledge.json' : 'learning-resources.json'
+
+    const res = await fetch('/api/dev/save-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: fileName, content: jsonStr })
+    }).catch(() => null)
+
+    if (res && res.ok) {
+      ElNotification({
+        title: '💾 已直接更新本地 JSON 文件！',
+        message: '已自动写回 content/' + fileName + '。您可以在 IDE 的 Source Control 面板直接审查 Diff 并提交推送！',
+        type: 'success',
+        duration: 5000
+      })
+    }
+  } catch (err) {
+    console.warn('自动同步到本地 content 失败（可能处于纯静态托管环境）', err)
+  }
+}
+
+import { ElNotification } from 'element-plus'
 import { localDB } from './localDatabase'
 
 /**
@@ -54,7 +87,9 @@ async function handleLocalRequest(method: string, rawUrl: string, body?: any): P
     return await localDB.getKnowledgePoints(query.subject)
   }
   if (path === '/knowledge' && method === 'POST') {
-    return await localDB.saveKnowledgePoint(body)
+    const res = await localDB.saveKnowledgePoint(body)
+    await syncToBackendIfDev('knowledge')
+    return res
   }
   const noteMatch = path.match(/^\/knowledge\/(\d+)\/note$/)
   if (noteMatch && method === 'PUT') {
@@ -64,8 +99,16 @@ async function handleLocalRequest(method: string, rawUrl: string, body?: any): P
   if (pointMatch) {
     const id = Number(pointMatch[1])
     if (method === 'GET') return await localDB.getKnowledgePointById(id)
-    if (method === 'PUT') return await localDB.saveKnowledgePoint({ ...body, id })
-    if (method === 'DELETE') return await localDB.deleteKnowledgePoint(id)
+    if (method === 'PUT') {
+      const res = await localDB.saveKnowledgePoint({ ...body, id })
+      await syncToBackendIfDev('knowledge')
+      return res
+    }
+    if (method === 'DELETE') {
+      const res = await localDB.deleteKnowledgePoint(id)
+      await syncToBackendIfDev('knowledge')
+      return res
+    }
   }
 
   // 4. 学习资源
@@ -73,13 +116,23 @@ async function handleLocalRequest(method: string, rawUrl: string, body?: any): P
     return await localDB.getLearningResources(query.subject)
   }
   if (path === '/learning-resources' && method === 'POST') {
-    return await localDB.saveLearningResource(body)
+    const res = await localDB.saveLearningResource(body)
+    await syncToBackendIfDev('resources')
+    return res
   }
   const resourceMatch = path.match(/^\/learning-resources\/(\d+)$/)
   if (resourceMatch) {
     const id = Number(resourceMatch[1])
-    if (method === 'PUT') return await localDB.saveLearningResource({ ...body, id })
-    if (method === 'DELETE') return await localDB.deleteLearningResource(id)
+    if (method === 'PUT') {
+      const res = await localDB.saveLearningResource({ ...body, id })
+      await syncToBackendIfDev('resources')
+      return res
+    }
+    if (method === 'DELETE') {
+      const res = await localDB.deleteLearningResource(id)
+      await syncToBackendIfDev('resources')
+      return res
+    }
   }
 
   // 5. 错题本
