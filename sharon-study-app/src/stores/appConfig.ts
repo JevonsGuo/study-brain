@@ -4,7 +4,7 @@ export const isLocalEnv = (): boolean => {
 }
 
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, h } from 'vue'
 import { api, localDB } from '../utils/api'
 import type { DbSyncState } from '../utils/localDatabase'
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
@@ -15,6 +15,12 @@ export interface VersionMeta {
   database_version: string
   updated_at: string
   description?: string
+  stats?: {
+    knowledge_points?: number
+    learning_resources?: number
+    total_words?: number
+    word_lists?: number
+  }
 }
 
 export const useAppConfigStore = defineStore('appConfig', () => {
@@ -80,8 +86,6 @@ export const useAppConfigStore = defineStore('appConfig', () => {
           // 2. 存储新版本号并更新响应式状态
           localStorage.setItem(DB_VERSION_KEY, meta.database_version)
           currentDbVersion.value = meta.database_version
-          dbSyncStatus.value = 'latest'
-          dbSyncMessage.value = `已更新至 v${meta.database_version}`
 
           // 3. 递增响应式计数器并派发全局事件，触发当前页面组件就地静默拉取新数据
           dataVersionCounter.value++
@@ -89,14 +93,33 @@ export const useAppConfigStore = defineStore('appConfig', () => {
             window.dispatchEvent(new CustomEvent('study-brain-data-updated', { detail: meta }))
           }
 
-          // 4. 显示非阻塞的明显右下角更新提醒
+          // 4. 显示非阻塞的明显右下角更新提醒（附带详细内容摘要与刷新按钮）
+          const statsInfo = meta.stats?.knowledge_points ? `全科考点增至 ${meta.stats.knowledge_points} 个` : ''
+          const descText = meta.description || (statsInfo ? `${statsInfo}，公共题库与词库已就地同步生效。` : `已自动静默同步至最新版本 (v${meta.database_version})！`)
+
           ElNotification({
-            title: '✨ 公共数据已自动更新',
-            message: `已自动静默同步至最新版本 (v${meta.database_version})，学科考点与单词词库即刻生效！`,
+            title: '✨ 题库与词库已自动更新',
+            message: h('div', { class: 'db-update-notif-body', style: 'display: flex; flex-direction: column; gap: 8px;' }, [
+              h('div', { style: 'font-size: 13px; color: #334155; line-height: 1.5;' }, descText),
+              h('div', { style: 'display: flex; align-items: center; justify-content: space-between; margin-top: 4px;' }, [
+                h('span', { style: 'font-size: 11px; color: #94a3b8;' }, '无需重启，页面已热加载'),
+                h('button', {
+                  style: 'background: #3b82f6; color: #ffffff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);',
+                  onClick: () => {
+                    if (typeof window !== 'undefined') window.location.reload()
+                  }
+                }, '⚡ 刷新页面')
+              ])
+            ]),
             type: 'success',
-            duration: 4500,
+            duration: 6500,
             position: 'bottom-right'
           })
+
+          setTimeout(() => {
+            dbSyncStatus.value = 'latest'
+            dbSyncMessage.value = `已更新至 v${meta.database_version}`
+          }, 1500)
         } else {
           dbSyncStatus.value = 'latest'
           dbSyncMessage.value = `已是最新 (v${currentDbVersion.value})`

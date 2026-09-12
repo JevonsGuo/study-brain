@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../../utils/api'
+import { useAppConfigStore } from '../../stores/appConfig'
 import { subjectEmojis } from '../../utils/subjects'
 import { SUBJECT_METAS } from '../../utils/gaokaoTopics'
 import {
@@ -29,6 +30,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
+const appConfig = useAppConfigStore()
 
 const subjects = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治']
 
@@ -51,8 +53,8 @@ const loadLocalStatuses = () => {
   }
 }
 
-const fetchData = async () => {
-  loading.value = true
+const fetchData = async (silent = false) => {
+  if (!silent) loading.value = true
   loadLocalStatuses()
   try {
     const [pointsRes, wrongRes] = await Promise.all([
@@ -64,9 +66,15 @@ const fetchData = async () => {
   } catch (err) {
     console.error('Failed to fetch subject hub data', err)
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
   }
 }
+
+// 监听公共数据库版本更新，就地静默同步全科统计与考点总数
+watch(() => appConfig.dataVersionCounter, () => {
+  console.log('[SubjectHall] 收到公共数据版本更新，自动静默同步考点总览...')
+  fetchData(true)
+})
 
 // 统计总览
 const overallStats = computed(() => {
@@ -126,7 +134,7 @@ onMounted(fetchData)
 </script>
 
 <template>
-  <div class="subject-hall-root" v-loading="loading">
+  <div class="subject-hall-root" v-loading="loading" element-loading-text="正在加载学科中心全景数据..." element-loading-background="rgba(255, 255, 255, 0.7)">
     <!-- 英雄大顶栏：标题与双指标总览 -->
     <!-- 首次载入 / 数据同步中加载提示条 -->
     <div v-if="loading && allPoints.length === 0" class="hall-sync-banner">
@@ -134,7 +142,7 @@ onMounted(fetchData)
         <span class="sync-banner-emblem">📚</span>
         <div class="sync-banner-info">
           <div class="sync-banner-title">正在从官方云端下载 9 大学科核心考点库...</div>
-          <div class="sync-banner-sub">收录 215 个高考必考考点与核心提分思维导图，仅首次进入需要同步，完成后离线秒开！</div>
+          <div class="sync-banner-sub">收录 {{ allPoints.length || 235 }} 个高考必考考点与核心提分思维导图，仅首次进入需要同步，完成后离线秒开！</div>
         </div>
       </div>
       <div class="sync-banner-progress">

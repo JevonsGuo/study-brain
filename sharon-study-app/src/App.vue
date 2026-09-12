@@ -281,6 +281,14 @@ const toggleCollapse = () => {
         <span>正在载入{{ targetModuleName ? `【${targetModuleName}】` : '模块' }}...</span>
       </div>
     </transition>
+
+    <!-- 公共数据静默同步感知微胶囊 (无感后台更新，仅在顶部轻量告知) -->
+    <transition name="capsule-drop">
+      <div v-if="appConfig.dbSyncStatus === 'syncing'" class="route-loading-capsule db-sync-capsule">
+        <span class="capsule-spin">🔄</span>
+        <span>正在自动同步最新公共题库与词库...</span>
+      </div>
+    </transition>
     <el-aside :width="isCollapse ? '64px' : '200px'" class="app-aside">
       <div
         class="logo-area"
@@ -1156,7 +1164,12 @@ const toggleCollapse = () => {
   filter: blur(2px);
 }
 
-/* 模块切换感知微胶囊 */
+/* 模块切换与数据同步感知微胶囊 */
+.route-loading-capsule.db-sync-capsule {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 14px rgba(16, 185, 129, 0.35);
+}
+
 .route-loading-capsule {
   position: fixed;
   top: 16px;

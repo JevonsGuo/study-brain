@@ -127,9 +127,11 @@ const resources = ref<LearningResource[]>([])
 const loadingPoints = ref(false)
 const loadingWrong = ref(false)
 
-const loadAllData = async () => {
-  loadingPoints.value = true
-  loadingWrong.value = true
+const loadAllData = async (silent = false) => {
+  if (!silent) {
+    loadingPoints.value = true
+    loadingWrong.value = true
+  }
   try {
     const [pRes, wRes, rRes] = await Promise.all([
       api.get(`/knowledge?subject=${encodeURIComponent(props.subject)}`),
@@ -140,21 +142,24 @@ const loadAllData = async () => {
     wrongItems.value = (wRes as WrongItem[]) || []
     resources.value = (rRes as LearningResource[]) || []
 
-    // 默认考点与错题收起
-    expandedPointIds.value = new Set()
-    expandedWrongIds.value = new Set()
+    if (!silent) {
+      expandedPointIds.value = new Set()
+      expandedWrongIds.value = new Set()
+    }
   } catch (err) {
     console.error('Failed to load subject data', err)
   } finally {
-    loadingPoints.value = false
-    loadingWrong.value = false
+    if (!silent) {
+      loadingPoints.value = false
+      loadingWrong.value = false
+    }
   }
 }
 
 // 监听公共数据库版本更新，就地静默拉取新考点与学习资源
 watch(() => appConfig.dataVersionCounter, () => {
   console.log("[SubjectWorkbench] 公共数据库发生更新，自动静默同步最新考点流...")
-  loadAllData()
+  loadAllData(true)
 })
 
 // -------------------------------------------------------------
@@ -979,7 +984,7 @@ onMounted(() => {
     <!-- ======================================================== -->
     <!-- TAB 1: 核心考点重点库                                     -->
     <!-- ======================================================== -->
-    <div v-if="activeTab === 'knowledge'" class="knowledge-tab-content" v-loading="loadingPoints">
+    <div v-if="activeTab === 'knowledge'" class="knowledge-tab-content" v-loading="loadingPoints" element-loading-text="正在加载考点与学习资料..." element-loading-background="rgba(255, 255, 255, 0.7)">
       <!-- 核心考点重点标签面板 (全量平铺展开，免去横向挪动，按严格序号排好) -->
       <div class="topics-tags-panel">
         <!-- 标签顶栏：维度切换与说明 -->
@@ -1123,7 +1128,12 @@ onMounted(() => {
               <el-icon class="fold-chevron" :class="{ 'is-expanded': expandedPointIds.has(p.id) }">
                 <ArrowRight />
               </el-icon>
-              <span class="core-point-badge">🎯 核心考点</span>
+              <span
+                v-if="p.chapter.includes('必背') || p.title.includes('背诵')"
+                class="recitation-point-badge"
+              >
+                🎙️ 必背篇目
+              </span>
               <h3
                 class="point-title"
                 :title="expandedPointIds.has(p.id) ? '点击折叠考点详情' : '点击展开考点详情'"
@@ -2572,6 +2582,18 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.recitation-point-badge {
+  font-size: 11px;
+  background: rgba(225, 29, 72, 0.1);
+  color: #e11d48;
+  border: 1px solid rgba(225, 29, 72, 0.25);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 .core-point-badge {

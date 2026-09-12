@@ -458,8 +458,8 @@ const fetchStats = async () => {
   }
 }
 
-const fetchWords = async () => {
-  loading.value = true
+const fetchWords = async (silent = false) => {
+  if (!silent) loading.value = true
   try {
     if (studyMode.value === 'due') {
       const params = new URLSearchParams()
@@ -490,7 +490,7 @@ const fetchWords = async () => {
   } catch {
     ElMessage.error('加载单词失败')
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
   }
 }
 
@@ -527,8 +527,9 @@ watch(() => appConfig.dataVersionCounter, () => {
   console.log("[WordCard] 公共词库版本发生更新，自动静默同步最新单词与词库统计...")
   fetchWordListDetails()
   fetchStats()
-  if (selectedWordList.value) {
-    fetchWords()
+  // 仅在列表查看模式下就地静默刷新列表；若正在进行卡片学习，保留当前做题进度不重置
+  if (selectedWordList.value && view.value === "list") {
+    fetchWords(true)
   }
 })
 
