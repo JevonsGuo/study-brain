@@ -4104,4 +4104,57 @@ onMounted(() => {
   animation: bar-slide 1.5s infinite ease-in-out;
 }
 
+
+/* 学科工作台移动端与 Pad 端适配 */
+@media (max-width: 768px) {
+  .workbench-container {
+    height: auto !important;
+    min-height: calc(100vh - 120px) !important;
+    overflow: visible !important;
+  }
+
+  .workbench-top-nav {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+  }
+
+  .nav-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .segmented-tabs {
+    flex: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .seg-tab-btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .topics-tags-panel {
+    padding: 10px 12px !important;
+  }
+
+  .tag-panel-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+}
+
 </style>

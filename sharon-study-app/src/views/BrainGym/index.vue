@@ -713,4 +713,23 @@ onMounted(() => {
 .gym-stage-view {
   padding: 10px 0;
 }
+
+/* 脑力工坊小屏自适应 */
+@media (max-width: 640px) {
+  .schulte-hero-card {
+    padding: 16px 14px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+  .banner-action-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .games-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
 </style>

@@ -838,4 +838,63 @@ onUnmounted(() => {
     order: -1;
   }
 }
+
+/* 手机端深度精细化适配 (< 768px) */
+@media (max-width: 768px) {
+  .welcome-section {
+    padding: 18px 14px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+
+  .greeting-title {
+    font-size: 20px;
+  }
+
+  .banner-center {
+    padding: 10px 0;
+  }
+
+  .clock-time {
+    font-size: clamp(28px, 8.5vw, 36px);
+    letter-spacing: -0.5px;
+  }
+
+  .today-discipline-deck {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .disc-val {
+    font-size: 13px;
+  }
+
+  .disc-label {
+    font-size: 10px;
+  }
+
+  .gaokao-days-num {
+    font-size: 32px;
+  }
+
+  .module-card {
+    margin-bottom: 12px;
+  }
+
+  .footer-inner {
+    gap: 8px;
+  }
+
+  .footer-meta-line,
+  .footer-copy-line {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .footer-sep {
+    display: none;
+  }
+}
+
 </style>

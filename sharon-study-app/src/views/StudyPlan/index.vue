@@ -898,4 +898,29 @@ onMounted(fetchPlans)
 :global(html.dark) .quick-hint {
   color: #94a3b8 !important;
 }
+
+/* 学习计划多端响应式适配 */
+@media (max-width: 900px) {
+  .two-col {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .plan-page {
+    padding: 4px 0;
+  }
+  .date-nav {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .action-bar {
+    gap: 8px;
+  }
+  .plan-item {
+    padding: 10px 12px !important;
+  }
+}
+
 </style>

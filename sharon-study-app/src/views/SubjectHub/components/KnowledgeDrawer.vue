@@ -35,6 +35,13 @@ const emit = defineEmits<{
 const point = ref<KnowledgePoint | null>(null)
 const loading = ref(false)
 
+const drawerSize = computed(() => {
+  if (typeof window !== "undefined" && window.innerWidth < 768) {
+    return "100%"
+  }
+  return "520px"
+})
+
 const visible = computed({
   get: () => props.modelValue,
   set: (val) => emit('update:modelValue', val)
@@ -103,7 +110,7 @@ const triggerVideo = () => {
 <template>
   <el-drawer
     v-model="visible"
-    :size="520"
+    :size="drawerSize"
     :with-header="false"
     class="knowledge-quick-drawer"
     direction="rtl"
@@ -475,4 +482,20 @@ const triggerVideo = () => {
 :global(.dark) .cta-subtitle {
   color: #f87171;
 }
+
+@media (max-width: 768px) {
+  .drawer-header {
+    padding: 12px 14px;
+  }
+  .drawer-body {
+    padding: 12px 14px 24px;
+  }
+  .point-main-title {
+    font-size: 18px !important;
+  }
+  .section-card {
+    padding: 12px 14px !important;
+  }
+}
+
 </style>

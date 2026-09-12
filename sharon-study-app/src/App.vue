@@ -10,7 +10,7 @@ import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import DataConsoleModal from './components/DataConsoleModal.vue'
 import AboutModal from './components/AboutModal.vue'
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
-import { Edit } from '@element-plus/icons-vue'
+import { Edit, Star, Sunny, Moon, Menu as MenuIcon, Close, VideoPause } from '@element-plus/icons-vue'
 import { localDB } from './utils/localDatabase'
 
 const router = useRouter()
@@ -79,6 +79,20 @@ const isCollapse = ref(false)
 const isDark = ref(false)
 const showCloudModal = ref(false)
 const showAboutModal = ref(false)
+const showMobileMenu = ref(false)
+
+const mobileNavItems = [
+  { index: '/home', icon: 'HomeFilled', title: '首页' },
+  { index: '/study-plan', icon: 'Calendar', title: '计划' },
+  { index: '/subjects', icon: 'Reading', title: '学科' },
+  { index: '/word-card', icon: 'Postcard', title: '单词' },
+  { index: '/timer', icon: 'Timer', title: '专注' },
+]
+
+const handleMobileSelect = (index: string) => {
+  showMobileMenu.value = false
+  handleSelect(index)
+}
 
 const isLocal = computed(() => {
   if (typeof window === 'undefined') return false
@@ -291,6 +305,44 @@ const toggleCollapse = () => {
         <span>正在自动同步最新公共题库与词库...</span>
       </div>
     </transition>
+    
+    <!-- 移动端顶部 Header (仅在 <= 768px 生效) -->
+    <header class="mobile-header">
+      <div class="mobile-header-brand" @click="userProfile.showEditModal = true" title="点击修改空间信息">
+        <el-icon :size="18" class="logo-icon"><Star /></el-icon>
+        <div class="mobile-brand-text">
+          <span class="mobile-brand-title">{{ userProfile.userName || '智学' }}</span>
+          <span class="mobile-brand-sub">学习大脑</span>
+        </div>
+        <el-icon :size="12" class="mobile-brand-edit"><Edit /></el-icon>
+      </div>
+      <div class="mobile-header-actions">
+        <button
+          type="button"
+          class="mobile-header-btn"
+          @click="toggleTheme"
+          :title="isDark ? '切换亮色模式' : '切换暗色模式'"
+        >
+          <el-icon :size="16"><component :is="isDark ? 'Sunny' : 'Moon'" /></el-icon>
+        </button>
+        <button
+          type="button"
+          class="mobile-header-btn"
+          @click="showCloudModal = true"
+          title="坚果云多端备份"
+        >
+          ☁️
+        </button>
+        <button
+          type="button"
+          class="mobile-header-btn mobile-menu-btn"
+          @click="showMobileMenu = true"
+          title="展开全部功能导航"
+        >
+          <el-icon :size="18"><MenuIcon /></el-icon>
+        </button>
+      </div>
+    </header>
     <el-aside :width="isCollapse ? '64px' : '200px'" class="app-aside">
       <div
         class="logo-area"
@@ -458,6 +510,84 @@ const toggleCollapse = () => {
         </transition>
       </router-view>
     </el-main>
+    <!-- 移动端原生感底部导航栏 (仅在 <= 768px 生效) -->
+    <nav class="mobile-bottom-nav">
+      <button
+        v-for="item in mobileNavItems"
+        :key="item.index"
+        type="button"
+        class="mobile-tab-btn"
+        :class="{ active: activeMenu === item.index }"
+        @click="handleSelect(item.index)"
+      >
+        <div class="tab-icon-wrap">
+          <el-icon :size="20"><component :is="item.icon" /></el-icon>
+          <span v-if="navigatingTarget === item.index" class="tab-nav-dot"></span>
+        </div>
+        <span class="tab-title">{{ item.title }}</span>
+      </button>
+    </nav>
+
+    <!-- 移动端全功能侧滑抽屉 -->
+    <el-drawer
+      v-model="showMobileMenu"
+      size="280px"
+      :with-header="false"
+      direction="rtl"
+      class="mobile-nav-drawer"
+      destroy-on-close
+    >
+      <div class="mobile-drawer-body">
+        <div class="drawer-header-row">
+          <div class="drawer-user-info" @click="showMobileMenu = false; userProfile.showEditModal = true">
+            <el-icon :size="22" class="logo-icon"><Star /></el-icon>
+            <div class="drawer-user-text">
+              <div class="drawer-name-row">
+                <span class="drawer-name">{{ userProfile.userName || '智学' }}</span>
+                <span class="drawer-grade-tag">{{ userProfile.gradeLevel || '高三' }}</span>
+              </div>
+              <span class="drawer-quote">{{ userProfile.customQuote || '自律成就梦想' }}</span>
+            </div>
+          </div>
+          <button class="drawer-close-btn" @click="showMobileMenu = false">
+            <el-icon :size="18"><Close /></el-icon>
+          </button>
+        </div>
+
+        <div class="drawer-nav-list">
+          <div
+            v-for="item in menuItems"
+            :key="item.index"
+            class="drawer-nav-item"
+            :class="{ active: activeMenu === item.index }"
+            @click="handleMobileSelect(item.index)"
+          >
+            <el-icon :size="18" class="drawer-item-icon"><component :is="item.icon" /></el-icon>
+            <span class="drawer-item-title">{{ item.title }}</span>
+            <span v-if="activeMenu === item.index" class="drawer-active-dot"></span>
+          </div>
+        </div>
+
+        <div class="drawer-bottom-section">
+          <div class="drawer-action-row" @click="showMobileMenu = false; showCloudModal = true">
+            <span class="action-icon">☁️</span>
+            <span class="action-title">坚果云多端备份</span>
+          </div>
+          <div class="drawer-action-row" @click="showMobileMenu = false; showAboutModal = true">
+            <span class="action-icon">ℹ️</span>
+            <span class="action-title">关于系统 (v1.0.0)</span>
+          </div>
+          <div v-if="isLocal" class="drawer-action-row dev-row" @click="showMobileMenu = false; openPinPrompt()">
+            <span class="action-icon">🛠️</span>
+            <span class="action-title">公共数据库维护</span>
+          </div>
+          <div class="drawer-version-tip">
+            公共数据: v{{ appConfig.currentDbVersion }} · 本地私有引擎
+          </div>
+        </div>
+      </div>
+    </el-drawer>
+
 
     <!-- 全局悬浮计时小药丸：离开番茄钟页面但正在计时时常驻右下角 -->
     <transition name="floater-slide">
@@ -1316,6 +1446,421 @@ const toggleCollapse = () => {
 
 .exit-btn-main {
   font-weight: 600;
+}
+
+
+/* ========================================================== */
+/* 移动端与多端响应式适配架构 (Mobile & Multi-Device Styles)    */
+/* ========================================================== */
+
+/* 桌面端 (宽屏 >= 769px) 绝对隔离：保证移动端外壳在 PC 毫无踪影 */
+@media (min-width: 769px) {
+  .mobile-header,
+  .mobile-bottom-nav,
+  .mobile-nav-drawer {
+    display: none !important;
+  }
+}
+
+/* 移动端 (<= 768px)：侧边栏隐藏，启用顶部 AppBar + 底部 Tabbar */
+@media (max-width: 768px) {
+  .app-aside {
+    display: none !important;
+  }
+
+  .app-main {
+    padding: calc(50px + 12px) 12px calc(58px + env(safe-area-inset-bottom) + 12px) 12px !important;
+    overflow-x: hidden;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .global-timer-floater {
+    bottom: calc(62px + env(safe-area-inset-bottom) + 12px) !important;
+    right: 12px !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* 移动端顶部轻量 AppBar */
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  z-index: 1000;
+  transition: background-color 0.25s, border-color 0.25s;
+}
+
+:global(.dark) .mobile-header {
+  background: rgba(11, 15, 25, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobile-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mobile-brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.mobile-brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+}
+
+:global(.dark) .mobile-brand-title {
+  color: #f8fafc;
+}
+
+.mobile-brand-sub {
+  font-size: 11px;
+  color: #6366f1;
+  font-weight: 700;
+}
+
+:global(.dark) .mobile-brand-sub {
+  color: #818cf8;
+}
+
+.mobile-brand-edit {
+  color: var(--text-sub, #94a3b8);
+  font-size: 11px;
+}
+
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobile-header-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main, #334155);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:global(.dark) .mobile-header-btn {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
+.mobile-header-btn:active {
+  transform: scale(0.92);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:global(.dark) .mobile-header-btn:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 移动端原生感底部导航栏 (Bottom Tabbar) */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1000;
+  user-select: none;
+  transition: background-color 0.25s, border-color 0.25s;
+}
+
+:global(.dark) .mobile-bottom-nav {
+  background: rgba(19, 27, 46, 0.92);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobile-tab-btn {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-sub, #64748b);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.18s, transform 0.18s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:global(.dark) .mobile-tab-btn {
+  color: #94a3b8;
+}
+
+.tab-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-nav-dot {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  animation: nav-pulse 0.8s infinite alternate;
+}
+
+.tab-title {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.mobile-tab-btn.active {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+:global(.dark) .mobile-tab-btn.active {
+  color: #818cf8;
+}
+
+.mobile-tab-btn:active {
+  transform: scale(0.92);
+}
+
+/* 移动端全功能抽屉 */
+.mobile-drawer-body {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.drawer-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  margin-bottom: 12px;
+}
+
+:global(.dark) .drawer-header-row {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.drawer-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.drawer-user-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawer-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.drawer-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+}
+
+:global(.dark) .drawer-name {
+  color: #f8fafc;
+}
+
+.drawer-grade-tag {
+  font-size: 10px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+:global(.dark) .drawer-grade-tag {
+  background: rgba(129, 140, 248, 0.18);
+  color: #818cf8;
+}
+
+.drawer-quote {
+  font-size: 11px;
+  color: var(--text-sub, #64748b);
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drawer-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-sub, #64748b);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.drawer-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-main, #334155);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+:global(.dark) .drawer-nav-item {
+  color: #e2e8f0;
+}
+
+.drawer-nav-item:hover,
+.drawer-nav-item:active {
+  background: rgba(99, 102, 241, 0.08);
+  color: #4f46e5;
+}
+
+:global(.dark) .drawer-nav-item:hover,
+:global(.dark) .drawer-nav-item:active {
+  background: rgba(129, 140, 248, 0.12);
+  color: #818cf8;
+}
+
+.drawer-nav-item.active {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+:global(.dark) .drawer-nav-item.active {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+.drawer-item-icon {
+  font-size: 18px;
+}
+
+.drawer-active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  margin-left: auto;
+}
+
+.drawer-bottom-section {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+:global(.dark) .drawer-bottom-section {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.drawer-action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-main, #334155);
+  transition: background 0.2s;
+}
+
+:global(.dark) .drawer-action-row {
+  color: #cbd5e1;
+}
+
+.drawer-action-row:hover,
+.drawer-action-row:active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:global(.dark) .drawer-action-row:hover,
+:global(.dark) .drawer-action-row:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.drawer-action-row.dev-row {
+  color: #d97706;
+}
+
+:global(.dark) .drawer-action-row.dev-row {
+  color: #fbbf24;
+}
+
+.drawer-version-tip {
+  font-size: 10px;
+  color: var(--text-sub, #94a3b8);
+  text-align: center;
+  padding-top: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
 }
 
 </style>
