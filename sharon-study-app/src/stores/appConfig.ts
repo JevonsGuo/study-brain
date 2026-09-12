@@ -7,7 +7,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api, localDB } from '../utils/api'
 import type { DbSyncState } from '../utils/localDatabase'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 
 const DB_VERSION_KEY = 'study_database_version'
 
@@ -18,7 +18,8 @@ export interface VersionMeta {
 }
 
 export const useAppConfigStore = defineStore('appConfig', () => {
-  const currentDbVersion = ref<string>('20260911-001')
+  const currentDbVersion = ref<string>('20260912.00000000')
+  const dataVersionCounter = ref(0)
   const remoteVersionMeta = ref<VersionMeta | null>(null)
   const showUpdateModal = ref(false)
   const isMaintenanceMode = ref(isLocalEnv() && typeof sessionStorage !== 'undefined' && sessionStorage.getItem('study_admin_unlocked') === 'true')
@@ -46,12 +47,12 @@ export const useAppConfigStore = defineStore('appConfig', () => {
     })
   }
 
-  const checkDatabaseVersion = async (manual = false) => {
+  const checkDatabaseVersion = async (manual = false, _silent = false) => {
     dbSyncStatus.value = 'checking'
     dbSyncMessage.value = '正在检查更新...'
 
     try {
-      const meta = await api.get('/version') as VersionMeta
+      const meta = await api.get(`/version?_t=${Date.now()}`) as VersionMeta
       if (meta && meta.database_version) {
         remoteVersionMeta.value = meta
         const saved = localStorage.getItem(DB_VERSION_KEY)
@@ -68,10 +69,34 @@ export const useAppConfigStore = defineStore('appConfig', () => {
         }
 
         if (meta.database_version !== saved) {
-          // 发现新版本
-          dbSyncStatus.value = 'update_available'
-          dbSyncMessage.value = `发现新版本 v${meta.database_version}`
-          showUpdateModal.value = true
+          // 发现新版本：自动静默热更新！
+          console.log(`[DatabaseSync] 发现公共数据新版本: v${meta.database_version} (本地原版本: v${saved})`)
+          dbSyncStatus.value = 'syncing'
+          dbSyncMessage.value = `正在自动同步 v${meta.database_version}...`
+
+          // 1. 清空本地公共数据缓存，保证下一次请求获取全量最新数据
+          localDB.invalidatePublicContentCache()
+
+          // 2. 存储新版本号并更新响应式状态
+          localStorage.setItem(DB_VERSION_KEY, meta.database_version)
+          currentDbVersion.value = meta.database_version
+          dbSyncStatus.value = 'latest'
+          dbSyncMessage.value = `已更新至 v${meta.database_version}`
+
+          // 3. 递增响应式计数器并派发全局事件，触发当前页面组件就地静默拉取新数据
+          dataVersionCounter.value++
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('study-brain-data-updated', { detail: meta }))
+          }
+
+          // 4. 显示非阻塞的明显右下角更新提醒
+          ElNotification({
+            title: '✨ 公共数据已自动更新',
+            message: `已自动静默同步至最新版本 (v${meta.database_version})，学科考点与单词词库即刻生效！`,
+            type: 'success',
+            duration: 4500,
+            position: 'bottom-right'
+          })
         } else {
           dbSyncStatus.value = 'latest'
           dbSyncMessage.value = `已是最新 (v${currentDbVersion.value})`
@@ -92,12 +117,17 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
   const confirmDatabaseUpdate = () => {
     if (remoteVersionMeta.value?.database_version) {
+      localDB.invalidatePublicContentCache()
       currentDbVersion.value = remoteVersionMeta.value.database_version
       localStorage.setItem(DB_VERSION_KEY, currentDbVersion.value)
+      dataVersionCounter.value++
       showUpdateModal.value = false
       dbSyncStatus.value = 'latest'
       dbSyncMessage.value = `已更新至 v${currentDbVersion.value}`
       ElMessage.success('数据库已成功更新至最新版本！')
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('study-brain-data-updated', { detail: remoteVersionMeta.value }))
+      }
     }
   }
 
@@ -150,6 +180,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
   return {
     currentDbVersion,
+    dataVersionCounter,
     remoteVersionMeta,
     showUpdateModal,
     isMaintenanceMode,

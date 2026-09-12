@@ -1,3 +1,5 @@
+// @ts-ignore
+import { syncContentAndVersion } from "../scripts/copy-content-to-public.mjs"
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -72,10 +74,11 @@ function devContentSyncPlugin(): Plugin {
                 if (fs.existsSync(publicContentDir)) {
                   fs.writeFileSync(targetPublicFile, formatted, 'utf8')
                 }
-                console.log(`[dev-content-sync] 成功更新单词 [${updateWord.word}] 于: content/${safeFile}`)
+                const newMeta = syncContentAndVersion()
+                console.log(`[dev-content-sync] 成功更新单词 [${updateWord.word}] 于: content/${safeFile} (版本: v${newMeta?.database_version})`)
                 res.statusCode = 200
                 res.setHeader('Content-Type', 'application/json')
-                res.end(JSON.stringify({ ok: true, word: updateWord.word, file: safeFile }))
+                res.end(JSON.stringify({ ok: true, word: updateWord.word, file: safeFile, versionMeta: newMeta }))
                 return
               }
             }
@@ -90,11 +93,12 @@ function devContentSyncPlugin(): Plugin {
               fs.writeFileSync(targetPublicFile, formattedContent, 'utf8')
             }
 
-            console.log(`[dev-content-sync] 成功直接写回本地文件: content/${safeFile}`)
+            const newMeta = syncContentAndVersion()
+            console.log(`[dev-content-sync] 成功直接写回本地文件: content/${safeFile} (版本: v${newMeta?.database_version})`)
 
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify({ ok: true, file: safeFile }))
+            res.end(JSON.stringify({ ok: true, file: safeFile, versionMeta: newMeta }))
           } catch (err: any) {
             console.error('[dev-content-sync] 写回失败:', err)
             res.statusCode = 500

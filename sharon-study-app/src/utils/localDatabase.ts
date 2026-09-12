@@ -253,31 +253,45 @@ class LocalDatabase {
   }
 
   // === 静态公共内容加载 ===
-  private async loadPublicJson<T>(filename: string): Promise<T> {
-    if (this.contentCache.has(filename)) {
+  invalidatePublicContentCache() {
+    this.contentCache.clear()
+    this.wordCache.clear()
+    this.idToWordMap.clear()
+    console.log("[localDB] 已清空公共数据内存缓存，将从服务器拉取全量最新数据")
+  }
+
+  private async loadPublicJson<T>(filename: string, forceFresh = false): Promise<T> {
+    if (!forceFresh && this.contentCache.has(filename)) {
       return this.contentCache.get(filename) as T
     }
 
     const baseUrl = import.meta.env.BASE_URL || './'
     const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
-    const url = `${normalizedBase}content/${filename}`
+    const isVersion = filename === 'version.json'
+    const cacheBuster = isVersion || forceFresh ? `?_t=${Date.now()}` : ''
+    const url = `${normalizedBase}content/${filename}${cacheBuster}`
 
-    const res = await fetch(url)
+    const res = await fetch(url, {
+      cache: isVersion || forceFresh ? 'no-store' : 'no-cache'
+    })
     if (!res.ok) {
       throw new Error(`Failed to load ${filename}: ${res.statusText}`)
     }
     const data = await res.json()
-    this.contentCache.set(filename, data)
+    // version.json 永不缓存于内存，确保每次版本检查均为服务器真实最新文件
+    if (!isVersion) {
+      this.contentCache.set(filename, data)
+    }
     return data as T
   }
 
   // ================= 模块 1: 系统版本与公共元数据 =================
-  async getVersionMeta() {
+  async getVersionMeta(forceFresh = true) {
     try {
-      return await this.loadPublicJson('version.json')
+      return await this.loadPublicJson('version.json', forceFresh)
     } catch {
       return {
-        database_version: '20260911-001',
+        database_version: '20260912.00000000',
         updated_at: new Date().toISOString(),
         description: '本地离线单机模式'
       }

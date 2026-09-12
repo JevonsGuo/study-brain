@@ -522,6 +522,16 @@ watch(studySubMode, (newMode) => {
   }
 })
 
+// 监听公共词库版本更新，就地静默拉取新词库和统计数据
+watch(() => appConfig.dataVersionCounter, () => {
+  console.log("[WordCard] 公共词库版本发生更新，自动静默同步最新单词与词库统计...")
+  fetchWordListDetails()
+  fetchStats()
+  if (selectedWordList.value) {
+    fetchWords()
+  }
+})
+
 // 单词切换时统一初始化模式状态
 const onWordChanged = () => {
   flipped.value = false

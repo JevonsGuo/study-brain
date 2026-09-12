@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTimerStore } from './stores/timer'
 import { useAppConfigStore, isLocalEnv } from './stores/appConfig'
@@ -148,6 +148,25 @@ const displayDbText = computed(() => {
 onMounted(() => {
   appConfig.initLocalVersion()
   appConfig.checkDatabaseVersion(false)
+
+  // 公共数据库版本感知机制：
+  // 1. 标签页切回前台时自动检查更新 (visibilitychange)
+  const onVisibilityChange = () => {
+    if (document.visibilityState === "visible") {
+      appConfig.checkDatabaseVersion(false, true)
+    }
+  }
+  document.addEventListener("visibilitychange", onVisibilityChange)
+
+  // 2. 后台 60 秒定期心跳探测更新 (嗅探轻量 version.json <1KB)
+  const versionInterval = setInterval(() => {
+    appConfig.checkDatabaseVersion(false, true)
+  }, 60 * 1000)
+
+  onUnmounted(() => {
+    document.removeEventListener("visibilitychange", onVisibilityChange)
+    clearInterval(versionInterval)
+  })
   userProfile.fetchProfile()
 
   const queryTheme = new URLSearchParams(window.location.search).get('theme')
