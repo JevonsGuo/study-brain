@@ -27,9 +27,12 @@ const stats = ref<any>({
   resources: { total: 0, modified: 0, added: 0, deleted: 0, hasDraft: false }
 })
 
+const wordLists = ref<{ word_list: string; count: number }[]>([])
+
 const loadStats = async () => {
   try {
     stats.value = await localDB.getDraftStats()
+    wordLists.value = await localDB.getWordLists()
   } catch (err) {
     console.warn('获取草稿统计失败', err)
   }
@@ -64,7 +67,7 @@ const exportKnowledge = async () => {
   try {
     const jsonStr = await localDB.exportConsolidatedKnowledgeJson()
     downloadJsonFile('knowledge.json', jsonStr)
-    ElMessage.success('已下载完整 knowledge.json！如未自动写回，可直接覆盖项目的 content/ 目录')
+    ElMessage.success('已下载完整 knowledge.json！可覆盖项目 content/ 目录')
   } catch (err: any) {
     ElMessage.error(`导出失败: ${err.message || '未知错误'}`)
   } finally {
@@ -78,7 +81,7 @@ const exportResources = async () => {
   try {
     const jsonStr = await localDB.exportConsolidatedResourcesJson()
     downloadJsonFile('learning-resources.json', jsonStr)
-    ElMessage.success('已下载完整 learning-resources.json！如未自动写回，可直接覆盖项目的 content/ 目录')
+    ElMessage.success('已下载完整 learning-resources.json！可覆盖项目 content/ 目录')
   } catch (err: any) {
     ElMessage.error(`导出失败: ${err.message || '未知错误'}`)
   } finally {
@@ -115,23 +118,23 @@ const handleExit = () => {
   <el-dialog
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
-    title="🛠️ 官方题库维护与数据管理控制台"
-    width="580px"
+    title="🛠️ 公共数据库管理与控制台 (学科中心 + 单词库)"
+    width="620px"
     destroy-on-close
     class="data-console-dialog"
   >
-    <!-- 顶部状态看板 -->
+    <!-- 顶部状态看板：三大公共数据模块 -->
     <div class="stats-overview-grid">
       <div class="stat-card">
         <div class="stat-icon">📚</div>
         <div class="stat-info">
-          <div class="stat-title">全科知识库考点</div>
+          <div class="stat-title">学科中心 · 核心考点库</div>
           <div class="stat-num">{{ stats.knowledge.total }} <span>个考点</span></div>
           <div class="stat-draft-tags">
             <span v-if="stats.knowledge.modified" class="tag tag-mod">改动 {{ stats.knowledge.modified }}</span>
             <span v-if="stats.knowledge.added" class="tag tag-add">新增 {{ stats.knowledge.added }}</span>
             <span v-if="stats.knowledge.deleted" class="tag tag-del">删除 {{ stats.knowledge.deleted }}</span>
-            <span v-if="!stats.knowledge.hasDraft" class="tag tag-clean">与当前一致</span>
+            <span v-if="!stats.knowledge.hasDraft" class="tag tag-clean">与本地磁盘一致</span>
           </div>
         </div>
       </div>
@@ -139,33 +142,45 @@ const handleExit = () => {
       <div class="stat-card">
         <div class="stat-icon">🧰</div>
         <div class="stat-info">
-          <div class="stat-title">学科在线工具箱</div>
-          <div class="stat-num">{{ stats.resources.total }} <span>个资源</span></div>
+          <div class="stat-title">学科中心 · 在线工具箱</div>
+          <div class="stat-num">{{ stats.resources.total }} <span>个工具</span></div>
           <div class="stat-draft-tags">
             <span v-if="stats.resources.modified" class="tag tag-mod">改动 {{ stats.resources.modified }}</span>
             <span v-if="stats.resources.added" class="tag tag-add">新增 {{ stats.resources.added }}</span>
             <span v-if="stats.resources.deleted" class="tag tag-del">删除 {{ stats.resources.deleted }}</span>
-            <span v-if="!stats.resources.hasDraft" class="tag tag-clean">与当前一致</span>
+            <span v-if="!stats.resources.hasDraft" class="tag tag-clean">与本地磁盘一致</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card full-width">
+        <div class="stat-icon">📖</div>
+        <div class="stat-info">
+          <div class="stat-title">全套英语公共单词词库</div>
+          <div class="stat-vocab-chips">
+            <span class="vocab-chip" v-for="vl in wordLists" :key="vl.word_list">
+              {{ vl.word_list }}: <b>{{ vl.count }}</b> 词
+            </span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- IDE 源码管理联动指引 -->
+    <!-- IDE 源码管理直写指引 -->
     <div class="ide-sync-banner">
       <div class="banner-title-row">
         <el-icon><FolderChecked /></el-icon>
-        <span>⚡ IDE Source Control 自动化直写流程</span>
+        <span>⚡ 本地公共数据秒级直写流程已就绪</span>
       </div>
       <p class="banner-desc">
-        当您通过 <code>./scripts/dev.sh</code> 启动本地服务时：在页面上点击<b>【保存考点】</b>、<b>【删除考点】</b>或<b>【修改学习资源】</b>后，系统已<b>自动秒级直接写回项目本地的 <code>content/knowledge.json</code> 与 <code>content/learning-resources.json</code></b>！
+        公共数据包含<b>【学科中心考点与工具】</b>以及<b>【各级别英语单词数据】</b>。在本地 <code>localhost:5173</code> 开发环境下，您在页面上保存的任何修改都会<b>秒级直接写回磁盘项目的 <code>content/</code> 目录</b>！
       </p>
       <div class="ide-step-badges">
         <span class="step-badge">1. 页面直接编辑保存</span>
         <span class="step-arrow">➔</span>
-        <span class="step-badge">2. 后台 JSON 秒级自动写回</span>
+        <span class="step-badge">2. content/*.json 自动更新</span>
         <span class="step-arrow">➔</span>
-        <span class="step-badge active">3. 在 IDE Source Control 中审查 Diff 并 Commit 提交</span>
+        <span class="step-badge active">3. 在 IDE Source Control 中审查 Diff 并提交</span>
       </div>
     </div>
 
@@ -173,7 +188,7 @@ const handleExit = () => {
     <div class="manual-export-box">
       <div class="manual-title">
         <el-icon><InfoFilled /></el-icon>
-        <span>手动备用另存（支持离线备份与多端覆盖）</span>
+        <span>手动备用另存（覆盖项目 content/ 目录）</span>
       </div>
       <div class="export-btns-row">
         <el-button
@@ -206,9 +221,9 @@ const handleExit = () => {
         </el-button>
       </div>
       <div class="danger-row">
-        <span class="danger-tip">退出管理员编辑状态（隐藏所有编辑按钮）：</span>
+        <span class="danger-tip">退出公共数据维护模式（隐藏所有编辑按钮）：</span>
         <el-button type="info" plain size="small" :icon="SwitchButton" @click="handleExit">
-          退出官方维护模式
+          退出维护模式
         </el-button>
       </div>
     </div>
@@ -237,6 +252,10 @@ const handleExit = () => {
   border-radius: 12px;
 }
 
+.stat-card.full-width {
+  grid-column: span 2;
+}
+
 :global(.dark) .stat-card {
   background: #1e293b;
   border-color: #334155;
@@ -254,7 +273,7 @@ const handleExit = () => {
 }
 
 .stat-num {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-main, #0f172a);
 }
@@ -273,6 +292,28 @@ const handleExit = () => {
   margin-top: 4px;
   display: flex;
   gap: 4px;
+}
+
+.stat-vocab-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.vocab-chip {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #4f46e5;
+}
+
+:global(.dark) .vocab-chip {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
 }
 
 .tag {

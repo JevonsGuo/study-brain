@@ -39,7 +39,7 @@ function devContentSyncPlugin(): Plugin {
               return
             }
 
-            const safeFile = path.basename(file)
+                        const safeFile = path.basename(file)
             if (!safeFile.endsWith('.json')) {
               res.statusCode = 400
               res.setHeader('Content-Type', 'application/json')
@@ -49,6 +49,36 @@ function devContentSyncPlugin(): Plugin {
 
             const targetSourceFile = path.join(contentDir, safeFile)
             const targetPublicFile = path.join(publicContentDir, safeFile)
+
+            // 支持单词高精度增量更新（避免全量覆盖损坏词库）
+            const { updateWord } = JSON.parse(bodyStr)
+            if (updateWord && updateWord.word) {
+              if (fs.existsSync(targetSourceFile)) {
+                const raw = fs.readFileSync(targetSourceFile, 'utf8')
+                const list = JSON.parse(raw)
+                let found = false
+                for (let i = 0; i < list.length; i++) {
+                  if (list[i].word && list[i].word.toLowerCase() === updateWord.word.toLowerCase()) {
+                    list[i] = { ...list[i], ...updateWord }
+                    found = true
+                    break
+                  }
+                }
+                if (!found) {
+                  list.push(updateWord)
+                }
+                const formatted = JSON.stringify(list, null, 2) + '\n'
+                fs.writeFileSync(targetSourceFile, formatted, 'utf8')
+                if (fs.existsSync(publicContentDir)) {
+                  fs.writeFileSync(targetPublicFile, formatted, 'utf8')
+                }
+                console.log(`[dev-content-sync] 成功更新单词 [${updateWord.word}] 于: content/${safeFile}`)
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json')
+                res.end(JSON.stringify({ ok: true, word: updateWord.word, file: safeFile }))
+                return
+              }
+            }
 
             const formattedContent = content.endsWith('\n') ? content : content + '\n'
 

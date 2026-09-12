@@ -86,11 +86,11 @@ const isLocal = computed(() => {
 const openPinPrompt = async () => {
   if (!isLocal.value) return
   try {
-    const { value } = await ElMessageBox.prompt('请输入管理员维护密码：', '🛠️ 官方题库维护模式', {
+    const { value } = await ElMessageBox.prompt('请输入管理员维护密码：', '🛠️ 公共数据库维护模式 (学科考点与单词库)', {
       inputType: 'password',
       confirmButtonText: '验证解锁',
       cancelButtonText: '取消',
-      inputPlaceholder: '输入密码 654321 解锁编辑权限',
+      inputPlaceholder: '输入密码 654321 解锁公共数据编辑权限',
       inputPattern: /^.+$/,
       inputErrorMessage: '密码不能为空'
     })
@@ -317,9 +317,9 @@ const toggleCollapse = () => {
             type="button"
             class="dev-mode-btn"
             @click="openPinPrompt"
-            title="输入密码（654321）解锁官方题库维护与直写模式"
+            title="输入密码（654321）解锁公共数据库维护（包含学科中心考点与全套英语词库）"
           >
-            🛠️ 题库数据维护
+            🛠️ 公共数据库
           </button>
           <div
             v-else
@@ -328,7 +328,7 @@ const toggleCollapse = () => {
             title="当前处于本地维护模式，点击打开数据管理面板"
           >
             <span class="dev-dot-pulse"></span>
-            <span>🛠️ 维护中(点击管理/退出)</span>
+            <span>🛠️ 公共数据库(管理/退出)</span>
           </div>
         </div>
 

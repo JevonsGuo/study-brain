@@ -958,7 +958,7 @@ onMounted(() => {
           class="data-console-btn"
           @click="appConfig.showDataConsole = true"
         >
-          📦 题库发布控制台
+          📦 公共数据控制台
         </el-button>
         <el-button
           :icon="RefreshRight"

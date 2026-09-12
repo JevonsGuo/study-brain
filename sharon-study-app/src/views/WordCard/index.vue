@@ -2,7 +2,8 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../utils/api'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+import { useAppConfigStore } from '../../stores/appConfig'
 import {
   ArrowLeft, ArrowRight, Check, Close, RefreshRight, Refresh,
   Microphone, Setting, Plus, Sort
@@ -73,6 +74,85 @@ interface WordListDetail {
 // 视图层级：词库选单 vs 学习工作台
 const route = useRoute()
 const router = useRouter()
+
+const appConfig = useAppConfigStore()
+
+// 维护模式：单词公共数据编辑
+const editWordDialogVisible = ref(false)
+const wordEditForm = ref({
+  word: '',
+  phonetic: '',
+  meaning: '',
+  example_en: '',
+  example_cn: '',
+  etymology: ''
+})
+
+const openEditWordModal = (w?: Word) => {
+  if (!w) return
+  wordEditForm.value = {
+    word: w.word,
+    phonetic: w.phonetic || '',
+    meaning: w.meaning || '',
+    example_en: w.example_en || '',
+    example_cn: w.example_cn || '',
+    etymology: w.etymology || ''
+  }
+  editWordDialogVisible.value = true
+}
+
+const saveWordEdit = async () => {
+  if (!wordEditForm.value.word) return
+  if (!wordEditForm.value.meaning.trim()) {
+    ElMessage.warning('请输入单词中文释义')
+    return
+  }
+
+  // 1. 更新当前内存中单词属性
+  const target = words.value.find(w => w.word.toLowerCase() === wordEditForm.value.word.toLowerCase())
+  if (target) {
+    target.phonetic = wordEditForm.value.phonetic
+    target.meaning = wordEditForm.value.meaning
+    target.example_en = wordEditForm.value.example_en
+    target.example_cn = wordEditForm.value.example_cn
+    target.etymology = wordEditForm.value.etymology
+  }
+
+  // 2. 发起本地开发服务器直写
+  const listKey = selectedWordList.value || 'default'
+  try {
+    const res = await fetch('/api/dev/save-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file: `words-${listKey}.json`,
+        updateWord: {
+          word: wordEditForm.value.word,
+          phonetic: wordEditForm.value.phonetic,
+          meaning: wordEditForm.value.meaning,
+          example_en: wordEditForm.value.example_en,
+          example_cn: wordEditForm.value.example_cn,
+          etymology: wordEditForm.value.etymology
+        }
+      })
+    }).catch(() => null)
+
+    if (res && res.ok) {
+      ElNotification({
+        title: '💾 单词公共数据已直接更新！',
+        message: `已秒级写回 content/words-${listKey}.json。请在 IDE Source Control 中审查 Diff 并提交。`,
+        type: 'success',
+        duration: 5000
+      })
+    } else {
+      ElMessage.success('单词已保存')
+    }
+    editWordDialogVisible.value = false
+  } catch (err: any) {
+    ElMessage.error(`保存失败: ${err.message}`)
+  }
+}
+
 const view = ref<'list' | 'study'>('list')
 const words = ref<Word[]>([])
 const stats = ref<Stats | null>(null)
@@ -854,7 +934,42 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-    </template>
+    
+    <!-- 单词数据快速编辑弹窗 (维护模式专属) -->
+    <el-dialog
+      v-model="editWordDialogVisible"
+      :title="`✏️ 编辑单词公共数据 [${wordEditForm.word}]`"
+      width="520px"
+      destroy-on-close
+      class="edit-word-dialog"
+    >
+      <el-form label-position="top">
+        <el-form-item label="单词拼写">
+          <el-input v-model="wordEditForm.word" disabled />
+        </el-form-item>
+        <el-form-item label="国际音标 (IPA)">
+          <el-input v-model="wordEditForm.phonetic" placeholder="如 /əˈbændən/" />
+        </el-form-item>
+        <el-form-item label="核心释义 (词性与中文)">
+          <el-input v-model="wordEditForm.meaning" placeholder="如 vt. 放弃，遗弃" />
+        </el-form-item>
+        <el-form-item label="真题例句 (英文)">
+          <el-input v-model="wordEditForm.example_en" type="textarea" :rows="2" placeholder="英文例句" />
+        </el-form-item>
+        <el-form-item label="例句翻译 (中文)">
+          <el-input v-model="wordEditForm.example_cn" type="textarea" :rows="2" placeholder="中文翻译" />
+        </el-form-item>
+        <el-form-item label="词根词缀 (记忆法)">
+          <el-input v-model="wordEditForm.etymology" placeholder="如 a-(away) + bandon(control)" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="editWordDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveWordEdit">保存并写回本地词库</el-button>
+      </template>
+    </el-dialog>
+
+</template>
 
     <!-- 阶段二：单词互动工作台 (Interactive Vocabulary Studio) -->
     <template v-else>
@@ -950,6 +1065,14 @@ onUnmounted(() => {
         <!-- 辅助开关 -->
         <div class="mode-aux-actions">
           <button
+            v-if="appConfig.isMaintenanceMode"
+            class="aux-btn admin-console-btn"
+            @click="appConfig.showDataConsole = true"
+            title="打开公共数据库管理面板"
+          >
+            📦 公共数据库
+          </button>
+          <button
             class="aux-btn"
             :class="{ active: shuffled }"
             @click="toggleShuffle"
@@ -998,7 +1121,17 @@ onUnmounted(() => {
                 <span class="plant-stage-badge" :class="currentPlant.badgeClass">
                   {{ currentPlant.emoji }} {{ currentPlant.label }}
                 </span>
-                <div class="accent-selector" @click.stop>
+                <div class="card-top-actions" @click.stop>
+                <button
+                  v-if="appConfig.isMaintenanceMode"
+                  type="button"
+                  class="card-quick-edit-btn"
+                  @click="openEditWordModal(currentWord)"
+                  title="编辑当前单词数据"
+                >
+                  ✏️ 编辑
+                </button>
+                <div class="accent-selector">
                   <button
                     class="accent-btn"
                     :class="{ active: preferredAccent === 'us' }"
@@ -1013,6 +1146,7 @@ onUnmounted(() => {
                   >
                     🇬🇧 英
                   </button>
+                </div>
                 </div>
               </div>
 
@@ -1038,6 +1172,15 @@ onUnmounted(() => {
               <div class="card-washi-tape"></div>
               <div class="back-scroll-content">
                 <!-- 核心释义大高光 -->
+                <div v-if="appConfig.isMaintenanceMode" class="back-edit-row">
+                  <button
+                    type="button"
+                    class="card-quick-edit-btn"
+                    @click.stop="openEditWordModal(currentWord)"
+                  >
+                    ✏️ 编辑此单词数据
+                  </button>
+                </div>
                 <div class="back-meaning-box">
                   <div class="back-meaning-text">{{ currentWord?.meaning }}</div>
                 </div>
@@ -1288,8 +1431,9 @@ onUnmounted(() => {
               <el-tag size="small" round>{{ plantStage(row.mastery_level, row.interval_days).label }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="80" align="center">
+          <el-table-column label="操作" width="130" align="center">
             <template #default="{ row }">
+              <el-button v-if="appConfig.isMaintenanceMode" size="small" type="primary" text @click="openEditWordModal(row)">编辑</el-button>
               <el-button size="small" type="danger" text @click="removeWord(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -2820,6 +2964,55 @@ html.dark .accent-btn.active {
 @keyframes bar-slide {
   0% { left: -40%; }
   100% { left: 100%; }
+}
+
+
+.card-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-quick-edit-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #d97706;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:global(.dark) .card-quick-edit-btn {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #fbbf24;
+}
+
+.card-quick-edit-btn:hover {
+  background: #f59e0b;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.back-edit-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.admin-console-btn {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  color: #d97706 !important;
+  font-weight: 600 !important;
+}
+
+:global(.dark) .admin-console-btn {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fbbf24 !important;
 }
 
 </style>
