@@ -19,7 +19,8 @@
   内置自主研发的 **IndexedDB 本地私有数据引擎**（`localDatabase.ts`），错题、计划、笔记、成绩、专注打卡与词汇进度 100% 存储于学生本地浏览器，无需租用云数据库，保护个人隐私，发一个链接人人开箱即用。
 - ⚡ **多端极速秒级并发部署**：
   配置 GitHub Actions CI/CD 流水线，一次提交，自动并发分发至：
-  - **GitHub Pages**：`https://jevonsguo.github.io/study-brain/#/home`
+  - **官方独立域名**：`https://study.gyfolk.com/#/home` (免备案 · 全球极速)
+  - **GitHub Pages 镜像**：`https://jevonsguo.github.io/study-brain/#/home`
   - **Cloudflare Pages**：全球 Anycast 边缘 CDN 加速 + 专有 Worker 反代
   - **Google Cloud Platform (GCP)**：生产级 Nginx 静态优化与 Gzip 深度压缩
   - **自建 Ubuntu 服务器**：自动化拉取、生产备份与热重载
