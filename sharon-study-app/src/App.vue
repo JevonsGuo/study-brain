@@ -8,6 +8,7 @@ import CloudSyncModal from './components/CloudSyncModal.vue'
 import UserOnboardingModal from './components/UserOnboardingModal.vue'
 import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import DataConsoleModal from './components/DataConsoleModal.vue'
+import AboutModal from './components/AboutModal.vue'
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
 import { Edit } from '@element-plus/icons-vue'
 import { localDB } from './utils/localDatabase'
@@ -77,6 +78,7 @@ const userProfile = useUserProfileStore()
 const isCollapse = ref(false)
 const isDark = ref(false)
 const showCloudModal = ref(false)
+const showAboutModal = ref(false)
 
 const isLocal = computed(() => {
   if (typeof window === 'undefined') return false
@@ -323,24 +325,34 @@ const toggleCollapse = () => {
 
       <!-- 侧边栏底部操作区：左下角主题切换 + 侧栏折叠 -->
       <div class="aside-footer">
-        <!-- 数据库版本常驻角落 (低调淡灰小字) + 坚果云备份入口 -->
+        <!-- 数据库版本常驻角落 (低调淡灰小字) + 坚果云备份入口 + 关于系统 -->
         <div v-show="!isCollapse" class="aside-db-bar">
           <div
             class="db-version-text"
-            @click="appConfig.checkDatabaseVersion(true)"
-            :title="`公共数据库: v${appConfig.currentDbVersion} (${appConfig.dbSyncMessage || '已是最新'}) (点击检查更新)`"
+            @click="showAboutModal = true"
+            :title="`公共数据库: v${appConfig.currentDbVersion} (点击查看系统详情、版权与联系反馈)`"
           >
             <span class="db-dot" :class="appConfig.dbSyncStatus"></span>
             <span class="db-status-label">{{ displayDbText }}</span>
           </div>
-          <button
-            type="button"
-            class="aside-cloud-btn"
-            @click="showCloudModal = true"
-            title="坚果云多端备份 (可选)"
-          >
-            ☁️
-          </button>
+          <div class="aside-btn-group">
+            <button
+              type="button"
+              class="aside-cloud-btn"
+              @click="showCloudModal = true"
+              title="坚果云多端备份 (可选)"
+            >
+              ☁️
+            </button>
+            <button
+              type="button"
+              class="aside-cloud-btn"
+              @click="showAboutModal = true"
+              title="关于智学大脑 · 版本、版权与联系反馈"
+            >
+              ℹ️
+            </button>
+          </div>
         </div>
 
         <!-- 本地专属：公共数据库维护入口（仅在本地 localhost 开发环境显示，线上生产环境彻底隐藏） -->
@@ -505,6 +517,7 @@ const toggleCollapse = () => {
 
     <!-- 坚果云云端备份弹窗 -->
     <CloudSyncModal v-model="showCloudModal" />
+    <AboutModal v-model="showAboutModal" />
 
     <!-- 首次使用量身定制专属空间引导弹窗 -->
     <UserOnboardingModal />
@@ -909,6 +922,13 @@ const toggleCollapse = () => {
 }
 
 /* 数据库版本与坚果云常驻底部栏 */
+.aside-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .aside-db-bar {
   display: flex;
   align-items: center;

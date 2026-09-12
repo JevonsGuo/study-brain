@@ -45,9 +45,13 @@ const modules = [
 ]
 
 import { useUserProfileStore } from '../../stores/userProfile'
+import { useAppConfigStore } from '../../stores/appConfig'
+import AboutModal from '../../components/AboutModal.vue'
 import { Edit } from '@element-plus/icons-vue'
 
 const userProfile = useUserProfileStore()
+const appConfig = useAppConfigStore()
+const showAboutModal = ref(false)
 
 const updateGreeting = () => {
   const hour = currentTime.value.getHours()
@@ -230,6 +234,38 @@ onUnmounted(() => {
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 规范页脚：版本、版权与联系反馈 -->
+    <footer class="home-footer">
+      <div class="footer-divider"></div>
+      <div class="footer-inner">
+        <div class="footer-meta-line">
+          <span class="footer-brand">🎯 智学大脑 · Study Brain</span>
+          <span class="footer-badge">上海新高考自律智学系统</span>
+          <span class="footer-sep">·</span>
+          <span class="footer-ver">应用系统 v1.0.6</span>
+          <span class="footer-sep">·</span>
+          <span class="footer-db">考点词库 v{{ appConfig.currentDbVersion }}</span>
+          <span class="footer-sep">·</span>
+          <button type="button" class="footer-link-btn" @click="showAboutModal = true">
+            关于系统
+          </button>
+        </div>
+
+        <div class="footer-copy-line">
+          <span class="footer-copy">Copyright © 2026 GYFolk / Sharon Study. All Rights Reserved.</span>
+          <span class="footer-sep">·</span>
+          <span class="footer-contact">
+            技术反馈与交流：
+            <a href="mailto:Guo.Qihua@GYFolk.com" class="footer-email-link" title="点击直接发送邮件">
+              Guo.Qihua@GYFolk.com
+            </a>
+          </span>
+        </div>
+      </div>
+    </footer>
+
+    <AboutModal v-model="showAboutModal" />
   </div>
 </template>
 
@@ -390,4 +426,99 @@ onUnmounted(() => {
   margin: 4px 0 6px;
   letter-spacing: 0.3px;
 }
+
+/* 规范版权与页脚 */
+.home-footer {
+  margin-top: 40px;
+  padding-bottom: 30px;
+}
+
+.footer-divider {
+  height: 1px;
+  background: var(--border-color, rgba(226, 232, 240, 0.8));
+  margin-bottom: 18px;
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.footer-meta-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-sub, #64748b);
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  font-weight: 700;
+  color: var(--text-main, #334155);
+}
+
+.footer-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4f46e5;
+}
+
+.footer-ver,
+.footer-db {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+
+.footer-sep {
+  opacity: 0.4;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #3b82f6;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+  font-weight: 600;
+}
+
+.footer-link-btn:hover {
+  color: #1d4ed8;
+}
+
+.footer-copy-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-sub, #94a3b8);
+  flex-wrap: wrap;
+}
+
+.footer-email-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  transition: color 0.2s;
+}
+
+.footer-email-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
 </style>

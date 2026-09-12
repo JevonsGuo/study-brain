@@ -1128,12 +1128,6 @@ onMounted(() => {
               <el-icon class="fold-chevron" :class="{ 'is-expanded': expandedPointIds.has(p.id) }">
                 <ArrowRight />
               </el-icon>
-              <span
-                v-if="p.chapter.includes('必背') || p.title.includes('背诵')"
-                class="recitation-point-badge"
-              >
-                🎙️ 必背篇目
-              </span>
               <h3
                 class="point-title"
                 :title="expandedPointIds.has(p.id) ? '点击折叠考点详情' : '点击展开考点详情'"
@@ -2584,27 +2578,6 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
-.recitation-point-badge {
-  font-size: 11px;
-  background: rgba(225, 29, 72, 0.1);
-  color: #e11d48;
-  border: 1px solid rgba(225, 29, 72, 0.25);
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-
-.core-point-badge {
-  font-size: 11px;
-  background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
 
 .point-title {
   margin: 0;
