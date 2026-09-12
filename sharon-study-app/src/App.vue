@@ -7,6 +7,7 @@ import { useUserProfileStore } from './stores/userProfile'
 import CloudSyncModal from './components/CloudSyncModal.vue'
 import UserOnboardingModal from './components/UserOnboardingModal.vue'
 import UserProfileEditModal from './components/UserProfileEditModal.vue'
+import DataConsoleModal from './components/DataConsoleModal.vue'
 import { ElNotification, ElMessageBox } from 'element-plus'
 import { Edit } from '@element-plus/icons-vue'
 import { localDB } from './utils/localDatabase'
@@ -76,21 +77,45 @@ const userProfile = useUserProfileStore()
 const isCollapse = ref(false)
 const isDark = ref(false)
 const showCloudModal = ref(false)
-const isDev = import.meta.env.DEV
+
+// 隐蔽入口机制：快速连击 5 次版本号 / 快捷键 Cmd/Ctrl+Shift+M / URL #admin
+let dbClickCount = 0
+let dbClickTimer: any = null
 
 const openPinPrompt = async () => {
   try {
-    const { value } = await ElMessageBox.prompt('请输入开发者维护密码：', '官方数据维护模式', {
+    const { value } = await ElMessageBox.prompt('请输入管理员维护密码：', '🔒 官方数据维护模式 (Admin)', {
       inputType: 'password',
-      confirmButtonText: '验证进入',
+      confirmButtonText: '验证解锁',
       cancelButtonText: '取消',
+      inputPlaceholder: '输入密码解锁官方考点与资源管理权限',
       inputPattern: /^.+$/,
       inputErrorMessage: '密码不能为空'
     })
-    appConfig.unlockMaintenanceMode(value)
+    const ok = appConfig.unlockMaintenanceMode(value)
+    if (ok) {
+      appConfig.showDataConsole = true
+    }
   } catch {
     // cancelled
   }
+}
+
+const handleDbVersionClick = () => {
+  dbClickCount++
+  clearTimeout(dbClickTimer)
+  dbClickTimer = setTimeout(() => {
+    dbClickCount = 0
+  }, 1500)
+
+  if (dbClickCount >= 5) {
+    dbClickCount = 0
+    openPinPrompt()
+    return
+  }
+
+  // 正常点击 1 次：手动检查更新
+  appConfig.checkDatabaseVersion(true)
 }
 
 const THEME_KEY = 'study_theme'
@@ -284,8 +309,8 @@ const toggleCollapse = () => {
         <div v-show="!isCollapse" class="aside-db-bar">
           <div
             class="db-version-text"
-            @click="appConfig.checkDatabaseVersion(true)"
-            :title="`数据库状态: ${appConfig.dbSyncMessage} (点击检查更新)`"
+            @click="handleDbVersionClick"
+            :title="`数据库状态: ${appConfig.dbSyncMessage} (点击检查更新，连击5次进入管理)`"
           >
             <span class="db-dot" :class="appConfig.dbSyncStatus"></span>
             <span class="db-status-label">{{ displayDbText }}</span>
@@ -300,25 +325,15 @@ const toggleCollapse = () => {
           </button>
         </div>
 
-        <!-- 仅在开发环境（import.meta.env.DEV）展示的维护模式切换按钮 -->
-        <div v-if="isDev && !isCollapse" class="aside-dev-bar">
-          <button
-            v-if="!appConfig.isMaintenanceMode"
-            type="button"
-            class="dev-mode-btn"
-            @click="openPinPrompt"
-            title="输入密码（654321）解锁官方数据维护模式"
-          >
-            🛠️ 题库维护
-          </button>
+        <!-- 官方数据维护模式激活状态条（仅激活后展示，点击打开控制台） -->
+        <div v-if="appConfig.isMaintenanceMode && !isCollapse" class="aside-dev-bar">
           <div
-            v-else
             class="dev-active-badge"
-            @click="appConfig.exitMaintenanceMode"
-            title="当前处于维护模式，点击退出"
+            @click="appConfig.showDataConsole = true"
+            title="当前处于官方数据维护模式，点击打开题库发布控制台"
           >
             <span class="dev-dot-pulse"></span>
-            <span>维护中(点击退出)</span>
+            <span>🛠️ 题库管理控制台</span>
           </div>
         </div>
 
@@ -446,6 +461,9 @@ const toggleCollapse = () => {
 
     <!-- 随时修改名字与空间信息弹窗 -->
     <UserProfileEditModal />
+
+    <!-- 官方题库与公共数据发布控制台 -->
+    <DataConsoleModal v-model="appConfig.showDataConsole" />
   </el-container>
 </template>
 

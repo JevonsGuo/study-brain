@@ -16,7 +16,8 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   const currentDbVersion = ref<string>('20260911-001')
   const remoteVersionMeta = ref<VersionMeta | null>(null)
   const showUpdateModal = ref(false)
-  const isMaintenanceMode = ref(false)
+  const isMaintenanceMode = ref(typeof sessionStorage !== 'undefined' && sessionStorage.getItem('study_admin_unlocked') === 'true')
+  const showDataConsole = ref(false)
 
   // 动态数据库实时状态
   const dbSyncStatus = ref<DbSyncState>('latest')
@@ -102,6 +103,9 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   const unlockMaintenanceMode = (pin: string): boolean => {
     if (pin.trim() === '654321') {
       isMaintenanceMode.value = true
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('study_admin_unlocked', 'true')
+      }
       ElMessage.success('已解锁【官方数据维护模式】，可直接编辑考点与工具')
       return true
     }
@@ -111,6 +115,10 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
   const exitMaintenanceMode = () => {
     isMaintenanceMode.value = false
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem('study_admin_unlocked')
+    }
+    showDataConsole.value = false
     ElMessage.info('已退出官方数据维护模式')
   }
 
@@ -132,6 +140,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
     remoteVersionMeta,
     showUpdateModal,
     isMaintenanceMode,
+    showDataConsole,
     dbSyncStatus,
     dbSyncMessage,
     setDbSyncStatus,

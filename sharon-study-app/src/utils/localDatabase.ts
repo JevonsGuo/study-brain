@@ -243,6 +243,15 @@ class LocalDatabase {
     })
   }
 
+  private async clearStore(storeName: string): Promise<void> {
+    const store = await this.getStore(storeName, 'readwrite')
+    return new Promise((resolve, reject) => {
+      const req = store.clear()
+      req.onsuccess = () => resolve()
+      req.onerror = () => reject(req.error)
+    })
+  }
+
   // === 静态公共内容加载 ===
   private async loadPublicJson<T>(filename: string): Promise<T> {
     if (this.contentCache.has(filename)) {
@@ -305,10 +314,22 @@ class LocalDatabase {
   }
 
   // ================= 模块 3: 知识库 (Knowledge Points) & 学生笔记 =================
+  getKnowledgeOverrides(): Record<number, any> {
+    try {
+      const raw = localStorage.getItem('study_knowledge_overrides')
+      return raw ? JSON.parse(raw) : {}
+    } catch { return {} }
+  }
+
+  getKnowledgeDeletedIds(): Set<number> {
+    try {
+      const raw = localStorage.getItem('study_knowledge_deleted_ids')
+      return new Set(raw ? JSON.parse(raw) : [])
+    } catch { return new Set() }
+  }
+
   async getSubjects(): Promise<string[]> {
-    const seedPoints = await this.loadPublicJson<any[]>('knowledge.json').catch(() => [])
-    const customPoints = await this.getAll<any>('custom_knowledge')
-    const all = [...seedPoints, ...customPoints]
+    const all = await this.getKnowledgePoints()
     const subjects = Array.from(new Set(all.map((p) => p.subject).filter(Boolean)))
     return subjects.length > 0 ? subjects : ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治']
   }
@@ -319,17 +340,25 @@ class LocalDatabase {
     const allNotes = await this.getAll<{ knowledge_point_id: number; note: string }>('student_notes')
     const noteMap = new Map<number, string>(allNotes.map(n => [n.knowledge_point_id, n.note]))
 
-    // 为 seed points 分配稳定数字 ID (1, 2, 3...)
-    const list: any[] = seedPoints.map((item, index) => {
+    const overrides = this.getKnowledgeOverrides()
+    const deletedIds = this.getKnowledgeDeletedIds()
+
+    // 为 seed points 分配稳定数字 ID (1, 2, 3...)，并融入官方维护模式草稿覆盖与删除
+    const list: any[] = []
+    seedPoints.forEach((item, index) => {
       const id = index + 1
+      if (deletedIds.has(id)) return // 已被维护模式标记删除
+
       const note = noteMap.get(id) || ''
-      return {
-        ...item,
+      const pointData = overrides[id] ? { ...item, ...overrides[id] } : item
+      list.push({
+        ...pointData,
         id,
         origin: 'seed',
+        is_modified: Boolean(overrides[id]),
         student_note: note,
         user_note: note
-      }
+      })
     })
 
     // 合并用户自定义考点 (ID 从 10000+ 开始)
@@ -358,6 +387,13 @@ class LocalDatabase {
   }
 
   async saveKnowledgePoint(payload: any) {
+    // 若编辑的是已有 seed 考点（id < 10000），写入官方维护草稿 overrides 字典
+    if (payload.id && payload.id < 10000) {
+      const overrides = this.getKnowledgeOverrides()
+      overrides[payload.id] = { ...payload }
+      localStorage.setItem('study_knowledge_overrides', JSON.stringify(overrides))
+      return payload
+    }
     if (payload.id && payload.id >= 10000) {
       await this.putItem('custom_knowledge', payload)
       return payload
@@ -374,7 +410,16 @@ class LocalDatabase {
   }
 
   async deleteKnowledgePoint(id: number) {
-    if (id >= 10000) {
+    if (id < 10000) {
+      // 官方考点删除：记录至 deleted_ids
+      const deletedIds = this.getKnowledgeDeletedIds()
+      deletedIds.add(id)
+      localStorage.setItem('study_knowledge_deleted_ids', JSON.stringify(Array.from(deletedIds)))
+
+      const overrides = this.getKnowledgeOverrides()
+      delete overrides[id]
+      localStorage.setItem('study_knowledge_overrides', JSON.stringify(overrides))
+    } else {
       await this.deleteItem('custom_knowledge', id)
     }
     await this.deleteItem('student_notes', id)
@@ -392,15 +437,38 @@ class LocalDatabase {
   }
 
   // ================= 模块 4: 学习资源 (Learning Resources) =================
+  getResourceOverrides(): Record<number, any> {
+    try {
+      const raw = localStorage.getItem('study_resources_overrides')
+      return raw ? JSON.parse(raw) : {}
+    } catch { return {} }
+  }
+
+  getResourceDeletedIds(): Set<number> {
+    try {
+      const raw = localStorage.getItem('study_resources_deleted_ids')
+      return new Set(raw ? JSON.parse(raw) : [])
+    } catch { return new Set() }
+  }
+
   async getLearningResources(subject?: string) {
     const seed = await this.loadPublicJson<any[]>('learning-resources.json').catch(() => [])
     const custom = await this.getAll<any>('custom_resources')
+    const overrides = this.getResourceOverrides()
+    const deletedIds = this.getResourceDeletedIds()
 
-    const list: any[] = seed.map((item, index) => ({
-      ...item,
-      id: index + 1,
-      origin: 'seed'
-    }))
+    const list: any[] = []
+    seed.forEach((item, index) => {
+      const id = index + 1
+      if (deletedIds.has(id)) return
+      const resData = overrides[id] ? { ...item, ...overrides[id] } : item
+      list.push({
+        ...resData,
+        id,
+        origin: 'seed',
+        is_modified: Boolean(overrides[id])
+      })
+    })
 
     for (const cr of custom) {
       list.push({
@@ -418,6 +486,12 @@ class LocalDatabase {
   }
 
   async saveLearningResource(payload: any) {
+    if (payload.id && payload.id < 10000) {
+      const overrides = this.getResourceOverrides()
+      overrides[payload.id] = { ...payload }
+      localStorage.setItem('study_resources_overrides', JSON.stringify(overrides))
+      return payload
+    }
     if (payload.id && payload.id >= 10000) {
       await this.putItem('custom_resources', payload)
       return payload
@@ -434,10 +508,90 @@ class LocalDatabase {
   }
 
   async deleteLearningResource(id: number) {
-    if (id >= 10000) {
+    if (id < 10000) {
+      const deletedIds = this.getResourceDeletedIds()
+      deletedIds.add(id)
+      localStorage.setItem('study_resources_deleted_ids', JSON.stringify(Array.from(deletedIds)))
+
+      const overrides = this.getResourceOverrides()
+      delete overrides[id]
+      localStorage.setItem('study_resources_overrides', JSON.stringify(overrides))
+    } else {
       await this.deleteItem('custom_resources', id)
     }
     return { ok: true }
+  }
+
+  // ================= 模块 4.1: 官方公共 JSON 数据导出与发布工具 =================
+  async exportConsolidatedKnowledgeJson(): Promise<string> {
+    const all = await this.getKnowledgePoints()
+    // 整理为官方纯净标准字段 (去除 id, origin, is_modified, student_note, user_note 等前端运行态字段)
+    const cleanList = all.map(p => ({
+      subject: p.subject || '',
+      grade: p.grade || '',
+      book: p.book || '',
+      chapter: p.chapter || '',
+      title: p.title || '',
+      content: p.content || '',
+      key_formulas: p.key_formulas || '',
+      tips: p.tips || '',
+      visual_desc: p.visual_desc || '',
+      video_url: p.video_url || '',
+      sort_order: Number(p.sort_order || 0)
+    }))
+    return JSON.stringify(cleanList, null, 2)
+  }
+
+  async exportConsolidatedResourcesJson(): Promise<string> {
+    const all = await this.getLearningResources()
+    const cleanList = all.map(r => ({
+      subject: r.subject || '',
+      category: r.category || 'tool',
+      name: r.name || '',
+      desc: r.desc || '',
+      url: r.url || '',
+      sort_order: Number(r.sort_order || 0)
+    }))
+    return JSON.stringify(cleanList, null, 2)
+  }
+
+  async getDraftStats() {
+    const knowledgeOverrides = Object.keys(this.getKnowledgeOverrides()).length
+    const knowledgeDeleted = this.getKnowledgeDeletedIds().size
+    const customKnowledge = (await this.getAll('custom_knowledge')).length
+
+    const resOverrides = Object.keys(this.getResourceOverrides()).length
+    const resDeleted = this.getResourceDeletedIds().size
+    const customRes = (await this.getAll('custom_resources')).length
+
+    const totalPoints = (await this.getKnowledgePoints()).length
+    const totalResources = (await this.getLearningResources()).length
+
+    return {
+      knowledge: {
+        total: totalPoints,
+        modified: knowledgeOverrides,
+        added: customKnowledge,
+        deleted: knowledgeDeleted,
+        hasDraft: knowledgeOverrides > 0 || knowledgeDeleted > 0 || customKnowledge > 0
+      },
+      resources: {
+        total: totalResources,
+        modified: resOverrides,
+        added: customRes,
+        deleted: resDeleted,
+        hasDraft: resOverrides > 0 || resDeleted > 0 || customRes > 0
+      }
+    }
+  }
+
+  async resetAllOfficialDrafts() {
+    localStorage.removeItem('study_knowledge_overrides')
+    localStorage.removeItem('study_knowledge_deleted_ids')
+    localStorage.removeItem('study_resources_overrides')
+    localStorage.removeItem('study_resources_deleted_ids')
+    await this.clearStore('custom_knowledge')
+    await this.clearStore('custom_resources')
   }
 
   // ================= 模块 5: 错题本 (Wrong Book) =================

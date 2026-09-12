@@ -36,7 +36,8 @@ import {
   TopRight,
   Tools,
   CopyDocument,
-  FullScreen
+  FullScreen,
+  Download
 } from '@element-plus/icons-vue'
 import { getVideoHubInfo, type VideoHubInfo } from '../../utils/videoSources'
 import { useAppConfigStore } from '../../stores/appConfig'
@@ -948,6 +949,17 @@ onMounted(() => {
           推荐自选资源
         </el-button>
 
+        <el-button
+          v-if="appConfig.isMaintenanceMode"
+          type="warning"
+          plain
+          size="default"
+          :icon="Download"
+          class="data-console-btn"
+          @click="appConfig.showDataConsole = true"
+        >
+          📦 题库发布控制台
+        </el-button>
         <el-button
           :icon="RefreshRight"
           circle
