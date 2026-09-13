@@ -1,13 +1,16 @@
 {
   "name": "sharon-study-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "prebuild": "node ../scripts/copy-content-to-public.mjs",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "bump": "node ../scripts/bump-version.mjs patch",
+    "bump:minor": "node ../scripts/bump-version.mjs minor",
+    "bump:major": "node ../scripts/bump-version.mjs major"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",

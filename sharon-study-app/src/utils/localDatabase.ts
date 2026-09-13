@@ -228,8 +228,10 @@ class LocalDatabase {
 
   private async putItem<T>(storeName: string, item: T): Promise<IDBValidKey> {
     const store = await this.getStore(storeName, 'readwrite')
+    // 移除 Vue 3 响应式 Proxy 包装，防止 IndexedDB 抛出 DataCloneError
+    const safeItem = JSON.parse(JSON.stringify(item))
     return new Promise((resolve, reject) => {
-      const req = store.put(item)
+      const req = store.put(safeItem)
       req.onsuccess = () => resolve(req.result)
       req.onerror = () => reject(req.error)
     })

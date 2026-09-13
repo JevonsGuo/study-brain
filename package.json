@@ -1,11 +1,14 @@
 {
   "name": "study-brain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "npm run dev --prefix sharon-study-app",
     "build": "npm run build --prefix sharon-study-app",
     "preview": "npm run preview --prefix sharon-study-app",
-    "deploy:cf": "npm run build && npx wrangler pages deploy sharon-study-app/dist --project-name=study-brain"
+    "deploy:cf": "npm run build && npx wrangler pages deploy sharon-study-app/dist --project-name=study-brain",
+    "bump": "node scripts/bump-version.mjs patch",
+    "bump:minor": "node scripts/bump-version.mjs minor",
+    "bump:major": "node scripts/bump-version.mjs major"
   }
 }

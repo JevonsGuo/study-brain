@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { ElMessage } from "element-plus"
-import { useAppConfigStore } from "../stores/appConfig"
+import { useAppConfigStore, isLocalEnv } from "../stores/appConfig"
+import { useAppVersionStore } from "../stores/appVersion"
 import {
   Message,
   DocumentCopy,
@@ -9,7 +10,8 @@ import {
   RefreshRight,
   Lock,
   Reading,
-  Cpu
+  Cpu,
+  Lightning
 } from "@element-plus/icons-vue"
 
 const props = defineProps<{
@@ -21,6 +23,8 @@ const emit = defineEmits<{
 }>()
 
 const appConfig = useAppConfigStore()
+const appVersionStore = useAppVersionStore()
+const isLocal = isLocalEnv()
 const copied = ref(false)
 const contactEmail = "Jevons@GYFolk.com"
 
@@ -87,8 +91,26 @@ const sendMail = () => {
             <span class="spec-name">应用版本</span>
           </div>
           <div class="spec-val">
-            <span class="spec-badge blue">v1.0.0</span>
-            <span class="spec-sub">Web 现代化前端</span>
+            <span class="spec-badge blue">v{{ appVersionStore.currentVersion }}</span>
+            <button
+              type="button"
+              class="spec-refresh-btn"
+              :disabled="appVersionStore.isChecking"
+              @click="appVersionStore.checkAppUpdate(false, true)"
+              title="检查前端页面是否有新发布版本"
+            >
+              <el-icon><RefreshRight /></el-icon> 检查更新
+            </button>
+            <button
+              v-if="isLocal"
+              type="button"
+              class="spec-refresh-btn test-btn"
+              @click="appVersionStore.triggerMockUpdateForTesting"
+              title="模拟触发新版本发布弹窗"
+              style="margin-left: 6px; background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: rgba(245, 158, 11, 0.3);"
+            >
+              <el-icon><Lightning /></el-icon> 模拟弹窗
+            </button>
           </div>
         </div>
 

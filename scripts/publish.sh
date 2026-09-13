@@ -14,13 +14,18 @@ fi
 
 echo "=== 发布到生产服务器: $REMOTE_USER@$REMOTE_HOST ==="
 
-echo "[1/2] Git commit and push..."
+# 自动自增修订版本号 (第三位数字: 1.0.0 -> 1.0.1)，保证用户端弹窗版本号明显递增
 cd "$(dirname "$0")/.."
+BUMP_ARG="${4:-patch}"
+node scripts/bump-version.mjs "$BUMP_ARG"
+
+echo "[1/2] Git commit and push..."
 git add -A
 if git diff --cached --quiet; then
   echo "  无本地改动需要提交"
 else
-  git commit -m "v$(node -p 'require("./sharon-study-app/package.json").version') update"
+  CURRENT_VERSION=$(node -p 'require("./sharon-study-app/package.json").version')
+  git commit -m "v${CURRENT_VERSION} release"
   git push
 fi
 

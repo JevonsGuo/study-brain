@@ -9,6 +9,8 @@ import UserOnboardingModal from './components/UserOnboardingModal.vue'
 import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import DataConsoleModal from './components/DataConsoleModal.vue'
 import AboutModal from './components/AboutModal.vue'
+import AppVersionModal from './components/AppVersionModal.vue'
+import { useAppVersionStore } from './stores/appVersion'
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
 import { Edit, Star, Sunny, Moon, Menu as MenuIcon, Close, VideoPause } from '@element-plus/icons-vue'
 import { localDB } from './utils/localDatabase'
@@ -75,6 +77,7 @@ router.afterEach(() => {
 const timerStore = useTimerStore()
 const appConfig = useAppConfigStore()
 const userProfile = useUserProfileStore()
+const appVersionStore = useAppVersionStore()
 const isCollapse = ref(false)
 const isDark = ref(false)
 const showCloudModal = ref(false)
@@ -222,6 +225,12 @@ onMounted(() => {
       }
     }
   }, 30 * 60 * 1000)
+
+  // 启动前端新发布版本生命周期自动检测
+  appVersionStore.startAutoCheck()
+  if (typeof window !== 'undefined') {
+    (window as any).__testAppUpdate = () => appVersionStore.triggerMockUpdateForTesting()
+  }
 })
 
 const applyTheme = (dark: boolean) => {
@@ -303,6 +312,19 @@ const toggleCollapse = () => {
       <div v-if="appConfig.dbSyncStatus === 'syncing'" class="route-loading-capsule db-sync-capsule">
         <span class="capsule-spin">🔄</span>
         <span>正在自动同步最新公共题库与词库...</span>
+      </div>
+    </transition>
+
+    <!-- 前端新版本发布醒目提示胶囊 (点击即可呼出更新弹窗) -->
+    <transition name="capsule-drop">
+      <div
+        v-if="appVersionStore.hasUpdate && !appVersionStore.showUpdateModal"
+        class="route-loading-capsule app-update-capsule"
+        @click="appVersionStore.openUpdateModal"
+        title="点击查看新版本详情并升级"
+      >
+        <span class="pulse-dot-green"></span>
+        <span class="update-capsule-text">🚀 发现新版本发布 (点击刷新升级)</span>
       </div>
     </transition>
     
@@ -388,6 +410,16 @@ const toggleCollapse = () => {
             <span class="db-status-label">{{ displayDbText }}</span>
           </div>
           <div class="aside-btn-group">
+            <button
+              v-if="appVersionStore.hasUpdate"
+              type="button"
+              class="aside-app-update-btn"
+              @click="appVersionStore.openUpdateModal"
+              title="检测到前端新版本发布，点击升级"
+            >
+              <span class="aside-update-dot"></span>
+              <span>新版本</span>
+            </button>
             <button
               type="button"
               class="aside-cloud-btn"
@@ -575,7 +607,7 @@ const toggleCollapse = () => {
           </div>
           <div class="drawer-action-row" @click="showMobileMenu = false; showAboutModal = true">
             <span class="action-icon">ℹ️</span>
-            <span class="action-title">关于系统 (v1.0.0)</span>
+            <span class="action-title">关于系统 (v{{ appVersionStore.currentVersion }})</span>
           </div>
           <div v-if="isLocal" class="drawer-action-row dev-row" @click="showMobileMenu = false; openPinPrompt()">
             <span class="action-icon">🛠️</span>
@@ -648,6 +680,9 @@ const toggleCollapse = () => {
     <!-- 坚果云云端备份弹窗 -->
     <CloudSyncModal v-model="showCloudModal" />
     <AboutModal v-model="showAboutModal" />
+
+    <!-- 前端新版本发布升级提示弹窗 -->
+    <AppVersionModal />
 
     <!-- 首次使用量身定制专属空间引导弹窗 -->
     <UserOnboardingModal />
@@ -1318,6 +1353,76 @@ const toggleCollapse = () => {
 .route-loading-capsule.db-sync-capsule {
   border-color: rgba(16, 185, 129, 0.5);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 14px rgba(16, 185, 129, 0.35);
+}
+
+/* 前端新发布版本强提醒胶囊 */
+.route-loading-capsule.app-update-capsule {
+  pointer-events: auto;
+  cursor: pointer;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4), 0 0 16px rgba(59, 130, 246, 0.4);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.route-loading-capsule.app-update-capsule:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.5), 0 0 20px rgba(59, 130, 246, 0.6);
+}
+
+.pulse-dot-green {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: pulse-ring 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.aside-app-update-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.aside-app-update-btn:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+.aside-update-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2563eb;
+  animation: pulse-ring 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+:global(.dark) .aside-app-update-btn {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
 }
 
 .route-loading-capsule {

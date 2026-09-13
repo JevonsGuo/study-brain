@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue"
 import { api } from "../../utils/api"
 import { useUserProfileStore } from "../../stores/userProfile"
 import { useAppConfigStore } from "../../stores/appConfig"
+import { useAppVersionStore } from "../../stores/appVersion"
 import { useTimerStore } from "../../stores/timer"
 import AboutModal from "../../components/AboutModal.vue"
 import { Edit } from "@element-plus/icons-vue"
@@ -30,6 +31,7 @@ const todayStats = ref<DayStats>({ total: 0, done: 0 })
 
 const userProfile = useUserProfileStore()
 const appConfig = useAppConfigStore()
+const appVersionStore = useAppVersionStore()
 const timerStore = useTimerStore()
 const showAboutModal = ref(false)
 
@@ -338,7 +340,7 @@ onUnmounted(() => {
           <span class="footer-brand">🎯 智学大脑 · Study Brain</span>
           <span class="footer-badge">个人自律学习助手</span>
           <span class="footer-sep">·</span>
-          <span class="footer-ver">应用版本 v1.0.0</span>
+          <span class="footer-ver">应用版本 v{{ appVersionStore.currentVersion }}</span>
           <span class="footer-sep">·</span>
           <span class="footer-db">考点词库 v{{ appConfig.currentDbVersion }}</span>
           <span class="footer-sep">·</span>

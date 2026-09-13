@@ -1,5 +1,6 @@
 // @ts-ignore
 import { syncContentAndVersion } from "../scripts/copy-content-to-public.mjs"
+import { execSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -10,6 +11,70 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
 const contentDir = path.resolve(rootDir, 'content')
 const publicContentDir = path.resolve(__dirname, 'public/content')
+
+/**
+ * 前端版本元数据插件 (构建时生成 app-version.json，并向客户端注入 __APP_BUILD_INFO__)
+ */
+function appVersionPlugin(): Plugin {
+  let buildInfo: any = null
+
+  const getBuildInfo = () => {
+    const pkgPath = path.resolve(__dirname, 'package.json')
+    let version = '1.0.0'
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+      version = pkg.version || '1.0.0'
+    } catch {}
+
+    const now = new Date()
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+
+    let gitHash = ''
+    try {
+      gitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf8', cwd: rootDir }).trim()
+    } catch {
+      gitHash = Math.random().toString(36).slice(2, 8)
+    }
+
+    return {
+      version,
+      buildTime: timeStr,
+      buildTimestamp: now.getTime(),
+      gitHash
+    }
+  }
+
+  return {
+    name: 'app-version-plugin',
+    config() {
+      buildInfo = getBuildInfo()
+      const publicDir = path.resolve(__dirname, 'public')
+      if (!fs.existsSync(publicDir)) {
+        fs.mkdirSync(publicDir, { recursive: true })
+      }
+      fs.writeFileSync(
+        path.join(publicDir, 'app-version.json'),
+        JSON.stringify(buildInfo, null, 2) + '\n',
+        'utf8'
+      )
+
+      return {
+        define: {
+          __APP_BUILD_INFO__: JSON.stringify(buildInfo)
+        }
+      }
+    },
+    generateBundle() {
+      if (buildInfo) {
+        this.emitFile({
+          type: 'asset',
+          fileName: 'app-version.json',
+          source: JSON.stringify(buildInfo, null, 2) + '\n'
+        })
+      }
+    }
+  }
+}
 
 /**
  * 开发者模式公共数据直写插件
@@ -113,7 +178,7 @@ function devContentSyncPlugin(): Plugin {
 
 export default defineConfig({
   base: './',
-  plugins: [vue(), devContentSyncPlugin()],
+  plugins: [vue(), devContentSyncPlugin(), appVersionPlugin()],
   server: {
     proxy: {
       '/api/nutstore': {
