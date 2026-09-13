@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { api } from '../../utils/api'
 import { useAppConfigStore } from '../../stores/appConfig'
-import { subjectEmojis } from '../../utils/subjects'
+import { useUserProfileStore } from '../../stores/userProfile'
+import {
+  subjectEmojis,
+  MANDATORY_SUBJECTS,
+  ALL_SUBJECTS
+} from '../../utils/subjects'
 import { SUBJECT_METAS } from '../../utils/gaokaoTopics'
 import {
   Reading,
   Notebook,
   Right,
   RefreshRight,
-  Plus
+  Plus,
+  Check,
+  Filter
 } from '@element-plus/icons-vue'
 
 interface KnowledgePoint {
@@ -31,8 +39,60 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const appConfig = useAppConfigStore()
+const userProfile = useUserProfileStore()
 
-const subjects = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治']
+// 视图过滤模式：all (全部9科) | my3plus3 (语数英+自选3副科=6科) | electives (仅自选副科)
+export type SubjectFilterMode = 'all' | 'my3plus3' | 'electives'
+const FILTER_STORAGE_KEY = 'study_subject_filter_mode'
+const filterMode = ref<SubjectFilterMode>(
+  (localStorage.getItem(FILTER_STORAGE_KEY) as SubjectFilterMode) || 'all'
+)
+
+const setFilterMode = (mode: SubjectFilterMode) => {
+  filterMode.value = mode
+  localStorage.setItem(FILTER_STORAGE_KEY, mode)
+}
+
+// 判定科目类别
+const isMandatory = (sub: string) => MANDATORY_SUBJECTS.includes(sub)
+const isElectiveSelected = (sub: string) => userProfile.electiveSubjects.includes(sub)
+
+// 切换选考副科标记
+const toggleElectiveSubject = async (sub: string) => {
+  if (isMandatory(sub)) return
+
+  const current = [...userProfile.electiveSubjects]
+  const index = current.indexOf(sub)
+
+  if (index > -1) {
+    // 取消选中
+    current.splice(index, 1)
+    await userProfile.updateElectiveSubjects(current)
+    ElMessage.info(`已取消【${sub}】选考副科标记`)
+  } else {
+    // 选中新科目（限制 3 门）
+    if (current.length >= 3) {
+      ElMessage.warning('上海新高考为 3+3 模式（3门必考 + 3门副科），当前已选满 3 门副科。请先取消某一门再添加！')
+      return
+    }
+    current.push(sub)
+    await userProfile.updateElectiveSubjects(current)
+    ElMessage.success(`已将【${sub}】设为我的 3+3 选考副科`)
+  }
+}
+
+// 根据当前视图模式过滤要呈现的学科
+const displayedSubjects = computed(() => {
+  if (filterMode.value === 'my3plus3') {
+    const chosen = new Set(userProfile.electiveSubjects)
+    return ALL_SUBJECTS.filter(s => MANDATORY_SUBJECTS.includes(s) || chosen.has(s))
+  }
+  if (filterMode.value === 'electives') {
+    const chosen = new Set(userProfile.electiveSubjects)
+    return ALL_SUBJECTS.filter(s => chosen.has(s))
+  }
+  return ALL_SUBJECTS
+})
 
 const loading = ref(false)
 const allPoints = ref<KnowledgePoint[]>([])
@@ -76,16 +136,19 @@ watch(() => appConfig.dataVersionCounter, () => {
   fetchData(true)
 })
 
-// 统计总览
+// 依据当前视图过滤范围，动态计算看板总览
 const overallStats = computed(() => {
-  const totalPoints = allPoints.value.length
-  const masteredPoints = allPoints.value.filter(p => masteredPointIds.value.has(p.id)).length
+  const targetSubjectSet = new Set(displayedSubjects.value)
+  const scopedPoints = allPoints.value.filter(p => targetSubjectSet.has(p.subject))
+  const totalPoints = scopedPoints.length
+  const masteredPoints = scopedPoints.filter(p => masteredPointIds.value.has(p.id)).length
   const pointRate = totalPoints > 0 ? Math.round((masteredPoints / totalPoints) * 100) : 0
 
-  const totalWrong = allWrongItems.value.length
-  const unmasteredWrong = allWrongItems.value.filter(w => w.mastery_status === 'unmastered').length
-  const learningWrong = allWrongItems.value.filter(w => w.mastery_status === 'learning').length
-  const masteredWrong = allWrongItems.value.filter(w => w.mastery_status === 'mastered').length
+  const scopedWrongs = allWrongItems.value.filter(w => targetSubjectSet.has(w.subject))
+  const totalWrong = scopedWrongs.length
+  const unmasteredWrong = scopedWrongs.filter(w => w.mastery_status === 'unmastered').length
+  const learningWrong = scopedWrongs.filter(w => w.mastery_status === 'learning').length
+  const masteredWrong = scopedWrongs.filter(w => w.mastery_status === 'mastered').length
   const wrongRate = totalWrong > 0 ? Math.round((masteredWrong / totalWrong) * 100) : 0
 
   return {
@@ -169,7 +232,9 @@ onMounted(fetchData)
               <el-icon class="capsule-icon"><Reading /></el-icon>
             </div>
             <div class="capsule-info">
-              <div class="capsule-title">全科核心考点库</div>
+              <div class="capsule-title">
+                {{ filterMode === 'all' ? '全科核心考点库' : filterMode === 'my3plus3' ? '我的 3+3 核心考点库' : '自选副科考点库' }}
+              </div>
               <div class="capsule-metric-row">
                 <span class="metric-num">{{ overallStats.totalPoints }}</span>
                 <span class="metric-label">个归集考点</span>
@@ -186,7 +251,9 @@ onMounted(fetchData)
               <el-icon class="capsule-icon"><Notebook /></el-icon>
             </div>
             <div class="capsule-info">
-              <div class="capsule-title">实战错题集录</div>
+              <div class="capsule-title">
+                {{ filterMode === 'all' ? '全科实战错题集' : filterMode === 'my3plus3' ? '3+3 实战错题集' : '自选副科错题集' }}
+              </div>
               <div class="capsule-metric-row">
                 <span class="metric-num">{{ overallStats.totalWrong }}</span>
                 <span class="metric-label">道记录错题</span>
@@ -221,10 +288,72 @@ onMounted(fetchData)
       </div>
     </header>
 
-    <!-- 9 大学科双指标网格卡片墙 (3x3 布局) -->
-    <main class="subjects-grid">
+    <!-- 学科视图范围切换工具栏 -->
+    <section class="hall-filter-bar">
+      <div class="filter-switch-area">
+        <div class="filter-label">
+          <el-icon class="filter-icon"><Filter /></el-icon>
+          <span class="label-text">学科视图：</span>
+        </div>
+        <div class="filter-tabs">
+          <button
+            type="button"
+            class="filter-tab-btn"
+            :class="{ active: filterMode === 'all' }"
+            @click="setFilterMode('all')"
+          >
+            <span>全部学科</span>
+            <span class="tab-count-badge">9</span>
+          </button>
+          <button
+            type="button"
+            class="filter-tab-btn"
+            :class="{ active: filterMode === 'my3plus3' }"
+            @click="setFilterMode('my3plus3')"
+            title="上海新高考 3+3 体系：语文、数学、英语 + 3门自选副科"
+          >
+            <span class="badge-icon">🎯</span>
+            <span>我的 3+3</span>
+            <span class="tab-count-badge highlight">{{ 3 + userProfile.electiveSubjects.length }}</span>
+          </button>
+          <button
+            type="button"
+            class="filter-tab-btn"
+            :class="{ active: filterMode === 'electives' }"
+            @click="setFilterMode('electives')"
+            title="仅显示自己选择的选考副科"
+          >
+            <span class="badge-icon">⚡</span>
+            <span>仅自选副科</span>
+            <span class="tab-count-badge">{{ userProfile.electiveSubjects.length }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-status-area">
+        <div class="status-badge mandatory-badge" title="高考必考科目：语文、数学、英语（不可更改）">
+          <span class="dot mandatory-dot"></span>
+          <span class="badge-text">必考：语 · 数 · 英</span>
+        </div>
+        <div
+          class="status-badge elective-badge"
+          :class="{ 'is-complete': userProfile.electiveSubjects.length === 3 }"
+          title="上海新高考 6 门选考副科中自选 3 门"
+        >
+          <span class="dot elective-dot"></span>
+          <span class="badge-text">
+            自选副科 ({{ userProfile.electiveSubjects.length }}/3)：
+            <strong v-if="userProfile.electiveSubjects.length > 0">{{ userProfile.electiveSubjects.join(' · ') }}</strong>
+            <span v-else class="text-hint">未选（请在下方卡片点击标记）</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 学科卡片网格 (依据视图显示全部/3+3/自选副科) -->
+    <main v-if="displayedSubjects.length > 0" class="subjects-grid">
       <div
-        v-for="s in subjects"
+        v-for="s in displayedSubjects"
         :key="s"
         class="subject-card"
         :style="{
@@ -242,7 +371,30 @@ onMounted(fetchData)
             <div class="subject-info-left">
               <span class="subject-emoji">{{ subjectEmojis[s] || '📚' }}</span>
               <div class="subject-titles">
-                <h3 class="subject-name">{{ s }}</h3>
+                <div class="subject-name-row">
+                  <h3 class="subject-name">{{ s }}</h3>
+                  <!-- 必考科目只读徽章 -->
+                  <span
+                    v-if="isMandatory(s)"
+                    class="subject-kind-pill mandatory-pill"
+                    title="上海新高考 3+3 必考主科（全员必修）"
+                  >
+                    必考
+                  </span>
+                  <!-- 选考副科交互按钮 -->
+                  <button
+                    v-else
+                    type="button"
+                    class="subject-kind-pill elective-pill"
+                    :class="{ 'is-selected': isElectiveSelected(s) }"
+                    @click.stop="toggleElectiveSubject(s)"
+                    :title="isElectiveSelected(s) ? '点击取消选考标记' : '点击设为我的 3+3 选考副科'"
+                  >
+                    <el-icon v-if="isElectiveSelected(s)" class="pill-icon"><Check /></el-icon>
+                    <el-icon v-else class="pill-icon"><Plus /></el-icon>
+                    <span>{{ isElectiveSelected(s) ? '我的选科' : '设为选科' }}</span>
+                  </button>
+                </div>
                 <span class="subject-edition">
                   {{ SUBJECT_METAS[s]?.edition || '高考标准大纲' }}
                 </span>
@@ -337,6 +489,18 @@ onMounted(fetchData)
         </div>
       </div>
     </main>
+
+    <!-- 副科为空时的引导占位箱 -->
+    <div v-else class="hall-empty-box">
+      <div class="empty-emoji">📌</div>
+      <h3 class="empty-title">暂未标记自选副科</h3>
+      <p class="empty-desc">
+        上海新高考为 3+3 模式（语数英为必考科目，其余 6 门自选 3 门副科）。请切换到“全部学科”，在物理、化学、生物、历史、地理、政治卡片上点击【设为选科】进行标记。
+      </p>
+      <el-button type="primary" size="default" @click="setFilterMode('all')">
+        切换到全部学科开始标记
+      </el-button>
+    </div>
   </div>
 </template>
 
@@ -613,6 +777,14 @@ onMounted(fetchData)
 .subject-titles {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+}
+
+.subject-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .subject-name {
@@ -620,6 +792,62 @@ onMounted(fetchData)
   font-size: 18px;
   font-weight: 700;
   color: var(--text-main, #0f172a);
+}
+
+/* 必考与选考类别徽章 */
+.subject-kind-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 8px;
+  border-radius: 6px;
+  user-select: none;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.mandatory-pill {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border-color: rgba(37, 99, 235, 0.22);
+  cursor: default;
+}
+
+.elective-pill {
+  cursor: pointer;
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+  color: #64748b;
+  outline: none;
+}
+
+.elective-pill:hover {
+  border-color: #3b82f6;
+  color: #2563eb;
+  background: #eff6ff;
+  transform: translateY(-1px);
+}
+
+.elective-pill.is-selected {
+  border-style: solid;
+  border-color: #0284c7;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.15);
+}
+
+.elective-pill.is-selected:hover {
+  background: linear-gradient(135deg, #bae6fd 0%, #7dd3fc 100%);
+  border-color: #0369a1;
+  color: #075985;
+}
+
+.pill-icon {
+  font-size: 11px;
 }
 
 .subject-edition {
@@ -634,6 +862,198 @@ onMounted(fetchData)
   padding: 2px 8px;
   border-radius: 6px;
   white-space: nowrap;
+}
+
+/* 学科视图范围切换工具栏 */
+.hall-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  padding: 10px 18px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  flex-wrap: wrap;
+}
+
+.filter-switch-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main, #1e293b);
+}
+
+.filter-icon {
+  color: #3b82f6;
+  font-size: 15px;
+}
+
+.filter-tabs {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-page, #f1f5f9);
+  padding: 3px;
+  border-radius: 10px;
+  gap: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.filter-tab-btn {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.filter-tab-btn:hover {
+  color: var(--text-main, #0f172a);
+}
+
+.filter-tab-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+  font-weight: 700;
+}
+
+.filter-tab-btn.active .tab-count-badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.tab-count-badge.highlight {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.filter-tab-btn.active .tab-count-badge.highlight {
+  background: #fde68a;
+  color: #92400e;
+}
+
+.filter-status-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px solid transparent;
+}
+
+.mandatory-badge {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+.mandatory-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2563eb;
+}
+
+.elective-badge {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+.elective-badge.is-complete {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.elective-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+.elective-badge.is-complete .elective-dot {
+  background: #10b981;
+}
+
+.text-hint {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* 空状态占位箱 */
+.hall-empty-box {
+  background: var(--bg-card, #ffffff);
+  border: 2px dashed var(--border-color, #cbd5e1);
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  max-width: 600px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-emoji {
+  font-size: 40px;
+}
+
+.empty-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.empty-desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-muted, #64748b);
+  line-height: 1.6;
+  max-width: 480px;
 }
 
 /* 双指标面板 */
@@ -872,6 +1292,83 @@ onMounted(fetchData)
   color: #94a3b8;
 }
 
+:global(.dark) .hall-filter-bar {
+  background: #131b2e;
+  border-color: #1e293b;
+}
+
+:global(.dark) .filter-label {
+  color: #f8fafc;
+}
+
+:global(.dark) .filter-tabs {
+  background: #0b1120;
+}
+
+:global(.dark) .filter-tab-btn {
+  color: #94a3b8;
+}
+
+:global(.dark) .filter-tab-btn:hover {
+  color: #f8fafc;
+}
+
+:global(.dark) .filter-tab-btn.active {
+  background: #1e293b;
+  color: #60a5fa;
+}
+
+:global(.dark) .mandatory-badge {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+:global(.dark) .mandatory-pill {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+:global(.dark) .elective-badge {
+  background: #0b1120;
+  border-color: #1e293b;
+  color: #cbd5e1;
+}
+
+:global(.dark) .elective-badge.is-complete {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+:global(.dark) .elective-pill {
+  background: #0b1120;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+:global(.dark) .elective-pill:hover {
+  background: #1e293b;
+  color: #60a5fa;
+  border-color: #3b82f6;
+}
+
+:global(.dark) .elective-pill.is-selected {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25) 0%, rgba(14, 165, 233, 0.25) 100%);
+  border-color: #0284c7;
+  color: #38bdf8;
+}
+
+:global(.dark) .hall-empty-box {
+  background: #131b2e;
+  border-color: #334155;
+}
+
+:global(.dark) .empty-title {
+  color: #f8fafc;
+}
+
 /* 首次同步加载条美化 */
 .hall-sync-banner {
   margin-bottom: 20px;
@@ -1003,6 +1500,42 @@ onMounted(fetchData)
 
   .subjects-grid {
     gap: 12px !important;
+  }
+
+  .hall-filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  .filter-switch-area {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .filter-tabs {
+    width: 100% !important;
+    display: flex !important;
+  }
+
+  .filter-tab-btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 6px 4px !important;
+    font-size: 11.5px !important;
+  }
+
+  .filter-status-area {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .status-badge {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
   }
 }
 

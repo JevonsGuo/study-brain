@@ -13,10 +13,14 @@ export interface UserProfile {
   grade_level: string
   target_exam: string
   custom_quote: string
+  elective_subjects?: string[]
   created_at?: string
   updated_at?: string
   has_configured: boolean
 }
+
+const ELECTIVE_SUBJECTS_KEY = 'study_elective_subjects'
+const DEFAULT_ELECTIVES = ['物理', '化学', '生物']
 
 function loadCachedProfile(): Partial<UserProfile> {
   try {
@@ -38,6 +42,21 @@ export const useUserProfileStore = defineStore('userProfile', () => {
   const gradeLevel = ref(cached.grade_level || '高三')
   const targetExam = ref(cached.target_exam || '高考')
   const customQuote = ref(cached.custom_quote || '')
+  
+  // 选考副科（6选3），默认物化生
+  const electiveSubjects = ref<string[]>(
+    Array.isArray(cached.elective_subjects) && cached.elective_subjects.length > 0
+      ? cached.elective_subjects
+      : (() => {
+          try {
+            const raw = localStorage.getItem(ELECTIVE_SUBJECTS_KEY)
+            return raw ? JSON.parse(raw) : DEFAULT_ELECTIVES
+          } catch {
+            return DEFAULT_ELECTIVES
+          }
+        })()
+  )
+
   const hasConfigured = ref(cached.has_configured ?? Boolean(cached.user_name && cached.user_name.trim()))
   const isLoaded = ref(Boolean(cached.user_name))
 
@@ -87,6 +106,9 @@ export const useUserProfileStore = defineStore('userProfile', () => {
           gradeLevel.value = data.grade_level || gradeLevel.value || '高三'
           targetExam.value = data.target_exam || targetExam.value || '高考'
           customQuote.value = data.custom_quote || customQuote.value || ''
+          if (Array.isArray(data.elective_subjects) && data.elective_subjects.length > 0) {
+            electiveSubjects.value = [...data.elective_subjects]
+          }
           hasConfigured.value = data.has_configured || Boolean(userName.value.trim())
         }
 
@@ -99,8 +121,10 @@ export const useUserProfileStore = defineStore('userProfile', () => {
           grade_level: gradeLevel.value,
           target_exam: targetExam.value,
           custom_quote: customQuote.value,
+          elective_subjects: electiveSubjects.value,
           has_configured: hasConfigured.value
         }))
+        localStorage.setItem(ELECTIVE_SUBJECTS_KEY, JSON.stringify(electiveSubjects.value))
 
         // 仅在确认真的未配置名字时，弹出首次引导框
         if (!hasConfigured.value && !userName.value.trim()) {
@@ -136,11 +160,13 @@ export const useUserProfileStore = defineStore('userProfile', () => {
         grade_level: payload.grade_level || '高三冲刺',
         target_exam: payload.target_exam || '高考',
         custom_quote: payload.custom_quote?.trim() || '',
+        elective_subjects: electiveSubjects.value,
         has_configured: Boolean(trimmedName)
       }
 
       // 1. 同步毫秒级直接存入 LocalStorage，确保下次冷启动立即可用
       localStorage.setItem(USER_PROFILE_CACHE_KEY, JSON.stringify(profileData))
+      localStorage.setItem(ELECTIVE_SUBJECTS_KEY, JSON.stringify(electiveSubjects.value))
 
       userName.value = profileData.user_name
       appCustomTitle.value = profileData.app_title
@@ -166,6 +192,31 @@ export const useUserProfileStore = defineStore('userProfile', () => {
     }
   }
 
+  // 快捷更新选考副科
+  const updateElectiveSubjects = async (subs: string[]) => {
+    electiveSubjects.value = [...subs]
+    localStorage.setItem(ELECTIVE_SUBJECTS_KEY, JSON.stringify(electiveSubjects.value))
+    
+    // 同步更新 profile 缓存
+    const current = loadCachedProfile()
+    current.elective_subjects = electiveSubjects.value
+    localStorage.setItem(USER_PROFILE_CACHE_KEY, JSON.stringify(current))
+
+    try {
+      await api.put('/user-profile', {
+        user_name: userName.value,
+        app_title: appCustomTitle.value,
+        grade_level: gradeLevel.value,
+        target_exam: targetExam.value,
+        custom_quote: customQuote.value,
+        elective_subjects: electiveSubjects.value,
+        has_configured: hasConfigured.value
+      })
+    } catch (err) {
+      console.warn('Failed to persist elective subjects', err)
+    }
+  }
+
   return {
     userName,
     appCustomTitle,
@@ -179,6 +230,8 @@ export const useUserProfileStore = defineStore('userProfile', () => {
     appTitle,
     greetingName,
     gaokaoTarget,
+    electiveSubjects,
+    updateElectiveSubjects,
     fetchProfile,
     saveProfile,
     syncDocumentTitle

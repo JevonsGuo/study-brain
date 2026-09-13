@@ -14,6 +14,7 @@ export interface LocalUserProfile {
   grade_level: string
   target_exam: string
   custom_quote: string
+  elective_subjects?: string[]
   has_configured: boolean
   updated_at?: string
 }
@@ -310,6 +311,7 @@ class LocalDatabase {
       grade_level: '高三',
       target_exam: '高考',
       custom_quote: '',
+      elective_subjects: ['物理', '化学', '生物'],
       has_configured: false
     }
   }
@@ -320,7 +322,8 @@ class LocalDatabase {
       ...existing,
       ...payload,
       id: 1,
-      has_configured: Boolean(payload.user_name && payload.user_name.trim()),
+      elective_subjects: payload.elective_subjects !== undefined ? payload.elective_subjects : (existing.elective_subjects || ['物理', '化学', '生物']),
+      has_configured: payload.has_configured !== undefined ? payload.has_configured : Boolean(payload.user_name && payload.user_name.trim()),
       updated_at: new Date().toISOString()
     }
     await this.putItem('user_profile', updated)
