@@ -12,6 +12,7 @@ import {
   Compass,
   RefreshRight
 } from '@element-plus/icons-vue'
+import { subjectEmojis } from '../../utils/subjects'
 
 interface CuratedResource {
   id: string
@@ -111,11 +112,11 @@ const currentCategories = computed(() => {
   }
 
   if (activeTag.value === 'subject_tools') {
-    const subjects = ['全部学科', '数学', '物理', '化学', '生物', '英语', '语文', '政治', '历史', '地理']
+    const subjects = ['全部学科', '语文', '数学', '英语', '物理', '化学', '生物', '政治', '历史', '地理']
     return subjects.map(s => ({
       key: s === '全部学科' ? 'all' : s,
       name: s,
-      icon: s === '全部学科' ? '🌟' : '📐'
+      icon: s === '全部学科' ? '🌟' : (subjectEmojis[s] || '📚')
     }))
   }
 
@@ -194,7 +195,7 @@ const filteredResources = computed(() => {
       tag_name: '高考学科提分神器',
       category: st.subject,
       category_name: `${st.subject}学科神器`,
-      icon: st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬',
+      icon: subjectEmojis[st.subject] || (st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬'),
       domain: new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', ''),
       url: st.url,
       badge: `${st.subject} · ${st.category === 'tool' ? '专属神器' : st.category === 'practice' ? '精选真题' : '名师课程'}`,
@@ -216,7 +217,7 @@ const filteredResources = computed(() => {
       tag_name: '高考学科提分神器',
       category: st.subject,
       category_name: `${st.subject}学科神器`,
-      icon: st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬',
+      icon: subjectEmojis[st.subject] || (st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬'),
       domain: new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', ''),
       url: st.url,
       badge: `${st.subject} · ${st.category === 'tool' ? '专属神器' : st.category === 'practice' ? '精选真题' : '名师课程'}`,

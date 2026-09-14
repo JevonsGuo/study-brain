@@ -117,7 +117,7 @@ const sendMail = () => {
         <div class="spec-card">
           <div class="spec-header">
             <el-icon class="spec-icon"><Reading /></el-icon>
-            <span class="spec-name">公共题库与词库</span>
+            <span class="spec-name">公共学习资源</span>
           </div>
           <div class="spec-val">
             <span class="spec-badge green">v{{ appConfig.currentDbVersion }}</span>
@@ -125,7 +125,7 @@ const sendMail = () => {
               type="button"
               class="spec-refresh-btn"
               @click="appConfig.checkDatabaseVersion(true)"
-              title="检查题库是否有新版本"
+              title="检查学习资源是否有新版本"
             >
               <el-icon><RefreshRight /></el-icon> 检查更新
             </button>

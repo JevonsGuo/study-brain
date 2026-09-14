@@ -8,6 +8,7 @@ import { ref, h } from 'vue'
 import { api, localDB } from '../utils/api'
 import type { DbSyncState } from '../utils/localDatabase'
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+import { useAppVersionStore } from './appVersion'
 
 const DB_VERSION_KEY = 'study_database_version'
 
@@ -69,16 +70,16 @@ export const useAppConfigStore = defineStore('appConfig', () => {
           dbSyncStatus.value = 'latest'
           dbSyncMessage.value = `已是最新 (v${meta.database_version})`
           if (manual) {
-            ElMessage.success(`当前数据库已是最新版本：v${currentDbVersion.value}`)
+            ElMessage.success(`当前资源已是最新版本：v${currentDbVersion.value}`)
           }
           return
         }
 
         if (meta.database_version !== saved) {
           // 发现新版本：自动静默热更新！
-          console.log(`[DatabaseSync] 发现公共数据新版本: v${meta.database_version} (本地原版本: v${saved})`)
+          console.log(`[DatabaseSync] 发现公共资源新版本: v${meta.database_version} (本地原版本: v${saved})`)
           dbSyncStatus.value = 'syncing'
-          dbSyncMessage.value = `正在自动同步 v${meta.database_version}...`
+          dbSyncMessage.value = `正在自动同步资源 v${meta.database_version}...`
 
           // 1. 清空本地公共数据缓存，保证下一次请求获取全量最新数据
           localDB.invalidatePublicContentCache()
@@ -93,12 +94,25 @@ export const useAppConfigStore = defineStore('appConfig', () => {
             window.dispatchEvent(new CustomEvent('study-brain-data-updated', { detail: meta }))
           }
 
-          // 4. 显示非阻塞的明显右下角更新提醒（附带详细内容摘要与刷新按钮）
+          // 核心协同：如果同时存在前端应用版本更新，优先展示版本更新弹窗，抑制资源更新通知打扰
+          const appVersionStore = useAppVersionStore()
+          if (!appVersionStore.hasUpdate) {
+            await appVersionStore.checkAppUpdate(true)
+          }
+
+          if (appVersionStore.hasUpdate || appVersionStore.showUpdateModal) {
+            console.log('[DatabaseSync] 检测到前端应用同时有新版本，已就地静默更新资源，抑制独立资源通知')
+            dbSyncStatus.value = 'latest'
+            dbSyncMessage.value = `已更新至 v${meta.database_version}`
+            return
+          }
+
+          // 4. 仅在纯资源独立更新（前端页面无新版本）时，才显示轻量右下角资源更新提醒
           const statsInfo = meta.stats?.knowledge_points ? `全科考点增至 ${meta.stats.knowledge_points} 个` : ''
-          const descText = meta.description || (statsInfo ? `${statsInfo}，公共题库与词库已就地同步生效。` : `已自动静默同步至最新版本 (v${meta.database_version})！`)
+          const descText = meta.description || (statsInfo ? `${statsInfo}，最新学习资源已就地同步生效。` : `已自动静默同步至最新资源版本 (v${meta.database_version})！`)
 
           ElNotification({
-            title: '✨ 题库与词库已自动更新',
+            title: '✨ 资源更新',
             message: h('div', { class: 'db-update-notif-body', style: 'display: flex; flex-direction: column; gap: 8px;' }, [
               h('div', { style: 'font-size: 13px; color: #334155; line-height: 1.5;' }, descText),
               h('div', { style: 'display: flex; align-items: center; justify-content: space-between; margin-top: 4px;' }, [
@@ -112,7 +126,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
               ])
             ]),
             type: 'success',
-            duration: 6500,
+            duration: 5000,
             position: 'bottom-right'
           })
 
@@ -124,7 +138,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
           dbSyncStatus.value = 'latest'
           dbSyncMessage.value = `已是最新 (v${currentDbVersion.value})`
           if (manual) {
-            ElMessage.success(`当前数据库已是最新版本：v${currentDbVersion.value}`)
+            ElMessage.success(`当前资源已是最新版本：v${currentDbVersion.value}`)
           }
         }
       }

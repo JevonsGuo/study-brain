@@ -309,11 +309,11 @@ const toggleCollapse = () => {
       </div>
     </transition>
 
-    <!-- 公共数据静默同步感知微胶囊 (无感后台更新，仅在顶部轻量告知) -->
+    <!-- 公共资源静默同步感知微胶囊 (无感后台更新，仅在顶部轻量告知) -->
     <transition name="capsule-drop">
       <div v-if="appConfig.dbSyncStatus === 'syncing'" class="route-loading-capsule db-sync-capsule">
         <span class="capsule-spin">🔄</span>
-        <span>正在自动同步最新公共题库与词库...</span>
+        <span>正在自动同步最新资源...</span>
       </div>
     </transition>
 
@@ -652,7 +652,7 @@ const toggleCollapse = () => {
     <!-- 数据库版本更新提醒弹窗 -->
     <el-dialog
       v-model="appConfig.showUpdateModal"
-      title="数据库更新提醒"
+      title="资源更新提醒"
       width="460px"
       :show-close="false"
       class="db-update-dialog"
@@ -661,13 +661,13 @@ const toggleCollapse = () => {
         <div class="update-icon-box">📦</div>
         <div class="update-text-box">
           <p class="update-version-title">
-            检测到最新的数据库版本：<b>{{ appConfig.remoteVersionMeta?.database_version }}</b>
+            检测到最新的资源版本：<b>{{ appConfig.remoteVersionMeta?.database_version }}</b>
           </p>
           <p class="update-current-version">
             当前本地版本：{{ appConfig.currentDbVersion }}
           </p>
           <div class="update-safe-tip">
-            💡 说明：本次更新包含最新考点勘误与微课精讲。更新<b>不会影响</b>您的任何错题、背诵进度与个人随堂笔记。
+            💡 说明：本次更新包含最新学习资源与考点精讲。更新<b>不会影响</b>您的任何错题、背诵进度与个人随堂笔记。
           </div>
         </div>
       </div>
