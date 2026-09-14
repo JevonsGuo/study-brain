@@ -64,16 +64,18 @@ export function saveSyncConfig(config: Partial<SyncConfig>): void {
 
 /**
  * 智能解析同步后端接口基址：
- * - 在 Cloudflare Pages (study.gyfolk.com) 或本地开发环境中直接使用相对路径 /api/sync
- * - 在 GitHub Pages (github.io) 或其他外部纯静态环境中，无缝路由至 Cloudflare Pages 边缘服务
+ * - 本地开发环境 (localhost) 与 Cloudflare Pages (*.pages.dev 或绑定的自定义域名) 直接使用同源相对路径 /api/sync
+ * - 支持通过 localStorage 自定义独立中继服务
  */
 function getSyncApiBase(): string {
   if (typeof window === 'undefined') return ''
-  const host = window.location.hostname
-  if (host === 'localhost' || host === '127.0.0.1' || host.includes('gyfolk.com')) {
-    return ''
+  const custom = localStorage.getItem('study_sync_custom_server')
+  if (custom && custom.trim()) {
+    return custom.trim().replace(/\/+$/, '')
   }
-  return 'https://study.gyfolk.com'
+
+  // 默认同源相对路径（无论是本地开发还是已部署在 Cloudflare Pages）
+  return ''
 }
 
 /**
