@@ -30,7 +30,7 @@ const emit = defineEmits<{
 }>()
 
 const passcode = ref('')
-const autoSyncEnabled = ref(false)
+const autoSyncEnabled = ref(true)
 const lastSyncTime = ref('')
 const lastStats = ref<SyncStats | null>(null)
 const isPushing = ref(false)
@@ -58,7 +58,7 @@ const handlePasscodeChange = () => {
 const handleAutoSyncChange = () => {
   saveSyncConfig({ autoSync: autoSyncEnabled.value })
   ElMessage.success(
-    autoSyncEnabled.value ? '已开启后台自动静默同步 (每30分钟)' : '已关闭后台自动同步'
+    autoSyncEnabled.value ? '已开启后台自动静默同步 (每5分钟)' : '已关闭后台自动同步'
   )
 }
 
@@ -275,7 +275,7 @@ const handleFileImport = async (e: Event) => {
       <!-- 自动同步选项 -->
       <div class="auto-sync-box">
         <el-checkbox v-model="autoSyncEnabled" @change="handleAutoSyncChange">
-          <span class="auto-sync-text">⏱️ 后台定时自动静默同步 (每 30 分钟)</span>
+          <span class="auto-sync-text">⏱️ 后台定时自动静默同步 (每 5 分钟)</span>
         </el-checkbox>
         <span class="auto-sync-sub">（在有学习进度变动时自动加密并同步最新备份）</span>
       </div>

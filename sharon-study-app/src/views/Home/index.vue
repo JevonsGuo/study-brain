@@ -921,48 +921,9 @@ onUnmounted(() => {
     font-size: 14px !important;
   }
 
-  /* 手机端两列紧凑模块卡片 */
+  /* 手机端隐藏主功能模块入口方块（已由底部快捷导航栏完全承载：计划/学科/单词/专注） */
   .module-cards {
-    margin: 0 -6px !important;
-  }
-
-  .module-cards .el-col {
-    padding: 0 6px !important;
-    margin-bottom: 12px;
-  }
-
-  .module-card {
-    padding: 14px 10px !important;
-    border-radius: 14px !important;
-  }
-
-  .module-card :deep(.el-card__body) {
-    padding: 0 !important;
-  }
-
-  .module-icon {
-    width: 44px !important;
-    height: 44px !important;
-    border-radius: 12px !important;
-    margin-bottom: 8px !important;
-  }
-
-  .module-icon .el-icon {
-    font-size: 22px !important;
-  }
-
-  .module-card h3 {
-    font-size: 14px !important;
-    margin-bottom: 4px !important;
-  }
-
-  .module-card p {
-    font-size: 11px !important;
-    line-height: 1.3 !important;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    display: none !important;
   }
 
   /* 手机端精简页脚：仅保留单行紧凑版权 */

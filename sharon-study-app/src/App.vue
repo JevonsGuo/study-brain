@@ -202,7 +202,7 @@ onMounted(() => {
   }
   applyTheme(isDark.value)
 
-  // 端到端加密 30 分钟后台定时自动云端备份机制
+  // 端到端加密 5 分钟后台定时自动云端备份机制
   setInterval(async () => {
     const syncCfg = getSyncConfig()
     if (syncCfg.autoSync && syncCfg.passcode) {
@@ -212,7 +212,7 @@ onMounted(() => {
         // 静默运行，不打扰自习状态
       }
     }
-  }, 30 * 60 * 1000)
+  }, 5 * 60 * 1000)
 
   // 启动前端新发布版本生命周期自动检测
   appVersionStore.startAutoCheck()

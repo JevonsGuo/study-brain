@@ -30,11 +30,13 @@ export interface SyncConfig {
 
 export function getSyncConfig(): SyncConfig {
   if (typeof window === 'undefined') {
-    return { passcode: '', autoSync: false, lastSyncTime: '', lastStats: null }
+    return { passcode: '', autoSync: true, lastSyncTime: '', lastStats: null }
   }
 
   const passcode = localStorage.getItem(SYNC_STORAGE_KEYS.PASSCODE) || ''
-  const autoSync = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC) === 'true'
+  const storedAutoSync = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC)
+  // 默认开启后台自动同步（用户未手动关闭时默认为 true）
+  const autoSync = storedAutoSync === null ? true : storedAutoSync === 'true'
   const lastSyncTime = localStorage.getItem(SYNC_STORAGE_KEYS.LAST_SYNC) || ''
   let lastStats: SyncStats | null = null
   try {
