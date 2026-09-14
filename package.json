@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run dev --prefix sharon-study-app",
-    "build": "npm run build --prefix sharon-study-app",
+    "build": "cd sharon-study-app && npm install && npm run build",
     "preview": "npm run preview --prefix sharon-study-app",
     "deploy:cf": "npm run build && npx wrangler pages deploy sharon-study-app/dist --project-name=study-brain",
     "bump": "node scripts/bump-version.mjs patch",
