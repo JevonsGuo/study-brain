@@ -76,14 +76,18 @@ export const useAppVersionStore = defineStore('appVersion', () => {
       if (remote && remote.buildTimestamp) {
         lastCheckedAt.value = now
 
-        // 核心防护 1：比对用户是否已确认升级过此版本，防止点击“确定升级”刷新后循环反复弹出
+        // 核心防护 1：比对用户是否已确认升级过此完全相同的版本，防止点击“确定升级”刷新后循环反复弹出
         const lastUpgradedTs = Number(localStorage.getItem(LAST_UPGRADED_TS_KEY) || 0)
         const lastUpgradedHash = localStorage.getItem(LAST_UPGRADED_HASH_KEY) || ''
 
+        // 只有当本地已经升级到或高于远端版本，且构建时间戳一致时才视作已升级；
+        // 若远端版本号不同，或远端时间戳更新，一律视为新版本并提示升级
         const isAlreadyUpgraded =
           !forceShow &&
-          ((lastUpgradedTs > 0 && remote.buildTimestamp <= lastUpgradedTs) ||
-           (lastUpgradedHash && remote.gitHash === lastUpgradedHash))
+          remote.version === currentVersion.value &&
+          lastUpgradedTs > 0 &&
+          remote.buildTimestamp <= lastUpgradedTs &&
+          (!lastUpgradedHash || remote.gitHash === lastUpgradedHash)
 
         if (isAlreadyUpgraded) {
           hasUpdate.value = false
