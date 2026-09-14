@@ -24,8 +24,8 @@
   - **Cloudflare Pages**：全球 Anycast 边缘 CDN 加速 + 专有 Worker 反代
   - **Google Cloud Platform (GCP)**：生产级 Nginx 静态优化与 Gzip 深度压缩
   - **自建 Ubuntu 服务器**：自动化拉取、生产备份与热重载
-- 🔄 **坚果云 WebDAV 跨设备云端备份**：
-  支持直连坚果云 WebDAV（自动突破浏览器 CORS 限制），后台每 30 分钟静默同步至 `/我的坚果云/StudyBrain/backup.json`；同时支持全量学习数据一键导出与导入 JSON 文件。
+- 🔄 **端到端加密极速跨设备云端同步 (AES-256-GCM)**：
+  无需下载任何 App、无需注册任何第三方网盘。浏览器端原生高强度对称加密（PBKDF2 + AES-256-GCM），零知识存储；凭同步口令跨手机/平板/电脑秒级漫游，后台每 30 分钟静默同步；同时支持全量学习数据一键导出与导入离线 JSON 文件。
 - 🎨 **学生量身定制系统**：
   新用户首次访问智能呼出入驻向导，输入学生昵称、学段与励志座右铭，全站动态生成专属空间名称（如“子涵 的学习大脑”），随处支持一键 ✏️ 即时修改。
 - 📚 **权威分层学科与词汇体系**：
@@ -67,7 +67,7 @@ study-brain/
 │   │   │   └── textbookCatalog.ts # 沪教版等高中教材目录与章节索引
 │   │   ├── components/       # 通用组件 (CloudSyncModal, UserOnboardingModal, UserProfileEditModal 等)
 │   │   └── App.vue           # 响应式侧边栏布局、全局主题切换与自动备份调度
-│   ├── functions/api/nutstore/ # Cloudflare Pages Functions (坚果云 WebDAV 跨域反代)
+│   ├── functions/api/sync/   # Cloudflare Pages Functions (端到端加密同步边缘接口)
 │   ├── public/               # 静态资源 (音频、高清书皮封面、favicon)
 │   └── vite.config.ts        # Vite 编译配置 (base: './' 兼容多级子路径)
 ├── content/                  # 内容数据源 (内容即代码，入 git)
@@ -163,7 +163,7 @@ study-brain/
    - **构建命令**：`cd sharon-study-app && npm run build`
    - **输出目录**：`sharon-study-app/dist`
    - **环境变量**：添加 `NODE_VERSION: 20`
-4. 点击部署，获得全球边缘加速并自动激活坚果云 WebDAV 反代能力。
+4. 点击部署，获得全球边缘加速并自动激活无服务器端到端同步边缘能力。
 
 #### 3. 部署到 Google Cloud VM (GCP Nginx)
 1. 运行 `npm run build`，将生成的 `sharon-study-app/dist` 上传至 GCP 服务器目录 `/var/www/study-brain/dist`；

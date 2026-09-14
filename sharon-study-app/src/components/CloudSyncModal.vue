@@ -1,8 +1,25 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Download, Upload, Key, Document, InfoFilled, FolderOpened } from '@element-plus/icons-vue'
+import {
+  Download,
+  Upload,
+  Key,
+  Document,
+  FolderOpened,
+  CopyDocument,
+  RefreshRight,
+  Lock
+} from '@element-plus/icons-vue'
 import { localDB } from '../utils/localDatabase'
+import {
+  getSyncConfig,
+  saveSyncConfig,
+  pushCloudBackup,
+  pullCloudBackup,
+  generateRandomPasscode,
+  type SyncStats
+} from '../utils/cloudSync'
 
 const props = defineProps<{
   modelValue: boolean
@@ -12,134 +29,107 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
 
-const nutstoreEmail = ref('')
-const nutstorePassword = ref('')
+const passcode = ref('')
 const autoSyncEnabled = ref(false)
-const isTesting = ref(false)
-const isBackingUp = ref(false)
-const isRestoring = ref(false)
 const lastSyncTime = ref('')
+const lastStats = ref<SyncStats | null>(null)
+const isPushing = ref(false)
+const isPulling = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
-const STORAGE_EMAIL_KEY = 'study_nutstore_email'
-const STORAGE_PWD_KEY = 'study_nutstore_pwd'
-const STORAGE_SYNC_KEY = 'study_nutstore_last_sync'
-const STORAGE_AUTO_SYNC_KEY = 'study_nutstore_auto_sync'
-
 onMounted(() => {
-  nutstoreEmail.value = localStorage.getItem(STORAGE_EMAIL_KEY) || localStorage.getItem('sharon_nutstore_email') || ''
-  nutstorePassword.value = localStorage.getItem(STORAGE_PWD_KEY) || localStorage.getItem('sharon_nutstore_pwd') || ''
-  lastSyncTime.value = localStorage.getItem(STORAGE_SYNC_KEY) || localStorage.getItem('sharon_nutstore_last_sync') || ''
-  autoSyncEnabled.value = localStorage.getItem(STORAGE_AUTO_SYNC_KEY) === 'true'
+  const cfg = getSyncConfig()
+  if (cfg.passcode) {
+    passcode.value = cfg.passcode
+  } else {
+    // 首次进入自动生成一个口令，开箱即用
+    passcode.value = generateRandomPasscode()
+    saveSyncConfig({ passcode: passcode.value })
+  }
+  autoSyncEnabled.value = cfg.autoSync
+  lastSyncTime.value = cfg.lastSyncTime
+  lastStats.value = cfg.lastStats || null
 })
 
-const saveNutstoreConfig = () => {
-  localStorage.setItem(STORAGE_EMAIL_KEY, nutstoreEmail.value.trim())
-  localStorage.setItem(STORAGE_PWD_KEY, nutstorePassword.value.trim())
-  localStorage.setItem(STORAGE_AUTO_SYNC_KEY, autoSyncEnabled.value ? 'true' : 'false')
+const handlePasscodeChange = () => {
+  saveSyncConfig({ passcode: passcode.value.trim() })
 }
 
-const testConnection = async () => {
-  if (!nutstoreEmail.value || !nutstorePassword.value) {
-    ElMessage.warning('请先填写坚果云账号与应用授权密码')
-    return
-  }
-  isTesting.value = true
-  saveNutstoreConfig()
-  try {
-    const authHeader = 'Basic ' + btoa(`${nutstoreEmail.value.trim()}:${nutstorePassword.value.trim()}`)
-    const res = await fetch('/api/nutstore/', {
-      method: 'PROPFIND',
-      headers: { Authorization: authHeader, Depth: '0' }
-    }).catch(() => null)
-
-    if (res && (res.ok || res.status === 207)) {
-      ElMessage.success('坚果云 WebDAV 连接成功！已检测到云端目录')
-    } else {
-      ElMessage.success('坚果云 WebDAV 凭据格式有效，已安全保存在本地')
-    }
-  } catch {
-    ElMessage.error('连接失败，请检查账号或应用密码是否正确')
-  } finally {
-    isTesting.value = false
-  }
+const handleAutoSyncChange = () => {
+  saveSyncConfig({ autoSync: autoSyncEnabled.value })
+  ElMessage.success(
+    autoSyncEnabled.value ? '已开启后台自动静默同步 (每30分钟)' : '已关闭后台自动同步'
+  )
 }
 
-const performBackup = async (silent = false) => {
-  if (!nutstoreEmail.value || !nutstorePassword.value) {
-    if (!silent) ElMessage.warning('请先配置坚果云账号与应用密码')
-    return
-  }
-  isBackingUp.value = true
-  saveNutstoreConfig()
-  try {
-    const authHeader = 'Basic ' + btoa(`${nutstoreEmail.value.trim()}:${nutstorePassword.value.trim()}`)
-    const payload = await localDB.exportAllUserData()
-
-    // 确保 StudyBrain 目录存在
-    await fetch('/api/nutstore/我的坚果云/StudyBrain/', {
-      method: 'MKCOL',
-      headers: { Authorization: authHeader }
-    }).catch(() => {})
-
-    const res = await fetch('/api/nutstore/我的坚果云/StudyBrain/backup.json', {
-      method: 'PUT',
-      headers: {
-        Authorization: authHeader,
-        'Content-Type': 'application/json; charset=utf-8'
-      },
-      body: JSON.stringify(payload, null, 2)
-    })
-
-    if (res.ok || res.status === 201 || res.status === 204) {
-      const nowStr = new Date().toLocaleString()
-      lastSyncTime.value = nowStr
-      localStorage.setItem(STORAGE_SYNC_KEY, nowStr)
-      if (!silent) {
-        ElMessage.success('已将当前完整数据库安全备份至坚果云：/我的坚果云/StudyBrain/backup.json')
-      }
-    } else {
-      throw new Error(`服务器响应状态 ${res.status}`)
-    }
-  } catch (err: any) {
-    if (!silent) {
-      ElMessage.warning(
-        '云端同步提示：如当前运行在 GitHub Pages 纯静态环境，受浏览器跨域保护限制无法直连 WebDAV。推荐使用下方的【📦 导出本地数据备份文件】或部署至 Cloudflare / Google Cloud 开启自动云端同步！'
+const handleGenerateNewCode = async () => {
+  if (passcode.value) {
+    try {
+      await ElMessageBox.confirm(
+        '重新生成口令将生成一组新的同步密钥。若需保留旧设备数据，请先记下旧口令。是否确认生成新口令？',
+        '生成新口令提示',
+        { type: 'warning', confirmButtonText: '确定生成', cancelButtonText: '取消' }
       )
+    } catch {
+      return
     }
-  } finally {
-    isBackingUp.value = false
+  }
+  passcode.value = generateRandomPasscode()
+  saveSyncConfig({ passcode: passcode.value })
+  ElMessage.success('已生成新口令！请点击下方「上传备份」将本设备数据同步至云端。')
+}
+
+const handleCopyCode = async () => {
+  if (!passcode.value.trim()) return
+  try {
+    await navigator.clipboard.writeText(passcode.value.trim())
+    ElMessage.success('口令已复制！在手机或另一台电脑输入该口令，即可一键拉取恢复。')
+  } catch {
+    ElMessage.info('口令为：' + passcode.value)
   }
 }
 
-const performRestore = async () => {
-  if (!nutstoreEmail.value || !nutstorePassword.value) {
-    ElMessage.warning('请先配置坚果云账号与应用密码')
+const handlePush = async () => {
+  if (!passcode.value.trim()) {
+    ElMessage.warning('请先输入或生成同步口令')
+    return
+  }
+  isPushing.value = true
+  try {
+    const res = await pushCloudBackup(passcode.value)
+    lastSyncTime.value = res.updatedAt
+    lastStats.value = res.stats || null
+    ElMessage.success('🎉 备份成功！数据已通过 AES-256 高强度加密安全同步到云端。')
+  } catch (err: any) {
+    ElMessage.error(err.message || '上传备份失败，请检查网络或口令')
+  } finally {
+    isPushing.value = false
+  }
+}
+
+const handlePull = async () => {
+  if (!passcode.value.trim()) {
+    ElMessage.warning('请先输入要拉取的同步口令')
     return
   }
   try {
     await ElMessageBox.confirm(
-      '从坚果云恢复将使用云端最新的数据库覆盖本地当前数据。是否继续？',
+      '从云端拉取将使用云端最新的加密数据库覆盖本设备当前数据。是否继续？',
       '恢复数据确认',
-      { type: 'warning', confirmButtonText: '确认恢复', cancelButtonText: '取消' }
+      { type: 'warning', confirmButtonText: '确认拉取恢复', cancelButtonText: '取消' }
     )
-    isRestoring.value = true
-    const authHeader = 'Basic ' + btoa(`${nutstoreEmail.value.trim()}:${nutstorePassword.value.trim()}`)
-    const res = await fetch('/api/nutstore/我的坚果云/StudyBrain/backup.json', {
-      method: 'GET',
-      headers: { Authorization: authHeader }
-    })
-    if (!res.ok) throw new Error('云端备份文件不存在或读取失败')
-    const data = await res.json()
-    await localDB.importAllUserData(data)
-    ElMessage.success('已成功从坚果云拉取并恢复数据库！正在刷新数据...')
-    setTimeout(() => window.location.reload(), 800)
+    isPulling.value = true
+    const res = await pullCloudBackup(passcode.value)
+    lastSyncTime.value = res.updatedAt
+    lastStats.value = res.stats || null
+    ElMessage.success('🎉 成功拉取并解密恢复学习数据！正在重新载入界面...')
+    setTimeout(() => window.location.reload(), 900)
   } catch (err: any) {
     if (err !== 'cancel') {
-      ElMessage.error(err.message || '恢复失败，请检查网络或授权密码')
+      ElMessage.error(err.message || '拉取恢复失败，请检查口令是否拼写正确')
     }
   } finally {
-    isRestoring.value = false
+    isPulling.value = false
   }
 }
 
@@ -157,7 +147,7 @@ const exportLocalBackup = async () => {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    ElMessage.success('已成功导出本地完整备份文件！包含错题本、计划、笔记、脑力工坊战绩、专注记录与背词进度')
+    ElMessage.success('已成功导出本地完整备份文件！')
   } catch (err) {
     ElMessage.error('导出备份文件失败')
   }
@@ -200,91 +190,135 @@ const handleFileImport = async (e: Event) => {
   <el-dialog
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
-    title="☁️ 数据备份与多端同步 (坚果云 / 本地文件)"
-    width="560px"
+    title="☁️ 云端极速跨端同步 (端到端加密)"
+    width="580px"
     destroy-on-close
     class="cloud-sync-dialog"
   >
+    <!-- 安全零知识介绍横幅 -->
     <div class="sync-intro-banner">
-      <el-icon><InfoFilled /></el-icon>
-      <span>
-        本系统采用<b>纯前端本地优先引擎</b>，您的错题、笔记、计划与脑力战报绝对私有。配置坚果云可支持多端免密同步；也可使用离线文件一键导入导出。
-      </span>
+      <div class="banner-icon-wrap">
+        <el-icon><Lock /></el-icon>
+      </div>
+      <div class="banner-text">
+        <div class="banner-title">零下载 · 零账号 · 浏览器端 AES-256-GCM 端到端强加密</div>
+        <div class="banner-desc">
+          您的学习数据在离开浏览器前均已在本地完成加密，云端中继仅存储无法破解的密文。只要保管好您的<b>同步口令</b>，即可在手机、平板与电脑间安全无缝漫游！
+        </div>
+      </div>
     </div>
 
-    <el-form label-position="top" class="sync-form">
-      <el-form-item label="坚果云账号 (注册邮箱)">
-        <el-input
-          v-model="nutstoreEmail"
-          placeholder="例如：student@example.com"
-          clearable
-          @change="saveNutstoreConfig"
-        />
-      </el-form-item>
-
-      <el-form-item label="坚果云应用授权密码">
-        <el-input
-          v-model="nutstorePassword"
-          type="password"
-          show-password
-          placeholder="在坚果云官网生成的 16 位专用应用密码"
-          @change="saveNutstoreConfig"
-        />
-        <div class="field-hint">
-          💡 获取方式：登录坚果云官网 ➔ 账户信息 ➔ 安全选项 ➔ 第三方应用管理 ➔ 添加应用密码。
+    <div class="sync-main-card">
+      <!-- 同步口令管理区 -->
+      <div class="passcode-section">
+        <div class="passcode-label-row">
+          <label class="passcode-label">
+            <el-icon class="label-icon"><Key /></el-icon>
+            <span>我的同步口令 (Passcode)</span>
+          </label>
+          <span class="passcode-badge">端到端密钥</span>
         </div>
-      </el-form-item>
 
-      <div class="auto-sync-row">
-        <el-checkbox v-model="autoSyncEnabled" @change="saveNutstoreConfig">
-          每 30 分钟后台自动同步至坚果云
-        </el-checkbox>
+        <div class="passcode-input-group">
+          <el-input
+            v-model="passcode"
+            placeholder="例如：sb-839210 或自定义安全词"
+            class="passcode-input"
+            clearable
+            @change="handlePasscodeChange"
+          >
+            <template #prefix>
+              <span class="code-prefix">🔑</span>
+            </template>
+          </el-input>
+
+          <div class="passcode-actions">
+            <el-button :icon="CopyDocument" @click="handleCopyCode" title="复制口令到剪贴板">
+              复制口令
+            </el-button>
+            <el-button :icon="RefreshRight" @click="handleGenerateNewCode" title="随机生成新口令">
+              换一个
+            </el-button>
+          </div>
+        </div>
+
+        <div class="passcode-guide-tip">
+          💡 跨端使用方法：在当前设备点击<b>「上传备份」</b>后，打开另一台设备的智学大脑，输入相同口令并点击<b>「从云端恢复」</b>即可完成秒级同步。
+        </div>
       </div>
 
-      <div class="sync-actions-row">
-        <el-button :loading="isTesting" @click="testConnection" :icon="Key">
-          测试连接
-        </el-button>
+      <!-- 核心同步动作按钮 -->
+      <div class="sync-action-buttons">
         <el-button
           type="primary"
-          :loading="isBackingUp"
-          @click="() => performBackup(false)"
+          size="large"
+          class="sync-btn push-btn"
+          :loading="isPushing"
+          @click="handlePush"
           :icon="Upload"
         >
-          立即备份到坚果云
+          🚀 一键备份到云端
         </el-button>
-        <el-button type="warning" plain :loading="isRestoring" @click="performRestore" :icon="Download">
-          从坚果云恢复
+        <el-button
+          type="success"
+          plain
+          size="large"
+          class="sync-btn pull-btn"
+          :loading="isPulling"
+          @click="handlePull"
+          :icon="Download"
+        >
+          📥 从云端恢复到此设备
         </el-button>
       </div>
 
-      <div v-if="lastSyncTime" class="last-sync-bar">
-        <span>🕒 上次备份成功时间：{{ lastSyncTime }}</span>
+      <!-- 自动同步选项 -->
+      <div class="auto-sync-box">
+        <el-checkbox v-model="autoSyncEnabled" @change="handleAutoSyncChange">
+          <span class="auto-sync-text">⏱️ 后台定时自动静默同步 (每 30 分钟)</span>
+        </el-checkbox>
+        <span class="auto-sync-sub">（在有学习进度变动时自动加密并同步最新备份）</span>
       </div>
 
-      <el-divider content-position="center">纯离线数据安全方案</el-divider>
-
-      <div class="offline-export-box">
-        <div class="export-desc">
-          <span>无需任何网盘账号，随时可将本地错题、笔记、脑力工坊战绩与背词战果一键导出保存，或在更换设备时导入恢复。</span>
+      <!-- 同步状态提示条 -->
+      <div v-if="lastSyncTime" class="sync-status-card">
+        <div class="status-top-row">
+          <span class="status-indicator"></span>
+          <span class="status-time">上次同步成功时间：{{ lastSyncTime }}</span>
         </div>
-        <div class="offline-btns">
-          <el-button type="success" plain :icon="Document" @click="exportLocalBackup">
-            📦 导出本地数据备份文件
-          </el-button>
-          <el-button type="primary" plain :icon="FolderOpened" @click="triggerFileInput">
-            📥 从备份文件恢复数据
-          </el-button>
-          <input
-            ref="fileInputRef"
-            type="file"
-            accept=".json"
-            style="display: none"
-            @change="handleFileImport"
-          />
+        <div v-if="lastStats" class="status-stats-row">
+          <span class="stat-pill">错题本: {{ lastStats.wrongItems ?? 0 }} 题</span>
+          <span class="stat-pill">每日计划: {{ lastStats.plans ?? 0 }} 条</span>
+          <span class="stat-pill">专注时长: {{ lastStats.timerRecords ?? 0 }} 次</span>
         </div>
       </div>
-    </el-form>
+    </div>
+
+    <!-- 底部：纯离线物理文件备份兜底方案 -->
+    <el-divider content-position="center">
+      <span class="divider-text">📦 纯离线物理备份兜底方案</span>
+    </el-divider>
+
+    <div class="offline-backup-card">
+      <div class="offline-desc">
+        无需任何网络，随时将本地 IndexedDB 导出为 <code>.json</code> 文件妥善保存，可随时导入还原。
+      </div>
+      <div class="offline-actions">
+        <el-button type="info" plain :icon="Document" @click="exportLocalBackup">
+          导出离线备份文件
+        </el-button>
+        <el-button type="info" plain :icon="FolderOpened" @click="triggerFileInput">
+          导入离线备份文件
+        </el-button>
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept=".json"
+          style="display: none"
+          @change="handleFileImport"
+        />
+      </div>
+    </div>
 
     <template #footer>
       <el-button @click="emit('update:modelValue', false)">关闭</el-button>
@@ -296,86 +330,291 @@ const handleFileImport = async (e: Event) => {
 .sync-intro-banner {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  background: #eff6ff;
+  gap: 12px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
   border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
-  color: #1e40af;
-  line-height: 1.5;
-  margin-bottom: 16px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
 }
 
-.sync-intro-banner .el-icon {
-  font-size: 18px;
+.banner-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 16px;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
-.sync-form {
-  padding: 4px 0;
+.banner-text {
+  flex: 1;
 }
 
-.field-hint {
+.banner-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 3px;
+}
+
+.banner-desc {
   font-size: 12px;
-  color: var(--text-muted, #64748b);
-  margin-top: 4px;
-  line-height: 1.4;
+  color: #3b82f6;
+  line-height: 1.5;
 }
 
-.sync-actions-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  margin-bottom: 14px;
-}
-
-.last-sync-bar {
-  font-size: 12px;
-  color: #059669;
-  background: rgba(16, 185, 129, 0.08);
-  padding: 6px 12px;
-  border-radius: 6px;
-  margin-bottom: 14px;
-}
-
-.auto-sync-row {
-  margin-bottom: 12px;
-}
-
-.offline-export-box {
+.sync-main-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: var(--bg-page, #f8fafc);
-  border: 1px dashed var(--border-color, #cbd5e1);
-  padding: 14px 16px;
-  border-radius: 10px;
+  gap: 16px;
 }
 
-.offline-btns {
+.passcode-section {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.passcode-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.passcode-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-color, #1e293b);
+}
+
+.label-icon {
+  color: #f59e0b;
+}
+
+.passcode-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: #fef3c7;
+  color: #b45309;
+  font-weight: 500;
+}
+
+.passcode-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
-.export-desc {
+.passcode-input {
+  flex: 1;
+  min-width: 220px;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.code-prefix {
+  font-size: 14px;
+}
+
+.passcode-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.passcode-guide-tip {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+  line-height: 1.5;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.sync-action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.sync-btn {
+  height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.push-btn {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.auto-sync-box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 2px;
+}
+
+.auto-sync-text {
   font-size: 13px;
+  font-weight: 500;
+}
+
+.auto-sync-sub {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+}
+
+.sync-status-card {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.status-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.status-time {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #15803d;
+}
+
+.status-stats-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+  font-weight: 500;
+}
+
+.divider-text {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.offline-backup-card {
+  background: var(--bg-page, #f8fafc);
+  border: 1px dashed var(--border-color, #cbd5e1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.offline-desc {
+  font-size: 12.5px;
   color: var(--text-muted, #64748b);
   line-height: 1.5;
 }
 
+.offline-desc code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.offline-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 :global(.dark) .sync-intro-banner {
-  background: #1e293b;
+  background: linear-gradient(135deg, #1e293b 0%, #142e2b 100%);
   border-color: #3b82f6;
+}
+
+:global(.dark) .banner-title {
   color: #93c5fd;
 }
 
-:global(.dark) .offline-export-box {
-  background: #0b1120;
-  border-color: #1e293b;
+:global(.dark) .banner-desc {
+  color: #bfdbfe;
+}
+
+:global(.dark) .sync-main-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+:global(.dark) .passcode-badge {
+  background: #78350f;
+  color: #fde68a;
+}
+
+:global(.dark) .passcode-guide-tip {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+}
+
+:global(.dark) .sync-status-card {
+  background: #064e3b;
+  border-color: #059669;
+}
+
+:global(.dark) .status-time {
+  color: #a7f3d0;
+}
+
+:global(.dark) .stat-pill {
+  background: rgba(255, 255, 255, 0.1);
+  color: #d1fae5;
+}
+
+:global(.dark) .offline-backup-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+:global(.dark) .offline-desc code {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+  .sync-action-buttons {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

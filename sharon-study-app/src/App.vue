@@ -13,7 +13,7 @@ import AppVersionModal from './components/AppVersionModal.vue'
 import { useAppVersionStore } from './stores/appVersion'
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
 import { Edit, Star, Sunny, Moon, Menu as MenuIcon, Close, VideoPause } from '@element-plus/icons-vue'
-import { localDB } from './utils/localDatabase'
+import { getSyncConfig, pushCloudBackup } from './utils/cloudSync'
 
 const router = useRouter()
 const route = useRoute()
@@ -202,25 +202,12 @@ onMounted(() => {
   }
   applyTheme(isDark.value)
 
-  // 坚果云 30 分钟后台定时自动备份机制
+  // 端到端加密 30 分钟后台定时自动云端备份机制
   setInterval(async () => {
-    const autoSync = localStorage.getItem('study_nutstore_auto_sync') === 'true'
-    const email = localStorage.getItem('study_nutstore_email') || ''
-    const pwd = localStorage.getItem('study_nutstore_pwd') || ''
-    if (autoSync && email && pwd) {
+    const syncCfg = getSyncConfig()
+    if (syncCfg.autoSync && syncCfg.passcode) {
       try {
-        const authHeader = 'Basic ' + btoa(`${email.trim()}:${pwd.trim()}`)
-        const payload = await localDB.exportAllUserData()
-        await fetch('/api/nutstore/我的坚果云/StudyBrain/backup.json', {
-          method: 'PUT',
-          headers: {
-            Authorization: authHeader,
-            'Content-Type': 'application/json; charset=utf-8'
-          },
-          body: JSON.stringify(payload, null, 2)
-        })
-        const nowStr = new Date().toLocaleString()
-        localStorage.setItem('study_nutstore_last_sync', nowStr)
+        await pushCloudBackup(syncCfg.passcode)
       } catch {
         // 静默运行，不打扰自习状态
       }
@@ -353,7 +340,7 @@ const toggleCollapse = () => {
           type="button"
           class="mobile-header-btn"
           @click="showCloudModal = true"
-          title="坚果云多端备份"
+          title="云端极速跨端同步 (端到端加密)"
         >
           ☁️
         </button>
@@ -426,7 +413,7 @@ const toggleCollapse = () => {
               type="button"
               class="aside-cloud-btn"
               @click="showCloudModal = true"
-              title="坚果云多端备份 (可选)"
+              title="云端极速跨端同步 (端到端加密)"
             >
               ☁️
             </button>
@@ -605,7 +592,7 @@ const toggleCollapse = () => {
         <div class="drawer-bottom-section">
           <div class="drawer-action-row" @click="showMobileMenu = false; showCloudModal = true">
             <span class="action-icon">☁️</span>
-            <span class="action-title">坚果云多端备份</span>
+            <span class="action-title">云端极速跨端同步</span>
           </div>
           <div class="drawer-action-row" @click="showMobileMenu = false; showAboutModal = true">
             <span class="action-icon">ℹ️</span>

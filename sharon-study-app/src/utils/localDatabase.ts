@@ -1166,7 +1166,7 @@ class LocalDatabase {
     return item
   }
 
-  // ================= 模块 10: 坚果云 (WebDAV) 同步与全量个人数据导入/导出 =================
+  // ================= 模块 10: 云端极速加密同步与全量个人数据导入/导出 =================
   async exportAllUserData() {
     const user_profile = await this.getByKey('user_profile', 1)
     const wrong_items = await this.getAll('wrong_items')

@@ -12,7 +12,7 @@
 ## 核心原则（不可违反）
 
 1. **内容即代码**：单词字典/知识库/学习资源的唯一数据源是 `content/*.json`（入 git）。在 `npm run build` 或 `./scripts/dev.sh` 时，由 `scripts/copy-content-to-public.mjs` 自动同步到 `sharon-study-app/public/content/`，严禁通过手工脚本或服务端 API 灌内容。
-2. **用户数据客户端绝对私有**：学生的个人昵称、自律座右铭、每日计划、错题本、成绩追踪、专注打卡与背诵进度，严格保存在每个学生自己的浏览器 `IndexedDB` (`StudyBrainDB`) 中。跨设备同步通过坚果云 WebDAV 或全量 JSON 导入导出。
+2. **用户数据客户端绝对私有**：学生的个人昵称、自律座右铭、每日计划、错题本、成绩追踪、专注打卡与背诵进度，严格保存在每个学生自己的浏览器 `IndexedDB` (`StudyBrainDB`) 中。跨设备同步通过端到端高强度加密口令极速同步（Cloudflare 零知识中继）或全量 JSON 导入导出。
 3. **API 客户端虚拟路由层**：页面所有 `api.get` / `api.post` / `api.put` / `api.del` 请求由 `sharon-study-app/src/utils/api.ts` 的 `handleLocalRequest` 统一拦截并无感就地响应，严禁破坏这套解耦架构。
 4. **统一现代化静态部署**：
    - GitHub Pages / Cloudflare Pages：由 `.github/workflows/deploy.yml` 自动打包分发；

@@ -176,16 +176,70 @@ function devContentSyncPlugin(): Plugin {
   }
 }
 
+/**
+ * 开发者模式本地云端加密同步测试中间件
+ * 本地开发或离线调试时，无缝拦截 /api/sync/push 和 /api/sync/pull，实现 100% 极速本地闭环测试
+ */
+function devCloudSyncPlugin(): Plugin {
+  const localSyncData = new Map<string, any>()
+  return {
+    name: 'dev-cloud-sync',
+    configureServer(server) {
+      server.middlewares.use('/api/sync/push', (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405
+          res.end('Method Not Allowed')
+          return
+        }
+        let bodyStr = ''
+        req.on('data', chunk => { bodyStr += chunk })
+        req.on('end', () => {
+          try {
+            const { codeHash, payload } = JSON.parse(bodyStr)
+            if (!codeHash || !payload) {
+              res.statusCode = 400
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({ ok: false, error: 'Missing codeHash or payload' }))
+              return
+            }
+            const nowIso = new Date().toISOString()
+            localSyncData.set(codeHash, { payload, updatedAt: nowIso })
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ ok: true, updatedAt: nowIso }))
+          } catch (err: any) {
+            res.statusCode = 500
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ ok: false, error: err.message }))
+          }
+        })
+      })
+
+      server.middlewares.use('/api/sync/pull', (req, res) => {
+        const url = new URL(req.url || '', 'http://localhost')
+        const codeHash = url.searchParams.get('code')
+        if (!codeHash) {
+          res.statusCode = 400
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ ok: false, error: 'Missing code' }))
+          return
+        }
+        const record = localSyncData.get(codeHash)
+        if (!record) {
+          res.statusCode = 404
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ ok: false, error: 'not_found', message: '未找到该同步口令的云端备份' }))
+          return
+        }
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify({ ok: true, payload: record.payload, updatedAt: record.updatedAt }))
+      })
+    }
+  }
+}
+
 export default defineConfig({
   base: './',
-  plugins: [vue(), devContentSyncPlugin(), appVersionPlugin()],
-  server: {
-    proxy: {
-      '/api/nutstore': {
-        target: 'https://dav.jianguoyun.com/dav',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/nutstore/, ''),
-      },
-    },
-  },
+  plugins: [vue(), devContentSyncPlugin(), appVersionPlugin(), devCloudSyncPlugin()],
 })
