@@ -34,6 +34,7 @@ const getModuleTitle = (path: string): string => {
   if (path.startsWith('/grade-tracker')) return '成绩追踪'
   if (path.startsWith('/timer')) return '番茄钟'
   if (path.startsWith('/brain-gym') || path.startsWith('/games')) return '脑力工坊'
+  if (path.startsWith('/resources')) return '优质资源'
   if (path.startsWith('/home')) return '首页'
   return ''
 }
@@ -269,6 +270,7 @@ const menuItems = [
   { index: '/grade-tracker', icon: 'TrendCharts', title: '成绩追踪' },
   { index: '/timer', icon: 'Timer', title: '番茄钟' },
   { index: '/brain-gym', icon: 'MagicStick', title: '脑力工坊' },
+  { index: '/resources', icon: 'Compass', title: '优质资源' },
 ]
 
 const handleSelect = (index: string) => {

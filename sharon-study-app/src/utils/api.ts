@@ -135,6 +135,11 @@ async function handleLocalRequest(method: string, rawUrl: string, body?: any): P
     }
   }
 
+  // 4.1 网络优质精选学习资源 (Curated Resources)
+  if (path === '/curated-resources' && method === 'GET') {
+    return await localDB.getCuratedResources(query.category)
+  }
+
   // 5. 错题本
   if (path === '/wrong-items' && method === 'GET') {
     return await localDB.getWrongItems(query.subject)

@@ -541,6 +541,17 @@ class LocalDatabase {
     return { ok: true }
   }
 
+  // ================= 模块 4.05: 网络优质精选资源库 (Curated Resources) =================
+  async getCuratedResources(category?: string) {
+    const list = await this.loadPublicJson<any[]>('curated-resources.json').catch(() => [])
+    let filtered = list
+    if (category && category !== 'all') {
+      filtered = filtered.filter(item => item.category === category)
+    }
+    filtered.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+    return filtered
+  }
+
   // ================= 模块 4.1: 官方公共 JSON 数据导出与发布工具 =================
   async exportConsolidatedKnowledgeJson(): Promise<string> {
     const all = await this.getKnowledgePoints()

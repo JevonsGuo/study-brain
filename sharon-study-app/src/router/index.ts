@@ -48,6 +48,11 @@ const router = createRouter({
       component: () => import('../views/BrainGym/index.vue'),
     },
     {
+      path: '/resources',
+      name: 'ResourceHub',
+      component: () => import('../views/ResourceHub/index.vue'),
+    },
+    {
       path: '/games',
       redirect: '/brain-gym',
     },

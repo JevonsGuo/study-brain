@@ -1,7 +1,7 @@
 {
-  "database_version": "20260912.630014",
-  "content_hash": "630014",
-  "updated_at": "2026-09-12 19:19:52",
+  "database_version": "20260914.701371",
+  "content_hash": "701371",
+  "updated_at": "2026-09-14 16:52:13",
   "description": "公共数据库自动版本同步 (收录235个考点、66项学科神器与20584个单词)",
   "stats": {
     "knowledge_points": 235,
