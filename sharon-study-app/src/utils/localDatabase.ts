@@ -542,9 +542,12 @@ class LocalDatabase {
   }
 
   // ================= 模块 4.05: 网络优质精选资源库 (Curated Resources) =================
-  async getCuratedResources(category?: string) {
+  async getCuratedResources(category?: string, tag?: string) {
     const list = await this.loadPublicJson<any[]>('curated-resources.json').catch(() => [])
     let filtered = list
+    if (tag && tag !== 'all') {
+      filtered = filtered.filter(item => item.tag === tag || item.tag_name === tag)
+    }
     if (category && category !== 'all') {
       filtered = filtered.filter(item => item.category === category)
     }

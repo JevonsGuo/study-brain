@@ -16,6 +16,8 @@ import {
 interface CuratedResource {
   id: string
   title: string
+  tag?: string
+  tag_name?: string
   category: string
   category_name: string
   icon: string
@@ -42,6 +44,7 @@ interface SubjectResource {
 const resources = ref<CuratedResource[]>([])
 const subjectTools = ref<SubjectResource[]>([])
 const loading = ref(true)
+const activeTag = ref('all')
 const activeCategory = ref('all')
 const searchQuery = ref('')
 const onlyFavorites = ref(false)
@@ -49,19 +52,91 @@ const favorites = ref<Set<string>>(new Set())
 
 const FAVORITES_KEY = 'study_curated_resource_favorites'
 
-const categories = [
-  { key: 'all', name: '全部精品', icon: '🌟' },
-  { key: 'k12', name: '中小学基础教育', icon: '🏫' },
-  { key: 'reading', name: '数字阅读典籍', icon: '📖' },
-  { key: 'higher_edu', name: '名校大学与考研', icon: '🎓' },
-  { key: 'vocational', name: '职业教育与实操', icon: '🛠️' },
-  { key: 'recitation', name: '经典语文示范诵读', icon: '🎙️' },
-  { key: 'science', name: '权威科学前沿科普', icon: '🔬' },
-  { key: 'academic', name: '学术文献与期刊', icon: '📑' },
-  { key: 'documentary', name: '正版高清纪录片', icon: '🎥' },
-  { key: 'lifelong', name: '终身教育与百科', icon: '🌱' },
-  { key: 'subject_tools', name: '高考全科提分神器', icon: '🧮' }
-]
+// 动态提取与聚合资源标签（自动支持国家级学习资源，以及未来任意新增的各类标签）
+const availableTags = computed(() => {
+  const map = new Map<string, { key: string; name: string; icon: string; count: number }>()
+
+  // 全部资源
+  map.set('all', {
+    key: 'all',
+    name: '全部资源',
+    icon: '🌟',
+    count: resources.value.length + subjectTools.value.length
+  })
+
+  // 动态扫描并归集各类标签（当前 9 大平台归属于 national: 国家级学习资源）
+  resources.value.forEach(item => {
+    const key = item.tag || 'national'
+    const name = item.tag_name || '国家级学习资源'
+    const icon = key === 'national' ? '🏛️' : (item.icon || '📚')
+    if (!map.has(key)) {
+      map.set(key, { key, name, icon, count: 0 })
+    }
+    map.get(key)!.count++
+  })
+
+  // 高考全科提分神器作为专属标签
+  map.set('subject_tools', {
+    key: 'subject_tools',
+    name: '高考学科提分神器',
+    icon: '🧮',
+    count: subjectTools.value.length
+  })
+
+  return Array.from(map.values())
+})
+
+// 切换一级主标签
+const handleTagChange = (tagKey: string) => {
+  activeTag.value = tagKey
+  activeCategory.value = 'all'
+}
+
+// 动态提取当前主标签下的二级分类
+const currentCategories = computed(() => {
+  if (activeTag.value === 'all') {
+    return [
+      { key: 'all', name: '全部精品', icon: '🌟' },
+      { key: 'k12', name: '中小学基础教育', icon: '🏫' },
+      { key: 'reading', name: '数字阅读典籍', icon: '📖' },
+      { key: 'higher_edu', name: '名校大学与考研', icon: '🎓' },
+      { key: 'vocational', name: '职业教育与实操', icon: '🛠️' },
+      { key: 'recitation', name: '经典语文示范诵读', icon: '🎙️' },
+      { key: 'science', name: '权威科学前沿科普', icon: '🔬' },
+      { key: 'academic', name: '学术文献与期刊', icon: '📑' },
+      { key: 'documentary', name: '正版高清纪录片', icon: '🎥' },
+      { key: 'lifelong', name: '终身教育与百科', icon: '🌱' },
+      { key: 'subject_tools', name: '高考全科提分神器', icon: '🧮' }
+    ]
+  }
+
+  if (activeTag.value === 'subject_tools') {
+    const subjects = ['全部学科', '数学', '物理', '化学', '生物', '英语', '语文', '政治', '历史', '地理']
+    return subjects.map(s => ({
+      key: s === '全部学科' ? 'all' : s,
+      name: s,
+      icon: s === '全部学科' ? '🌟' : '📐'
+    }))
+  }
+
+  // 针对特定标签（如 national: 国家级学习资源，或其他未来新标签）
+  const list = resources.value.filter(item => (item.tag || 'national') === activeTag.value)
+  const cats: { key: string; name: string; icon: string }[] = [
+    { key: 'all', name: '全部分类', icon: '🌟' }
+  ]
+  const seen = new Set<string>()
+  list.forEach(item => {
+    if (!seen.has(item.category)) {
+      seen.add(item.category)
+      cats.push({
+        key: item.category,
+        name: item.category_name,
+        icon: item.icon
+      })
+    }
+  })
+  return cats
+})
 
 const loadFavorites = () => {
   try {
@@ -110,12 +185,14 @@ onMounted(() => {
 const filteredResources = computed(() => {
   let list: CuratedResource[] = []
 
-  if (activeCategory.value === 'subject_tools') {
-    // 聚合转换高考 66 项学科神器
+  // 1. 根据主标签 (activeTag) 预筛选
+  if (activeTag.value === 'subject_tools') {
     list = subjectTools.value.map(st => ({
       id: `tool-${st.id}`,
       title: st.name,
-      category: 'subject_tools',
+      tag: 'subject_tools',
+      tag_name: '高考学科提分神器',
+      category: st.subject,
       category_name: `${st.subject}学科神器`,
       icon: st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬',
       domain: new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', ''),
@@ -127,10 +204,41 @@ const filteredResources = computed(() => {
       highlights: ['精准对标高中核心考点', '省时高效提分利器', '100%免费免充值'],
       sort_order: st.sort_order || 99
     }))
-  } else if (activeCategory.value === 'all') {
-    list = [...resources.value]
+
+    if (activeCategory.value !== 'all') {
+      list = list.filter(item => item.category === activeCategory.value)
+    }
+  } else if (activeTag.value === 'all') {
+    const convertedTools: CuratedResource[] = subjectTools.value.map(st => ({
+      id: `tool-${st.id}`,
+      title: st.name,
+      tag: 'subject_tools',
+      tag_name: '高考学科提分神器',
+      category: st.subject,
+      category_name: `${st.subject}学科神器`,
+      icon: st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬',
+      domain: new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', ''),
+      url: st.url,
+      badge: `${st.subject} · ${st.category === 'tool' ? '专属神器' : st.category === 'practice' ? '精选真题' : '名师课程'}`,
+      badge_type: 'info' as const,
+      target_audience: `高中${st.subject}专项备考拔高`,
+      desc: st.desc,
+      highlights: ['精准对标高中核心考点', '省时高效提分利器', '100%免费免充值'],
+      sort_order: (st.sort_order || 99) + 50
+    }))
+
+    list = [...resources.value, ...convertedTools]
+
+    if (activeCategory.value !== 'all') {
+      list = list.filter(item => item.category === activeCategory.value)
+    }
   } else {
-    list = resources.value.filter(item => item.category === activeCategory.value)
+    // 选定某个特定标签（如 'national' 国家级学习资源，或未来任意新标签）
+    list = resources.value.filter(item => (item.tag || 'national') === activeTag.value)
+
+    if (activeCategory.value !== 'all') {
+      list = list.filter(item => item.category === activeCategory.value)
+    }
   }
 
   // 收藏筛选
@@ -138,11 +246,12 @@ const filteredResources = computed(() => {
     list = list.filter(item => favorites.value.has(item.id))
   }
 
-  // 搜索关键字筛选
+  // 搜索关键字筛选（包含 tag_name）
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.trim().toLowerCase()
     list = list.filter(item =>
       item.title.toLowerCase().includes(q) ||
+      (item.tag_name && item.tag_name.toLowerCase().includes(q)) ||
       item.desc.toLowerCase().includes(q) ||
       item.domain.toLowerCase().includes(q) ||
       item.target_audience.toLowerCase().includes(q) ||
@@ -184,6 +293,7 @@ const openExternal = (url: string) => {
 }
 
 const resetFilter = () => {
+  activeTag.value = 'all'
   activeCategory.value = 'all'
   searchQuery.value = ''
   onlyFavorites.value = false
@@ -199,17 +309,17 @@ const resetFilter = () => {
         <div class="hero-title-row">
           <span class="hero-emoji">🌐</span>
           <h1 class="hero-title">网络优质学习资源宝库</h1>
-          <span class="hero-badge">央视权威推荐 · 国家级公益</span>
+          <span class="hero-badge">权威推荐 · 公益赋能</span>
         </div>
         <p class="hero-desc">
-          精选国家教育部、中科院、国图与央视总台打造的永久免费优质学习门户，无商业广告、不搞VIP套路，立省上千元网课与会员开销。
+          精选国家级公益平台、各学科提分神器与正版优质自学门户，无商业广告、不搞VIP套路，全方位助力自律高效提分。
         </p>
 
         <!-- 关键承诺指标徽章 -->
         <div class="hero-stat-chips">
           <div class="stat-chip">
             <el-icon class="stat-icon"><CircleCheck /></el-icon>
-            <span><b>9 大</b>国家级公益平台</span>
+            <span><b>🏛️ 国家级</b>权威公益学习平台</span>
           </div>
           <div class="stat-chip">
             <span class="chip-dot-green"></span>
@@ -217,7 +327,7 @@ const resetFilter = () => {
           </div>
           <div class="stat-chip">
             <el-icon class="stat-icon"><Compass /></el-icon>
-            <span>覆盖小初高全科至终身进修</span>
+            <span>多维度标签分类扩展</span>
           </div>
           <div class="stat-chip highlight-chip">
             <span>省下每年上千元多平台会员费 💰</span>
@@ -228,12 +338,30 @@ const resetFilter = () => {
 
     <!-- 筛选控制与分类导航栏 -->
     <section class="hub-filter-section">
+      <!-- 一级大类标签选项卡 (动态支持：国家级学习资源 / 高考学科提分神器 / 以及未来任意新类型标签) -->
+      <div class="resource-tag-tabs-wrap">
+        <div class="resource-tag-tabs">
+          <button
+            v-for="t in availableTags"
+            :key="t.key"
+            type="button"
+            class="tag-tab-btn"
+            :class="{ 'is-active': activeTag === t.key }"
+            @click="handleTagChange(t.key)"
+          >
+            <span class="tab-icon">{{ t.icon }}</span>
+            <span class="tab-name">{{ t.name }}</span>
+            <span class="tab-count-badge">{{ t.count }}</span>
+          </button>
+        </div>
+      </div>
+
       <!-- 搜索与控制行 -->
       <div class="filter-controls-row">
         <div class="search-input-wrap">
           <el-input
             v-model="searchQuery"
-            placeholder="搜索资源名称、考研、论文、纪录片、科普、域名等关键词..."
+            placeholder="搜索资源名称、标签、考研、论文、纪录片、科普、域名等关键词..."
             clearable
             :prefix-icon="Search"
             class="hub-search-input"
@@ -252,7 +380,7 @@ const resetFilter = () => {
           </el-button>
 
           <el-button
-            v-if="searchQuery || activeCategory !== 'all' || onlyFavorites"
+            v-if="searchQuery || activeTag !== 'all' || activeCategory !== 'all' || onlyFavorites"
             plain
             :icon="RefreshRight"
             @click="resetFilter"
@@ -263,10 +391,10 @@ const resetFilter = () => {
         </div>
       </div>
 
-      <!-- 分类胶囊选项卡 -->
+      <!-- 二级细分类目胶囊滑动栏 -->
       <div class="category-pills-bar">
         <button
-          v-for="cat in categories"
+          v-for="cat in currentCategories"
           :key="cat.key"
           type="button"
           class="category-pill"
@@ -294,6 +422,9 @@ const resetFilter = () => {
               <span class="card-emoji">{{ item.icon }}</span>
             </div>
             <div class="card-badge-group">
+              <span class="resource-tag-chip" :class="`tag-${item.tag || 'national'}`">
+                {{ item.tag === 'national' ? '🏛️ 国家级学习资源' : (item.tag_name || '优质学习资源') }}
+              </span>
               <span class="official-badge" :class="`badge-${item.badge_type}`">
                 {{ item.badge }}
               </span>
@@ -509,6 +640,74 @@ const resetFilter = () => {
   padding: 0 24px;
 }
 
+/* 一级主标签切换选项卡 */
+.resource-tag-tabs-wrap {
+  margin-bottom: 16px;
+}
+
+.resource-tag-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card, #ffffff);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.resource-tag-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tag-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-color, #475569);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tag-tab-btn:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+}
+
+.tag-tab-btn.is-active {
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+}
+
+.tab-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.2);
+  color: inherit;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tag-tab-btn.is-active .tab-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
 .filter-controls-row {
   display: flex;
   align-items: center;
@@ -650,7 +849,53 @@ const resetFilter = () => {
 .card-badge-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* 主标签徽章 */
+.resource-tag-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.resource-tag-chip.tag-national {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.resource-tag-chip.tag-subject_tools {
+  background: #fdf2f8;
+  color: #9d174d;
+  border-color: #fbcfe8;
+}
+
+:global(.dark) .resource-tag-chip {
+  background: rgba(30, 58, 138, 0.35);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+:global(.dark) .resource-tag-chip.tag-national {
+  background: rgba(6, 95, 70, 0.35);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+:global(.dark) .resource-tag-chip.tag-subject_tools {
+  background: rgba(157, 23, 77, 0.35);
+  color: #f472b6;
+  border-color: rgba(236, 72, 153, 0.4);
 }
 
 .official-badge {

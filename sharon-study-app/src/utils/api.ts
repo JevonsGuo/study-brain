@@ -137,7 +137,7 @@ async function handleLocalRequest(method: string, rawUrl: string, body?: any): P
 
   // 4.1 网络优质精选学习资源 (Curated Resources)
   if (path === '/curated-resources' && method === 'GET') {
-    return await localDB.getCuratedResources(query.category)
+    return await localDB.getCuratedResources(query.category, query.tag)
   }
 
   // 5. 错题本
