@@ -2,6 +2,7 @@
  * Cloudflare Pages Function - 智学大脑端到端加密同步引擎
  * 部署至 Cloudflare Pages 时自动运行于全球 Anycast 边缘网络
  * 支持跨域 (CORS) 访问，无论前端部署在 GitHub Pages、Google Cloud 还是独立域名均可调用
+ * 内置防撞库防暴力枚举限频保护机制
  */
 
 interface Env {
@@ -10,6 +11,21 @@ interface Env {
 
 // 内存兜底存储（当用户尚未在 Cloudflare 后台绑定 KV 命名空间时自动启用）
 const memoryStore = new Map<string, { payload: any; updatedAt: string }>()
+
+// 内存防暴力枚举限频表（单 IP 每分钟限制，防止恶意脚本扫描遍历口令哈希）
+const ipRateLimits = new Map<string, { count: number; resetAt: number }>()
+
+function checkRateLimit(clientIp: string, maxRequests = 30, windowMs = 60000): boolean {
+  if (!clientIp) return true
+  const now = Date.now()
+  const entry = ipRateLimits.get(clientIp)
+  if (!entry || now > entry.resetAt) {
+    ipRateLimits.set(clientIp, { count: 1, resetAt: now + windowMs })
+    return true
+  }
+  entry.count++
+  return entry.count <= maxRequests
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -30,6 +46,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   if (request.method === 'OPTIONS') {
     return onRequestOptions(context)
+  }
+
+  // 防暴力枚举限频拦截
+  const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || ''
+  if (!checkRateLimit(clientIp)) {
+    return new Response(JSON.stringify({
+      ok: false,
+      error: 'rate_limited',
+      message: '请求过于频繁，为保障数据安全已开启防暴力枚举保护，请稍后再试'
+    }), {
+      status: 429,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' }
+    })
   }
 
   const url = new URL(request.url)
