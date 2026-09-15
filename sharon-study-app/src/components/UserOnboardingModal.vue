@@ -7,7 +7,8 @@ import {
   generateRandomPasscode,
   saveSyncConfig,
   pushCloudBackup,
-  pullCloudBackup
+  pullCloudBackup,
+  validatePasscode
 } from '../utils/cloudSync'
 import {
   Key,
@@ -74,8 +75,9 @@ const handleConfirm = async () => {
   }
 
   const cleanCode = formPasscode.value.trim()
-  if (!cleanCode) {
-    ElMessage.warning('请保留或设置同步口令')
+  const codeCheck = validatePasscode(cleanCode)
+  if (!codeCheck.valid) {
+    ElMessage.warning(codeCheck.message || '同步口令需至少包含字母与数字组合，长度不少于 8 位')
     return
   }
 
@@ -106,8 +108,9 @@ const handleConfirm = async () => {
 // 2. 使用已有口令一键恢复云端数据
 const handleRestoreFromCloud = async () => {
   const code = restorePasscode.value.trim()
-  if (!code) {
-    ElMessage.warning('请输入你在其他设备生成的同步口令')
+  const codeCheck = validatePasscode(code)
+  if (!codeCheck.valid) {
+    ElMessage.warning(codeCheck.message || '同步口令需至少包含字母与数字组合，长度不少于 8 位')
     return
   }
 
@@ -265,7 +268,7 @@ const handleSkip = async () => {
             </div>
           </div>
           <div class="passcode-tip">
-            💡 保存后将自动开启静默同步。在其他电脑或手机输入该口令，即可随时恢复进度。
+            💡 口令规则：至少包含<b>字母与数字</b>组合，长度<b>8位以上</b>（已自动为您生成）。保存后自动开启每 5 分钟后台静默同步。
           </div>
         </div>
 

@@ -14,6 +14,7 @@ export interface EncryptedPackage {
     wrongItems?: number
     plans?: number
     timerRecords?: number
+    gameRecords?: number
     userName?: string
   }
 }
@@ -100,10 +101,10 @@ export async function encryptPayload(data: any, passcode: string): Promise<Encry
     encodedData as any
   )
 
-  // 提取概览统计信息（不包含具体题目、计划或笔记细节，仅展示卡片计数）
   const wrongCount = Array.isArray(data.wrong_items) ? data.wrong_items.length : 0
   const planCount = Array.isArray(data.study_plans) ? data.study_plans.length : 0
-  const timerCount = Array.isArray(data.timer_records) ? data.timer_records.length : 0
+  const focusCount = Array.isArray(data.focus_records) ? data.focus_records.length : (Array.isArray(data.timer_records) ? data.timer_records.length : 0)
+  const gameCount = data.braingym_records && typeof data.braingym_records === 'object' ? Object.keys(data.braingym_records).length : 0
   const userName = data.user_profile?.user_name || ''
 
   return {
@@ -115,7 +116,8 @@ export async function encryptPayload(data: any, passcode: string): Promise<Encry
     dataStats: {
       wrongItems: wrongCount,
       plans: planCount,
-      timerRecords: timerCount,
+      timerRecords: focusCount,
+      gameRecords: gameCount,
       userName
     }
   }

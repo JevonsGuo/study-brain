@@ -1181,39 +1181,30 @@ class LocalDatabase {
     const custom_knowledge = await this.getAll('custom_knowledge')
     const custom_resources = await this.getAll('custom_resources')
 
-    // 收集脑力工坊全部游戏最佳纪录与训练统计
+    // 收集脑力工坊全部 8 款益智游戏历史最佳纪录与训练时长统计
     const braingym_records: Record<string, any> = {}
     const points_mastery: Record<string, any> = {}
+    const gameKeyWords = [
+      'braingym',
+      'schulte',
+      '2048',
+      'sudoku',
+      'klotski',
+      'arrow',
+      'minesweeper',
+      'memory',
+      'hanoi'
+    ]
     if (typeof localStorage !== 'undefined') {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
         if (!key) continue
-        if (
-          key.startsWith('study_braingym_') ||
-          key.startsWith('study_schulte_') ||
-          key.startsWith('study_2048_') ||
-          key.startsWith('study_sudoku_') ||
-          key.startsWith('study_klotski_') ||
-          key.startsWith('study_arrow_') ||
-          key.startsWith('study_minesweeper_') ||
-          key.startsWith('study_memory_') ||
-          key.startsWith('study_hanoi_') ||
-          key.startsWith('sharon_braingym_') ||
-          key.startsWith('sharon_schulte_') ||
-          key.startsWith('sharon_2048_') ||
-          key.startsWith('sharon_sudoku_') ||
-          key.startsWith('sharon_klotski_') ||
-          key.startsWith('sharon_arrow_') ||
-          key.startsWith('sharon_minesweeper_') ||
-          key.startsWith('sharon_memory_') ||
-          key.startsWith('sharon_hanoi_')
-        ) {
+        const lowerKey = key.toLowerCase()
+        if (gameKeyWords.some(w => lowerKey.includes(w))) {
           braingym_records[key] = localStorage.getItem(key)
         } else if (
-          key === 'study_starred_points' ||
-          key === 'study_mastered_points' ||
-          key === 'sharon_starred_points' ||
-          key === 'sharon_mastered_points'
+          lowerKey.includes('starred_points') ||
+          lowerKey.includes('mastered_points')
         ) {
           points_mastery[key] = localStorage.getItem(key)
         }
@@ -1288,6 +1279,9 @@ class LocalDatabase {
           if (key.startsWith('sharon_')) {
             const studyKey = 'study_' + key.slice('sharon_'.length)
             localStorage.setItem(studyKey, String(val))
+          } else if (key.startsWith('study_')) {
+            const sharonKey = 'sharon_' + key.slice('study_'.length)
+            localStorage.setItem(sharonKey, String(val))
           }
         }
       }

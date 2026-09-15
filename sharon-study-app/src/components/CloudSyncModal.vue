@@ -18,6 +18,7 @@ import {
   pushCloudBackup,
   pullCloudBackup,
   generateRandomPasscode,
+  validatePasscode,
   type SyncStats
 } from '../utils/cloudSync'
 
@@ -90,8 +91,9 @@ const handleCopyCode = async () => {
 }
 
 const handlePush = async () => {
-  if (!passcode.value.trim()) {
-    ElMessage.warning('请先输入或生成同步口令')
+  const check = validatePasscode(passcode.value)
+  if (!check.valid) {
+    ElMessage.warning(check.message)
     return
   }
   isPushing.value = true
@@ -108,8 +110,9 @@ const handlePush = async () => {
 }
 
 const handlePull = async () => {
-  if (!passcode.value.trim()) {
-    ElMessage.warning('请先输入要拉取的同步口令')
+  const check = validatePasscode(passcode.value)
+  if (!check.valid) {
+    ElMessage.warning(check.message)
     return
   }
   try {
@@ -243,7 +246,7 @@ const handleFileImport = async (e: Event) => {
         </div>
 
         <div class="passcode-guide-tip">
-          💡 跨端使用方法：在当前设备点击<b>「上传备份」</b>后，打开另一台设备的智学大脑，输入相同口令并点击<b>「从云端恢复」</b>即可完成秒级同步。
+          💡 口令规则：至少包含<b>字母与数字</b>组合，长度<b>8位以上</b>（如系统自动生成的 <code>sb-7k9p-4m2x</code>）。在另一台设备输入该口令，即可一键恢复全部学情与益智战报。
         </div>
       </div>
 
@@ -290,6 +293,7 @@ const handleFileImport = async (e: Event) => {
           <span class="stat-pill">错题本: {{ lastStats.wrongItems ?? 0 }} 题</span>
           <span class="stat-pill">每日计划: {{ lastStats.plans ?? 0 }} 条</span>
           <span class="stat-pill">专注时长: {{ lastStats.timerRecords ?? 0 }} 次</span>
+          <span v-if="lastStats.gameRecords" class="stat-pill">益智对局: {{ lastStats.gameRecords }} 项纪录</span>
         </div>
       </div>
     </div>

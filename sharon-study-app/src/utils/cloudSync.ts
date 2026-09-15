@@ -18,7 +18,28 @@ export interface SyncStats {
   wrongItems?: number
   plans?: number
   timerRecords?: number
+  gameRecords?: number
   userName?: string
+}
+
+/**
+ * 严格校验同步口令合规性：
+ * 规则：必须包含字母与数字组合，长度至少 8 位以上
+ */
+export function validatePasscode(code: string): { valid: boolean; message?: string } {
+  const clean = (code || '').trim()
+  if (!clean) {
+    return { valid: false, message: '请输入同步口令' }
+  }
+  if (clean.length < 8) {
+    return { valid: false, message: '同步口令长度至少需 8 位以上' }
+  }
+  const hasLetter = /[a-zA-Z]/.test(clean)
+  const hasNumber = /[0-9]/.test(clean)
+  if (!hasLetter || !hasNumber) {
+    return { valid: false, message: '同步口令必须为“字母 + 数字”组合（长度至少 8 位，例如 sb-7k9p-4m2x）' }
+  }
+  return { valid: true }
 }
 
 export interface SyncConfig {
@@ -84,8 +105,9 @@ function getSyncApiBase(): string {
  */
 export async function pushCloudBackup(passcode: string): Promise<{ ok: boolean; updatedAt: string; stats?: SyncStats }> {
   const cleanPasscode = passcode.trim()
-  if (!cleanPasscode) {
-    throw new Error('请输入同步口令')
+  const check = validatePasscode(cleanPasscode)
+  if (!check.valid) {
+    throw new Error(check.message)
   }
 
   // 1. 提取所有本地私有数据
@@ -138,8 +160,9 @@ export async function pushCloudBackup(passcode: string): Promise<{ ok: boolean; 
  */
 export async function pullCloudBackup(passcode: string): Promise<{ ok: boolean; data: any; updatedAt: string; stats?: SyncStats }> {
   const cleanPasscode = passcode.trim()
-  if (!cleanPasscode) {
-    throw new Error('请输入同步口令')
+  const check = validatePasscode(cleanPasscode)
+  if (!check.valid) {
+    throw new Error(check.message)
   }
 
   const codeHash = await hashPasscode(cleanPasscode)
