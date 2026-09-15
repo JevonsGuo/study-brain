@@ -197,6 +197,7 @@ export async function pullCloudBackup(passcode: string): Promise<{ ok: boolean; 
   const nowDisplay = new Date().toLocaleString()
   saveSyncConfig({
     passcode: cleanPasscode,
+    autoSync: true,
     lastSyncTime: nowDisplay,
     lastStats: result.payload.dataStats
   })
