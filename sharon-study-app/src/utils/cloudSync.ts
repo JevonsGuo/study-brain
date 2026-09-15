@@ -30,19 +30,17 @@ export interface SyncConfig {
 
 export function getSyncConfig(): SyncConfig {
   if (typeof window === 'undefined') {
-    return { passcode: '', autoSync: true, lastSyncTime: '', lastStats: null }
+    return { passcode: '', autoSync: false, lastSyncTime: '', lastStats: null }
   }
 
   const passcode = localStorage.getItem(SYNC_STORAGE_KEYS.PASSCODE) || ''
-  const storedAutoSync = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC)
-  // 默认开启后台自动同步（用户未手动关闭时默认为 true）
-  const autoSync = storedAutoSync === null ? true : storedAutoSync === 'true'
+  const autoSync = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC) === 'true'
   const lastSyncTime = localStorage.getItem(SYNC_STORAGE_KEYS.LAST_SYNC) || ''
   let lastStats: SyncStats | null = null
   try {
     const rawStats = localStorage.getItem(SYNC_STORAGE_KEYS.LAST_STATS)
     if (rawStats) lastStats = JSON.parse(rawStats)
-  } catch {}
+  } catch { }
 
   return { passcode, autoSync, lastSyncTime, lastStats }
 }
@@ -66,18 +64,16 @@ export function saveSyncConfig(config: Partial<SyncConfig>): void {
 
 /**
  * 智能解析同步后端接口基址：
- * - 本地开发环境 (localhost) 与 Cloudflare Pages (*.pages.dev 或绑定的自定义域名) 直接使用同源相对路径 /api/sync
- * - 支持通过 localStorage 自定义独立中继服务
+ * - 在 Cloudflare Pages (study.gyfolk.com) 或本地开发环境中直接使用相对路径 /api/sync
+ * - 在 GitHub Pages (github.io) 或其他外部纯静态环境中，无缝路由至 Cloudflare Pages 边缘服务
  */
 function getSyncApiBase(): string {
   if (typeof window === 'undefined') return ''
-  const custom = localStorage.getItem('study_sync_custom_server')
-  if (custom && custom.trim()) {
-    return custom.trim().replace(/\/+$/, '')
+  const host = window.location.hostname
+  if (host === 'localhost' || host === '127.0.0.1' || host.includes('gyfolk.com')) {
+    return ''
   }
-
-  // 默认同源相对路径（无论是本地开发还是已部署在 Cloudflare Pages）
-  return ''
+  return 'https://study.gyfolk.com'
 }
 
 /**
@@ -191,3 +187,4 @@ export async function pullCloudBackup(passcode: string): Promise<{ ok: boolean; 
 }
 
 export { generateRandomPasscode }
+
