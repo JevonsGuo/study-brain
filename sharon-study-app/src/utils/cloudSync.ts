@@ -55,7 +55,9 @@ export function getSyncConfig(): SyncConfig {
   }
 
   const passcode = localStorage.getItem(SYNC_STORAGE_KEYS.PASSCODE) || ''
-  const autoSync = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC) === 'true'
+  const autoSyncRaw = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC)
+  // 默认自动静默同步开启（只要未被用户显式关闭为 'false'，默认即为 true）
+  const autoSync = autoSyncRaw !== 'false'
   const lastSyncTime = localStorage.getItem(SYNC_STORAGE_KEYS.LAST_SYNC) || ''
   let lastStats: SyncStats | null = null
   try {

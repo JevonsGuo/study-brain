@@ -202,17 +202,38 @@ onMounted(() => {
   }
   applyTheme(isDark.value)
 
-  // 端到端加密 5 分钟后台定时自动云端备份机制
-  setInterval(async () => {
+  // 端到端加密 5 分钟后台定时自动云端备份机制（默认开启，每 5 分钟静默上云）
+  let lastSilentSyncTimestamp = 0
+  const runSilentSync = async () => {
     const syncCfg = getSyncConfig()
     if (syncCfg.autoSync && syncCfg.passcode) {
+      const now = Date.now()
+      // 防抖/节流：两次静默同步间隔不低于 60 秒
+      if (now - lastSilentSyncTimestamp < 60 * 1000) return
+      lastSilentSyncTimestamp = now
       try {
         await pushCloudBackup(syncCfg.passcode)
       } catch {
-        // 静默运行，不打扰自习状态
+        // 静默运行，不打扰沉浸自习
       }
     }
-  }, 5 * 60 * 1000)
+  }
+
+  // 启动 8 秒后首次静默同步，之后每 5 分钟定时执行
+  setTimeout(runSilentSync, 8 * 1000)
+  setInterval(runSilentSync, 5 * 60 * 1000)
+
+  // 用户切回网页或从休眠唤醒时，若已满 5 分钟自动静默补录
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        const now = Date.now()
+        if (now - lastSilentSyncTimestamp >= 5 * 60 * 1000) {
+          runSilentSync()
+        }
+      }
+    })
+  }
 
   // 启动前端新发布版本生命周期自动检测
   appVersionStore.startAutoCheck()
