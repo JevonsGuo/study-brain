@@ -9,7 +9,8 @@ import {
   FolderOpened,
   CopyDocument,
   RefreshRight,
-  Lock
+  Lock,
+  InfoFilled
 } from '@element-plus/icons-vue'
 import { localDB } from '../utils/localDatabase'
 import {
@@ -193,7 +194,7 @@ const handleFileImport = async (e: Event) => {
   <el-dialog
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
-    title="☁️ 云端极速跨端同步 (端到端加密)"
+    title="云端极速跨端同步 (端到端加密)"
     width="580px"
     destroy-on-close
     class="cloud-sync-dialog"
@@ -231,7 +232,7 @@ const handleFileImport = async (e: Event) => {
             @change="handlePasscodeChange"
           >
             <template #prefix>
-              <span class="code-prefix">🔑</span>
+              <el-icon class="code-prefix-icon"><Key /></el-icon>
             </template>
           </el-input>
 
@@ -246,7 +247,8 @@ const handleFileImport = async (e: Event) => {
         </div>
 
         <div class="passcode-guide-tip">
-          💡 口令规则：至少包含<b>字母与数字</b>组合，长度<b>8位以上</b>（如系统自动生成的 <code>sb-7k9p-4m2x</code>）。在另一台设备输入该口令，即可一键恢复全部学情与益智战报。
+          <el-icon class="tip-icon"><InfoFilled /></el-icon>
+          <span>口令规则：包含<b>字母与数字</b>组合，长度<b>8位以上</b>（如系统自动生成的 <code>sb-7k9p-4m2x</code>）。在另一台设备输入该口令，即可一键恢复全部学情与益智战报。</span>
         </div>
       </div>
 
@@ -260,7 +262,7 @@ const handleFileImport = async (e: Event) => {
           @click="handlePush"
           :icon="Upload"
         >
-          🚀 一键备份到云端
+          一键备份到云端
         </el-button>
         <el-button
           type="success"
@@ -271,14 +273,14 @@ const handleFileImport = async (e: Event) => {
           @click="handlePull"
           :icon="Download"
         >
-          📥 从云端恢复到此设备
+          从云端拉取恢复
         </el-button>
       </div>
 
       <!-- 自动同步选项 -->
       <div class="auto-sync-box">
         <el-checkbox v-model="autoSyncEnabled" @change="handleAutoSyncChange">
-          <span class="auto-sync-text">⏱️ 后台定时自动静默同步 (每 5 分钟)</span>
+          <span class="auto-sync-text">后台定时自动静默同步 (每 5 分钟)</span>
         </el-checkbox>
         <span class="auto-sync-sub">（在有学习进度变动时自动加密并同步最新备份）</span>
       </div>
@@ -300,7 +302,7 @@ const handleFileImport = async (e: Event) => {
 
     <!-- 底部：纯离线物理文件备份兜底方案 -->
     <el-divider content-position="center">
-      <span class="divider-text">📦 纯离线物理备份兜底方案</span>
+      <span class="divider-text">纯离线物理备份兜底方案</span>
     </el-divider>
 
     <div class="offline-backup-card">

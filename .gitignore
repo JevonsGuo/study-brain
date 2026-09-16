@@ -7,3 +7,4 @@ node_modules/
 sharon-study-app/data/
 *.db-shm
 *.db-wal
+promo-xhs/*.mp4

@@ -13,7 +13,11 @@ import {
   Key,
   CopyDocument,
   RefreshRight,
-  ArrowLeft
+  ArrowLeft,
+  Reading,
+  Download,
+  UserFilled,
+  User
 } from '@element-plus/icons-vue'
 
 const userProfile = useUserProfileStore()
@@ -145,7 +149,9 @@ const handleFinishNewUser = async () => {
     <div class="onboarding-box">
       <!-- 顶部轻量徽标与标题 -->
       <div class="header-section">
-        <div class="header-icon">🎓</div>
+        <div class="header-icon-box">
+          <el-icon :size="24"><Reading /></el-icon>
+        </div>
         <h2 class="header-title">欢迎使用智学大脑</h2>
         <p class="header-desc">本地私有存储 · 端到端加密</p>
       </div>
@@ -155,7 +161,7 @@ const handleFinishNewUser = async () => {
         <!-- 选择 A：输入 Code 恢复数据 -->
         <div class="choice-block restore-block">
           <div class="block-label">
-            <span class="block-emoji">📥</span>
+            <el-icon class="block-icon text-emerald"><Download /></el-icon>
             <span>已有数据？输入 Code 恢复</span>
           </div>
           <div class="input-action-row">
@@ -193,7 +199,7 @@ const handleFinishNewUser = async () => {
         <!-- 选择 B：输入名字开启新空间 -->
         <div class="choice-block create-block">
           <div class="block-label">
-            <span class="block-emoji">✨</span>
+            <el-icon class="block-icon text-indigo"><UserFilled /></el-icon>
             <span>新同学？输入名字开启</span>
           </div>
           <div class="input-action-row">
@@ -207,7 +213,7 @@ const handleFinishNewUser = async () => {
               @keyup.enter="handleGoToStep2"
             >
               <template #prefix>
-                <span class="input-prefix-icon">👤</span>
+                <el-icon class="input-prefix-icon"><User /></el-icon>
               </template>
             </el-input>
             <el-button
@@ -285,7 +291,7 @@ const handleFinishNewUser = async () => {
           @click="handleFinishNewUser"
         >
           <span v-if="isSubmitting">正在进入...</span>
-          <span v-else>🚀 开始使用</span>
+          <span v-else>进入智学空间 ➔</span>
         </button>
       </div>
     </div>
@@ -320,9 +326,22 @@ const handleFinishNewUser = async () => {
   margin-bottom: 18px;
 }
 
-.header-icon {
-  font-size: 32px;
-  margin-bottom: 4px;
+.header-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--bg-page, #f1f5f9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--el-color-primary, #3b82f6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+:global(.dark) .header-icon-box {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
 }
 
 .header-title {
@@ -385,14 +404,22 @@ const handleFinishNewUser = async () => {
 .block-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 13px;
   font-weight: 700;
   color: var(--text-main, #0f172a);
 }
 
-.block-emoji {
-  font-size: 15px;
+.block-icon {
+  font-size: 16px;
+}
+
+.text-emerald {
+  color: #10b981;
+}
+
+.text-indigo {
+  color: #6366f1;
 }
 
 .input-action-row {

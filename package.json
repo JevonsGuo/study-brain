@@ -1,6 +1,6 @@
 {
   "name": "study-brain",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "scripts": {
     "dev": "npm run dev --prefix sharon-study-app",

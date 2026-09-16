@@ -413,41 +413,91 @@ html.dark .example-sentence {
 
 
 /* ========================================================== */
-/* 移动端与小屏全局交互兜底防溢出规范 (Mobile Responsiveness)     */
+/* 移动端与小屏全局交互人体工学规范 (Mobile Ergonomics & Bottom Sheet) */
 /* ========================================================== */
 @media (max-width: 768px) {
-  /* 1. iOS Safari 聚焦防自动强制页面缩放 */
+  /* 1. iOS Safari 聚焦防自动强制页面缩放与视口撑满 */
   input, textarea, select, .el-input__inner {
     font-size: 16px !important;
   }
 
-  /* 2. 弹窗宽度全屏自适应与圆角优化 */
+  html, body, #app {
+    min-height: 100dvh !important;
+    overflow-x: hidden !important;
+  }
+
+  /* 2. 核心人体工学升级：居中硬弹窗全面升级为贴底抽屉 (Bottom Sheet) */
+  .el-overlay {
+    background-color: rgba(15, 23, 42, 0.54) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  .el-overlay-dialog {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
   .el-dialog {
-    width: 92vw !important;
-    max-width: 92vw !important;
-    margin: 16px auto !important;
-    border-radius: 16px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 22px 22px 0 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    max-height: 86dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    animation: sheetSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    padding: 12px 18px calc(16px + env(safe-area-inset-bottom)) 18px !important;
+    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.18) !important;
+    position: relative !important;
+  }
+
+  /* 抽屉顶部大拇指下划提示条 (Drag Handle) */
+  .el-dialog::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--border-regular, #cbd5e1);
+    border-radius: 2px;
+    margin: 2px auto 10px auto;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+
+  html.dark .el-dialog::before {
+    background: #475569;
   }
 
   .el-dialog__header {
-    padding: 14px 16px 10px !important;
+    padding: 8px 6px 12px 6px !important;
+    flex-shrink: 0;
   }
 
   .el-dialog__body {
-    padding: 14px 16px !important;
-    max-height: 72vh !important;
+    padding: 6px 4px 14px 4px !important;
+    max-height: calc(86dvh - 120px) !important;
     overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
   }
 
   .el-dialog__footer {
-    padding: 10px 16px 14px !important;
+    padding: 10px 4px 6px 4px !important;
+    flex-shrink: 0;
   }
 
-  /* 3. 消息提示框小屏适配 */
+  /* 3. 消息提示框小屏居底轻弹 */
   .el-message-box {
-    width: 90vw !important;
-    max-width: 360px !important;
-    border-radius: 14px !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 400px !important;
+    border-radius: 18px !important;
   }
 
   /* 4. 学科考点与大抽屉在移动端自适应全宽 */
@@ -456,9 +506,53 @@ html.dark .example-sentence {
     width: 100% !important;
     max-width: 100vw !important;
   }
+}
 
-  /* 5. 页面防横向滚动溢出 */
-  html, body, #app {
-    overflow-x: hidden !important;
+/* 抽屉平滑滑入动效 */
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
+
+/* ========================================================== */
+/* 平板设备 (Pad: 769px ~ 1024px) 专属自适应体验优化             */
+/* ========================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* 平板端主界面呼吸感内边距 */
+  .app-main {
+    padding: 16px 20px !important;
+  }
+
+  /* 平板端卡片最高宽度限制，防止拉伸过扁 */
+  .subjects-grid,
+  .resources-grid,
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+/* ========================================================== */
+/* 触控设备交互防 Hover 粘滞规范                              */
+/* ========================================================== */
+@media (hover: none) {
+  /* 触控设备上消除 hover 缩放与粘滞阴影，改用 active 快速即时反馈 */
+  .subject-card:hover,
+  .word-card:hover,
+  .game-card:hover {
+    transform: none !important;
+  }
+
+  .subject-card:active,
+  .word-card:active,
+  .game-card:active {
+    transform: scale(0.98) !important;
+  }
+}
+

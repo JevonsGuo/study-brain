@@ -12,7 +12,7 @@ import AboutModal from './components/AboutModal.vue'
 import AppVersionModal from './components/AppVersionModal.vue'
 import { useAppVersionStore } from './stores/appVersion'
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
-import { Edit, Star, Sunny, Moon, Menu as MenuIcon, Close, VideoPause } from '@element-plus/icons-vue'
+import { Edit, Star, Sunny, Moon, Menu as MenuIcon, Close, VideoPause, Connection, InfoFilled } from '@element-plus/icons-vue'
 import { getSyncConfig, pushCloudBackup } from './utils/cloudSync'
 
 const router = useRouter()
@@ -235,6 +235,22 @@ onMounted(() => {
     })
   }
 
+  // 平板设备 (Pad 769px ~ 1024px) 人体工学自适应：自动折叠侧边栏至 Rail 模式
+  const handlePadResize = () => {
+    if (typeof window === 'undefined') return
+    const width = window.innerWidth
+    if (width > 768 && width <= 1024) {
+      isCollapse.value = true
+    } else if (width > 1024) {
+      isCollapse.value = false
+    }
+  }
+  handlePadResize()
+  window.addEventListener('resize', handlePadResize)
+  onUnmounted(() => {
+    window.removeEventListener('resize', handlePadResize)
+  })
+
   // 启动前端新发布版本生命周期自动检测
   appVersionStore.startAutoCheck()
   if (typeof window !== 'undefined') {
@@ -363,7 +379,7 @@ const toggleCollapse = () => {
           @click="showCloudModal = true"
           title="云端极速跨端同步 (端到端加密)"
         >
-          ☁️
+          <el-icon :size="16"><Connection /></el-icon>
         </button>
         <button
           type="button"
@@ -436,7 +452,7 @@ const toggleCollapse = () => {
               @click="showCloudModal = true"
               title="云端极速跨端同步 (端到端加密)"
             >
-              ☁️
+              <el-icon :size="15"><Connection /></el-icon>
             </button>
             <button
               type="button"
@@ -444,7 +460,7 @@ const toggleCollapse = () => {
               @click="showAboutModal = true"
               title="关于智学大脑 · 版本、版权与联系反馈"
             >
-              ℹ️
+              <el-icon :size="15"><InfoFilled /></el-icon>
             </button>
           </div>
         </div>
@@ -612,11 +628,11 @@ const toggleCollapse = () => {
 
         <div class="drawer-bottom-section">
           <div class="drawer-action-row" @click="showMobileMenu = false; showCloudModal = true">
-            <span class="action-icon">☁️</span>
+            <el-icon :size="16" class="action-icon"><Connection /></el-icon>
             <span class="action-title">云端极速跨端同步</span>
           </div>
           <div class="drawer-action-row" @click="showMobileMenu = false; showAboutModal = true">
-            <span class="action-icon">ℹ️</span>
+            <el-icon :size="16" class="action-icon"><InfoFilled /></el-icon>
             <span class="action-title">关于系统 (v{{ appVersionStore.currentVersion }})</span>
           </div>
           <div v-if="isLocal" class="drawer-action-row dev-row" @click="showMobileMenu = false; openPinPrompt()">
@@ -1574,6 +1590,16 @@ const toggleCollapse = () => {
   .mobile-bottom-nav,
   .mobile-nav-drawer {
     display: none !important;
+  }
+}
+
+/* 平板设备 (Pad: 769px ~ 1024px)：自动折叠侧边栏至 Rail 紧凑模式 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app-aside {
+    width: 64px !important;
+  }
+  .app-main {
+    padding: 16px 20px !important;
   }
 }
 

@@ -737,10 +737,16 @@ onMounted(fetchData)
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
-.subject-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-  border-color: var(--card-color);
+@media (hover: hover) {
+  .subject-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    border-color: var(--card-color);
+  }
+}
+
+.subject-card:active {
+  transform: scale(0.985);
 }
 
 .card-top-stripe {

@@ -1393,10 +1393,16 @@ onMounted(async () => {
   flex-direction: column;
 }
 
-.subject-entry-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e1;
+@media (hover: hover) {
+  .subject-entry-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+  }
+}
+
+.subject-entry-card:active {
+  transform: scale(0.985);
 }
 
 .card-top-accent {
