@@ -37,7 +37,7 @@ const formGrade = ref('高三')
 const formPasscode = ref('')
 const isSubmitting = ref(false)
 
-const GRADE_OPTIONS = ['高一', '高二', '高三', '初中', '自学']
+const GRADE_OPTIONS = ['高一', '高二', '高三']
 
 onMounted(() => {
   formPasscode.value = generateRandomPasscode()
@@ -530,8 +530,8 @@ const handleFinishNewUser = async () => {
 
 .grade-group {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .grade-btn {

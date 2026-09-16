@@ -73,11 +73,6 @@ function dateLabelStr(date: string) {
   return `${d.getMonth() + 1}月${d.getDate()}日 周${weekdays[d.getDay()]}`
 }
 
-function shortDateLabel(date: string) {
-  const d = new Date(date)
-  const weekdays = ['日', '一', '二', '三', '四', '五', '六']
-  return `${d.getMonth() + 1}/${d.getDate()} 周${weekdays[d.getDay()]}`
-}
 
 const isToday = computed(() => selectedDate.value === todayStr())
 const dateLabel = computed(() => dateLabelStr(selectedDate.value))
@@ -142,19 +137,6 @@ const weekStats = computed(() => {
     else break
   }
   return { total, done, pct: total > 0 ? Math.round(done / total * 100) : 0, streak }
-})
-
-const prev3Days = computed(() => {
-  const result: { date: string; label: string; plans: PlanItem[] }[] = []
-  for (let i = 1; i <= 3; i++) {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    const dateStr = fmtDate(d.getFullYear(), d.getMonth(), d.getDate())
-    if (dateStr === selectedDate.value) continue
-    const dayItems = plans.value.filter(p => p.date === dateStr)
-    result.push({ date: dateStr, label: shortDateLabel(dateStr), plans: dayItems })
-  }
-  return result
 })
 
 const monthDays = computed(() => {
@@ -581,28 +563,6 @@ onMounted(fetchPlans)
             </div>
           </div>
         </div>
-
-        <div class="history-section">
-          <div class="history-title">近期记录</div>
-          <div v-for="day in prev3Days" :key="day.date" class="history-day">
-            <div class="history-day-header" @click="selectDay(day.date)">
-              <span class="history-date">{{ day.label }}</span>
-              <span class="history-stats">
-                <span v-if="day.plans.length === 0" class="stats-empty">无计划</span>
-                <span v-else-if="day.plans.every(p => p.done)" class="stats-full">✅ 全完成</span>
-                <span v-else class="stats-partial">{{ day.plans.filter(p => p.done).length }}/{{ day.plans.length }}</span>
-              </span>
-            </div>
-            <div v-if="day.plans.length > 0" class="history-items">
-              <div v-for="p in day.plans.slice(0, 4)" :key="p.id" :class="['history-item', { 'is-done': p.done }]">
-                <span class="history-dot" :style="{ background: subjectColors[p.subject] || '#909399' }"></span>
-                <span class="history-subject">{{ p.subject }}</span>
-                <span class="history-content">{{ p.content }}</span>
-              </div>
-              <div v-if="day.plans.length > 4" class="history-more">还有 {{ day.plans.length - 4 }} 项...</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -804,23 +764,6 @@ onMounted(fetchPlans)
 .week-cell-day { font-size: 14px; font-weight: 700; color: var(--text-main, #303133); line-height: 1; margin-bottom: 3px; }
 .week-cell-stats { font-size: 9px; color: var(--text-sub, #909399); margin-top: 1px; }
 
-.history-section { background: var(--bg-card, #fff); border-radius: 14px; padding: 14px; border: 1px solid var(--border-subtle, #f0f2f5); transition: var(--theme-transition); }
-.history-title { font-size: 13px; font-weight: 700; color: var(--text-main, #303133); margin-bottom: 10px; }
-.history-day { margin-bottom: 10px; }
-.history-day:last-child { margin-bottom: 0; }
-.history-day-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 4px 0; transition: color 0.2s; }
-.history-day-header:hover { color: #6366f1; }
-.history-date { font-size: 12px; font-weight: 600; color: var(--text-regular, #606266); }
-.stats-empty { font-size: 11px; color: var(--text-sub, #c0c4cc); }
-.stats-full { font-size: 11px; color: #52c41a; }
-.stats-partial { font-size: 11px; color: #e6a23c; }
-.history-items { margin-top: 4px; }
-.history-item { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; color: var(--text-regular, #606266); }
-.history-item.is-done { color: var(--text-sub, #c0c4cc); text-decoration: line-through; }
-.history-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-.history-subject { font-weight: 600; flex-shrink: 0; min-width: 24px; }
-.history-content { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.history-more { font-size: 11px; color: var(--text-sub, #c0c4cc); padding-left: 11px; }
 
 /* 快速录入弹窗样式 */
 .quick-date-row {

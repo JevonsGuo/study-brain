@@ -22,10 +22,8 @@ export function getGaokaoTarget(gradeLevel: string, currentDate = new Date()): G
     targetYear = baseGaokaoYear + 2
   } else if (gl.includes("高二")) {
     targetYear = baseGaokaoYear + 1
-  } else if (gl.includes("初三")) {
-    targetYear = baseGaokaoYear + 3
   } else {
-    // 默认高三冲刺、复读、自学
+    // 默认高三
     targetYear = baseGaokaoYear
   }
 
@@ -36,8 +34,6 @@ export function getGaokaoTarget(gradeLevel: string, currentDate = new Date()): G
   let stageDesc = "高三冲刺阶段"
   if (gl.includes("高一")) stageDesc = "高一扎根奠基"
   else if (gl.includes("高二")) stageDesc = "高二强化培优"
-  else if (gl.includes("初三")) stageDesc = "中考蓄力阶段"
-  else if (gl.includes("复读")) stageDesc = "高三百炼成钢"
 
   return {
     targetYear,

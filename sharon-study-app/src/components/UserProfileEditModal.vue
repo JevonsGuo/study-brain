@@ -8,25 +8,25 @@ const userProfile = useUserProfileStore()
 
 const formName = ref('')
 const formCustomTitle = ref('')
-const formGrade = ref('高三冲刺')
+const formGrade = ref('高三')
 const formQuote = ref('')
 const isSubmitting = ref(false)
 
-const GRADE_OPTIONS = [
-  '高三冲刺',
-  '高二培优',
-  '高一扎根',
-  '高三复读',
-  '初三中考',
-  '高中自学'
-]
+const GRADE_OPTIONS = ['高一', '高二', '高三']
+
+function normalizeGrade(val?: string) {
+  if (!val) return '高三'
+  if (val.includes('高一')) return '高一'
+  if (val.includes('高二')) return '高二'
+  return '高三'
+}
 
 // 弹窗打开时回填已有数据
 watch(() => userProfile.showEditModal, (val) => {
   if (val) {
     formName.value = userProfile.userName || ''
     formCustomTitle.value = userProfile.appCustomTitle || ''
-    formGrade.value = userProfile.gradeLevel || '高三冲刺'
+    formGrade.value = normalizeGrade(userProfile.gradeLevel)
     formQuote.value = userProfile.customQuote || ''
   }
 })

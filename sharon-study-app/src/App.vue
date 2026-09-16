@@ -425,7 +425,33 @@ const toggleCollapse = () => {
 
       <!-- 侧边栏底部操作区：左下角主题切换 + 侧栏折叠 -->
       <div class="aside-footer">
-        <!-- 数据库版本常驻角落 (低调淡灰小字) + 坚果云备份入口 + 关于系统 -->
+        <!-- PC 端专属：云端极速跨端同步显著入口 -->
+        <div class="aside-sync-entry" :class="{ 'is-collapsed': isCollapse }">
+          <button
+            v-if="!isCollapse"
+            type="button"
+            class="aside-sync-action-btn"
+            @click="showCloudModal = true"
+            title="云端极速跨端同步 (端到端加密口令)"
+          >
+            <div class="sync-action-left">
+              <el-icon :size="15" class="sync-action-icon"><Connection /></el-icon>
+              <span class="sync-action-title">云端数据同步</span>
+            </div>
+            <span class="sync-status-dot" title="自动同步已就绪"></span>
+          </button>
+          <button
+            v-else
+            type="button"
+            class="aside-sync-btn-collapsed"
+            @click="showCloudModal = true"
+            title="云端极速跨端同步 (端到端加密口令)"
+          >
+            <el-icon :size="18"><Connection /></el-icon>
+          </button>
+        </div>
+
+        <!-- 数据库版本常驻角落 (低调淡灰小字) + 关于系统 -->
         <div v-show="!isCollapse" class="aside-db-bar">
           <div
             class="db-version-text"
@@ -445,14 +471,6 @@ const toggleCollapse = () => {
             >
               <span class="aside-update-dot"></span>
               <span>新版本</span>
-            </button>
-            <button
-              type="button"
-              class="aside-cloud-btn"
-              @click="showCloudModal = true"
-              title="云端极速跨端同步 (端到端加密)"
-            >
-              <el-icon :size="15"><Connection /></el-icon>
             </button>
             <button
               type="button"
@@ -1010,6 +1028,8 @@ const toggleCollapse = () => {
   padding: 24px;
   overflow-y: auto;
   transition: var(--theme-transition);
+  display: flex;
+  flex-direction: column;
 }
 
 /* 全局悬浮计时胶囊 */
@@ -1202,6 +1222,86 @@ const toggleCollapse = () => {
 @keyframes db-pulse {
   0% { transform: scale(0.9); opacity: 0.6; }
   100% { transform: scale(1.3); opacity: 1; }
+}
+
+/* PC 端侧边栏专属云端同步卡片 */
+.aside-sync-entry {
+  padding: 0 10px 8px;
+}
+
+.aside-sync-entry.is-collapsed {
+  padding: 0 6px 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.aside-sync-action-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 9px;
+  padding: 7px 10px;
+  color: #c7d2fe;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aside-sync-action-btn:hover {
+  background: rgba(99, 102, 241, 0.28);
+  border-color: rgba(99, 102, 241, 0.6);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.sync-action-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sync-action-icon {
+  color: #818cf8;
+}
+
+.aside-sync-action-btn:hover .sync-action-icon {
+  color: #a5b4fc;
+}
+
+.sync-action-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.sync-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.aside-sync-btn-collapsed {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.16);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #818cf8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.aside-sync-btn-collapsed:hover {
+  background: rgba(99, 102, 241, 0.3);
+  color: #ffffff;
+  transform: scale(1.06);
 }
 
 .aside-cloud-btn {

@@ -1,12 +1,39 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue"
+import { useRouter } from "vue-router"
 import { api } from "../../utils/api"
 import { useUserProfileStore } from "../../stores/userProfile"
 import { useAppConfigStore } from "../../stores/appConfig"
 import { useAppVersionStore } from "../../stores/appVersion"
 import { useTimerStore } from "../../stores/timer"
 import AboutModal from "../../components/AboutModal.vue"
-import { Edit } from "@element-plus/icons-vue"
+import CloudSyncModal from "../../components/CloudSyncModal.vue"
+import {
+  Edit,
+  Calendar,
+  Reading,
+  Postcard,
+  TrendCharts,
+  Timer,
+  MagicStick,
+  Compass,
+  DocumentDelete,
+  Check,
+  Plus,
+  ArrowRight,
+  Clock,
+  Collection,
+  Connection,
+  Sunny,
+  Cloudy,
+  PartlyCloudy,
+  Pouring,
+  Lightning,
+  Drizzling
+} from "@element-plus/icons-vue"
+import { ElMessage, ElMessageBox } from "element-plus"
+
+const router = useRouter()
 
 interface WeatherData {
   temp: number
@@ -22,28 +49,46 @@ interface DayStats {
   done: number
 }
 
+interface HomePlanItem {
+  id: number
+  subject: string
+  content: string
+  date: string
+  status?: string
+  done: boolean
+  estimated_minutes?: number
+}
+
 const currentTime = ref(new Date())
 const greeting = ref("")
 const todayWeather = ref<WeatherData | null>(null)
 const tomorrowWeather = ref<WeatherData | null>(null)
 const weatherLoading = ref(true)
 const todayStats = ref<DayStats>({ total: 0, done: 0 })
+const todayPlans = ref<HomePlanItem[]>([])
+const wrongItemsCount = ref(0)
+const wordMasteredCount = ref(0)
+const plansLoading = ref(false)
 
 const userProfile = useUserProfileStore()
 const appConfig = useAppConfigStore()
 const appVersionStore = useAppVersionStore()
 const timerStore = useTimerStore()
 const showAboutModal = ref(false)
+const showCloudModal = ref(false)
 
-// 智能高考倒计时联动 userProfile.gaokaoTarget（根据年级动态推算）
+function todayStr() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+}
 
-// 今日计划进度 (选项 A)
+// 今日计划进度百分比
 const progressPct = computed(() => {
   if (todayStats.value.total === 0) return 0
   return Math.round((todayStats.value.done / todayStats.value.total) * 100)
 })
 
-// 今日专注时长格式化 (选项 A)
+// 今日专注时长格式化
 const todayFocusText = computed(() => {
   const mins = timerStore.stats.today_minutes || 0
   if (mins === 0) return "待开启专注"
@@ -55,13 +100,100 @@ const todayFocusText = computed(() => {
   return `${mins}分钟`
 })
 
+// 学生年级与选科概况标签
+const gradeAndElectivesLabel = computed(() => {
+  const grade = userProfile.gradeLevel || "高三"
+  const electives = userProfile.electiveSubjects || ["物理", "化学", "生物"]
+  return `${grade} · ${electives.join("")}`
+})
+
+// 学科直通车列表（语数英 + 选考科目）
+const quickSubjects = computed(() => {
+  const core = ["语文", "数学", "英语"]
+  const electives = userProfile.electiveSubjects || ["物理", "化学", "生物"]
+  return Array.from(new Set([...core, ...electives]))
+})
+
+// 8 大核心学习模块矩阵
 const modules = [
-  { title: "学习计划", desc: "制定和管理每日学习任务", icon: "Calendar", color: "#1890ff", path: "/study-plan" },
-  { title: "学科中心", desc: "9科考点重点与错题靶向", icon: "Reading", color: "#13c2c2", path: "/subjects" },
-  { title: "单词卡", desc: "英语单词记忆与复习", icon: "Postcard", color: "#52c41a", path: "/word-card" },
-  { title: "成绩追踪", desc: "记录成绩，可视化分析", icon: "TrendCharts", color: "#722ed1", path: "/grade-tracker" },
-  { title: "番茄钟", desc: "专注计时，高效学习", icon: "Timer", color: "#fa8c16", path: "/timer" },
+  {
+    title: "学习计划",
+    desc: "制定与管理每日学习任务，把握复习节奏",
+    icon: Calendar,
+    color: "#4f46e5",
+    path: "/study-plan",
+    tag: "待办安排"
+  },
+  {
+    title: "学科中心",
+    desc: "9大学科教材书架、考点精讲与沉浸阅读",
+    icon: Reading,
+    color: "#0891b2",
+    path: "/subjects",
+    tag: "考点精讲"
+  },
+  {
+    title: "错题靶向",
+    desc: "错因深度归因诊断，靶向击破弱项盲区",
+    icon: DocumentDelete,
+    color: "#e11d48",
+    path: "/subjects?tab=wrong-book",
+    tag: "弱项攻坚"
+  },
+  {
+    title: "英语单词",
+    desc: "高考3500词与考纲核心词，艾宾浩斯科学记忆",
+    icon: Postcard,
+    color: "#059669",
+    path: "/word-card",
+    tag: "词汇复习"
+  },
+  {
+    title: "专注番茄钟",
+    desc: "沉浸白噪音专注计时，量化每日有效学习",
+    icon: Timer,
+    color: "#d97706",
+    path: "/timer",
+    tag: "静心自习"
+  },
+  {
+    title: "脑力工坊",
+    desc: "8款益智小游戏，课间快速激活大脑思维",
+    icon: MagicStick,
+    color: "#7c3aed",
+    path: "/brain-gym",
+    tag: "思维训练"
+  },
+  {
+    title: "成绩追踪",
+    desc: "记录大考成绩，学科雷达分析与提分目标",
+    icon: TrendCharts,
+    color: "#db2777",
+    path: "/grade-tracker",
+    tag: "学情诊断"
+  },
+  {
+    title: "优质资源",
+    desc: "精选历年高考真题、思维导图与备考锦囊",
+    icon: Compass,
+    color: "#2563eb",
+    path: "/resources",
+    tag: "真题导图"
+  },
 ]
+
+const subjectColors: Record<string, string> = {
+  "语文": "#64748b",
+  "数学": "#4f46e5",
+  "英语": "#059669",
+  "物理": "#d97706",
+  "化学": "#e11d48",
+  "生物": "#16a34a",
+  "历史": "#b91c1c",
+  "地理": "#0891b2",
+  "政治": "#ea580c",
+  "全科": "#6366f1"
+}
 
 const updateGreeting = () => {
   const hour = currentTime.value.getHours()
@@ -83,35 +215,32 @@ const formatTime = (date: Date) => {
 }
 
 const weatherDesc = (code: number): string => {
-  if (code === 0) return "晴"
+  if (code === 0) return "晴朗"
   if (code <= 3) return "多云"
-  if (code <= 48) return "雾"
-  if (code <= 57) return "毛毛雨"
-  if (code <= 67) return "雨"
+  if (code <= 48) return "大雾"
+  if (code <= 57) return "细雨"
+  if (code <= 67) return "小到中雨"
   if (code <= 77) return "雪"
   if (code <= 82) return "阵雨"
   if (code <= 86) return "阵雪"
   if (code <= 99) return "雷阵雨"
-  return "晴"
+  return "晴朗"
 }
 
-const weatherIcon = (code: number): string => {
-  if (code === 0) return "☀️"
-  if (code <= 3) return "⛅"
-  if (code <= 48) return "🌫️"
-  if (code <= 57) return "🌧️"
-  if (code <= 67) return "🌧️"
-  if (code <= 77) return "❄️"
-  if (code <= 82) return "🌦️"
-  if (code <= 86) return "🌨️"
-  if (code <= 99) return "⛈️"
-  return "⛅"
+const weatherIconComponent = (code: number) => {
+  if (code === 0) return Sunny
+  if (code <= 3) return PartlyCloudy
+  if (code <= 48) return Cloudy
+  if (code <= 57) return Drizzling
+  if (code <= 67) return Pouring
+  if (code <= 82) return Pouring
+  if (code <= 99) return Lightning
+  return PartlyCloudy
 }
 
 const fetchWeather = async () => {
   weatherLoading.value = true
   try {
-    // 1. 读取本地 2 小时缓存，保证秒开
     const cachedWeather = localStorage.getItem("study_weather_cache")
     const cachedTime = localStorage.getItem("study_weather_cache_time")
     const now = Date.now()
@@ -123,7 +252,6 @@ const fetchWeather = async () => {
       return
     }
 
-    // 2. 超时保护请求
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 3500)
 
@@ -154,7 +282,6 @@ const fetchWeather = async () => {
     localStorage.setItem("study_weather_cache", JSON.stringify({ today, tomorrow }))
     localStorage.setItem("study_weather_cache_time", String(now))
   } catch {
-    // 3. 兜底数据，保证绝不卡在“加载中”
     if (!todayWeather.value) {
       todayWeather.value = {
         temp: 24,
@@ -178,14 +305,119 @@ const fetchWeather = async () => {
   }
 }
 
-const fetchTodayStats = async () => {
+// 获取今日待办计划列表
+const fetchTodayPlans = async () => {
+  plansLoading.value = true
   try {
-    const today = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
-    const plans = await api.get("/study-plans")
-    const todayPlans = (plans as any[]).filter(p => p.date === today)
-    todayStats.value = { total: todayPlans.length, done: todayPlans.filter(p => p.done || p.status === "done").length }
+    const today = todayStr()
+    const plans = (await api.get("/study-plans")) as any[]
+    const list: HomePlanItem[] = (plans || [])
+      .filter((p) => p.date === today)
+      .map((p) => ({
+        ...p,
+        done: Boolean(p.done || p.status === "done"),
+      }))
+    todayPlans.value = list
+    todayStats.value = {
+      total: list.length,
+      done: list.filter((p) => p.done).length,
+    }
   } catch {
+    todayPlans.value = []
     todayStats.value = { total: 0, done: 0 }
+  } finally {
+    plansLoading.value = false
+  }
+}
+
+// 快速完成/取消完成计划
+const togglePlanItem = async (item: HomePlanItem) => {
+  const originalDone = item.done
+  item.done = !originalDone
+  if (item.done) {
+    todayStats.value.done++
+  } else {
+    todayStats.value.done = Math.max(0, todayStats.value.done - 1)
+  }
+
+  try {
+    await api.put(`/study-plans/${item.id}/toggle`)
+    ElMessage.success({
+      message: item.done ? `已完成：${item.content}` : `已恢复待办：${item.content}`,
+      duration: 1600,
+    })
+  } catch {
+    item.done = originalDone
+    if (item.done) {
+      todayStats.value.done++
+    } else {
+      todayStats.value.done = Math.max(0, todayStats.value.done - 1)
+    }
+    ElMessage.error("更新状态失败，请重试")
+  }
+}
+
+// 首页快速添加今日任务
+const quickAddTodayPlan = async () => {
+  try {
+    const { value } = await ElMessageBox.prompt("请输入今日待办任务内容：", "⚡ 快速添加今日任务", {
+      confirmButtonText: "添加并保存",
+      cancelButtonText: "取消",
+      inputPlaceholder: "例如：完成导数大题专题训练 3 道",
+      inputPattern: /^.+$/,
+      inputErrorMessage: "任务内容不能为空",
+    })
+    if (value && value.trim()) {
+      const defaultSubject = userProfile.electiveSubjects?.[0] || "数学"
+      await api.post("/study-plans", {
+        subject: defaultSubject,
+        content: value.trim(),
+        date: todayStr(),
+        estimated_minutes: 30,
+        done: false,
+      })
+      ElMessage.success("已成功加入今日学习计划")
+      await fetchTodayPlans()
+    }
+  } catch {
+    // 用户取消输入
+  }
+}
+
+// 携带任务跳转专注番茄钟
+const goToTimerWithTask = (taskName: string, subject: string) => {
+  router.push({
+    path: "/timer",
+    query: {
+      task: taskName,
+      subject: subject || "全科"
+    }
+  })
+}
+
+// 直达学科中心
+const goToSubject = (sub: string) => {
+  router.push(`/subjects/${encodeURIComponent(sub)}`)
+}
+
+// 加载学情概览数据（错题数与单词统计）
+const fetchOverviewData = async () => {
+  try {
+    const wrongList = await api.get("/wrong-items")
+    if (Array.isArray(wrongList)) {
+      wrongItemsCount.value = wrongList.length
+    }
+  } catch {
+    wrongItemsCount.value = 0
+  }
+
+  try {
+    const wordStats = (await api.get("/words/stats")) as any
+    if (wordStats && typeof wordStats.masteredCount === "number") {
+      wordMasteredCount.value = wordStats.masteredCount
+    }
+  } catch {
+    wordMasteredCount.value = 0
   }
 }
 
@@ -194,7 +426,8 @@ let timer: ReturnType<typeof setInterval>
 onMounted(() => {
   updateGreeting()
   fetchWeather()
-  fetchTodayStats()
+  fetchTodayPlans()
+  fetchOverviewData()
   timerStore.fetchStats()
   timer = setInterval(() => {
     currentTime.value = new Date()
@@ -209,10 +442,10 @@ onUnmounted(() => {
 
 <template>
   <div class="home-page">
-    <!-- 首页顶部自律大看板 (三栏居中时钟架构) -->
-    <div class="welcome-section">
+    <!-- 1. 首页顶部自律大学情大看板 -->
+    <section class="welcome-section" aria-label="学情总览">
       <div class="welcome-banner-grid">
-        <!-- 1. 左栏：学生问候与今日自律战报 (选项 A) -->
+        <!-- 左栏：问候与今日自律指标 -->
         <div class="banner-col banner-left">
           <div class="greeting-row">
             <h1 class="greeting-title">{{ greeting }}</h1>
@@ -222,21 +455,42 @@ onUnmounted(() => {
               @click="userProfile.showEditModal = true"
               title="修改学生姓名与个人档案"
             >
-              <el-icon><Edit /></el-icon>
+              <el-icon :size="13"><Edit /></el-icon>
             </button>
           </div>
+
           <p v-if="userProfile.customQuote" class="quote-text">
             “{{ userProfile.customQuote }}”
           </p>
 
-          <!-- 今日自律学情胶囊 (选项 A: 专注与计划) -->
+          <div class="student-meta-row">
+            <div class="student-meta-pill">
+              <span class="meta-tag">{{ gradeAndElectivesLabel }}</span>
+              <span class="meta-dot">·</span>
+              <span class="meta-exam">{{ userProfile.targetExam || "全国统一高考" }}</span>
+            </div>
+
+            <button
+              type="button"
+              class="banner-sync-btn"
+              @click="showCloudModal = true"
+              title="云端极速跨端同步 (端到端加密口令)"
+            >
+              <el-icon :size="13"><Connection /></el-icon>
+              <span>云端同步</span>
+            </button>
+          </div>
+
+          <!-- 今日自律学情微卡 -->
           <div class="today-discipline-deck">
             <div
               class="discipline-item"
               @click="$router.push('/timer')"
               title="点击前往番茄钟专注计时"
             >
-              <span class="disc-icon">⏱️</span>
+              <div class="disc-icon-circle">
+                <el-icon :size="16"><Timer /></el-icon>
+              </div>
               <div class="disc-info">
                 <span class="disc-label">今日专注</span>
                 <span class="disc-val">
@@ -255,18 +509,20 @@ onUnmounted(() => {
               @click="$router.push('/study-plan')"
               title="点击查看今日学习任务"
             >
-              <span class="disc-icon">📋</span>
+              <div class="disc-icon-circle">
+                <el-icon :size="16"><Calendar /></el-icon>
+              </div>
               <div class="disc-info">
-                <span class="disc-label">今日计划</span>
+                <span class="disc-label">今日待办</span>
                 <span class="disc-val">
-                  {{ todayStats.total > 0 ? `${todayStats.done}/${todayStats.total} 项 (${progressPct}%)` : "暂无今日计划" }}
+                  {{ todayStats.total > 0 ? `${todayStats.done}/${todayStats.total} 项 (${progressPct}%)` : "暂无待办" }}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 2. 中栏：居中沉浸数字时钟 (时钟居中) -->
+        <!-- 中栏：居中沉浸式数字时钟 -->
         <div class="banner-col banner-center">
           <div class="center-clock-wrap">
             <div class="center-time">{{ formatTime(currentTime) }}</div>
@@ -278,29 +534,36 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- 3. 右栏：2027高考倒计时 & 稳健气象 -->
+        <!-- 右栏：动态高考倒计时与气象 -->
         <div class="banner-col banner-right">
-          <!-- 动态高考倒计时（根据所选年级推算目标年份） -->
+          <!-- 动态高考倒计时 -->
           <div
             class="gaokao-countdown-card is-clickable"
             @click="userProfile.showEditModal = true"
             title="点击修改学生年级或目标"
           >
             <div class="gaokao-header-row">
-              <span class="gaokao-badge">🎯 {{ userProfile.gaokaoTarget.targetYear }}年高考 · 倒计时</span>
+              <span class="gaokao-badge">
+                <el-icon :size="12" class="badge-icon"><Compass /></el-icon>
+                {{ userProfile.gaokaoTarget.targetYear }}年高考 · 倒计时
+              </span>
               <span class="gaokao-target-date">目标: 6月7日</span>
             </div>
             <div class="gaokao-main-row">
               <span class="gaokao-days-num">{{ userProfile.gaokaoTarget.diffDays }}</span>
               <span class="gaokao-days-unit">天</span>
             </div>
-            <div class="gaokao-slogan">【{{ userProfile.gradeLevel }}】{{ userProfile.gaokaoTarget.stageDesc }} · 每一天都算数</div>
+            <div class="gaokao-slogan">
+              【{{ userProfile.gradeLevel }}】{{ userProfile.gaokaoTarget.stageDesc }} · 每一天都算数
+            </div>
           </div>
 
-          <!-- 稳健天气卡片 -->
+          <!-- 实时气象卡片 -->
           <div class="weather-compact-card" v-if="todayWeather">
             <div class="weather-top-row">
-              <span class="weather-icon-inline">{{ weatherIcon(todayWeather.weatherCode) }}</span>
+              <el-icon :size="18" class="weather-icon-svg">
+                <component :is="weatherIconComponent(todayWeather.weatherCode)" />
+              </el-icon>
               <span class="weather-temp-bold">{{ todayWeather.temp }}°C</span>
               <span class="weather-desc-tag">{{ weatherDesc(todayWeather.weatherCode) }}</span>
               <span class="weather-range">{{ todayWeather.tempMin }}° ~ {{ todayWeather.tempMax }}°</span>
@@ -308,8 +571,8 @@ onUnmounted(() => {
             <div class="weather-sub-row">
               <span>上海市</span>
               <span>·</span>
-              <span>💧 湿度 {{ todayWeather.humidity }}%</span>
-              <span v-if="tomorrowWeather">· 明日 {{ weatherIcon(tomorrowWeather.weatherCode) }} {{ tomorrowWeather.tempMin }}°/{{ tomorrowWeather.tempMax }}°</span>
+              <span>湿度 {{ todayWeather.humidity }}%</span>
+              <span v-if="tomorrowWeather">· 明日 {{ weatherDesc(tomorrowWeather.weatherCode) }} {{ tomorrowWeather.tempMin }}°/{{ tomorrowWeather.tempMax }}°</span>
             </div>
           </div>
           <div class="weather-compact-card loading" v-else-if="weatherLoading">
@@ -317,35 +580,257 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- 主功能模块入口网格 -->
-    <el-row :gutter="20" class="module-cards">
-      <el-col :xs="12" :sm="12" :md="8" v-for="mod in modules" :key="mod.title">
-        <el-card shadow="hover" class="module-card" @click="$router.push(mod.path)">
-          <div class="module-icon" :style="{ background: mod.color }">
-            <el-icon :size="32"><component :is="mod.icon" /></el-icon>
+    <!-- 2. 核心工作区：今日任务即时打卡 + 学科直通车 & 简报 -->
+    <section class="workspace-section">
+      <div class="workspace-grid">
+        <!-- 左侧：今日待办清单即时打卡工作台 -->
+        <div class="today-tasks-panel">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <div class="panel-icon-dot"></div>
+              <h2 class="panel-title">今日待办清单</h2>
+              <span class="panel-counter" v-if="todayStats.total > 0">
+                已完成 {{ todayStats.done }}/{{ todayStats.total }} 项
+              </span>
+            </div>
+            <div class="panel-actions">
+              <button
+                type="button"
+                class="panel-quick-add-btn"
+                @click="quickAddTodayPlan"
+                title="快速增加一条今日任务"
+              >
+                <el-icon :size="14"><Plus /></el-icon>
+                <span>加任务</span>
+              </button>
+              <button
+                type="button"
+                class="panel-link-btn"
+                @click="$router.push('/study-plan')"
+                title="前往计划中心管理"
+              >
+                <span>全部计划</span>
+                <el-icon :size="12"><ArrowRight /></el-icon>
+              </button>
+            </div>
           </div>
-          <h3>{{ mod.title }}</h3>
-          <p>{{ mod.desc }}</p>
-        </el-card>
-      </el-col>
-    </el-row>
 
-    <!-- 规范页脚：版本、版权与联系反馈 -->
-    <footer class="home-footer">
+          <!-- 进度指示条 -->
+          <div class="tasks-progress-track" v-if="todayStats.total > 0">
+            <div
+              class="tasks-progress-bar"
+              :style="{ width: `${progressPct}%` }"
+            ></div>
+          </div>
+
+          <!-- 任务条目列表 -->
+          <div class="tasks-list" v-if="todayPlans.length > 0">
+            <div
+              v-for="plan in todayPlans"
+              :key="plan.id"
+              class="task-item-card"
+              :class="{ 'is-completed': plan.done }"
+            >
+              <button
+                type="button"
+                class="task-check-circle"
+                :class="{ checked: plan.done }"
+                @click="togglePlanItem(plan)"
+                :title="plan.done ? '点击标记为未完成' : '点击完成此项任务'"
+              >
+                <el-icon v-if="plan.done" :size="13"><Check /></el-icon>
+              </button>
+
+              <span
+                class="task-subject-tag"
+                :style="{
+                  backgroundColor: `${subjectColors[plan.subject] || '#6366f1'}15`,
+                  color: subjectColors[plan.subject] || '#6366f1',
+                  borderColor: `${subjectColors[plan.subject] || '#6366f1'}30`
+                }"
+              >
+                {{ plan.subject }}
+              </span>
+
+              <span class="task-content-text" :title="plan.content">
+                {{ plan.content }}
+              </span>
+
+              <div class="task-right-meta">
+                <span class="task-time-pill" v-if="plan.estimated_minutes">
+                  <el-icon :size="11"><Clock /></el-icon>
+                  {{ plan.estimated_minutes }}m
+                </span>
+
+                <button
+                  v-if="!plan.done"
+                  type="button"
+                  class="task-focus-btn"
+                  @click="goToTimerWithTask(plan.content, plan.subject)"
+                  title="以此任务开启专注计时"
+                >
+                  <el-icon :size="12"><Timer /></el-icon>
+                  <span>去专注</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 今日无任务空状态 -->
+          <div class="tasks-empty-state" v-else>
+            <div class="empty-icon-wrap">
+              <el-icon :size="28"><Calendar /></el-icon>
+            </div>
+            <div class="empty-text-wrap">
+              <p class="empty-title">今日暂无待办学习任务</p>
+              <p class="empty-sub">合理规划学习节奏，让复习更有条理</p>
+            </div>
+            <button
+              type="button"
+              class="empty-add-btn"
+              @click="quickAddTodayPlan"
+            >
+              <el-icon :size="13"><Plus /></el-icon>
+              <span>快速添加今日第一项任务</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 右侧：学科直通车与关键学情指标 -->
+        <div class="side-overview-panel">
+          <!-- 1. 学科考点直达通道 -->
+          <div class="quick-subjects-card">
+            <div class="side-card-header">
+              <span class="side-card-title">考点直达与错题本</span>
+              <span class="side-card-badge">直达阅读</span>
+            </div>
+            <div class="subject-chips-wrap">
+              <button
+                v-for="sub in quickSubjects"
+                :key="sub"
+                type="button"
+                class="subject-chip-btn"
+                @click="goToSubject(sub)"
+                :title="`直接前往【${sub}】教材考点库`"
+              >
+                <span
+                  class="chip-dot"
+                  :style="{ backgroundColor: subjectColors[sub] || '#6366f1' }"
+                ></span>
+                <span class="chip-name">{{ sub }}</span>
+              </button>
+
+              <!-- 错题靶向特殊按钮 -->
+              <button
+                type="button"
+                class="subject-chip-btn wrong-chip-btn"
+                @click="$router.push('/subjects?tab=wrong-book')"
+                title="查看并复习错题本"
+              >
+                <el-icon :size="13"><DocumentDelete /></el-icon>
+                <span class="chip-name">错题本</span>
+                <span class="wrong-badge" v-if="wrongItemsCount > 0">{{ wrongItemsCount }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. 学情四维小结 -->
+          <div class="milestone-mini-grid">
+            <div class="milestone-box" @click="$router.push('/timer')">
+              <div class="milestone-top">
+                <span class="m-label">今日专注</span>
+                <el-icon :size="14" class="m-icon icon-amber"><Timer /></el-icon>
+              </div>
+              <div class="m-value">{{ timerStore.stats.today_minutes || 0 }}<span class="m-unit">分</span></div>
+              <div class="m-sub">{{ timerStore.stats.today_pomodoros || 0 }} 个番茄时钟</div>
+            </div>
+
+            <div class="milestone-box" @click="$router.push('/study-plan')">
+              <div class="milestone-top">
+                <span class="m-label">今日完成率</span>
+                <el-icon :size="14" class="m-icon icon-indigo"><Calendar /></el-icon>
+              </div>
+              <div class="m-value">{{ progressPct }}<span class="m-unit">%</span></div>
+              <div class="m-sub">{{ todayStats.done }}/{{ todayStats.total }} 项已达成</div>
+            </div>
+
+            <div class="milestone-box" @click="$router.push('/subjects?tab=wrong-book')">
+              <div class="milestone-top">
+                <span class="m-label">待突破错题</span>
+                <el-icon :size="14" class="m-icon icon-rose"><DocumentDelete /></el-icon>
+              </div>
+              <div class="m-value">{{ wrongItemsCount }}<span class="m-unit">题</span></div>
+              <div class="m-sub">定期巩固错因归因</div>
+            </div>
+
+            <div class="milestone-box" @click="$router.push('/word-card')">
+              <div class="milestone-top">
+                <span class="m-label">单词掌握</span>
+                <el-icon :size="14" class="m-icon icon-emerald"><Postcard /></el-icon>
+              </div>
+              <div class="m-value">{{ wordMasteredCount }}<span class="m-unit">词</span></div>
+              <div class="m-sub">艾宾浩斯记忆曲线</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 8大核心学习工作台入口矩阵 -->
+    <section class="modules-section" aria-label="核心功能导航">
+      <div class="modules-section-header">
+        <div class="header-left">
+          <h2 class="modules-section-title">智学功能矩阵</h2>
+          <span class="modules-section-sub">8大自主学习引擎，助你高效备考</span>
+        </div>
+      </div>
+
+      <div class="module-cards-grid">
+        <div
+          v-for="mod in modules"
+          :key="mod.title"
+          class="module-card-item"
+          @click="$router.push(mod.path)"
+        >
+          <div class="module-card-inner">
+            <div class="module-card-top">
+              <div class="module-icon-wrap" :style="{ background: mod.color }">
+                <el-icon :size="22"><component :is="mod.icon" /></el-icon>
+              </div>
+              <span class="module-tag">{{ mod.tag }}</span>
+            </div>
+            <div class="module-card-body">
+              <h3 class="module-title">{{ mod.title }}</h3>
+              <p class="module-desc">{{ mod.desc }}</p>
+            </div>
+            <div class="module-card-footer">
+              <span class="footer-action-text">进入模块</span>
+              <el-icon :size="13" class="footer-arrow"><ArrowRight /></el-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 规范页脚：置底保障与版本版权 -->
+    <footer class="home-footer" role="contentinfo">
       <div class="footer-divider"></div>
       <div class="footer-inner">
         <div class="footer-meta-line">
-          <span class="footer-brand">🎯 智学大脑 · Study Brain</span>
-          <span class="footer-badge">个人自律学习助手</span>
+          <span class="footer-brand">
+            <el-icon :size="14" class="footer-logo-icon"><Collection /></el-icon>
+            智学大脑 · Study Brain
+          </span>
+          <span class="footer-badge">纯客户端私有学习引擎</span>
           <span class="footer-sep">·</span>
           <span class="footer-ver">应用版本 v{{ appVersionStore.currentVersion }}</span>
           <span class="footer-sep">·</span>
-          <span class="footer-db">考点词库 v{{ appConfig.currentDbVersion }}</span>
+          <span class="footer-db">知识库 v{{ appConfig.currentDbVersion }}</span>
           <span class="footer-sep">·</span>
           <button type="button" class="footer-link-btn" @click="showAboutModal = true">
-            关于
+            关于我们
           </button>
         </div>
 
@@ -362,24 +847,34 @@ onUnmounted(() => {
       </div>
     </footer>
 
+    <!-- 关于系统弹窗 -->
     <AboutModal v-model="showAboutModal" />
+
+    <!-- 极速端到端加密云端同步弹窗 -->
+    <CloudSyncModal v-model="showCloudModal" />
   </div>
 </template>
 
 <style scoped>
+/* 核心容器：保证 Sticky Footer 在短内容或长内容下均能精确置底 */
 .home-page {
   max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-height: 100%;
 }
 
-/* 顶部学情欢迎大看板 */
+/* 1. 顶部学情欢迎大看板 */
 .welcome-section {
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #7c3aed 100%);
+  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 35%, #6366f1 70%, #7c3aed 100%);
   border-radius: 20px;
-  padding: 26px 30px;
-  margin-bottom: 24px;
+  padding: 24px 28px;
+  margin-bottom: 22px;
   color: #ffffff;
-  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.22);
   position: relative;
   overflow: hidden;
 }
@@ -404,7 +899,7 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-/* 1. 左栏样式 */
+/* 左栏样式 */
 .banner-left {
   display: flex;
   flex-direction: column;
@@ -418,7 +913,7 @@ onUnmounted(() => {
 }
 
 .greeting-title {
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 800;
   margin: 0;
   letter-spacing: -0.3px;
@@ -435,34 +930,78 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
-  font-size: 13px;
+  transition: all 0.2s ease;
 }
 
 .edit-name-btn:hover {
   background: rgba(255, 255, 255, 0.35);
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .quote-text {
   font-size: 13.5px;
   color: rgba(255, 255, 255, 0.9);
   font-style: italic;
-  margin: 0 0 4px;
+  margin: 0;
   line-height: 1.4;
 }
 
-/* 今日自律学情胶囊卡 (选项 A) */
+.student-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.student-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11.5px;
+  width: fit-content;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+}
+
+.banner-sync-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11.5px;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-sync-btn:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-1px);
+}
+
+.meta-dot {
+  opacity: 0.6;
+}
+
+/* 今日自律学情胶囊 */
 .today-discipline-deck {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.16);
+  background: rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 8px 14px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .discipline-item {
@@ -475,11 +1014,19 @@ onUnmounted(() => {
 }
 
 .discipline-item:hover {
-  opacity: 0.85;
+  opacity: 0.88;
 }
 
-.disc-icon {
-  font-size: 18px;
+.disc-icon-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
 }
 
 .disc-info {
@@ -506,9 +1053,9 @@ onUnmounted(() => {
   font-size: 10px;
   padding: 1px 5px;
   border-radius: 4px;
-  background: rgba(239, 68, 68, 0.35);
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  color: #fee2e2;
+  background: rgba(245, 158, 11, 0.35);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fef3c7;
   font-weight: 600;
 }
 
@@ -518,7 +1065,7 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* 2. 中栏：居中时钟 */
+/* 中栏：居中数字时钟 */
 .banner-center {
   display: flex;
   justify-content: center;
@@ -575,15 +1122,23 @@ onUnmounted(() => {
   50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-/* 3. 右栏：2027高考与气象 */
+/* 右栏：高考倒计时与气象 */
 .banner-right {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.gaokao-countdown-card.is-clickable { cursor: pointer; transition: transform 0.2s, background 0.2s; }
-.gaokao-countdown-card.is-clickable:hover { background: rgba(0, 0, 0, 0.26); transform: translateY(-1px); }
+.gaokao-countdown-card.is-clickable {
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.gaokao-countdown-card.is-clickable:hover {
+  background: rgba(0, 0, 0, 0.26);
+  transform: translateY(-1px);
+}
+
 .gaokao-countdown-card {
   background: rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(12px);
@@ -604,6 +1159,9 @@ onUnmounted(() => {
   font-weight: 700;
   color: #fbbf24;
   letter-spacing: 0.2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .gaokao-target-date {
@@ -637,7 +1195,7 @@ onUnmounted(() => {
   margin-top: 1px;
 }
 
-/* 稳健天气卡片 */
+/* 实时气象卡片 */
 .weather-compact-card {
   background: rgba(0, 0, 0, 0.14);
   backdrop-filter: blur(10px);
@@ -650,7 +1208,7 @@ onUnmounted(() => {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   text-align: center;
-  padding: 14px;
+  padding: 12px;
 }
 
 .weather-top-row {
@@ -661,9 +1219,8 @@ onUnmounted(() => {
   margin-bottom: 2px;
 }
 
-.weather-icon-inline {
-  font-size: 18px;
-  line-height: 1;
+.weather-icon-svg {
+  color: #fde047;
 }
 
 .weather-temp-bold {
@@ -672,7 +1229,7 @@ onUnmounted(() => {
 }
 
 .weather-desc-tag {
-  font-size: 12px;
+  font-size: 11.5px;
   background: rgba(255, 255, 255, 0.15);
   padding: 1px 6px;
   border-radius: 4px;
@@ -692,59 +1249,600 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* 主功能卡片 */
-.module-cards {
-  margin-top: 0;
+/* 2. 工作区：今日任务即时打卡 + 学科直通 */
+.workspace-section {
+  margin-bottom: 24px;
 }
 
-.module-card {
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  text-align: center;
-  border-radius: 14px;
-  border: 1px solid var(--border-color, #e2e8f0);
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 18px;
 }
 
-.module-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-}
-
-.module-icon {
-  width: 58px;
-  height: 58px;
+/* 今日任务面板 */
+.today-tasks-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--theme-transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.panel-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-icon-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4f46e5;
+}
+
+.panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.panel-counter {
+  font-size: 12px;
+  color: var(--text-sub);
+  background: var(--bg-card-secondary);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-quick-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(79, 70, 229, 0.08);
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  color: #4f46e5;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:global(.dark) .panel-quick-add-btn {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+}
+
+.panel-quick-add-btn:hover {
+  background: rgba(79, 70, 229, 0.15);
+  transform: translateY(-1px);
+}
+
+.panel-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.panel-link-btn:hover {
+  color: #4f46e5;
+}
+
+/* 进度条 */
+.tasks-progress-track {
+  height: 4px;
+  background: var(--bg-card-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.tasks-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5 0%, #10b981 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* 任务列表 */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 270px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.task-item-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.task-item-card:hover {
+  border-color: var(--border-regular);
+  transform: translateX(2px);
+}
+
+.task-item-card.is-completed {
+  opacity: 0.65;
+  background: var(--bg-card);
+}
+
+.task-item-card.is-completed .task-content-text {
+  text-decoration: line-through;
+  color: var(--text-sub);
+}
+
+.task-check-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-regular);
+  background: var(--bg-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.task-check-circle:hover {
+  border-color: #10b981;
+}
+
+.task-check-circle.checked {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.task-subject-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.task-content-text {
+  font-size: 13px;
+  color: var(--text-main);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.task-right-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.task-time-pill {
+  font-size: 11px;
+  color: var(--text-sub);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+.task-focus-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #d97706;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:global(.dark) .task-focus-btn {
+  color: #fbbf24;
+}
+
+.task-focus-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  transform: scale(1.04);
+}
+
+/* 任务空状态 */
+.tasks-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 16px;
+  gap: 10px;
+}
+
+.empty-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--bg-card-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 14px;
-  color: #fff;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  color: var(--text-sub);
 }
 
-.module-card h3 {
-  margin: 0 0 6px;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text-main, #0f172a);
-}
-
-.module-card p {
-  color: var(--text-sub, #64748b);
-  font-size: 13.5px;
+.empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
   margin: 0;
 }
 
-/* 规范版权与页脚 */
+.empty-sub {
+  font-size: 12px;
+  color: var(--text-sub);
+  margin: 2px 0 0;
+}
+
+.empty-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s;
+}
+
+.empty-add-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+/* 右侧面板 */
+.side-overview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 学科直达卡 */
+.quick-subjects-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 14px 16px;
+  transition: var(--theme-transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.side-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.side-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.side-card-badge {
+  font-size: 11px;
+  color: var(--text-sub);
+}
+
+.subject-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.subject-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subject-chip-btn:hover {
+  border-color: var(--border-regular);
+  background: var(--bg-card-tertiary);
+  transform: translateY(-1px);
+}
+
+.chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.wrong-chip-btn {
+  background: rgba(225, 29, 72, 0.08);
+  border-color: rgba(225, 29, 72, 0.2);
+  color: #e11d48;
+}
+
+:global(.dark) .wrong-chip-btn {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.25);
+  color: #fb7185;
+}
+
+.wrong-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: #e11d48;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0 5px;
+  line-height: 14px;
+}
+
+/* 学情四维小结 */
+.milestone-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.milestone-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.milestone-box:hover {
+  border-color: var(--border-regular);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+}
+
+.milestone-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.m-label {
+  font-size: 11.5px;
+  color: var(--text-sub);
+  font-weight: 500;
+}
+
+.m-icon.icon-amber { color: #d97706; }
+.m-icon.icon-indigo { color: #4f46e5; }
+.m-icon.icon-rose { color: #e11d48; }
+.m-icon.icon-emerald { color: #059669; }
+
+.m-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+.m-unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub);
+  margin-left: 2px;
+}
+
+.m-sub {
+  font-size: 10.5px;
+  color: var(--text-sub);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3. 8大模块功能矩阵 */
+.modules-section {
+  margin-bottom: 24px;
+}
+
+.modules-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modules-section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  display: inline-block;
+}
+
+.modules-section-sub {
+  font-size: 12.5px;
+  color: var(--text-sub);
+  margin-left: 8px;
+}
+
+.module-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.module-card-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.module-card-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-regular);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.module-card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.module-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.module-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.module-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-sub);
+  background: var(--bg-card-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.module-card-body {
+  flex: 1;
+}
+
+.module-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 6px;
+}
+
+.module-desc {
+  font-size: 12.5px;
+  color: var(--text-sub);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.module-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 12px;
+  color: var(--text-sub);
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.module-card-item:hover .module-card-footer {
+  color: #4f46e5;
+}
+
+:global(.dark) .module-card-item:hover .module-card-footer {
+  color: #818cf8;
+}
+
+.footer-arrow {
+  transition: transform 0.2s;
+}
+
+.module-card-item:hover .footer-arrow {
+  transform: translateX(3px);
+}
+
+/* 4. 规范版权与置底页脚 */
 .home-footer {
-  margin-top: 36px;
-  padding-bottom: 26px;
+  margin-top: auto;
+  padding-top: 36px;
+  padding-bottom: 24px;
 }
 
 .footer-divider {
   height: 1px;
-  background: var(--border-color, rgba(226, 232, 240, 0.8));
+  background: var(--border-subtle);
   margin-bottom: 18px;
 }
 
@@ -762,13 +1860,20 @@ onUnmounted(() => {
   justify-content: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--text-sub, #64748b);
+  color: var(--text-sub);
   flex-wrap: wrap;
 }
 
 .footer-brand {
   font-weight: 700;
-  color: var(--text-main, #334155);
+  color: var(--text-regular);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.footer-logo-icon {
+  color: #4f46e5;
 }
 
 .footer-badge {
@@ -776,8 +1881,13 @@ onUnmounted(() => {
   font-weight: 600;
   padding: 1px 7px;
   border-radius: 6px;
-  background: rgba(99, 102, 241, 0.12);
+  background: rgba(79, 70, 229, 0.1);
   color: #4f46e5;
+}
+
+:global(.dark) .footer-badge {
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
 }
 
 .footer-ver,
@@ -794,7 +1904,7 @@ onUnmounted(() => {
   background: none;
   border: none;
   padding: 0;
-  color: #3b82f6;
+  color: #4f46e5;
   font-size: 13px;
   cursor: pointer;
   text-decoration: underline;
@@ -803,8 +1913,12 @@ onUnmounted(() => {
   font-weight: 600;
 }
 
+:global(.dark) .footer-link-btn {
+  color: #818cf8;
+}
+
 .footer-link-btn:hover {
-  color: #1d4ed8;
+  color: #3730a3;
 }
 
 .footer-copy-line {
@@ -813,35 +1927,47 @@ onUnmounted(() => {
   justify-content: center;
   gap: 8px;
   font-size: 12px;
-  color: var(--text-sub, #94a3b8);
+  color: var(--text-sub);
   flex-wrap: wrap;
 }
 
 .footer-email-link {
-  color: #3b82f6;
+  color: #4f46e5;
   text-decoration: none;
   font-weight: 600;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   transition: color 0.2s;
 }
 
+:global(.dark) .footer-email-link {
+  color: #818cf8;
+}
+
 .footer-email-link:hover {
-  color: #1d4ed8;
+  color: #3730a3;
   text-decoration: underline;
 }
 
-/* 移动端与小屏适配 */
-@media (max-width: 960px) {
+/* ================= 响应式人体工学适配 ================= */
+
+/* 平板尺寸 (Pad: 769px ~ 1024px) */
+@media (max-width: 1024px) {
   .welcome-banner-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr 1fr;
   }
   .banner-center {
+    grid-column: span 2;
     order: -1;
+  }
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+  .module-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* 手机端深度精简与去繁化简适配 (< 768px) */
+/* 手机端尺寸 (Mobile: <= 768px) */
 @media (max-width: 768px) {
   .welcome-section {
     padding: 16px 14px 14px;
@@ -849,12 +1975,13 @@ onUnmounted(() => {
     margin-bottom: 16px;
   }
 
-  /* 隐藏居中大时钟：手机系统顶栏已有时间，省出核心视口高度 */
+  /* 手机端顶部系统已有时间，隐藏沉浸大时钟以节省核心视口高度 */
   .banner-center {
     display: none !important;
   }
 
   .welcome-banner-grid {
+    grid-template-columns: 1fr !important;
     gap: 12px !important;
   }
 
@@ -864,7 +1991,6 @@ onUnmounted(() => {
 
   .quote-text {
     font-size: 12px;
-    margin-bottom: 2px;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -890,22 +2016,21 @@ onUnmounted(() => {
   }
 
   .gaokao-countdown-card {
-    padding: 10px 14px !important;
-    border-radius: 12px !important;
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
   }
 
   .gaokao-days-num {
-    font-size: 28px !important;
+    font-size: 26px !important;
   }
 
   .gaokao-slogan {
-    font-size: 11px !important;
+    font-size: 10.5px !important;
   }
 
-  /* 隐藏天气卡片的多余湿度、风速和明日预报，只保留紧凑单行 */
   .weather-compact-card {
-    padding: 6px 12px !important;
-    border-radius: 10px !important;
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
   }
 
   .weather-sub-row {
@@ -921,15 +2046,55 @@ onUnmounted(() => {
     font-size: 14px !important;
   }
 
-  /* 手机端隐藏主功能模块入口方块（已由底部快捷导航栏完全承载：计划/学科/单词/专注） */
-  .module-cards {
-    display: none !important;
+  /* 工作区单列排列 */
+  .workspace-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
-  /* 手机端精简页脚：仅保留单行紧凑版权 */
+  .today-tasks-panel {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .panel-title {
+    font-size: 15px;
+  }
+
+  /* 手机端核心模块网格：紧凑2列显示（不隐藏，方便触达所有功能） */
+  .module-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .module-card-item {
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .module-icon-wrap {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+  }
+
+  .module-title {
+    font-size: 14px !important;
+  }
+
+  .module-desc {
+    display: none;
+  }
+
+  .module-card-footer {
+    display: none;
+  }
+
+  /* 手机端精炼页脚 */
   .home-footer {
-    margin-top: 14px !important;
-    padding-top: 10px !important;
+    margin-top: auto !important;
+    padding-top: 20px !important;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
   }
 
   .footer-meta-line {
@@ -938,7 +2103,7 @@ onUnmounted(() => {
 
   .footer-copy-line {
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
     font-size: 11px;
     text-align: center;
   }
@@ -947,5 +2112,4 @@ onUnmounted(() => {
     display: none;
   }
 }
-
 </style>
