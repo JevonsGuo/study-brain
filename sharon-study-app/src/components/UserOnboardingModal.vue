@@ -314,7 +314,7 @@ const handleFinishNewUser = async () => {
               </el-button>
             </div>
           </div>
-          <p class="code-subtext">用于跨设备同步数据，系统默认开启每 5 分钟自动静默同步</p>
+          <p class="code-subtext">用于跨设备同步数据，系统默认开启每小时自动静默同步</p>
         </div>
 
         <!-- 提交并开始使用 -->

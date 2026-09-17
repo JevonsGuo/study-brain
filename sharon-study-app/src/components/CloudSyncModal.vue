@@ -65,7 +65,7 @@ const handlePasscodeChange = () => {
 const handleAutoSyncChange = () => {
   saveSyncConfig({ autoSync: autoSyncEnabled.value })
   ElMessage.success(
-    autoSyncEnabled.value ? '已开启后台自动静默同步 (每5分钟)' : '已关闭后台自动同步'
+    autoSyncEnabled.value ? '已开启后台自动静默同步 (每小时)' : '已关闭后台自动同步'
   )
 }
 
@@ -282,7 +282,7 @@ const handleFileImport = async (e: Event) => {
       <!-- 自动静默同步与上次时间 -->
       <div class="auto-sync-bar">
         <el-checkbox v-model="autoSyncEnabled" @change="handleAutoSyncChange">
-          <span class="auto-sync-text">后台自动静默同步 (每5分钟)</span>
+          <span class="auto-sync-text">后台自动静默同步 (每小时)</span>
         </el-checkbox>
         <span v-if="lastSyncTime" class="last-sync-time">
           上次: {{ lastSyncTime.slice(5) }}

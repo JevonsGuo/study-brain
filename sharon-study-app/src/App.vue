@@ -202,7 +202,7 @@ onMounted(() => {
   }
   applyTheme(isDark.value)
 
-  // 端到端加密 5 分钟后台定时自动云端备份机制（默认开启，每 5 分钟静默上云）
+  // 端到端加密后台定时自动云端备份机制（默认开启，每小时静默上云）
   let lastSilentSyncTimestamp = 0
   const runSilentSync = async () => {
     const syncCfg = getSyncConfig()
@@ -219,16 +219,16 @@ onMounted(() => {
     }
   }
 
-  // 启动 8 秒后首次静默同步，之后每 5 分钟定时执行
+  // 启动 8 秒后首次静默同步，之后每小时定时执行
   setTimeout(runSilentSync, 8 * 1000)
-  setInterval(runSilentSync, 5 * 60 * 1000)
+  setInterval(runSilentSync, 60 * 60 * 1000)
 
-  // 用户切回网页或从休眠唤醒时，若已满 5 分钟自动静默补录
+  // 用户切回网页或从休眠唤醒时，若已满 1 小时自动静默补录
   if (typeof document !== 'undefined') {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         const now = Date.now()
-        if (now - lastSilentSyncTimestamp >= 5 * 60 * 1000) {
+        if (now - lastSilentSyncTimestamp >= 60 * 60 * 1000) {
           runSilentSync()
         }
       }
