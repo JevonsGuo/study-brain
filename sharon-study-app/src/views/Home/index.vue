@@ -29,11 +29,13 @@ import {
   PartlyCloudy,
   Pouring,
   Lightning,
-  Drizzling
+  Drizzling,
+  ArrowDown
 } from "@element-plus/icons-vue"
 import { ElMessage, ElMessageBox } from "element-plus"
 
 const router = useRouter()
+const isMobileMoreExpanded = ref(false)
 
 interface WeatherData {
   temp: number
@@ -444,7 +446,55 @@ onUnmounted(() => {
   <div class="home-page">
     <!-- 1. 首页顶部自律大学情大看板 -->
     <section class="welcome-section" aria-label="学情总览">
-      <div class="welcome-banner-grid">
+      <!-- 移动端专享极简高能看板（手机端显示，桌面端隐藏） -->
+      <div class="mobile-compact-hero mobile-only">
+        <div class="mobile-hero-main">
+          <div class="mobile-hero-left">
+            <div class="mobile-greeting-row">
+              <span class="mobile-greeting-name">{{ greeting }}</span>
+              <button
+                type="button"
+                class="mobile-edit-btn"
+                @click="userProfile.showEditModal = true"
+                title="修改空间信息"
+              >
+                <el-icon :size="12"><Edit /></el-icon>
+              </button>
+            </div>
+            <div class="mobile-meta-chips">
+              <span class="mobile-chip-grade">{{ userProfile.gradeLevel || '高三' }} · {{ (userProfile.electiveSubjects || ['物理', '化学', '生物']).join('') }}</span>
+              <span class="mobile-chip-weather" v-if="todayWeather">
+                <component :is="weatherIconComponent(todayWeather.weatherCode)" class="weather-chip-icon" />
+                <span>{{ todayWeather.temp }}°C</span>
+              </span>
+            </div>
+          </div>
+
+          <div
+            class="mobile-hero-right"
+            @click="userProfile.showEditModal = true"
+            title="点击修改高考目标"
+          >
+            <div class="mobile-countdown-box">
+              <span class="m-count-num">{{ userProfile.gaokaoTarget.diffDays }}</span>
+              <span class="m-count-label">天后高考</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 极简进度细条 -->
+        <div class="mobile-hero-progress" v-if="todayStats.total > 0">
+          <div class="m-prog-bar">
+            <div class="m-prog-fill" :style="{ width: `${progressPct}%` }"></div>
+          </div>
+          <div class="m-prog-meta">
+            <span>今日待办 {{ todayStats.done }}/{{ todayStats.total }} 项 ({{ progressPct }}%)</span>
+            <span>专注 {{ todayFocusText }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-banner-grid desktop-only">
         <!-- 左栏：问候与今日自律指标 -->
         <div class="banner-col banner-left">
           <div class="greeting-row">
@@ -696,10 +746,47 @@ onUnmounted(() => {
               <span>快速添加今日第一项任务</span>
             </button>
           </div>
+
+          <!-- 移动端首屏极速快捷轨（免滑动一触即达核心引擎） -->
+          <div class="mobile-quick-rail mobile-only">
+            <button type="button" class="rail-chip" @click="$router.push('/timer')">
+              <span class="rail-icon-box rail-bg-amber"><el-icon :size="15"><Timer /></el-icon></span>
+              <span class="rail-text">专注计时</span>
+            </button>
+            <button type="button" class="rail-chip" @click="$router.push('/word-card')">
+              <span class="rail-icon-box rail-bg-emerald"><el-icon :size="15"><Postcard /></el-icon></span>
+              <span class="rail-text">背单词</span>
+            </button>
+            <button type="button" class="rail-chip" @click="$router.push('/subjects?tab=wrong-book')">
+              <span class="rail-icon-box rail-bg-rose"><el-icon :size="15"><DocumentDelete /></el-icon></span>
+              <span class="rail-text">错题靶向</span>
+              <span class="rail-counter" v-if="wrongItemsCount > 0">{{ wrongItemsCount }}</span>
+            </button>
+            <button type="button" class="rail-chip" @click="$router.push('/subjects')">
+              <span class="rail-icon-box rail-bg-indigo"><el-icon :size="15"><Reading /></el-icon></span>
+              <span class="rail-text">学科考点</span>
+            </button>
+            <button type="button" class="rail-chip" @click="$router.push('/brain-gym')">
+              <span class="rail-icon-box rail-bg-cyan"><el-icon :size="15"><MagicStick /></el-icon></span>
+              <span class="rail-text">脑力特训</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 移动端次要功能展开/收起切换栏 -->
+        <div class="mobile-secondary-toggle-bar mobile-only">
+          <button
+            type="button"
+            class="mobile-toggle-btn"
+            @click="isMobileMoreExpanded = !isMobileMoreExpanded"
+          >
+            <span>{{ isMobileMoreExpanded ? '收起学科直达与功能矩阵' : '查看学科考点与功能矩阵 (8)' }}</span>
+            <el-icon :class="{ 'is-rotated': isMobileMoreExpanded }"><ArrowDown /></el-icon>
+          </button>
         </div>
 
         <!-- 右侧：学科直通车与关键学情指标 -->
-        <div class="side-overview-panel">
+        <div class="side-overview-panel" :class="{ 'mobile-collapsed': !isMobileMoreExpanded }">
           <!-- 1. 学科考点直达通道 -->
           <div class="quick-subjects-card">
             <div class="side-card-header">
@@ -779,7 +866,7 @@ onUnmounted(() => {
     </section>
 
     <!-- 3. 8大核心学习工作台入口矩阵 -->
-    <section class="modules-section" aria-label="核心功能导航">
+    <section class="modules-section" :class="{ 'mobile-collapsed': !isMobileMoreExpanded }" aria-label="核心功能导航">
       <div class="modules-section-header">
         <div class="header-left">
           <h2 class="modules-section-title">智学功能矩阵</h2>
@@ -1967,133 +2054,492 @@ onUnmounted(() => {
   }
 }
 
-/* 手机端尺寸 (Mobile: <= 768px) */
-@media (max-width: 768px) {
-  .welcome-section {
-    padding: 16px 14px 14px;
-    border-radius: 16px;
-    margin-bottom: 16px;
-  }
+.mobile-only {
+  display: none !important;
+}
 
-  /* 手机端顶部系统已有时间，隐藏沉浸大时钟以节省核心视口高度 */
-  .banner-center {
+.desktop-only {
+  display: grid;
+}
+
+/* ========================================================== */
+/* 手机端深度人机工程学重构 (Mobile <= 768px, iPhone 16 基准)   */
+/* ========================================================== */
+@media (max-width: 768px) {
+  .desktop-only {
     display: none !important;
   }
 
-  .welcome-banner-grid {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
+  .mobile-only {
+    display: block !important;
   }
 
-  .greeting-title {
-    font-size: 19px;
+  .mobile-collapsed {
+    display: none !important;
   }
 
-  .quote-text {
-    font-size: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+  .home-page {
+    padding: 10px 12px 80px !important;
+  }
+
+  /* 1. 移动端专享极简高能看板 (Compact Unified Hero) */
+  .welcome-section {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin-bottom: 10px !important;
+  }
+
+  .mobile-compact-hero {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.12) 0%, rgba(99, 102, 241, 0.05) 50%, rgba(14, 165, 233, 0.08) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 14px;
+    padding: 12px 14px 10px;
+    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(10px);
+  }
+
+  :global(.dark) .mobile-compact-hero {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.35);
+  }
+
+  .mobile-hero-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .mobile-hero-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mobile-greeting-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .mobile-greeting-name {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--text-primary, #0f172a);
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.dark) .mobile-greeting-name {
+    color: #f8fafc;
+  }
+
+  .mobile-edit-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(255, 255, 255, 0.6);
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  :global(.dark) .mobile-edit-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #94a3b8;
+  }
+
+  .mobile-meta-chips {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .mobile-chip-grade {
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(99, 102, 241, 0.12);
+    color: #4f46e5;
+  }
+
+  :global(.dark) .mobile-chip-grade {
+    background: rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+  }
+
+  .mobile-chip-weather {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11.5px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(148, 163, 184, 0.15);
+    color: #475569;
+  }
+
+  :global(.dark) .mobile-chip-weather {
+    background: rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+  }
+
+  .weather-chip-icon {
+    width: 13px;
+    height: 13px;
+    color: #f59e0b;
+  }
+
+  /* 右侧高考倒计时胶囊 */
+  .mobile-hero-right {
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .mobile-countdown-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    padding: 6px 12px 5px;
+    border-radius: 10px;
+    min-width: 68px;
+  }
+
+  :global(.dark) .mobile-countdown-box {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: rgba(245, 158, 11, 0.45);
+  }
+
+  .m-count-num {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    color: #d97706;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :global(.dark) .m-count-num {
+    color: #fbbf24;
+  }
+
+  .m-count-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #b45309;
+    margin-top: 2px;
+  }
+
+  :global(.dark) .m-count-label {
+    color: #fde68a;
+  }
+
+  /* 极简进度微条 */
+  .mobile-hero-progress {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  :global(.dark) .mobile-hero-progress {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .m-prog-bar {
+    height: 3.5px;
+    border-radius: 2px;
+    background: rgba(148, 163, 184, 0.2);
     overflow: hidden;
   }
 
-  .today-discipline-deck {
-    padding: 6px 10px;
-    gap: 8px;
-    border-radius: 10px;
+  .m-prog-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%);
+    transition: width 0.3s ease;
   }
 
-  .disc-val {
-    font-size: 12.5px;
+  .m-prog-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #64748b;
   }
 
-  .disc-label {
-    font-size: 10px;
+  :global(.dark) .m-prog-meta {
+    color: #94a3b8;
   }
 
-  .banner-right {
+  /* 2. 今日待办清单移动端黄金工作台 */
+  .workspace-section {
+    margin-bottom: 8px !important;
+  }
+
+  .workspace-grid {
+    grid-template-columns: 1fr !important;
     gap: 8px !important;
   }
 
-  .gaokao-countdown-card {
-    padding: 8px 12px !important;
-    border-radius: 10px !important;
-  }
-
-  .gaokao-days-num {
-    font-size: 26px !important;
-  }
-
-  .gaokao-slogan {
-    font-size: 10.5px !important;
-  }
-
-  .weather-compact-card {
-    padding: 6px 10px !important;
-    border-radius: 8px !important;
-  }
-
-  .weather-sub-row {
-    display: none !important;
-  }
-
-  .weather-top-row {
-    gap: 6px !important;
-    font-size: 12px !important;
-  }
-
-  .weather-temp-bold {
-    font-size: 14px !important;
-  }
-
-  /* 工作区单列排列 */
-  .workspace-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
   .today-tasks-panel {
-    padding: 14px;
-    border-radius: 14px;
+    padding: 12px 12px 8px !important;
+    border-radius: 14px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .panel-header {
+    margin-bottom: 8px !important;
   }
 
   .panel-title {
-    font-size: 15px;
+    font-size: 15px !important;
   }
 
-  /* 手机端核心模块网格：紧凑2列显示（不隐藏，方便触达所有功能） */
+  .panel-counter {
+    font-size: 12px !important;
+  }
+
+  .panel-quick-add-btn {
+    height: 28px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    border-radius: 7px !important;
+  }
+
+  .panel-link-btn {
+    font-size: 12px !important;
+  }
+
+  /* 任务列表在手机端高度自适应，多任务支持内滚动 */
+  .tasks-list {
+    max-height: 190px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px !important;
+    padding-right: 2px;
+  }
+
+  .tasks-list::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .task-item-card {
+    padding: 8px 10px !important;
+    min-height: 42px !important;
+    border-radius: 10px !important;
+    gap: 8px !important;
+  }
+
+  .task-check-circle {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    border-radius: 7px !important;
+  }
+
+  .task-subject-tag {
+    font-size: 11.5px !important;
+    padding: 2px 6px !important;
+    border-radius: 5px !important;
+  }
+
+  .task-content-text {
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+  }
+
+  .task-time-pill {
+    display: none !important;
+  }
+
+  .task-focus-btn {
+    height: 26px !important;
+    padding: 0 8px !important;
+    font-size: 11.5px !important;
+    border-radius: 6px !important;
+  }
+
+  /* 今日无待办轻量条 */
+  .tasks-empty-state {
+    padding: 16px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .empty-icon-wrap {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .empty-title {
+    font-size: 13.5px !important;
+  }
+
+  .empty-sub {
+    font-size: 11.5px !important;
+  }
+
+  .empty-add-btn {
+    height: 30px !important;
+    font-size: 12px !important;
+    padding: 0 12px !important;
+  }
+
+  /* 3. 移动端首屏极速快捷轨 (Quick Rail) */
+  .mobile-quick-rail {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 0 2px;
+    margin-top: 4px;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  :global(.dark) .mobile-quick-rail {
+    border-top-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .mobile-quick-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 6px 11px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    color: var(--text-primary, #1e293b);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  :global(.dark) .rail-chip {
+    background: rgba(30, 41, 59, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+  }
+
+  .rail-icon-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .rail-bg-amber { background: #f59e0b; }
+  .rail-bg-emerald { background: #10b981; }
+  .rail-bg-rose { background: #f43f5e; }
+  .rail-bg-indigo { background: #6366f1; }
+  .rail-bg-cyan { background: #06b6d4; }
+
+  .rail-counter {
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: #f43f5e;
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+
+  /* 4. 移动端次要功能展开/收起切换栏 */
+  .mobile-secondary-toggle-bar {
+    display: flex !important;
+    justify-content: center;
+    padding: 4px 0 6px;
+  }
+
+  .mobile-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 14px;
+    border-radius: 16px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.dark) .mobile-toggle-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+  }
+
+  .mobile-toggle-btn .is-rotated {
+    transform: rotate(180deg);
+  }
+
+  /* 次要内容展开时的样式 */
+  .side-overview-panel:not(.mobile-collapsed) {
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px !important;
+    margin-top: 6px;
+  }
+
+  .modules-section:not(.mobile-collapsed) {
+    display: block !important;
+    margin-top: 14px;
+  }
+
   .module-cards-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    gap: 8px !important;
   }
 
   .module-card-item {
-    padding: 12px !important;
+    padding: 10px !important;
     border-radius: 12px !important;
   }
 
   .module-icon-wrap {
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 10px !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
   }
 
   .module-title {
-    font-size: 14px !important;
+    font-size: 13.5px !important;
   }
 
-  .module-desc {
-    display: none;
-  }
-
+  .module-desc,
   .module-card-footer {
-    display: none;
+    display: none !important;
   }
 
-  /* 手机端精炼页脚 */
+  /* 5. 移动端精炼页脚 */
   .home-footer {
-    margin-top: auto !important;
-    padding-top: 20px !important;
+    margin-top: 16px !important;
+    padding-top: 12px !important;
     padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
   }
 
@@ -2103,9 +2549,10 @@ onUnmounted(() => {
 
   .footer-copy-line {
     flex-direction: column;
-    gap: 3px;
-    font-size: 11px;
+    gap: 2px;
+    font-size: 10.5px;
     text-align: center;
+    color: #94a3b8;
   }
 
   .footer-sep {

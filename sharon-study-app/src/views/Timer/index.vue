@@ -1890,10 +1890,6 @@ onUnmounted(() => {
 }
 
 .zen-exit-btn {
-  position: absolute;
-  top: 28px;
-  right: 32px;
-  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #e2e8f0;
   padding: 8px 16px;
@@ -1903,197 +1899,71 @@ onUnmounted(() => {
   transition: all 0.2s;
 }
 
-.zen-exit-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.zen-center-box {
-  text-align: center;
-  max-width: 600px;
-}
-
-.zen-subject-badge {
-  font-size: 16px;
-  font-weight: 600;
-  color: #a5b4fc;
-  margin-bottom: 16px;
-  display: inline-block;
-  background: rgba(99, 102, 241, 0.15);
-  padding: 6px 18px;
-  border-radius: 20px;
-}
-
-.zen-task-text {
-  color: #e2e8f0;
-}
-
-.zen-time-display {
-  font-size: 120px;
-  font-weight: 800;
-  letter-spacing: -4px;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
-}
-
-.zen-colon {
-  opacity: 0.6;
-  margin: 0 4px;
-}
-
-.zen-progress-bar-wrap {
-  width: 280px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  margin: 32px auto;
-  overflow: hidden;
-}
-
-.zen-progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #6366f1, #a855f7);
-  box-shadow: 0 0 10px #6366f1;
-  transition: width 0.5s ease;
-}
-
-.zen-controls {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-}
-
-.zen-btn {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 20px;
-}
-
-.zen-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.08);
-}
-
-.zen-btn.play {
-  background: #6366f1;
-  border-color: #6366f1;
-}
-
-.zen-btn.pause {
-  background: #f59e0b;
-  border-color: #f59e0b;
-}
-
-/* 达成弹窗 */
-.completion-dialog-content {
-  text-align: center;
-  padding: 10px 0;
-}
-
-.celebrate-badge {
-  font-size: 14px;
-  font-weight: 700;
-  color: #10b981;
-  margin-bottom: 8px;
-}
-
-.celebrate-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-main, #0f172a);
-  margin-bottom: 12px;
-}
-
-.celebrate-meta {
-  font-size: 14px;
-  color: var(--text-regular, #475569);
-  margin-bottom: 20px;
-}
-
-.plan-hook-box {
-  background: var(--bg-page, #f8fafc);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 12px;
-  padding: 12px;
-  text-align: left;
-}
-
-.hook-task-name {
-  font-weight: 600;
-  color: #6366f1;
-  margin-top: 4px;
-  padding-left: 24px;
-}
-
-.input-unit {
-  margin-left: 8px;
-  color: var(--text-sub, #94a3b8);
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-.zen-fade-enter-active,
-.zen-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.zen-fade-enter-from,
-.zen-fade-leave-to {
-  opacity: 0;
-}
-
 /* ========================================================== */
-/* 番茄钟移动端精简与去繁化简适配 (< 768px)                     */
+/* 番茄钟移动端深度人机工程学重构 (< 768px, iPhone 16 基准)     */
 /* ========================================================== */
 @media (max-width: 768px) {
-  /* 1. 顶栏导航去繁化简 */
-  .timer-header-nav {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-    margin-bottom: 12px !important;
+  .timer-container {
+    padding: 8px 10px 80px !important;
   }
 
-  .nav-left-modes {
+  /* 1. 顶栏导航去繁化简：单行轻量对齐 */
+  .top-nav-bar {
+    display: flex !important;
+    align-items: center !important;
     justify-content: space-between !important;
-    width: 100% !important;
+    gap: 6px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .mode-tabs {
+    display: flex !important;
+    gap: 4px !important;
+    background: rgba(148, 163, 184, 0.12) !important;
+    padding: 3px !important;
+    border-radius: 10px !important;
+    flex: 1 !important;
+  }
+
+  :global(.dark) .mode-tabs {
+    background: rgba(255, 255, 255, 0.08) !important;
   }
 
   .mode-tab-btn {
     flex: 1 !important;
-    padding: 6px 8px !important;
+    padding: 5px 6px !important;
     justify-content: center !important;
-    font-size: 12px !important;
+    font-size: 11.5px !important;
+    border-radius: 7px !important;
+    white-space: nowrap !important;
+  }
+
+  .mode-tab-btn .mode-text {
+    font-size: 11px !important;
   }
 
   .nav-right-actions {
-    justify-content: space-between !important;
-    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
   }
 
-  /* 手机端隐藏非必要全屏按钮（手机端本身即全屏） */
+  /* 手机端隐藏非必要全屏按钮（手机本身即全屏沉浸） */
   .icon-tool-btn[title*="全屏"] {
     display: none !important;
   }
 
-  /* 2. 10 大学科胶囊：由换行平铺改为极度优雅的单行横向滚动条 */
+  .icon-tool-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+  }
+
+  /* 2. 学科选择条与任务绑定卡片精简 */
   .subject-bar-card {
-    padding: 10px 12px !important;
-    margin-bottom: 12px !important;
-    border-radius: 14px !important;
+    padding: 8px 10px 6px !important;
+    margin-bottom: 8px !important;
+    border-radius: 12px !important;
   }
 
   .subject-capsules {
@@ -2101,60 +1971,77 @@ onUnmounted(() => {
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
-    gap: 6px !important;
-    padding-bottom: 4px !important;
-    margin-bottom: 8px !important;
+    gap: 5px !important;
+    padding-bottom: 3px !important;
+    margin-bottom: 4px !important;
   }
 
   .subject-capsules::-webkit-scrollbar {
-    height: 3px !important;
+    display: none !important;
   }
 
   .subject-pill {
     flex-shrink: 0 !important;
-    padding: 5px 10px !important;
-    font-size: 12px !important;
-    border-radius: 8px !important;
+    padding: 4px 8px !important;
+    font-size: 11.5px !important;
+    border-radius: 7px !important;
   }
 
-  /* 绑定任务行简化 */
+  /* 绑定任务行在移动端折叠精炼 */
   .plan-linkage-row {
-    flex-direction: column !important;
-    align-items: stretch !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     gap: 6px !important;
+    margin-top: 4px !important;
+    padding-top: 4px !important;
+    border-top: 1px solid rgba(148, 163, 184, 0.12) !important;
+  }
+
+  .linkage-title {
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
   }
 
   .plan-selector {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 6px !important;
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .plan-dropdown-trigger {
+    font-size: 11px !important;
+    padding: 2px 6px !important;
+    border-radius: 6px !important;
   }
 
   .task-quick-input {
-    width: 100% !important;
+    display: none !important;
   }
 
-  /* 3. 核心大表盘卡片深度紧凑化：无需向下滚动即可看到主操作按钮 */
+  /* 3. 核心大表盘卡片深度紧凑化：iPhone 16 首屏黄金区 */
   .timer-hero-card {
-    padding: 16px 12px 14px !important;
-    margin-bottom: 12px !important;
-    border-radius: 16px !important;
+    padding: 12px 10px 12px !important;
+    margin-bottom: 8px !important;
+    border-radius: 14px !important;
   }
 
   .hero-status-pill {
-    margin-bottom: 4px !important;
-    font-size: 12px !important;
-    padding: 3px 10px !important;
+    margin-bottom: 2px !important;
+    font-size: 11.5px !important;
+    padding: 2px 8px !important;
   }
 
   .ring-stage {
-    width: 200px !important;
-    height: 200px !important;
-    margin: 4px auto 12px !important;
+    width: 190px !important;
+    height: 190px !important;
+    margin: 2px auto 8px !important;
   }
 
   .clock-digit {
-    font-size: 38px !important;
+    font-size: 40px !important;
+    font-weight: 700 !important;
   }
 
   .clock-colon {
@@ -2162,30 +2049,41 @@ onUnmounted(() => {
   }
 
   .clock-sublabel {
-    font-size: 11px !important;
-    margin-top: 2px !important;
+    font-size: 10.5px !important;
+    margin-top: 0 !important;
   }
 
+  /* 核心操作大药丸按钮：易击打拇指热区 */
   .control-actions-row {
-    gap: 8px !important;
+    gap: 10px !important;
+    justify-content: center !important;
   }
 
   .btn-primary-action {
-    height: 40px !important;
-    padding: 0 18px !important;
-    font-size: 13.5px !important;
+    height: 44px !important;
+    padding: 0 26px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    border-radius: 22px !important;
+    box-shadow: 0 3px 12px -2px rgba(16, 185, 129, 0.4) !important;
   }
 
   .btn-tool-action {
-    width: 38px !important;
-    height: 38px !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
   }
 
   /* 4. 双栏堆叠自适应 */
   .timer-lower-deck {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
+    gap: 8px !important;
+  }
+
+  .ambient-sound-card,
+  .quick-notes-card {
+    padding: 10px 12px !important;
+    border-radius: 12px !important;
   }
 }
-
 </style>
