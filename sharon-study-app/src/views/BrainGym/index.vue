@@ -10,13 +10,26 @@ import ArrowWheel from './games/ArrowWheel/index.vue'
 import Minesweeper from './games/Minesweeper/index.vue'
 import MemoryMatch from './games/MemoryMatch/index.vue'
 import HanoiTower from './games/HanoiTower/index.vue'
+import BrainGymLeaderboardModal from './components/BrainGymLeaderboardModal.vue'
 import { VideoPlay, MuteNotification, Bell } from '@element-plus/icons-vue'
+import { api } from '../../utils/api'
+import { useUserProfileStore } from '../../stores/userProfile'
 
 const route = useRoute()
 const router = useRouter()
+const userProfile = useUserProfileStore()
 
 // 当前正在玩的游戏 ID，null 表示停留在游戏大厅
 const activeGameId = ref<GameId | null>(null)
+
+// 排行榜弹窗状态
+const showLeaderboardModal = ref(false)
+const selectedLeaderboardGameId = ref<GameId>('schulte')
+
+const openLeaderboard = (gameId: GameId = 'schulte') => {
+  selectedLeaderboardGameId.value = gameId
+  showLeaderboardModal.value = true
+}
 
 // 本地缓存读写辅助 (study_ 前缀，平滑兼容历史 sharon_ 键)
 const getStorage = (key: string) => localStorage.getItem('study_' + key) || localStorage.getItem('sharon_' + key)
@@ -48,7 +61,7 @@ const loadStats = () => {
   totalTrainSeconds.value = Number(getStorage('braingym_total_sec') || '0')
 }
 
-// 记录保存回调
+// 记录保存回调（自动同步至全国学霸榜）
 const handleRecordSaved = (data: { gameId: string; timeMs: number }) => {
   todayPlays.value++
   const addSec = Math.max(1, Math.round(data.timeMs / 1000))
@@ -56,6 +69,14 @@ const handleRecordSaved = (data: { gameId: string; timeMs: number }) => {
 
   setStorage('braingym_today_plays', String(todayPlays.value))
   setStorage('braingym_total_sec', String(totalTrainSeconds.value))
+
+  // 破纪录或有效对局自动提报榜单
+  api.post('/games/leaderboard', {
+    gameId: data.gameId,
+    userName: userProfile.userName || '高三同学',
+    grade: userProfile.gradeLevel || '高三',
+    timeMs: data.timeMs
+  }).catch(() => {})
 }
 
 // 获取各游戏的历史最佳描述
@@ -185,6 +206,16 @@ onMounted(() => {
       <div class="header-controls">
         <button
           type="button"
+          class="leaderboard-entry-btn"
+          title="点击查看全国学霸风云榜"
+          @click="openLeaderboard()"
+        >
+          <span class="entry-trophy">🏆</span>
+          <span>学霸风云榜</span>
+        </button>
+
+        <button
+          type="button"
           class="audio-toggle-btn"
           :class="{ 'is-muted': isSoundMuted }"
           :title="isSoundMuted ? '点击开启工坊音效' : '点击静音'"
@@ -242,9 +273,20 @@ onMounted(() => {
               <div class="game-icon-box" :style="{ backgroundColor: game.accentBg }">
                 <span class="game-icon">{{ game.icon }}</span>
               </div>
-              <div class="status-badge" :class="game.status">
-                <span v-if="game.status === 'playable'" class="badge-dot-green"></span>
-                <span>{{ game.status === 'playable' ? '可挑战' : '工坊整备中' }}</span>
+              <div class="card-top-right-group">
+                <button
+                  v-if="game.status === 'playable'"
+                  type="button"
+                  class="card-trophy-btn"
+                  title="查看该游戏全国学霸榜"
+                  @click.stop="openLeaderboard(game.id)"
+                >
+                  🏆 榜单
+                </button>
+                <div class="status-badge" :class="game.status">
+                  <span v-if="game.status === 'playable'" class="badge-dot-green"></span>
+                  <span>{{ game.status === 'playable' ? '可挑战' : '工坊整备中' }}</span>
+                </div>
               </div>
             </div>
 
@@ -335,6 +377,12 @@ onMounted(() => {
         @record-saved="handleRecordSaved"
       />
     </main>
+
+    <!-- 3. 全国学霸风云榜弹窗 -->
+    <BrainGymLeaderboardModal
+      v-model="showLeaderboardModal"
+      :initial-game-id="selectedLeaderboardGameId"
+    />
   </div>
 </template>
 
@@ -732,4 +780,72 @@ onMounted(() => {
   }
 }
 
+/* 学霸风云榜主入口按钮 */
+.leaderboard-entry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  border: 1px solid rgba(234, 179, 8, 0.45);
+  background: linear-gradient(135deg, rgba(254, 240, 138, 0.3) 0%, rgba(253, 224, 71, 0.12) 100%);
+  color: #b45309;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(234, 179, 8, 0.15);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+:global(html.dark) .leaderboard-entry-btn {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.22) 0%, rgba(249, 115, 22, 0.1) 100%);
+  border-color: rgba(234, 179, 8, 0.4);
+  color: #fbbf24;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.leaderboard-entry-btn:hover {
+  transform: translateY(-1px);
+  border-color: #eab308;
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3);
+}
+
+.entry-trophy {
+  font-size: 15px;
+  filter: drop-shadow(0 1px 2px rgba(234, 179, 8, 0.4));
+}
+
+/* 卡片顶部右侧组 */
+.card-top-right-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-trophy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  background: rgba(254, 240, 138, 0.25);
+  color: #b45309;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:global(html.dark) .card-trophy-btn {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: rgba(234, 179, 8, 0.3);
+  color: #fde047;
+}
+
+.card-trophy-btn:hover {
+  border-color: #eab308;
+  background: rgba(254, 240, 138, 0.45);
+}
 </style>

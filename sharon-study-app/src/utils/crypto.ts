@@ -187,13 +187,28 @@ export function generateRandomPasscode(): string {
     }
   }
 
-  let part1 = ''
-  let part2 = ''
-  for (let i = 0; i < 4; i++) {
-    part1 += chars[bytes[i] % chars.length]
+  let code = ''
+  while (true) {
+    let p1 = ''
+    let p2 = ''
+    const b = new Uint8Array(8)
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+      window.crypto.getRandomValues(b)
+    } else {
+      for (let i = 0; i < 8; i++) {
+        b[i] = Math.floor(Math.random() * 256)
+      }
+    }
+    for (let i = 0; i < 4; i++) {
+      p1 += chars[b[i] % chars.length]
+    }
+    for (let i = 4; i < 8; i++) {
+      p2 += chars[b[i] % chars.length]
+    }
+    code = `sb-${p1}-${p2}`
+    if (/[a-zA-Z]/.test(code) && /[0-9]/.test(code)) {
+      break
+    }
   }
-  for (let i = 4; i < 8; i++) {
-    part2 += chars[bytes[i] % chars.length]
-  }
-  return `sb-${part1}-${part2}`
+  return code
 }

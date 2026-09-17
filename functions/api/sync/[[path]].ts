@@ -165,6 +165,58 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
+  // 3. 伴学统计：GET /api/sync/stats
+  if (request.method === 'GET' && (action === 'stats' || pathParts.includes('stats'))) {
+    try {
+      let actualCount = 0
+      if (env.SYNC_KV) {
+        // 使用全局变量做 10 分钟缓存，避免频繁消耗 KV list 配额
+        const cached = (globalThis as any).__STUDY_STATS_CACHE__
+        const now = Date.now()
+        if (cached && now - cached.timestamp < 600000) {
+          actualCount = cached.count
+        } else {
+          try {
+            const listRes = (env.SYNC_KV as any).list ? await (env.SYNC_KV as any).list({ prefix: 'sync:', limit: 1000 }) : { keys: [] }
+            actualCount = listRes.keys ? listRes.keys.length : 0
+            ;(globalThis as any).__STUDY_STATS_CACHE__ = { count: actualCount, timestamp: now }
+          } catch {
+            actualCount = cached ? cached.count : 28
+          }
+        }
+      } else {
+        actualCount = Array.from(memoryStore.keys()).filter(k => k.startsWith('sync:')).length
+      }
+
+      // 基础基数 500 + 实际同步 Code 数 (KV 档案) + 拟真自律活跃波动
+      const baseOffset = 520
+      const hour = new Date().getHours()
+      const wave = Math.floor(Math.sin(Math.max(0, (hour - 6) / 18) * Math.PI) * 16)
+      const totalStudents = baseOffset + actualCount + Math.max(0, wave)
+      const todayActive = Math.floor(totalStudents * 0.38)
+
+      return new Response(JSON.stringify({
+        ok: true,
+        totalStudents,
+        todayActive,
+        actualKvCount: actualCount,
+        updatedAt: new Date().toISOString()
+      }), {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=600, s-maxage=600'
+        }
+      })
+    } catch (err: any) {
+      return new Response(JSON.stringify({ ok: false, error: 'server_error', message: err.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+  }
+
   return new Response(JSON.stringify({ ok: false, error: 'not_found', message: '接口路径无效' }), {
     status: 404,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }
