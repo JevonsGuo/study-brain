@@ -110,6 +110,11 @@ const currentSubjectObj = computed(() => {
   return subjects.find(s => s.name === timerStore.selectedSubject) || subjects[0]
 })
 
+const getSubjectColor = (name: string) => {
+  const s = subjects.find(item => item.name === name)
+  return s ? s.color : '#6366f1'
+}
+
 // 载入今日学习计划
 const loadTodayPlans = async () => {
   try {
@@ -351,11 +356,18 @@ const renderTrendChart = () => {
   trendChart.setOption(option)
 }
 
+// 自适应窗口缩放重绘图表
+const handleResize = () => {
+  subjectChart?.resize()
+  trendChart?.resize()
+}
+
 // 页面挂载
 onMounted(async () => {
   await timerStore.fetchStats()
   await loadTodayPlans()
   window.addEventListener('keydown', handleKeyDown)
+  window.addEventListener('resize', handleResize)
 
   // 监听暗色主题切换
   themeObserver = new MutationObserver(() => {
@@ -375,6 +387,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeyDown)
+  window.removeEventListener('resize', handleResize)
   if (themeObserver) themeObserver.disconnect()
   if (subjectChart) subjectChart.dispose()
   if (trendChart) trendChart.dispose()
@@ -388,8 +401,8 @@ onUnmounted(() => {
   <div class="timer-container" :class="{ 'is-zen-active': timerStore.isZenMode }">
     <!-- 顶部主导航控制栏 -->
     <div class="top-nav-bar">
-      <!-- 模式胶囊群组 -->
-      <div class="mode-tabs">
+      <!-- 模式胶囊群组 (工作台视图下展示) -->
+      <div v-if="activeTab === 'timer'" class="mode-tabs">
         <button
           type="button"
           class="mode-tab-btn"
@@ -430,12 +443,14 @@ onUnmounted(() => {
           </el-radio-button>
         </el-radio-group>
 
-        <button class="icon-tool-btn" @click="toggleZenMode" title="全屏禅模式 (Esc退出)">
-          <el-icon size="16"><FullScreen /></el-icon>
-        </button>
-        <button class="icon-tool-btn" @click="openSettings" title="番茄钟设置">
-          <el-icon size="16"><Setting /></el-icon>
-        </button>
+        <div class="nav-tools">
+          <button class="icon-tool-btn zen-btn-tool" @click="toggleZenMode" title="全屏禅模式 (Esc退出)">
+            <el-icon size="16"><FullScreen /></el-icon>
+          </button>
+          <button class="icon-tool-btn" @click="openSettings" title="番茄钟设置">
+            <el-icon size="16"><Setting /></el-icon>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -833,7 +848,7 @@ onUnmounted(() => {
           <span class="table-title">📜 专注明细流水账 (最近 {{ timerStore.recentRecords.length }} 次)</span>
         </div>
 
-        <el-table :data="timerStore.recentRecords" stripe style="width: 100%" max-height="400">
+        <el-table :data="timerStore.recentRecords" stripe style="width: 100%" max-height="400" class="desktop-history-table">
           <el-table-column prop="completed_at" label="完成时间" width="170" />
           <el-table-column label="学科" width="110">
             <template #default="{ row }">
@@ -868,6 +883,43 @@ onUnmounted(() => {
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- 移动端专注记录卡片流 (高易读无横滑) -->
+        <div class="mobile-record-list">
+          <div
+            v-for="record in timerStore.recentRecords"
+            :key="record.id"
+            class="m-record-card"
+          >
+            <div class="m-card-top">
+              <div class="m-card-tags">
+                <span class="m-sub-badge" :style="{ background: `${getSubjectColor(record.subject)}18`, color: getSubjectColor(record.subject) }">
+                  {{ record.subject }}
+                </span>
+                <span class="m-mode-badge">
+                  {{ record.mode === 'exam' ? '📝 模考' : (record.mode === 'stopwatch' ? '⏱️ 心流' : '🍅 番茄') }}
+                </span>
+                <span class="m-dur-badge">
+                  <b>{{ record.duration_minutes }}</b> 分钟
+                </span>
+              </div>
+              <button
+                class="m-del-btn"
+                title="删除记录"
+                @click="handleDeleteRecord(record.id)"
+              >
+                <el-icon size="14"><Delete /></el-icon>
+              </button>
+            </div>
+            <div v-if="record.task_name" class="m-card-task">
+              🎯 {{ record.task_name }}
+            </div>
+            <div class="m-card-time">{{ record.completed_at }}</div>
+          </div>
+          <div v-if="timerStore.recentRecords.length === 0" class="m-record-empty">
+            暂无专注记录，点击开始专注开启深度心流吧！
+          </div>
+        </div>
       </div>
     </div>
 
@@ -958,7 +1010,7 @@ onUnmounted(() => {
     </el-dialog>
 
     <!-- 番茄钟偏好设置弹窗 -->
-    <el-dialog v-model="showSettings" title="⏱ 番茄钟与模考偏好设置" width="400px">
+    <el-dialog v-model="showSettings" title="⏱ 番茄钟与模考偏好设置" width="400px" class="timer-settings-dialog">
       <el-form label-width="110px">
         <el-form-item label="番茄专注时长">
           <el-input-number v-model="tempWorkDur" :min="10" :max="60" :step="5" />
@@ -1890,6 +1942,10 @@ onUnmounted(() => {
 }
 
 .zen-exit-btn {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #e2e8f0;
   padding: 8px 16px;
@@ -1899,81 +1955,262 @@ onUnmounted(() => {
   transition: all 0.2s;
 }
 
+.zen-exit-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.zen-center-box {
+  text-align: center;
+  max-width: 600px;
+}
+
+.zen-subject-badge {
+  font-size: 16px;
+  font-weight: 600;
+  color: #a5b4fc;
+  margin-bottom: 16px;
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.15);
+  padding: 6px 18px;
+  border-radius: 20px;
+}
+
+.zen-task-text {
+  color: #e2e8f0;
+}
+
+.zen-time-display {
+  font-size: 120px;
+  font-weight: 800;
+  letter-spacing: -4px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+}
+
+.zen-colon {
+  opacity: 0.6;
+  margin: 0 4px;
+}
+
+.zen-progress-bar-wrap {
+  width: 280px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin: 32px auto;
+  overflow: hidden;
+}
+
+.zen-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  box-shadow: 0 0 10px #6366f1;
+  transition: width 0.5s ease;
+}
+
+.zen-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.zen-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 20px;
+}
+
+.zen-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+.zen-btn.play {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.zen-btn.pause {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+/* 达成弹窗 */
+.completion-dialog-content {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.celebrate-badge {
+  font-size: 14px;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 8px;
+}
+
+.celebrate-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  margin-bottom: 12px;
+}
+
+.celebrate-meta {
+  font-size: 14px;
+  color: var(--text-regular, #475569);
+  margin-bottom: 20px;
+}
+
+.plan-hook-box {
+  background: var(--bg-page, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+}
+
+.hook-task-name {
+  font-weight: 600;
+  color: #6366f1;
+  margin-top: 4px;
+  padding-left: 24px;
+}
+
+.input-unit {
+  margin-left: 8px;
+  color: var(--text-sub, #94a3b8);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.zen-fade-enter-active,
+.zen-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.zen-fade-enter-from,
+.zen-fade-leave-to {
+  opacity: 0;
+}
+
+/* PC 端隐藏移动端流水记录卡片列表 */
+.mobile-record-list {
+  display: none;
+}
+
 /* ========================================================== */
-/* 番茄钟移动端深度人机工程学重构 (< 768px, iPhone 16 基准)     */
+/* 番茄钟移动端深度人机工程学重构 (< 768px, iPhone 16 / Nova 14) */
 /* ========================================================== */
 @media (max-width: 768px) {
   .timer-container {
-    padding: 8px 10px 80px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 8px 10px calc(76px + env(safe-area-inset-bottom)) !important;
+    overflow-x: hidden !important;
   }
 
-  /* 1. 顶栏导航去繁化简：单行轻量对齐 */
+  /* 1. 顶栏导航双层轻量化排布：无挤压、无横滑 */
   .top-nav-bar {
     display: flex !important;
-    align-items: center !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .nav-right-actions {
+    display: flex !important;
     justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    order: 1 !important;
+  }
+
+  .nav-tools {
+    display: flex !important;
+    align-items: center !important;
     gap: 6px !important;
-    margin-bottom: 8px !important;
+  }
+
+  /* 手机端隐藏全屏按钮（手机浏览器本身即全屏体验） */
+  .zen-btn-tool {
+    display: none !important;
+  }
+
+  .icon-tool-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .mode-tabs {
     display: flex !important;
+    width: 100% !important;
+    order: 2 !important;
     gap: 4px !important;
     background: rgba(148, 163, 184, 0.12) !important;
     padding: 3px !important;
     border-radius: 10px !important;
-    flex: 1 !important;
+    box-sizing: border-box !important;
   }
 
-  :global(.dark) .mode-tabs {
+  :global(.dark) .mode-tabs,
+  .dark .mode-tabs {
     background: rgba(255, 255, 255, 0.08) !important;
   }
 
   .mode-tab-btn {
     flex: 1 !important;
-    padding: 5px 6px !important;
+    padding: 6px 4px !important;
     justify-content: center !important;
     font-size: 11.5px !important;
     border-radius: 7px !important;
+    min-width: 0 !important;
     white-space: nowrap !important;
+    text-align: center !important;
   }
 
   .mode-tab-btn .mode-text {
     font-size: 11px !important;
   }
 
-  .nav-right-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-  }
-
-  /* 手机端隐藏非必要全屏按钮（手机本身即全屏沉浸） */
-  .icon-tool-btn[title*="全屏"] {
-    display: none !important;
-  }
-
-  .icon-tool-btn {
-    width: 32px !important;
-    height: 32px !important;
-    border-radius: 8px !important;
-  }
-
-  /* 2. 学科选择条与任务绑定卡片精简 */
+  /* 2. 学科选择条与任务绑定卡片 */
   .subject-bar-card {
     padding: 8px 10px 6px !important;
     margin-bottom: 8px !important;
     border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .subject-capsules {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
     gap: 5px !important;
     padding-bottom: 3px !important;
     margin-bottom: 4px !important;
+    scrollbar-width: none !important;
   }
 
   .subject-capsules::-webkit-scrollbar {
@@ -1982,13 +2219,13 @@ onUnmounted(() => {
 
   .subject-pill {
     flex-shrink: 0 !important;
-    padding: 4px 8px !important;
+    padding: 4px 9px !important;
     font-size: 11.5px !important;
     border-radius: 7px !important;
   }
 
-  /* 绑定任务行在移动端折叠精炼 */
   .plan-linkage-row {
+    display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -1996,52 +2233,135 @@ onUnmounted(() => {
     margin-top: 4px !important;
     padding-top: 4px !important;
     border-top: 1px solid rgba(148, 163, 184, 0.12) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .linkage-title {
     font-size: 11.5px !important;
     white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 
   .plan-selector {
     flex: 1 !important;
+    min-width: 0 !important;
     display: flex !important;
+    justify-content: flex-end !important;
     align-items: center !important;
-    gap: 4px !important;
   }
 
   .plan-dropdown-trigger {
     font-size: 11px !important;
-    padding: 2px 6px !important;
+    padding: 3px 8px !important;
     border-radius: 6px !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
 
   .task-quick-input {
     display: none !important;
   }
 
-  /* 3. 核心大表盘卡片深度紧凑化：iPhone 16 首屏黄金区 */
+  .active-task-tag {
+    max-width: 100% !important;
+    padding: 2px 8px !important;
+    font-size: 11px !important;
+  }
+
+  .active-task-tag .task-name {
+    font-size: 11px !important;
+    max-width: 120px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .exam-preset-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 5px !important;
+    padding-top: 6px !important;
+    margin-top: 4px !important;
+    border-top: 1px dashed rgba(148, 163, 184, 0.15) !important;
+    scrollbar-width: none !important;
+  }
+
+  .exam-preset-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .preset-label {
+    flex-shrink: 0 !important;
+    font-size: 11px !important;
+  }
+
+  .preset-btn {
+    flex-shrink: 0 !important;
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 3. 核心大表盘卡片首屏黄金区居中 */
   .timer-hero-card {
-    padding: 12px 10px 12px !important;
+    padding: 14px 10px 12px !important;
     margin-bottom: 8px !important;
-    border-radius: 14px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
   }
 
   .hero-status-pill {
-    margin-bottom: 2px !important;
+    margin: 0 auto 4px !important;
     font-size: 11.5px !important;
-    padding: 2px 8px !important;
+    padding: 3px 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
   }
 
   .ring-stage {
-    width: 190px !important;
-    height: 190px !important;
-    margin: 2px auto 8px !important;
+    width: 184px !important;
+    height: 184px !important;
+    margin: 4px auto 10px !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
   }
 
-  .clock-digit {
+  .progress-ring-svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+
+  .ring-inner-display {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100% !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .clock-numbers {
     font-size: 40px !important;
-    font-weight: 700 !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: -1.5px !important;
   }
 
   .clock-colon {
@@ -2050,18 +2370,22 @@ onUnmounted(() => {
 
   .clock-sublabel {
     font-size: 10.5px !important;
-    margin-top: 0 !important;
+    margin-top: 3px !important;
+    white-space: nowrap !important;
   }
 
-  /* 核心操作大药丸按钮：易击打拇指热区 */
   .control-actions-row {
-    gap: 10px !important;
+    display: flex !important;
     justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
   }
 
   .btn-primary-action {
     height: 44px !important;
-    padding: 0 26px !important;
+    min-width: 130px !important;
+    padding: 0 24px !important;
     font-size: 15px !important;
     font-weight: 600 !important;
     border-radius: 22px !important;
@@ -2069,21 +2393,250 @@ onUnmounted(() => {
   }
 
   .btn-tool-action {
-    width: 40px !important;
-    height: 40px !important;
+    width: 44px !important;
+    height: 44px !important;
     border-radius: 50% !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
   }
 
-  /* 4. 双栏堆叠自适应 */
-  .timer-lower-deck {
-    grid-template-columns: 1fr !important;
+  /* 4. 纯净伴读轻音卡片：双层人体工学布局 */
+  .sound-deck-card {
+    padding: 8px 10px !important;
+    border-radius: 14px !important;
+    margin-bottom: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .sound-deck-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     gap: 8px !important;
+    width: 100% !important;
   }
 
-  .ambient-sound-card,
-  .quick-notes-card {
-    padding: 10px 12px !important;
+  .deck-track-meta {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    order: 1 !important;
+  }
+
+  .deck-right-actions {
+    display: contents !important;
+  }
+
+  .deck-play-btn {
+    order: 2 !important;
+    width: 36px !important;
+    height: 36px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .music-channel-selector {
+    order: 3 !important;
+    flex: 1 1 auto !important;
+    min-width: 130px !important;
+    justify-content: flex-start !important;
+  }
+
+  .channel-dropdown-btn {
+    width: 100% !important;
+    justify-content: space-between !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .dropdown-btn-name {
+    font-size: 11.5px !important;
+  }
+
+  .deck-volume-box {
+    order: 4 !important;
+    width: 105px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 5. 学情看板与指标网格 */
+  .analytics-layout {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    gap: 10px !important;
+  }
+
+  .stats-overview-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .metric-card {
+    padding: 10px !important;
     border-radius: 12px !important;
+    gap: 10px !important;
+  }
+
+  .metric-icon {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 18px !important;
+    border-radius: 10px !important;
+  }
+
+  .metric-label {
+    font-size: 11px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .metric-val {
+    font-size: 18px !important;
+  }
+
+  .metric-val .unit {
+    font-size: 10.5px !important;
+  }
+
+  .charts-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .chart-card {
+    padding: 12px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .chart-header {
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .echarts-container {
+    height: 220px !important;
+    width: 100% !important;
+  }
+
+  .history-table-card {
+    padding: 12px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 移动端隐藏宽表格，切换为轻量卡片流 */
+  .desktop-history-table {
+    display: none !important;
+  }
+
+  .mobile-record-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .m-record-card {
+    background: var(--bg-page, #f8fafc);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  :global(.dark) .m-record-card,
+  .dark .m-record-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .m-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .m-card-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .m-sub-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .m-mode-badge {
+    font-size: 11px;
+    color: var(--text-sub, #64748b);
+    background: rgba(148, 163, 184, 0.12);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .m-dur-badge {
+    font-size: 11px;
+    color: var(--text-main, #0f172a);
+  }
+
+  .m-del-btn {
+    border: none;
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .m-card-task {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-main, #0f172a);
+    line-height: 1.4;
+    word-break: break-all;
+  }
+
+  .m-card-time {
+    font-size: 10.5px;
+    color: var(--text-sub, #94a3b8);
+  }
+
+  .m-record-empty {
+    text-align: center;
+    color: var(--text-sub, #94a3b8);
+    font-size: 12px;
+    padding: 20px 0;
+  }
+
+  /* 6. 弹窗自适应为移动端底部抽屉 (Bottom Sheet) */
+  :global(.el-dialog.completion-dialog),
+  :global(.el-dialog.timer-settings-dialog) {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
   }
 }
 </style>
