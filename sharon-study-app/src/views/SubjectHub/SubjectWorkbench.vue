@@ -2673,12 +2673,30 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .point-block {
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 13px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.math-content {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .block-title {
@@ -4202,19 +4220,35 @@ onMounted(() => {
     font-size: 11px !important;
   }
 
-  /* 3. 考点卡片头部紧凑排版：解决按钮拥挤折行问题 */
+  /* 3. 考点卡片头部紧凑排版：保证操作按钮在视口内，标题自适应折行 */
   .knowledge-card {
     padding: 10px 12px !important;
     border-radius: 12px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .card-top-row {
     gap: 8px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .point-meta-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
   }
 
   .point-title {
-    font-size: 14.5px !important;
+    font-size: 14px !important;
     line-height: 1.35 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    min-width: 0 !important;
   }
 
   .linked-wrong-empty {
@@ -4225,6 +4259,7 @@ onMounted(() => {
     padding: 2px 6px !important;
     font-size: 11px !important;
     border-radius: 6px !important;
+    flex-shrink: 0 !important;
   }
 
   .unmastered-dot,
@@ -4232,24 +4267,37 @@ onMounted(() => {
     display: none !important; /* 移动端简化徽章文字 */
   }
 
+  .point-actions-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
   .action-icon-btn {
     width: 26px !important;
     height: 26px !important;
     font-size: 12px !important;
+    flex-shrink: 0 !important;
   }
 
-  /* 4. 解决“打开一个后，内容 也是 很像的 非常长”的痛点：
-     打破千篇一律的大厚框堆砌，重塑通透分明的现代精炼流 */
+  /* 4. 解决“打开一个后，内容也是很长的非常长”以及公式冲出屏幕痛点 */
   .point-body-content {
     margin-top: 8px !important;
     padding-top: 10px !important;
     gap: 8px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .point-block {
     padding: 8px 10px !important;
     border-radius: 8px !important;
     font-size: 12.5px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .block-title {
@@ -4257,16 +4305,41 @@ onMounted(() => {
     margin-bottom: 4px !important;
   }
 
-  /* 核心公式：重点突出，居中排版 */
+  /* 核心公式：重点突出，彻底防止横向冲出屏幕，支持内部丝滑横向滑动 */
   .formula-block {
     padding: 10px 12px !important;
     background: rgba(59, 130, 246, 0.05) !important;
     border: 1px solid rgba(59, 130, 246, 0.25) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
-  .formula-block .math-content {
-    font-size: 13.5px !important;
-    line-height: 1.5 !important;
+  .formula-block .math-content,
+  .point-block .math-content {
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+  }
+
+  .formula-block .math-content :deep(.katex-display),
+  .point-block .math-content :deep(.katex-display) {
+    margin: 4px 0 !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 3px 0 !important;
   }
 
   /* 知识精析：去除非必要厚重灰色框，作为通透正文呈现 */

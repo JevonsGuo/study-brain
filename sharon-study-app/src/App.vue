@@ -1714,6 +1714,8 @@ const toggleCollapse = () => {
     overflow-x: hidden;
     overflow-y: auto !important;
     height: 100vh !important;
+    width: 100%;
+    max-width: 100vw;
     box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
   }

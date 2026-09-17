@@ -1480,6 +1480,9 @@ onUnmounted(() => {
   border-radius: 10px;
   padding: 8px 12px;
   transition: all 0.2s ease;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .task-item-card:hover {
@@ -1534,7 +1537,8 @@ onUnmounted(() => {
 .task-content-text {
   font-size: 13px;
   color: var(--text-main);
-  flex: 1;
+  flex: 1 1 0%;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2079,7 +2083,10 @@ onUnmounted(() => {
   }
 
   .home-page {
-    padding: 10px 12px 80px !important;
+    padding: 0 0 calc(70px + env(safe-area-inset-bottom)) 0 !important;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   /* 1. 移动端专享极简高能看板 (Compact Unified Hero) */
@@ -2089,6 +2096,8 @@ onUnmounted(() => {
     box-shadow: none !important;
     border: none !important;
     margin-bottom: 10px !important;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .mobile-compact-hero {
@@ -2098,6 +2107,8 @@ onUnmounted(() => {
     padding: 12px 14px 10px;
     box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.06);
     backdrop-filter: blur(10px);
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   :global(.dark) .mobile-compact-hero {
@@ -2111,10 +2122,12 @@ onUnmounted(() => {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .mobile-hero-left {
-    flex: 1;
+    flex: 1 1 0%;
     min-width: 0;
   }
 
@@ -2123,6 +2136,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 6px;
     margin-bottom: 4px;
+    min-width: 0;
   }
 
   .mobile-greeting-name {
@@ -2133,6 +2147,8 @@ onUnmounted(() => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 0%;
   }
 
   :global(.dark) .mobile-greeting-name {
@@ -2342,6 +2358,9 @@ onUnmounted(() => {
     min-height: 42px !important;
     border-radius: 10px !important;
     gap: 8px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .task-check-circle {
@@ -2349,17 +2368,31 @@ onUnmounted(() => {
     height: 24px !important;
     min-width: 24px !important;
     border-radius: 7px !important;
+    flex-shrink: 0 !important;
   }
 
   .task-subject-tag {
     font-size: 11.5px !important;
     padding: 2px 6px !important;
     border-radius: 5px !important;
+    flex-shrink: 0 !important;
   }
 
   .task-content-text {
     font-size: 13.5px !important;
     font-weight: 500 !important;
+    min-width: 0 !important;
+    flex: 1 1 0% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .task-right-meta {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
   }
 
   .task-time-pill {
@@ -2371,6 +2404,7 @@ onUnmounted(() => {
     padding: 0 8px !important;
     font-size: 11.5px !important;
     border-radius: 6px !important;
+    flex-shrink: 0 !important;
   }
 
   /* 今日无待办轻量条 */

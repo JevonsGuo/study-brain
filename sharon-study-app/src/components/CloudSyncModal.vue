@@ -647,13 +647,36 @@ const handleFileImport = async (e: Event) => {
   border-color: #334155;
 }
 
-:global(.dark) .offline-desc code {
-  background: rgba(255, 255, 255, 0.1);
-}
+@media (max-width: 640px) {
+  .passcode-input-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
 
-@media (max-width: 520px) {
+  .passcode-input {
+    width: 100% !important;
+  }
+
+  .passcode-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .passcode-actions .el-button {
+    margin: 0 !important;
+    width: 100%;
+    height: 38px;
+    justify-content: center;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
   .sync-action-buttons {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 </style>

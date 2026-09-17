@@ -273,12 +273,14 @@ const handleFinishNewUser = async () => {
                 <el-icon class="input-icon"><Key /></el-icon>
               </template>
             </el-input>
-            <el-button :icon="CopyDocument" @click="handleCopyCode" title="复制">
-              复制
-            </el-button>
-            <el-button :icon="RefreshRight" @click="handleRegenerate" title="换一个">
-              换一个
-            </el-button>
+            <div class="code-action-btns">
+              <el-button :icon="CopyDocument" @click="handleCopyCode" title="复制">
+                复制
+              </el-button>
+              <el-button :icon="RefreshRight" @click="handleRegenerate" title="换一个">
+                换一个
+              </el-button>
+            </div>
           </div>
           <p class="code-subtext">用于跨设备同步数据，系统默认开启每 5 分钟自动静默同步</p>
         </div>
@@ -613,9 +615,34 @@ const handleFinishNewUser = async () => {
   margin-top: 4px;
 }
 
-.start-btn:hover {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.4);
+.code-action-btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 560px) {
+  .code-input-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .code-input-row .el-input {
+    width: 100% !important;
+  }
+
+  .code-action-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .code-action-btns .el-button {
+    margin: 0 !important;
+    width: 100%;
+    height: 38px;
+    justify-content: center;
+  }
 }
 </style>

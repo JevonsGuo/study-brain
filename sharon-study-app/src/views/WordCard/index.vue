@@ -6,7 +6,7 @@ import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { useAppConfigStore } from '../../stores/appConfig'
 import {
   ArrowLeft, ArrowRight, Check, Close, RefreshRight, Refresh,
-  Microphone, Setting, Plus, Sort
+  Microphone, Setting, Plus, Sort, Search, Operation
 } from '@element-plus/icons-vue'
 
 interface WordForms {
@@ -168,6 +168,31 @@ const filterMastery = ref(-1)
 export type StudySubMode = 'card' | 'quiz' | 'spelling' | 'listening' | 'table'
 const studySubMode = ref<StudySubMode>('card')
 const studyMode = ref<'all' | 'due'>('due')
+
+// 移动端专用轻量单行顶栏与抽屉状态
+const showMobileSearch = ref(false)
+const mobileStudioDrawerVisible = ref(false)
+const mobileSearchInputRef = ref<any>(null)
+
+const toggleMobileSearch = () => {
+  showMobileSearch.value = !showMobileSearch.value
+  if (showMobileSearch.value) {
+    nextTick(() => {
+      mobileSearchInputRef.value?.focus?.()
+    })
+  }
+}
+
+const currentModeShortLabel = computed(() => {
+  switch (studySubMode.value) {
+    case 'card': return '卡片'
+    case 'quiz': return '测验'
+    case 'spelling': return '拼写'
+    case 'listening': return '磨耳朵'
+    case 'table': return '清单'
+    default: return '模式'
+  }
+})
 
 const currentIndex = ref(0)
 const flipped = ref(false)
@@ -984,8 +1009,229 @@ onUnmounted(() => {
 
     <!-- 阶段二：单词互动工作台 (Interactive Vocabulary Studio) -->
     <template v-else>
-      <!-- 顶部轻盈导航栏 -->
-      <div class="study-nav-bar">
+      <!-- 移动端专享极简单行导航栏（首屏高度黄金释放，一触呼出抽屉） -->
+      <div class="mobile-study-topbar mobile-only">
+        <button
+          type="button"
+          class="m-nav-back-btn"
+          @click="backToList"
+          title="返回词库列表"
+        >
+          <el-icon :size="15"><ArrowLeft /></el-icon>
+          <span>词库</span>
+        </button>
+
+        <div class="m-nav-center">
+          <span class="m-list-name">{{ wordListLabel(selectedWordList) }}</span>
+          <span class="m-progress-pill" v-if="words.length > 0">
+            {{ currentIndex + 1 }}/{{ words.length }}
+          </span>
+          <span class="m-combo-pill" v-if="comboCount >= 2">🔥{{ comboCount }}</span>
+        </div>
+
+        <div class="m-nav-actions">
+          <!-- 快速查词入口 -->
+          <button
+            type="button"
+            class="m-tool-btn"
+            :class="{ active: showMobileSearch || searchQuery }"
+            @click="toggleMobileSearch"
+            title="搜索当前词库"
+          >
+            <el-icon :size="15"><Search /></el-icon>
+          </button>
+
+          <!-- 模式切换与学情指标抽屉唤起按钮 -->
+          <button
+            type="button"
+            class="m-tool-btn m-studio-trigger-btn"
+            @click="mobileStudioDrawerVisible = true"
+            title="展开背诵模式切换与今日目标"
+          >
+            <el-icon :size="15"><Operation /></el-icon>
+            <span class="m-mode-badge">{{ currentModeShortLabel }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 移动端轻量查词折叠输入条 -->
+      <div v-if="showMobileSearch" class="mobile-search-strip mobile-only">
+        <el-input
+          v-model="searchQuery"
+          placeholder="搜索本词库英文或中文释义..."
+          clearable
+          :prefix-icon="Search"
+          size="small"
+          @input="fetchWords"
+          ref="mobileSearchInputRef"
+        />
+      </div>
+
+      <!-- 移动端专属模式与今日指标底部抽屉 (Bottom Sheet) -->
+      <el-drawer
+        v-model="mobileStudioDrawerVisible"
+        direction="btt"
+        :with-header="false"
+        class="mobile-studio-drawer mobile-only"
+        size="auto"
+      >
+        <div class="studio-sheet-content">
+          <div class="sheet-drag-handle"></div>
+
+          <div class="sheet-top-row">
+            <div class="sheet-title-meta">
+              <span class="sheet-title">背诵工作台设置</span>
+              <span class="sheet-list-badge">{{ wordListLabel(selectedWordList) }}</span>
+            </div>
+            <button
+              type="button"
+              class="sheet-close-btn"
+              @click="mobileStudioDrawerVisible = false"
+            >
+              <el-icon :size="14"><Close /></el-icon>
+            </button>
+          </div>
+
+          <!-- 1. 今日指标手帐微胶囊 -->
+          <div v-if="stats" class="sheet-progress-strip">
+            <div class="sheet-strip-item main-ring">
+              <div class="ring-mini-text">{{ totalProgress }}%</div>
+              <div class="strip-label">今日达成</div>
+            </div>
+            <div class="sheet-strip-divider"></div>
+            <div class="sheet-strip-item">
+              <div class="strip-val">🔥 {{ stats.streak }}</div>
+              <div class="strip-label">连续打卡</div>
+            </div>
+            <div class="sheet-strip-item">
+              <div class="strip-val">{{ stats.todayStudied }} 词</div>
+              <div class="strip-label">今日已背</div>
+            </div>
+            <div class="sheet-strip-item">
+              <div class="strip-val">🌱 {{ stats.todayNew }}/{{ stats.targetNew }}</div>
+              <div class="strip-label">新词指标</div>
+            </div>
+            <div class="sheet-strip-item">
+              <div class="strip-val">🌿 {{ stats.todayReviewed }}/{{ stats.targetReview }}</div>
+              <div class="strip-label">复习指标</div>
+            </div>
+          </div>
+
+          <!-- 2. 5大背诵模式切换 -->
+          <div class="sheet-section-title">选择背诵模式</div>
+          <div class="sheet-mode-grid">
+            <button
+              class="sheet-mode-card"
+              :class="{ active: studySubMode === 'card' }"
+              @click="switchSubMode('card'); mobileStudioDrawerVisible = false"
+            >
+              <span class="sheet-mode-icon">✨</span>
+              <div class="sheet-mode-info">
+                <span class="sheet-mode-name">手帐卡片</span>
+                <span class="sheet-mode-desc">3D翻转 · 深度沉浸</span>
+              </div>
+            </button>
+            <button
+              class="sheet-mode-card"
+              :class="{ active: studySubMode === 'quiz' }"
+              @click="switchSubMode('quiz'); mobileStudioDrawerVisible = false"
+            >
+              <span class="sheet-mode-icon">🎯</span>
+              <div class="sheet-mode-info">
+                <span class="sheet-mode-name">极速四选一</span>
+                <span class="sheet-mode-desc">强化条件反射</span>
+              </div>
+            </button>
+            <button
+              class="sheet-mode-card"
+              :class="{ active: studySubMode === 'spelling' }"
+              @click="switchSubMode('spelling'); mobileStudioDrawerVisible = false"
+            >
+              <span class="sheet-mode-icon">✏️</span>
+              <div class="sheet-mode-info">
+                <span class="sheet-mode-name">拼写填空</span>
+                <span class="sheet-mode-desc">首字母提示 · 精确拼写</span>
+              </div>
+            </button>
+            <button
+              class="sheet-mode-card"
+              :class="{ active: studySubMode === 'listening' }"
+              @click="switchSubMode('listening'); mobileStudioDrawerVisible = false"
+            >
+              <span class="sheet-mode-icon">🎧</span>
+              <div class="sheet-mode-info">
+                <span class="sheet-mode-name">晚安磨耳朵</span>
+                <span class="sheet-mode-desc">自动巡航朗读</span>
+              </div>
+            </button>
+            <button
+              class="sheet-mode-card"
+              :class="{ active: studySubMode === 'table' }"
+              @click="switchSubMode('table'); mobileStudioDrawerVisible = false"
+            >
+              <span class="sheet-mode-icon">📋</span>
+              <div class="sheet-mode-info">
+                <span class="sheet-mode-name">词汇清单</span>
+                <span class="sheet-mode-desc">全表通览 · 批量过目</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- 3. 常用辅助控制 -->
+          <div class="sheet-section-title">背诵选项与工具</div>
+          <div class="sheet-aux-grid">
+            <button
+              class="sheet-aux-btn"
+              :class="{ active: shuffled }"
+              @click="toggleShuffle"
+            >
+              <el-icon :size="13"><Sort /></el-icon>
+              <span>{{ shuffled ? '🔀 真正乱序' : '🔤 考纲顺序' }}</span>
+            </button>
+            <button
+              v-if="shuffled"
+              class="sheet-aux-btn"
+              @click="refreshBatch"
+            >
+              <el-icon :size="13"><Refresh /></el-icon>
+              <span>换一批</span>
+            </button>
+            <button
+              class="sheet-aux-btn"
+              :class="{ active: autoPlayAudio }"
+              @click="autoPlayAudio = !autoPlayAudio"
+            >
+              <el-icon :size="13"><Microphone /></el-icon>
+              <span>{{ autoPlayAudio ? '🔊 自动发音开' : '🔇 自动发音关' }}</span>
+            </button>
+            <button
+              class="sheet-aux-btn"
+              :class="{ active: studyMode === 'due' }"
+              @click="studyMode = studyMode === 'due' ? 'all' : 'due'; fetchWords()"
+            >
+              <el-icon :size="13"><RefreshRight /></el-icon>
+              <span>{{ studyMode === 'due' ? '今日待复习' : '全部词库' }}</span>
+            </button>
+          </div>
+
+          <!-- 4. 底部快捷操作 -->
+          <div class="sheet-footer-actions">
+            <el-button size="small" @click="configDialogVisible = true; mobileStudioDrawerVisible = false" :icon="Setting" round>每日目标</el-button>
+            <el-button size="small" @click="addDialogVisible = true; mobileStudioDrawerVisible = false" :icon="Plus" round>添加新词</el-button>
+            <el-button
+              v-if="appConfig.isMaintenanceMode"
+              size="small"
+              @click="appConfig.showDataConsole = true; mobileStudioDrawerVisible = false"
+              round
+            >
+              公共数据库
+            </el-button>
+          </div>
+        </div>
+      </el-drawer>
+
+      <!-- 桌面端专属导航栏（宽屏原样保留） -->
+      <div class="study-nav-bar desktop-only">
         <el-button text @click="backToList" :icon="ArrowLeft" class="back-btn">
           返回词库
         </el-button>
@@ -1008,8 +1254,8 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- 每日进度手帐胶囊条 -->
-      <div v-if="stats" class="daily-progress-strip">
+      <!-- 桌面端专属每日进度手帐胶囊条 -->
+      <div v-if="stats" class="daily-progress-strip desktop-only">
         <div class="strip-item main-ring">
           <div class="ring-mini-text">{{ totalProgress }}%</div>
           <div class="strip-label">今日达成</div>
@@ -1033,8 +1279,8 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- 核心模式切换工作台 -->
-      <div class="mode-capsule-bar">
+      <!-- 桌面端专属核心模式切换工作台 -->
+      <div class="mode-capsule-bar desktop-only">
         <div class="mode-pills">
           <button
             class="mode-pill-btn"
@@ -3026,4 +3272,460 @@ html.dark .accent-btn.active {
   color: #fbbf24 !important;
 }
 
+/* ========================================================== */
+/* 单词互动工作台 手机端极简单行顶栏与底部抽屉交互规范 (< 768px) */
+/* ========================================================== */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: block !important;
+  }
+
+  /* 1. 移动端极简单行顶栏 (Minimal Sticky Bar) */
+  .mobile-study-topbar {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    height: 44px;
+    padding: 0 4px;
+    margin-bottom: 10px;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  :global(.dark) .mobile-study-topbar {
+    background: #131b2e;
+    border-color: #26334a;
+  }
+
+  .m-nav-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-main, #334155);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 8px;
+  }
+
+  :global(.dark) .m-nav-back-btn {
+    color: #cbd5e1;
+  }
+
+  .m-nav-center {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1 1 0%;
+    min-width: 0;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .m-list-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  :global(.dark) .m-list-name {
+    color: #f8fafc;
+  }
+
+  .m-progress-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: rgba(139, 92, 246, 0.12);
+    color: #8b5cf6;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :global(.dark) .m-progress-pill {
+    background: rgba(139, 92, 246, 0.25);
+    color: #c4b5fd;
+  }
+
+  .m-combo-pill {
+    font-size: 11px;
+    font-weight: 800;
+    color: #ef4444;
+    flex-shrink: 0;
+  }
+
+  .m-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .m-tool-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    background: var(--bg-card-secondary, #f8fafc);
+    color: var(--text-regular, #475569);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    padding: 0;
+  }
+
+  :global(.dark) .m-tool-btn {
+    background: #1a233a;
+    border-color: #26334a;
+    color: #cbd5e1;
+  }
+
+  .m-tool-btn.active {
+    background: rgba(139, 92, 246, 0.12);
+    color: #8b5cf6;
+    border-color: rgba(139, 92, 246, 0.3);
+  }
+
+  .m-studio-trigger-btn {
+    width: auto !important;
+    padding: 0 8px !important;
+    gap: 4px;
+  }
+
+  .m-mode-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b5cf6;
+  }
+
+  :global(.dark) .m-mode-badge {
+    color: #c4b5fd;
+  }
+
+  /* 移动端快速查词折叠输入框 */
+  .mobile-search-strip {
+    margin-bottom: 8px;
+    animation: slideDown 0.2s ease-out;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 2. 移动端卡片尺寸黄金自适应（零滑动） */
+  .handbook-card-container {
+    max-width: 100% !important;
+    height: min(420px, calc(100dvh - 210px)) !important;
+    margin-bottom: 12px !important;
+  }
+
+  .card-front {
+    padding: 20px 18px 16px !important;
+  }
+
+  .card-back {
+    padding: 16px 14px !important;
+  }
+
+  .card-word-title {
+    font-size: 32px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .card-phonetic-pill {
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .card-example-brief {
+    font-size: 12.5px !important;
+    line-height: 1.45 !important;
+    padding: 6px 10px !important;
+  }
+
+  .handbook-action-dock {
+    gap: 10px !important;
+  }
+
+  .action-btn {
+    padding: 10px 18px !important;
+    font-size: 13px !important;
+  }
+
+  /* 3. 抽屉内部现代化排版规范 */
+  .studio-sheet-content {
+    padding: 0 4px 16px 4px;
+  }
+
+  .sheet-drag-handle {
+    width: 36px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    margin: 0 auto 12px auto;
+  }
+
+  :global(.dark) .sheet-drag-handle {
+    background: #475569;
+  }
+
+  .sheet-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .sheet-title-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sheet-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+  }
+
+  :global(.dark) .sheet-title {
+    color: #f8fafc;
+  }
+
+  .sheet-list-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 8px;
+    background: rgba(139, 92, 246, 0.12);
+    color: #8b5cf6;
+  }
+
+  .sheet-close-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  :global(.dark) .sheet-close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+  }
+
+  /* 抽屉内进度条 */
+  .sheet-progress-strip {
+    display: flex;
+    align-items: center;
+    background: var(--bg-card-secondary, #f8fafc);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    gap: 12px;
+  }
+
+  :global(.dark) .sheet-progress-strip {
+    background: #1a233a;
+    border-color: #26334a;
+  }
+
+  .sheet-strip-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .sheet-strip-item .strip-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+  }
+
+  :global(.dark) .sheet-strip-item .strip-val {
+    color: #f8fafc;
+  }
+
+  .sheet-strip-item .strip-label {
+    font-size: 10px;
+    color: var(--text-sub, #94a3b8);
+  }
+
+  .sheet-strip-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border-subtle, #e2e8f0);
+    flex-shrink: 0;
+  }
+
+  :global(.dark) .sheet-strip-divider {
+    background: #26334a;
+  }
+
+  .sheet-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sub, #64748b);
+    margin: 10px 0 6px 0;
+  }
+
+  /* 模式卡片网格 */
+  .sheet-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .sheet-mode-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--bg-card-secondary, #f8fafc);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  :global(.dark) .sheet-mode-card {
+    background: #1a233a;
+    border-color: #26334a;
+  }
+
+  .sheet-mode-card.active {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+    border-color: #8b5cf6;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+  }
+
+  .sheet-mode-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .sheet-mode-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .sheet-mode-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+  }
+
+  :global(.dark) .sheet-mode-name {
+    color: #f8fafc;
+  }
+
+  .sheet-mode-card.active .sheet-mode-name {
+    color: #8b5cf6;
+  }
+
+  :global(.dark) .sheet-mode-card.active .sheet-mode-name {
+    color: #c4b5fd;
+  }
+
+  .sheet-mode-desc {
+    font-size: 10px;
+    color: var(--text-sub, #94a3b8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 辅助按钮网格 */
+  .sheet-aux-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .sheet-aux-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--bg-card-secondary, #f8fafc);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-regular, #334155);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  :global(.dark) .sheet-aux-btn {
+    background: #1a233a;
+    border-color: #26334a;
+    color: #cbd5e1;
+  }
+
+  .sheet-aux-btn.active {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+  }
+
+  :global(.dark) .sheet-aux-btn.active {
+    color: #c4b5fd;
+  }
+
+  .sheet-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-subtle, #e2e8f0);
+  }
+
+  :global(.dark) .sheet-footer-actions {
+    border-top-color: #26334a;
+  }
+}
+
 </style>
+
