@@ -176,12 +176,35 @@ export const useAppVersionStore = defineStore('appVersion', () => {
     }
   }
 
+  // 格式化为北京时间字符串
+  const formatToBeijingTimeString = (d: Date): string => {
+    try {
+      const formatter = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+      const parts = formatter.formatToParts(d)
+      const pMap: Record<string, string> = {}
+      for (const p of parts) pMap[p.type] = p.value
+      return `${pMap.year}-${pMap.month}-${pMap.day} ${pMap.hour}:${pMap.minute}:${pMap.second}`
+    } catch {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
+    }
+  }
+
   // 供开发/测试人员一键模拟新版本弹窗体验
   const triggerMockUpdateForTesting = () => {
+    const targetDate = new Date(Date.now() + 1000000)
     const mockRemote: AppBuildInfo = {
       version: '1.1.0',
-      buildTime: new Date().toLocaleString(),
-      buildTimestamp: Date.now() + 1000000,
+      buildTime: formatToBeijingTimeString(targetDate),
+      buildTimestamp: targetDate.getTime(),
       gitHash: 'demo789'
     }
     remoteBuildInfo.value = mockRemote

@@ -254,7 +254,12 @@ onMounted(() => {
   // 启动前端新发布版本生命周期自动检测
   appVersionStore.startAutoCheck()
   if (typeof window !== 'undefined') {
-    (window as any).__testAppUpdate = () => appVersionStore.triggerMockUpdateForTesting()
+    ;(window as any).__testAppUpdate = () => {
+      appVersionStore.triggerMockUpdateForTesting()
+    }
+    ;(window as any).__testOpenSync = () => {
+      showCloudModal.value = true
+    }
   }
 })
 

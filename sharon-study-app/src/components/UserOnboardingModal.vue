@@ -17,7 +17,9 @@ import {
   Reading,
   Download,
   UserFilled,
-  User
+  User,
+  View,
+  Hide
 } from '@element-plus/icons-vue'
 
 const userProfile = useUserProfileStore()
@@ -27,6 +29,7 @@ const currentStep = ref<1 | 2>(1)
 
 // 第一步：已有 Code 恢复
 const restorePasscode = ref('')
+const showRestorePasscode = ref(false)
 const isRestoring = ref(false)
 
 // 第一步：新同学名字
@@ -35,6 +38,7 @@ const formName = ref('')
 // 第二步：年级与专属 Code
 const formGrade = ref('高三')
 const formPasscode = ref('')
+const showFormPasscode = ref(false)
 const isSubmitting = ref(false)
 
 const GRADE_OPTIONS = ['高一', '高二', '高三']
@@ -167,6 +171,7 @@ const handleFinishNewUser = async () => {
           <div class="input-action-row">
             <el-input
               v-model="restorePasscode"
+              :type="showRestorePasscode ? 'text' : 'password'"
               placeholder="输入同步 Code (如 sb-7k9p-4m2x)"
               size="large"
               class="monospace-input"
@@ -175,6 +180,19 @@ const handleFinishNewUser = async () => {
             >
               <template #prefix>
                 <el-icon class="input-icon"><Key /></el-icon>
+              </template>
+              <template #suffix>
+                <button
+                  type="button"
+                  class="passcode-eye-btn"
+                  :title="showRestorePasscode ? '隐藏口令' : '显示口令'"
+                  @click="showRestorePasscode = !showRestorePasscode"
+                >
+                  <el-icon :size="16">
+                    <View v-if="!showRestorePasscode" />
+                    <Hide v-else />
+                  </el-icon>
+                </button>
               </template>
             </el-input>
             <el-button
@@ -263,6 +281,7 @@ const handleFinishNewUser = async () => {
           <div class="code-input-row">
             <el-input
               v-model="formPasscode"
+              :type="showFormPasscode ? 'text' : 'password'"
               size="large"
               placeholder="自定义专属 Code"
               class="monospace-input"
@@ -271,6 +290,19 @@ const handleFinishNewUser = async () => {
             >
               <template #prefix>
                 <el-icon class="input-icon"><Key /></el-icon>
+              </template>
+              <template #suffix>
+                <button
+                  type="button"
+                  class="passcode-eye-btn"
+                  :title="showFormPasscode ? '隐藏口令' : '显示口令'"
+                  @click="showFormPasscode = !showFormPasscode"
+                >
+                  <el-icon :size="16">
+                    <View v-if="!showFormPasscode" />
+                    <Hide v-else />
+                  </el-icon>
+                </button>
               </template>
             </el-input>
             <div class="code-action-btns">
@@ -591,6 +623,45 @@ const handleFinishNewUser = async () => {
 
 .code-input-row .el-input {
   flex: 1;
+}
+
+:deep(.monospace-input input[type="password"]) {
+  letter-spacing: 2px;
+}
+
+.passcode-eye-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0 2px;
+  cursor: pointer;
+  color: var(--text-muted, #94a3b8);
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.passcode-eye-btn:hover {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.passcode-eye-btn:active {
+  transform: scale(0.92);
+}
+
+:global(.dark) .passcode-eye-btn {
+  color: #94a3b8;
+}
+
+:global(.dark) .passcode-eye-btn:hover {
+  color: #a5b4fc;
+  background: rgba(165, 180, 252, 0.15);
 }
 
 .code-subtext {

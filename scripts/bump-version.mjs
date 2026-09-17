@@ -59,6 +59,26 @@ if (fs.existsSync(publicVersionPath)) {
   try {
     const raw = JSON.parse(fs.readFileSync(publicVersionPath, 'utf8'))
     raw.version = nextVersion
+    const now = new Date()
+    try {
+      const beijingFormatter = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+      const parts = beijingFormatter.formatToParts(now)
+      const pMap = {}
+      for (const p of parts) pMap[p.type] = p.value
+      raw.buildTime = `${pMap.year}-${pMap.month}-${pMap.day} ${pMap.hour}:${pMap.minute}:${pMap.second}`
+    } catch {
+      raw.buildTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+    }
+    raw.buildTimestamp = now.getTime()
     fs.writeFileSync(publicVersionPath, JSON.stringify(raw, null, 2) + '\n', 'utf8')
   } catch {}
 }

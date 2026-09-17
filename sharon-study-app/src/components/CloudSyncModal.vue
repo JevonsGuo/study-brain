@@ -11,7 +11,9 @@ import {
   RefreshRight,
   Lock,
   ArrowDown,
-  ArrowUp
+  ArrowUp,
+  View,
+  Hide
 } from '@element-plus/icons-vue'
 import { localDB } from '../utils/localDatabase'
 import {
@@ -33,6 +35,7 @@ const emit = defineEmits<{
 }>()
 
 const passcode = ref('')
+const showPasscode = ref(false)
 const autoSyncEnabled = ref(true)
 const lastSyncTime = ref('')
 const lastStats = ref<SyncStats | null>(null)
@@ -216,6 +219,7 @@ const handleFileImport = async (e: Event) => {
         <div class="passcode-input-group">
           <el-input
             v-model="passcode"
+            :type="showPasscode ? 'text' : 'password'"
             placeholder="例如：sb-7k9p-4m2x"
             class="passcode-input"
             clearable
@@ -223,6 +227,19 @@ const handleFileImport = async (e: Event) => {
           >
             <template #prefix>
               <el-icon class="code-prefix-icon"><Key /></el-icon>
+            </template>
+            <template #suffix>
+              <button
+                type="button"
+                class="passcode-eye-btn"
+                :title="showPasscode ? '隐藏口令' : '显示口令'"
+                @click="showPasscode = !showPasscode"
+              >
+                <el-icon :size="16">
+                  <View v-if="!showPasscode" />
+                  <Hide v-else />
+                </el-icon>
+              </button>
             </template>
           </el-input>
 
@@ -400,6 +417,36 @@ const handleFileImport = async (e: Event) => {
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 600;
   letter-spacing: 0.5px;
+}
+
+:deep(.passcode-input input[type="password"]) {
+  letter-spacing: 2px;
+}
+
+.passcode-eye-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0 2px;
+  cursor: pointer;
+  color: var(--text-muted, #94a3b8);
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.passcode-eye-btn:hover {
+  color: var(--color-primary, #3b82f6);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.passcode-eye-btn:active {
+  transform: scale(0.92);
 }
 
 .passcode-actions {
@@ -618,6 +665,15 @@ const handleFileImport = async (e: Event) => {
 :global(.dark) .sync-intro-banner {
   background: linear-gradient(135deg, #1e293b 0%, #142e2b 100%);
   border-color: #3b82f6;
+}
+
+:global(.dark) .passcode-eye-btn {
+  color: #94a3b8;
+}
+
+:global(.dark) .passcode-eye-btn:hover {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.15);
 }
 
 :global(.dark) .banner-title {

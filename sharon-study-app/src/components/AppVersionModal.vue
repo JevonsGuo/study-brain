@@ -3,6 +3,36 @@ import { useAppVersionStore } from '../stores/appVersion'
 import { RefreshRight, Close, Lightning } from '@element-plus/icons-vue'
 
 const appVersionStore = useAppVersionStore()
+
+/**
+ * 格式化为精确北京时间 (UTC+8 / Asia/Shanghai)
+ * 优先依据绝对时间戳 (buildTimestamp) 进行标准时区换算，
+ * 兜底解析 buildTime 字符串，确保跨设备、跨时区或 CI 构建环境下均精准显示北京时间。
+ */
+const formatBeijingDateTime = (timeStr?: string, timestamp?: number): string => {
+  if (timestamp && typeof timestamp === 'number' && !isNaN(timestamp) && timestamp > 0) {
+    try {
+      const d = new Date(timestamp)
+      const formatter = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+      const parts = formatter.formatToParts(d)
+      const map: Record<string, string> = {}
+      for (const p of parts) map[p.type] = p.value
+      return `${map.month}-${map.day} ${map.hour}:${map.minute}:${map.second}`
+    } catch {}
+  }
+
+  if (!timeStr) return '--'
+  const clean = timeStr.trim().slice(5)
+  return clean || '--'
+}
 </script>
 
 <template>
@@ -42,7 +72,8 @@ const appVersionStore = useAppVersionStore()
         <div class="version-cell current-cell">
           <span class="cell-label">当前运行版本</span>
           <span class="cell-version">v{{ appVersionStore.currentVersion }}</span>
-          <span class="cell-time">构建于 {{ appVersionStore.currentBuildTime.slice(5) }}</span>
+          <span class="cell-time">构建于 {{ formatBeijingDateTime(appVersionStore.currentBuildTime, appVersionStore.currentTimestamp) }}</span>
+          <span class="cell-tz-badge">北京时间</span>
         </div>
 
         <div class="version-arrow-divider">
@@ -65,8 +96,9 @@ const appVersionStore = useAppVersionStore()
             v{{ appVersionStore.remoteBuildInfo?.version || '最新' }}
           </span>
           <span class="cell-time highlight">
-            发布于 {{ (appVersionStore.remoteBuildInfo?.buildTime || '').slice(5) }}
+            发布于 {{ formatBeijingDateTime(appVersionStore.remoteBuildInfo?.buildTime, appVersionStore.remoteBuildInfo?.buildTimestamp) }}
           </span>
+          <span class="cell-tz-badge highlight">北京时间</span>
         </div>
       </div>
 
@@ -274,6 +306,24 @@ const appVersionStore = useAppVersionStore()
   font-weight: 600;
 }
 
+.cell-tz-badge {
+  display: inline-block;
+  font-size: 10px;
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-top: 2px;
+  letter-spacing: 0.2px;
+}
+
+.cell-tz-badge.highlight {
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+  font-weight: 700;
+}
+
 .version-arrow-divider {
   display: flex;
   flex-direction: column;
@@ -414,5 +464,35 @@ const appVersionStore = useAppVersionStore()
 :global(.dark) .btn-cancel-update:hover {
   background: #1e293b;
   color: #f8fafc;
+}
+
+:global(.dark) .cell-tz-badge {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+:global(.dark) .cell-tz-badge.highlight {
+  background: rgba(2, 132, 199, 0.2);
+  color: #38bdf8;
+}
+
+@media (max-width: 640px) {
+  :deep(.app-update-dialog) {
+    width: 92% !important;
+    max-width: 380px !important;
+  }
+  :deep(.app-update-dialog .el-dialog__body) {
+    padding: 24px 16px 14px !important;
+  }
+  :deep(.app-update-dialog .el-dialog__footer) {
+    padding: 0 16px 20px !important;
+  }
+  .version-comparison-deck {
+    padding: 10px 8px;
+    gap: 6px;
+  }
+  .cell-time {
+    font-size: 10px;
+  }
 }
 </style>

@@ -27,7 +27,28 @@ function appVersionPlugin(): Plugin {
     } catch {}
 
     const now = new Date()
-    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+    // 统一按北京时间 (UTC+8 / Asia/Shanghai) 格式化构建时间，避免 CI/CD 环境 (GitHub Actions / Cloudflare / Linux) 使用 UTC 导致显示偏慢 8 小时
+    let timeStr = ''
+    try {
+      const beijingFormatter = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+      const parts = beijingFormatter.formatToParts(now)
+      const pMap: Record<string, string> = {}
+      for (const p of parts) {
+        pMap[p.type] = p.value
+      }
+      timeStr = `${pMap.year}-${pMap.month}-${pMap.day} ${pMap.hour}:${pMap.minute}:${pMap.second}`
+    } catch {
+      timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+    }
 
     let gitHash = ''
     try {
