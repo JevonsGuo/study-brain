@@ -1,530 +1,387 @@
 [
   {
-    "subject": "数学",
-    "category": "tool",
-    "name": "GeoGebra 动态图形计算器",
-    "desc": "数学动态几何、空间立体截面与圆锥曲线动点轨迹演示神器",
-    "url": "https://www.geogebra.org/calculator",
-    "sort_order": 1
-  },
-  {
-    "subject": "数学",
-    "category": "tool",
-    "name": "Desmos 在线函数绘图器",
-    "desc": "极简优雅的平面函数图象、导数切线、参数方程与含参不等式区域秒级绘制",
-    "url": "https://www.desmos.com/calculator",
-    "sort_order": 2
-  },
-  {
-    "subject": "数学",
-    "category": "tool",
-    "name": "Wolfram Alpha 知识计算引擎",
-    "desc": "高等数学级符号计算、函数求导积分推导、方程解析根与数值验算",
-    "url": "https://www.wolframalpha.com",
-    "sort_order": 3
-  },
-  {
-    "subject": "数学",
+    "id": 1,
+    "name": "组卷网 (学科网)",
+    "subject": "全科",
+    "subjects": ["全科", "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
     "category": "practice",
-    "name": "组卷网 (高中数学)",
-    "desc": "按高考考点精准组卷，海量名校模拟卷与历年高考真题",
+    "desc": "按高中考点精准组卷，海量全国名校月考、模拟考及历年高考真题题库",
     "url": "https://www.zujuan.com",
+    "badge": "真题组卷",
     "sort_order": 1
   },
   {
-    "subject": "数学",
+    "id": 2,
+    "name": "菁优网",
+    "subject": "全科",
+    "subjects": ["全科", "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
     "category": "practice",
-    "name": "菁优网 (高中数学)",
-    "desc": "支持按考点与地区筛选的高中数学权威题库与逐题名师精析",
-    "url": "https://www.jyeoo.com/math",
+    "desc": "高中各学科权威考点母题精析题库，逐题分步名师详解与同类变式",
+    "url": "https://www.jyeoo.com",
+    "badge": "权威题库",
     "sort_order": 2
   },
   {
-    "subject": "数学",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (数学)",
-    "desc": "教育部官方平台，人教版A版教材全课时同步官方名师示范课",
-    "url": "https://basic.smartedu.cn/tchMaterial",
-    "sort_order": 1
+    "id": 3,
+    "name": "PhET 互动仿真实验",
+    "subject": "数理化生",
+    "subjects": ["数理化生", "物理", "化学", "生物", "数学"],
+    "category": "tool",
+    "desc": "诺奖团队研发的顶级互动仿真实验，力学、电磁场、分子反应与遗传模型可视化",
+    "url": "https://phet.colorado.edu/zh_CN/",
+    "badge": "理科实验",
+    "sort_order": 3
   },
   {
+    "id": 4,
+    "name": "NOBOOK 虚拟实验室",
+    "subject": "理化生",
+    "subjects": ["理化生", "物理", "化学", "生物"],
+    "category": "tool",
+    "desc": "中学物理与化学实验器材全流程模拟，仪表示数与反应现象直观可调",
+    "url": "https://www.nobook.com",
+    "badge": "虚拟实验",
+    "sort_order": 4
+  },
+  {
+    "id": 5,
+    "name": "GeoGebra 动态图形计算器",
     "subject": "数学",
-    "category": "video",
+    "subjects": ["数学"],
+    "category": "tool",
+    "desc": "动态平面几何、空间立体截面与圆锥曲线动点轨迹演示神器",
+    "url": "https://www.geogebra.org/calculator",
+    "badge": "动态几何",
+    "sort_order": 10
+  },
+  {
+    "id": 6,
+    "name": "Desmos 在线函数绘图器",
+    "subject": "数学",
+    "subjects": ["数学"],
+    "category": "tool",
+    "desc": "平面函数图象、切线极值、参数方程与含参不等式区域秒级绘制",
+    "url": "https://www.desmos.com/calculator",
+    "badge": "函数图象",
+    "sort_order": 11
+  },
+  {
+    "id": 7,
+    "name": "Wolfram Alpha 知识计算引擎",
+    "subject": "数学",
+    "subjects": ["数学"],
+    "category": "tool",
+    "desc": "高等数学级符号计算、函数求导积分推导与复杂方程数值验算",
+    "url": "https://www.wolframalpha.com",
+    "badge": "符号计算",
+    "sort_order": 12
+  },
+  {
+    "id": 8,
     "name": "一数 · 高中数学考点全通",
-    "desc": "B 站播放过亿的高中数学体系专栏，逻辑严密、保姆级解构",
+    "subject": "数学",
+    "subjects": ["数学"],
+    "category": "video",
+    "desc": "B 站高口碑高中数学系统专栏，逻辑严密、保姆级步骤精讲",
     "url": "https://space.bilibili.com/14229967",
-    "sort_order": 2
+    "badge": "数学名师",
+    "sort_order": 13
   },
   {
-    "subject": "物理",
-    "category": "tool",
-    "name": "PhET 物理互动仿真实验",
-    "desc": "力学受力平衡、带电粒子在电磁场运动、波动光学、光电效应，全中文在线交互",
-    "url": "https://phet.colorado.edu/zh_CN/simulations/filter?subjects=physics",
-    "sort_order": 1
-  },
-  {
-    "subject": "物理",
-    "category": "tool",
-    "name": "Algodoo 2D 物理沙盒",
-    "desc": "自建斜面、弹簧、滑轮组、碰撞反弹与流体动力学实验，具象化牛顿定律",
-    "url": "https://www.algodoo.com",
-    "sort_order": 2
-  },
-  {
-    "subject": "物理",
-    "category": "tool",
+    "id": 9,
     "name": "Falstad 动态电路模拟器",
-    "desc": "经典电子电路动态电流仿真，闭合电路欧姆定律、交变电流与电磁感应直观可见",
+    "subject": "物理",
+    "subjects": ["物理"],
+    "category": "tool",
+    "desc": "动态电流走向可视化仿真，闭合电路欧姆定律与电磁感应直观可见",
     "url": "https://www.falstad.com/circuit/",
-    "sort_order": 3
+    "badge": "电路仿真",
+    "sort_order": 20
   },
   {
+    "id": 10,
+    "name": "Algodoo 2D 物理沙盒",
     "subject": "物理",
+    "subjects": ["物理"],
     "category": "tool",
-    "name": "NOBOOK 物理虚拟实验室",
-    "desc": "游标卡尺、螺旋测微器读数交互模拟，多用电表与示波器虚拟器材操作",
-    "url": "https://www.nobook.com/physics",
-    "sort_order": 4
+    "desc": "自建斜面、弹簧、滑轮组与碰撞实验，直观展现牛顿运动定律",
+    "url": "https://www.algodoo.com",
+    "badge": "力学沙盒",
+    "sort_order": 21
   },
   {
-    "subject": "物理",
-    "category": "practice",
-    "name": "组卷网 (高中物理)",
-    "desc": "高考物理力学、电磁学真题按模型题型专项组卷",
-    "url": "https://physics.zujuan.com",
-    "sort_order": 1
-  },
-  {
-    "subject": "物理",
-    "category": "practice",
-    "name": "菁优网 (高中物理)",
-    "desc": "高中物理受力分析与带电粒子运动经典母题详解题库",
-    "url": "https://www.jyeoo.com/physics",
-    "sort_order": 2
-  },
-  {
-    "subject": "物理",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (物理)",
-    "desc": "教育部官方高中物理同步微课与特级教师实验演示",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=physics",
-    "sort_order": 1
-  },
-  {
-    "subject": "物理",
-    "category": "video",
+    "id": 11,
     "name": "李永乐老师高中物理精讲",
-    "desc": "知名人大附中名师，生动解析物理宇宙模型与高频考点",
+    "subject": "物理",
+    "subjects": ["物理"],
+    "category": "video",
+    "desc": "人大附中名师，深入浅出解析高考力学、电磁学与天体运动模型",
     "url": "https://space.bilibili.com/9458053",
-    "sort_order": 2
+    "badge": "物理名师",
+    "sort_order": 22
   },
   {
+    "id": 12,
+    "name": "Ptable 动态元素周期表",
     "subject": "化学",
+    "subjects": ["化学"],
     "category": "tool",
-    "name": "Ptable 动态互动元素周期表",
-    "desc": "全球最佳元素周期表：电子排布、轨道构型、同位素丰度、状态相变与化合物反应",
-    "url": "https://ptable.com/?lang=zh-Hans",
-    "sort_order": 1
+    "desc": "全球权威互动周期表：电子排布、相变状态与化合物化学反应全景",
+    "url": "https://ptable.com",
+    "badge": "元素周期表",
+    "sort_order": 30
   },
   {
-    "subject": "化学",
-    "category": "tool",
+    "id": 13,
     "name": "MolView 在线 3D 分子构建器",
-    "desc": "在线构建三维有机物分子模型、球棍与比例模型，直观理解立体异构与手性碳",
+    "subject": "化学",
+    "subjects": ["化学"],
+    "category": "tool",
+    "desc": "在线构建三维有机物分子模型，直观理解同分异构与空间构型",
     "url": "https://molview.org",
-    "sort_order": 2
+    "badge": "分子模型",
+    "sort_order": 31
   },
   {
-    "subject": "化学",
-    "category": "tool",
-    "name": "PhET 化学互动仿真",
-    "desc": "酸碱中和滴定曲线、摩尔浓度配比、可逆反应化学平衡移动微观碰撞模拟",
-    "url": "https://phet.colorado.edu/zh_CN/simulations/filter?subjects=chemistry",
-    "sort_order": 3
-  },
-  {
-    "subject": "化学",
-    "category": "tool",
-    "name": "NOBOOK 化学虚拟实验室",
-    "desc": "试剂调配、焰色试验、气体制备与化学反应现象全过程虚拟交互",
-    "url": "https://www.nobook.com/chemistry",
-    "sort_order": 4
-  },
-  {
-    "subject": "化学",
-    "category": "practice",
-    "name": "组卷网 (高中化学)",
-    "desc": "高考化学元素化合物、反应原理与有机推断专项题库",
-    "url": "https://chemistry.zujuan.com",
-    "sort_order": 1
-  },
-  {
-    "subject": "化学",
-    "category": "practice",
-    "name": "菁优网 (高中化学)",
-    "desc": "化学工艺流程大题与实验探究母题题型汇总",
-    "url": "https://www.jyeoo.com/chemistry",
-    "sort_order": 2
-  },
-  {
-    "subject": "化学",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (化学)",
-    "desc": "教育部官方高中化学实验与反应原理精讲课程",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=chemistry",
-    "sort_order": 1
-  },
-  {
-    "subject": "化学",
-    "category": "video",
+    "id": 14,
     "name": "李政化学官方专栏",
-    "desc": "高频考点元素反应口诀化拆解，大题模型秒杀技巧",
+    "subject": "化学",
+    "subjects": ["化学"],
+    "category": "video",
+    "desc": "高中化学高频考点口诀化拆解，工艺流程大题与实验模型秒杀",
     "url": "https://space.bilibili.com/393278500",
-    "sort_order": 2
+    "badge": "化学名师",
+    "sort_order": 32
   },
   {
+    "id": 15,
+    "name": "BioDigital Human 3D 人体解剖",
     "subject": "生物",
+    "subjects": ["生物"],
     "category": "tool",
-    "name": "BioDigital Human 3D人体解剖图谱",
-    "desc": "高精度 3D 人体解剖图谱：神经系统、内分泌腺体、免疫循环与内环境稳态",
+    "desc": "高精度三维人体解剖图谱：神经反射、内分泌腺体与内环境稳态",
     "url": "https://human.biodigital.com",
-    "sort_order": 1
+    "badge": "人体解剖",
+    "sort_order": 40
   },
   {
-    "subject": "生物",
-    "category": "tool",
-    "name": "PhET 生物互动仿真",
-    "desc": "孟德尔豌豆杂交遗传实验、基因表达转录翻译、抗药性细菌自然选择模型",
-    "url": "https://phet.colorado.edu/zh_CN/simulations/filter?subjects=biology",
-    "sort_order": 2
-  },
-  {
-    "subject": "生物",
-    "category": "tool",
+    "id": 16,
     "name": "Learn.Genetics 遗传科学中心",
-    "desc": "犹他大学分子生物学互动：DNA 提取、PCR 扩增与凝胶电泳虚拟实验",
+    "subject": "生物",
+    "subjects": ["生物"],
+    "category": "tool",
+    "desc": "DNA 复制转录、孟德尔豌豆杂交实验与基因工程微观模拟实验",
     "url": "https://learn.genetics.utah.edu",
-    "sort_order": 3
+    "badge": "遗传实验",
+    "sort_order": 41
   },
   {
-    "subject": "生物",
-    "category": "practice",
-    "name": "组卷网 (高中生物)",
-    "desc": "高中生物细胞代谢、遗传规律与生态系统大题专项真题",
-    "url": "https://biology.zujuan.com",
-    "sort_order": 1
-  },
-  {
-    "subject": "生物",
-    "category": "practice",
-    "name": "菁优网 (高中生物)",
-    "desc": "高中生物遗传图解与实验设计题库",
-    "url": "https://www.jyeoo.com/bio",
-    "sort_order": 2
-  },
-  {
-    "subject": "生物",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (生物)",
-    "desc": "教育部官方高中生物新课标统编教材课时同步课堂",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=biology",
-    "sort_order": 1
-  },
-  {
-    "subject": "生物",
-    "category": "video",
+    "id": 17,
     "name": "周老师高中生物",
-    "desc": "B 站知名生物名师，细胞器微观图解与孟德尔遗传定律通俗精析",
+    "subject": "生物",
+    "subjects": ["生物"],
+    "category": "video",
+    "desc": "高中生物光合呼吸代谢专题与遗传概率大题破题思维系统精讲",
     "url": "https://space.bilibili.com/393844627",
-    "sort_order": 2
+    "badge": "生物名师",
+    "sort_order": 42
   },
   {
+    "id": 18,
+    "name": "Earth Nullschool 全球动态气象",
     "subject": "地理",
+    "subjects": ["地理"],
     "category": "tool",
-    "name": "Earth Nullschool 全球动态风场与洋流",
-    "desc": "三维地球实时呈现全球风场、气压气旋、大洋洋流与海温分布，大气大洋环流必备神器",
-    "url": "https://earth.nullschool.net/zh",
-    "sort_order": 1
+    "desc": "全球风场、洋流系统与高空气压带动态模拟，直观理解气候分布",
+    "url": "https://earth.nullschool.net",
+    "badge": "气象洋流",
+    "sort_order": 50
   },
   {
+    "id": 19,
+    "name": "天地图 (国家地理信息公共平台)",
     "subject": "地理",
+    "subjects": ["地理"],
     "category": "tool",
-    "name": "Stellarium Web 虚拟天文馆",
-    "desc": "真实推演地球自转公转、晨昏线位置、四季星空与正午太阳高度角变化模型",
-    "url": "https://stellarium-web.org",
-    "sort_order": 2
-  },
-  {
-    "subject": "地理",
-    "category": "tool",
-    "name": "天地图 (国家地理信息公共服务平台)",
-    "desc": "国家测绘局官方服务，标准中国等高线地形图、地质断层与高精卫星遥感影像",
+    "desc": "国家自然资源部官方高精度中国与世界地形、地势卫星图",
     "url": "https://www.tianditu.gov.cn",
-    "sort_order": 3
+    "badge": "官方地形",
+    "sort_order": 51
   },
   {
+    "id": 20,
+    "name": "Stellarium Web 虚拟天文馆",
     "subject": "地理",
+    "subjects": ["地理"],
     "category": "tool",
-    "name": "Worldmapper 全球变形制图",
-    "desc": "全球人口、经济、资源分布变形制图，人文地理与产业转移直观视觉呈现",
-    "url": "https://worldmapper.org",
-    "sort_order": 4
+    "desc": "真实星空天体运行模拟，昼夜长短、正午太阳高度与地球公转直观展示",
+    "url": "https://stellarium-web.org",
+    "badge": "天体运动",
+    "sort_order": 52
   },
   {
-    "subject": "地理",
-    "category": "practice",
-    "name": "组卷网 (高中地理)",
-    "desc": "高中自然地理计算与人文地理综合大题真题库",
-    "url": "https://geography.zujuan.com",
-    "sort_order": 1
-  },
-  {
-    "subject": "地理",
-    "category": "practice",
-    "name": "菁优网 (高中地理)",
-    "desc": "全国各省高考地理等值线判读与区域地理大题解析",
-    "url": "https://www.jyeoo.com/geography",
-    "sort_order": 2
-  },
-  {
-    "subject": "地理",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (地理)",
-    "desc": "教育部官方高中地理统编教材同步微课",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=geography",
-    "sort_order": 1
-  },
-  {
-    "subject": "地理",
-    "category": "video",
+    "id": 21,
     "name": "包易正地理官方专栏",
-    "desc": "高中地理名师，自然地理空间推演与大题答题模板技巧",
+    "subject": "地理",
+    "subjects": ["地理"],
+    "category": "video",
+    "desc": "高中自然地理气候洋流与人文地理答题模板体系化精讲",
     "url": "https://space.bilibili.com/284102927",
-    "sort_order": 2
+    "badge": "地理名师",
+    "sort_order": 53
   },
   {
-    "subject": "历史",
-    "category": "tool",
+    "id": 22,
     "name": "全历史 (AllHistory)",
-    "desc": "时空地图轴线、中外历史横向对比、历史人物事件关系图谱一览无余，大历史观神器",
+    "subject": "历史",
+    "subjects": ["历史"],
+    "category": "tool",
+    "desc": "以时空地图与人物关系图谱串联中国与世界历史脉络及朝代演变",
     "url": "https://www.allhistory.com",
-    "sort_order": 1
+    "badge": "历史时空",
+    "sort_order": 60
   },
   {
-    "subject": "历史",
-    "category": "tool",
-    "name": "中华文明时空基础信息平台 (CCTS)",
-    "desc": "西周分封、春秋战国、秦汉至明清历代行政区划空间疆域变迁高清地图",
-    "url": "http://ccts.sinica.edu.tw",
-    "sort_order": 2
-  },
-  {
-    "subject": "历史",
-    "category": "tool",
+    "id": 23,
     "name": "故宫名画记",
-    "desc": "故宫十亿级像素数字文物与传世书画细部鉴赏，高考历史材料背景溯源",
+    "subject": "历史",
+    "subjects": ["历史", "语文"],
+    "category": "tool",
+    "desc": "故宫博物院官方超清古画鉴赏，古代社会生活、建筑与文博考证利器",
     "url": "https://minghuaji.dpm.org.cn",
-    "sort_order": 3
+    "badge": "故宫文博",
+    "sort_order": 61
   },
   {
-    "subject": "历史",
-    "category": "practice",
-    "name": "组卷网 (高中历史)",
-    "desc": "高考历史通史坐标与阶段特征核心材料大题专项",
-    "url": "https://history.zujuan.com",
-    "sort_order": 1
-  },
-  {
-    "subject": "历史",
-    "category": "practice",
-    "name": "菁优网 (高中历史)",
-    "desc": "唯物史观与史料实证历年真题及模拟题库",
-    "url": "https://www.jyeoo.com/history",
-    "sort_order": 2
-  },
-  {
-    "subject": "历史",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (历史)",
-    "desc": "教育部官方中国古代史与近现代史纲要名师精讲",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=history",
-    "sort_order": 1
-  },
-  {
-    "subject": "历史",
-    "category": "video",
-    "name": "国家宝藏文博精讲",
-    "desc": "央视国宝文化与传世文物背景故事，文史综合大题材料宝库",
-    "url": "https://space.bilibili.com/393282245",
-    "sort_order": 2
-  },
-  {
-    "subject": "语文",
-    "category": "tool",
-    "name": "搜韵 (诗词格律与用典考据)",
-    "desc": "古诗词鉴赏神器：平仄律绝检测、典故出处考据、意象网络图谱与历代词谱",
-    "url": "https://sou-yun.cn",
-    "sort_order": 1
-  },
-  {
-    "subject": "语文",
-    "category": "tool",
+    "id": 24,
     "name": "古诗文网",
-    "desc": "新课标高考必背 72 篇古诗文完整译文、重点实词虚词注释与名句赏析",
+    "subject": "语文",
+    "subjects": ["语文"],
+    "category": "tool",
+    "desc": "高考必背古诗文译文、注释名句赏析与历代名家作品全库",
     "url": "https://www.gushiwen.cn",
-    "sort_order": 2
+    "badge": "古诗文全库",
+    "sort_order": 70
   },
   {
+    "id": 25,
+    "name": "汉典 (ZDIC)",
     "subject": "语文",
+    "subjects": ["语文"],
     "category": "tool",
-    "name": "汉典 (Zdic)",
-    "desc": "古汉语字词训诂、通假字、古今异义、词类活用与汉字六书演变考据权威字典",
+    "desc": "权威汉字字形溯源、说文解字、成语出处典故与近反义词典",
     "url": "https://www.zdic.net",
-    "sort_order": 3
+    "badge": "字词典籍",
+    "sort_order": 71
   },
   {
+    "id": 26,
+    "name": "搜韵 (律诗格律与押韵检索)",
     "subject": "语文",
-    "category": "practice",
-    "name": "组卷网 (高中语文)",
-    "desc": "高考现代文论述类文本阅读、文言文断句与古诗鉴赏专项题库",
-    "url": "https://chinese.zujuan.com",
-    "sort_order": 1
+    "subjects": ["语文"],
+    "category": "tool",
+    "desc": "古典诗词平仄格律自动校验、韵书查韵与古代用典智能查询",
+    "url": "https://sou-yun.cn",
+    "badge": "诗词格律",
+    "sort_order": 72
   },
   {
-    "subject": "语文",
-    "category": "practice",
-    "name": "菁优网 (高中语文)",
-    "desc": "语言文字运用、成语辨析与名篇默写真题库",
-    "url": "https://www.jyeoo.com/chinese",
-    "sort_order": 2
-  },
-  {
-    "subject": "语文",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (语文)",
-    "desc": "教育部官方部编版高中语文课文名师讲析",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=chinese",
-    "sort_order": 1
-  },
-  {
-    "subject": "语文",
-    "category": "video",
+    "id": 27,
     "name": "董腾语文官方微课",
-    "desc": "高考作文论证思维结构与文言文快速阅读技巧",
+    "subject": "语文",
+    "subjects": ["语文"],
+    "category": "video",
+    "desc": "高考现代文阅读答题规范、文言文翻译拆解与高考作文立意精析",
     "url": "https://space.bilibili.com/436662706",
-    "sort_order": 2
+    "badge": "语文名师",
+    "sort_order": 73
   },
   {
-    "subject": "英语",
-    "category": "tool",
-    "name": "YouGlish 原声语境发音检索",
-    "desc": "在数千万真实英文演讲和影视片段中按句子精准定位单词标准发音与搭配语境",
-    "url": "https://youglish.com",
-    "sort_order": 1
-  },
-  {
-    "subject": "英语",
-    "category": "tool",
-    "name": "Ludwig 英语语境搜索引擎",
-    "desc": "输入表达短语，检索主流权威外刊真实例句搭配，高考英语读后续写与应用文神器",
-    "url": "https://ludwig.guru",
-    "sort_order": 2
-  },
-  {
-    "subject": "英语",
-    "category": "tool",
+    "id": 28,
     "name": "剑桥高阶英汉双解词典",
-    "desc": "剑桥官方双解词典：词性用法、介词搭配、英美发音与易混同义词辨析",
+    "subject": "英语",
+    "subjects": ["英语"],
+    "category": "tool",
+    "desc": "权威权威英美音发音、高考高频搭配短语、例句与同反义辨析",
     "url": "https://dictionary.cambridge.org/zhs/",
-    "sort_order": 3
+    "badge": "权威双解",
+    "sort_order": 80
   },
   {
+    "id": 29,
+    "name": "YouGlish 英语原声语境检索",
     "subject": "英语",
-    "category": "practice",
+    "subjects": ["英语"],
+    "category": "tool",
+    "desc": "输入任何英语单词或短语，秒搜其在海量真实演讲视频中的地道发音",
+    "url": "https://youglish.com",
+    "badge": "原声发音",
+    "sort_order": 81
+  },
+  {
+    "id": 30,
     "name": "百词斩",
-    "desc": "图背单词与艾宾浩斯复习曲线，高考 3500 词高效记忆",
+    "subject": "英语",
+    "subjects": ["英语"],
+    "category": "tool",
+    "desc": "图背单词法，高中 3500 词考纲词汇图文联想记忆与高频真题例句",
     "url": "https://www.baicizhan.com",
-    "sort_order": 1
+    "badge": "考纲单词",
+    "sort_order": 82
   },
   {
-    "subject": "英语",
-    "category": "practice",
-    "name": "菁优网 (高中英语)",
-    "desc": "语法填空、短文改错与阅读理解精选题库",
-    "url": "https://www.jyeoo.com/english",
-    "sort_order": 2
-  },
-  {
-    "subject": "英语",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (英语)",
-    "desc": "教育部官方高中英语课文听力与课时微课",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=english",
-    "sort_order": 1
-  },
-  {
-    "subject": "英语",
-    "category": "video",
+    "id": 31,
     "name": "英语兔 · 英语语法大系",
-    "desc": "B 站千万播放英语语法体系梳理，从词性到从句一目了然",
+    "subject": "英语",
+    "subjects": ["英语"],
+    "category": "video",
+    "desc": "系统化图解英语语法，从句子成分到长难句与时态语态彻底通透",
     "url": "https://space.bilibili.com/290800966",
-    "sort_order": 2
+    "badge": "语法体系",
+    "sort_order": 83
   },
   {
-    "subject": "政治",
-    "category": "tool",
-    "name": "求是网 (中共中央机关刊)",
-    "desc": "高考政治核心术语最权威官方解读，新质生产力、中国式现代化必背理论",
-    "url": "http://www.qstheory.cn",
-    "sort_order": 1
-  },
-  {
-    "subject": "政治",
-    "category": "tool",
-    "name": "中国政府网",
-    "desc": "政府工作报告全文、国家重大政策发布与国民经济统计公报权威原文",
-    "url": "https://www.gov.cn",
-    "sort_order": 2
-  },
-  {
-    "subject": "政治",
-    "category": "tool",
+    "id": 32,
     "name": "学习强国时事大课堂",
-    "desc": "高中思想政治哲学原理与新发展理念热点专题权威梳理",
+    "subject": "政治",
+    "subjects": ["政治"],
+    "category": "video",
+    "desc": "高中思想政治时事热点追踪，国家重大战略方针深度解析素材库",
     "url": "https://www.xuexi.cn",
-    "sort_order": 3
+    "badge": "时政热点",
+    "sort_order": 90
   },
   {
+    "id": 33,
+    "name": "求是网",
     "subject": "政治",
+    "subjects": ["政治"],
     "category": "practice",
-    "name": "组卷网 (高中政治)",
-    "desc": "高考政治经济生活、政治生活、文化与哲学大题专项组卷",
-    "url": "https://politics.zujuan.com",
-    "sort_order": 1
+    "desc": "中共中央党刊官方网站，高中政治哲学原理与科学社会主义权威论述",
+    "url": "http://www.qstheory.cn",
+    "badge": "理论深析",
+    "sort_order": 91
   },
   {
+    "id": 34,
+    "name": "中国政府网",
     "subject": "政治",
+    "subjects": ["政治"],
     "category": "practice",
-    "name": "菁优网 (高中政治)",
-    "desc": "政治主观题大题答题规范模板与历年真题解析",
-    "url": "https://www.jyeoo.com/politics",
-    "sort_order": 2
+    "desc": "国务院权威政策法规与宏观经济数据发布，高考政治命题直接源泉",
+    "url": "https://www.gov.cn",
+    "badge": "权威政策",
+    "sort_order": 92
   },
   {
-    "subject": "政治",
-    "category": "video",
-    "name": "国家中小学智慧教育平台 (思想政治)",
-    "desc": "教育部官方高中思想政治统编教材课时微课",
-    "url": "https://basic.smartedu.cn/tchMaterial?subject=politics",
-    "sort_order": 1
-  },
-  {
-    "subject": "政治",
-    "category": "video",
+    "id": 35,
     "name": "政治徐涛老师官方专栏",
-    "desc": "哲学矛盾分析法、唯物辩证法与经济生活逻辑体系通俗讲解",
+    "subject": "政治",
+    "subjects": ["政治"],
+    "category": "video",
+    "desc": "辩证唯物主义与马克思主义哲学底层逻辑生动幽默精辟拆解",
     "url": "https://space.bilibili.com/476906232",
-    "sort_order": 2
+    "badge": "思政名师",
+    "sort_order": 93
   }
 ]

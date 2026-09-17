@@ -21,6 +21,7 @@ interface CuratedResource {
   tag_name?: string
   category: string
   category_name: string
+  subjects?: string[]
   icon: string
   domain: string
   url: string
@@ -34,11 +35,13 @@ interface CuratedResource {
 
 interface SubjectResource {
   id: number
-  subject: string
-  category: string
   name: string
+  subject: string
+  subjects?: string[]
+  category: string
   desc: string
   url: string
+  badge?: string
   sort_order: number
 }
 
@@ -186,57 +189,62 @@ onMounted(() => {
 const filteredResources = computed(() => {
   let list: CuratedResource[] = []
 
+  const mapSubjectToolToCurated = (st: SubjectResource): CuratedResource => {
+    let domain = ''
+    try {
+      domain = new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', '')
+    } catch {
+      domain = st.url
+    }
+    const subjects = st.subjects || [st.subject]
+    const isMultiSubject = subjects.length > 1 || subjects.includes('全科') || subjects.includes('数理化生') || subjects.includes('理化生')
+    return {
+      id: `tool-${st.id}`,
+      title: st.name,
+      tag: 'subject_tools',
+      tag_name: '高考学科提分神器',
+      category: st.subject,
+      category_name: `${st.subject}学科神器`,
+      subjects,
+      icon: subjectEmojis[st.subject] || (st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬'),
+      domain,
+      url: st.url,
+      badge: st.badge || (isMultiSubject ? '多科/全科' : `${st.subject}专项`),
+      badge_type: 'info' as const,
+      target_audience: isMultiSubject ? '高中多学科综合备考' : `高中${st.subject}专项备考拔高`,
+      desc: st.desc,
+      highlights: isMultiSubject
+        ? [`涵盖 ${subjects.filter(s => s !== '全科' && s !== '数理化生' && s !== '理化生').slice(0, 4).join('、')} 等学科`]
+        : ['精准对标高中核心考点'],
+      sort_order: st.sort_order || 99
+    }
+  }
+
   // 1. 根据主标签 (activeTag) 预筛选
   if (activeTag.value === 'subject_tools') {
-    list = subjectTools.value.map(st => ({
-      id: `tool-${st.id}`,
-      title: st.name,
-      tag: 'subject_tools',
-      tag_name: '高考学科提分神器',
-      category: st.subject,
-      category_name: `${st.subject}学科神器`,
-      icon: subjectEmojis[st.subject] || (st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬'),
-      domain: new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', ''),
-      url: st.url,
-      badge: `${st.subject} · ${st.category === 'tool' ? '专属神器' : st.category === 'practice' ? '精选真题' : '名师课程'}`,
-      badge_type: 'info' as const,
-      target_audience: `高中${st.subject}专项备考拔高`,
-      desc: st.desc,
-      highlights: ['精准对标高中核心考点', '省时高效提分利器', '100%免费免充值'],
-      sort_order: st.sort_order || 99
-    }))
-
+    list = subjectTools.value.map(mapSubjectToolToCurated)
     if (activeCategory.value !== 'all') {
-      list = list.filter(item => item.category === activeCategory.value)
+      list = list.filter(item => {
+        if (item.subjects && item.subjects.length > 0) {
+          return item.subjects.includes(activeCategory.value) || item.subjects.includes('全科')
+        }
+        return item.category === activeCategory.value
+      })
     }
   } else if (activeTag.value === 'all') {
-    const convertedTools: CuratedResource[] = subjectTools.value.map(st => ({
-      id: `tool-${st.id}`,
-      title: st.name,
-      tag: 'subject_tools',
-      tag_name: '高考学科提分神器',
-      category: st.subject,
-      category_name: `${st.subject}学科神器`,
-      icon: subjectEmojis[st.subject] || (st.category === 'tool' ? '🧮' : st.category === 'practice' ? '📝' : '🎬'),
-      domain: new URL(st.url.startsWith('http') ? st.url : `https://${st.url}`).hostname.replace('www.', ''),
-      url: st.url,
-      badge: `${st.subject} · ${st.category === 'tool' ? '专属神器' : st.category === 'practice' ? '精选真题' : '名师课程'}`,
-      badge_type: 'info' as const,
-      target_audience: `高中${st.subject}专项备考拔高`,
-      desc: st.desc,
-      highlights: ['精准对标高中核心考点', '省时高效提分利器', '100%免费免充值'],
-      sort_order: (st.sort_order || 99) + 50
-    }))
-
+    const convertedTools: CuratedResource[] = subjectTools.value.map(mapSubjectToolToCurated)
     list = [...resources.value, ...convertedTools]
-
     if (activeCategory.value !== 'all') {
-      list = list.filter(item => item.category === activeCategory.value)
+      list = list.filter(item => {
+        if (item.subjects && item.subjects.length > 0) {
+          return item.subjects.includes(activeCategory.value) || item.subjects.includes('全科')
+        }
+        return item.category === activeCategory.value
+      })
     }
   } else {
     // 选定某个特定标签（如 'national' 国家级学习资源，或未来任意新标签）
     list = resources.value.filter(item => (item.tag || 'national') === activeTag.value)
-
     if (activeCategory.value !== 'all') {
       list = list.filter(item => item.category === activeCategory.value)
     }
@@ -419,55 +427,48 @@ const resetFilter = () => {
         >
           <!-- 卡片顶栏 -->
           <div class="card-header">
-            <div class="card-icon-wrap">
-              <span class="card-emoji">{{ item.icon }}</span>
+            <div class="card-identity">
+              <div class="card-icon-wrap">
+                <span class="card-emoji">{{ item.icon }}</span>
+              </div>
+              <div class="card-titles">
+                <div class="card-title-row">
+                  <h2 class="card-title" @click="openExternal(item.url)">
+                    {{ item.title }}
+                  </h2>
+                  <span class="official-badge" :class="`badge-${item.badge_type}`">
+                    {{ item.badge }}
+                  </span>
+                </div>
+                <div class="card-meta-line">
+                  <span class="card-domain" :title="item.domain">{{ item.domain }}</span>
+                  <span v-if="item.subjects && item.subjects.length > 1" class="multi-subject-chip">
+                    {{ item.subjects.includes('全科') ? '全科覆盖' : item.subjects.filter(s => s !== '数理化生' && s !== '理化生').slice(0, 3).join('/') }}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div class="card-badge-group">
-              <span class="resource-tag-chip" :class="`tag-${item.tag || 'national'}`">
-                {{ item.tag === 'national' ? '🏛️ 国家级学习资源' : (item.tag_name || '优质学习资源') }}
-              </span>
-              <span class="official-badge" :class="`badge-${item.badge_type}`">
-                {{ item.badge }}
-              </span>
-              <button
-                type="button"
-                class="star-btn"
-                :class="{ 'is-starred': favorites.has(item.id) }"
-                @click="toggleFavorite(item.id)"
-                :title="favorites.has(item.id) ? '取消收藏' : '收藏此资源'"
-              >
-                <el-icon :size="16">
-                  <component :is="favorites.has(item.id) ? StarFilled : Star" />
-                </el-icon>
-              </button>
-            </div>
+            <button
+              type="button"
+              class="star-btn"
+              :class="{ 'is-starred': favorites.has(item.id) }"
+              @click="toggleFavorite(item.id)"
+              :title="favorites.has(item.id) ? '取消收藏' : '收藏此资源'"
+            >
+              <el-icon :size="16">
+                <component :is="favorites.has(item.id) ? StarFilled : Star" />
+              </el-icon>
+            </button>
           </div>
 
           <!-- 卡片主体 -->
           <div class="card-body">
-            <div class="card-title-row">
-              <h2 class="card-title" @click="openExternal(item.url)">
-                {{ item.title }}
-              </h2>
-              <span class="card-domain" :title="item.domain">{{ item.domain }}</span>
-            </div>
-
-            <!-- 适用人群胶囊 -->
-            <div class="card-audience-row">
-              <span class="audience-label">🎯 适用：</span>
-              <span class="audience-text">{{ item.target_audience }}</span>
-            </div>
-
-            <!-- 详尽介绍 -->
             <p class="card-desc">{{ item.desc }}</p>
-
-            <!-- 核心亮点清单 -->
-            <ul class="highlights-list">
-              <li v-for="(h, idx) in item.highlights" :key="idx" class="highlight-item">
-                <span class="check-icon">✓</span>
-                <span>{{ h }}</span>
-              </li>
-            </ul>
+            <div v-if="item.highlights && item.highlights.length > 0" class="highlights-pill-row">
+              <span v-for="(h, idx) in item.highlights.slice(0, 2)" :key="idx" class="highlight-chip">
+                <span class="check-icon">✓</span>{{ h }}
+              </span>
+            </div>
           </div>
 
           <!-- 卡片底栏操作区 -->
@@ -478,8 +479,8 @@ const resetFilter = () => {
               @click="copyUrl(item.url)"
               title="复制官方网站链接"
             >
-              <el-icon :size="14"><DocumentCopy /></el-icon>
-              <span>复制网址</span>
+              <el-icon :size="13"><DocumentCopy /></el-icon>
+              <span>复制</span>
             </button>
 
             <button
@@ -489,7 +490,7 @@ const resetFilter = () => {
               title="在新窗口直达官网"
             >
               <span>直达官网</span>
-              <el-icon :size="14"><Link /></el-icon>
+              <el-icon :size="13"><Link /></el-icon>
             </button>
           </div>
         </article>
@@ -799,8 +800,8 @@ const resetFilter = () => {
 
 .resource-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
 
 .resource-card {
@@ -808,102 +809,116 @@ const resetFilter = () => {
   flex-direction: column;
   background: var(--bg-card, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 18px;
-  padding: 20px;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  border-radius: 14px;
+  padding: 16px;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .resource-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: #93c5fd;
-  box-shadow: 0 12px 28px -6px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.12);
 }
 
 .resource-card.is-favorited {
   border-color: #fbbf24;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08);
 }
 
 /* 卡片顶部 */
 .card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.card-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .card-icon-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.5) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .card-emoji {
-  font-size: 24px;
+  font-size: 20px;
 }
 
-.card-badge-group {
+.card-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-color, #1e293b);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s;
+}
+
+.card-title:hover {
+  color: #2563eb;
+}
+
+.card-meta-line {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
-/* 主标签徽章 */
-.resource-tag-chip {
+.card-domain {
   font-size: 11px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #64748b;
+  background: rgba(148, 163, 184, 0.12);
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
-.resource-tag-chip.tag-national {
-  background: #ecfdf5;
-  color: #065f46;
-  border-color: #a7f3d0;
-}
-
-.resource-tag-chip.tag-subject_tools {
-  background: #fdf2f8;
-  color: #9d174d;
-  border-color: #fbcfe8;
-}
-
-:global(.dark) .resource-tag-chip {
-  background: rgba(30, 58, 138, 0.35);
-  color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.4);
-}
-
-:global(.dark) .resource-tag-chip.tag-national {
-  background: rgba(6, 95, 70, 0.35);
-  color: #6ee7b7;
-  border-color: rgba(16, 185, 129, 0.4);
-}
-
-:global(.dark) .resource-tag-chip.tag-subject_tools {
-  background: rgba(157, 23, 77, 0.35);
-  color: #f472b6;
-  border-color: rgba(236, 72, 153, 0.4);
+.multi-subject-chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0284c7;
+  background: rgba(14, 165, 233, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
 .official-badge {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 1px 7px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .badge-primary {
@@ -953,107 +968,68 @@ const resetFilter = () => {
   color: #f59e0b;
 }
 
-/* 卡片标题与域名 */
-.card-title-row {
+/* 简述与微胶囊 */
+.card-desc {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #475569;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.highlights-pill-row {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
   margin-bottom: 8px;
 }
 
-.card-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-color, #1e293b);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.card-title:hover {
-  color: #2563eb;
-}
-
-.card-domain {
-  font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  color: #64748b;
-  background: rgba(148, 163, 184, 0.1);
-  padding: 2px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-}
-
-/* 适用人群 */
-.card-audience-row {
-  font-size: 12px;
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-.audience-label {
-  font-weight: 600;
-  color: #0284c7;
-}
-
-.audience-text {
-  color: #475569;
-}
-
-/* 介绍文字 */
-.card-desc {
-  margin: 0 0 14px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #475569;
-}
-
-/* 亮点清单 */
-.highlights-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.highlight-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: 12px;
+.highlight-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
   color: #334155;
-  line-height: 1.4;
+  background: rgba(241, 245, 249, 0.85);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+:global(.dark) .highlight-chip {
+  background: rgba(51, 65, 85, 0.6);
+  color: #cbd5e1;
 }
 
 .check-icon {
   color: #10b981;
   font-weight: 800;
-  font-size: 13px;
+  font-size: 12px;
   flex-shrink: 0;
 }
 
 /* 卡片底栏 */
 .card-footer {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 10px;
   border-top: 1px dashed var(--border-color, #f1f5f9);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .btn-copy-link,
 .btn-open-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 13px;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -1195,19 +1171,64 @@ const resetFilter = () => {
 
 @media (max-width: 768px) {
   .hub-hero {
-    padding: 24px 20px 20px;
+    padding: 20px 16px 16px;
     border-radius: 0;
   }
   .hero-title {
-    font-size: 22px;
+    font-size: 20px;
+  }
+  .hero-desc {
+    font-size: 12.5px;
+    margin-bottom: 12px;
+  }
+  .hero-stat-chips {
+    gap: 6px;
+  }
+  .stat-chip {
+    font-size: 11px;
+    padding: 3px 8px;
   }
   .hub-filter-section,
   .hub-cards-container,
   .hub-footer-notice {
-    padding: 0 16px;
+    padding: 0 12px;
   }
   .resource-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .resource-card {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+  .card-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  .card-emoji {
+    font-size: 17px;
+  }
+  .card-title {
+    font-size: 14px;
+  }
+  .card-desc {
+    font-size: 11.5px;
+    line-height: 1.45;
+    margin-bottom: 6px;
+  }
+  .highlights-pill-row {
+    display: none;
+  }
+  .card-footer {
+    padding-top: 6px;
+    gap: 6px;
+  }
+  .btn-copy-link,
+  .btn-open-link {
+    padding: 4px 10px;
+    font-size: 11.5px;
+    border-radius: 6px;
   }
 }
 </style>
