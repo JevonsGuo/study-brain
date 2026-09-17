@@ -5,6 +5,29 @@
  * 内置防撞库防暴力枚举限频保护机制
  */
 
+// Cloudflare Pages / Workers 边缘运行环境自包含类型声明
+interface KVNamespace {
+  get(key: string, options?: any): Promise<string | null>
+  put(key: string, value: string, options?: any): Promise<void>
+  delete(key: string): Promise<void>
+}
+
+interface EventContext<Env, P extends string = string, Data = Record<string, unknown>> {
+  request: Request
+  functionPath: string
+  waitUntil: (promise: Promise<unknown>) => void
+  next: (input?: Request | string, init?: RequestInit) => Promise<Response>
+  env: Env
+  params: Record<P, string | string[]>
+  data: Data
+}
+
+type PagesFunction<
+  Env = unknown,
+  P extends string = string,
+  Data = Record<string, unknown>
+> = (context: EventContext<Env, P, Data>) => Response | Promise<Response>
+
 interface Env {
   SYNC_KV?: KVNamespace
 }
