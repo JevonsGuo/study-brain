@@ -11,7 +11,8 @@ export const SYNC_STORAGE_KEYS = {
   PASSCODE: 'study_sync_passcode',
   AUTO_SYNC: 'study_sync_auto_enabled',
   LAST_SYNC: 'study_sync_last_time',
-  LAST_STATS: 'study_sync_last_stats'
+  LAST_STATS: 'study_sync_last_stats',
+  LAST_HASH: 'study_sync_last_payload_hash'
 }
 
 export interface SyncStats {
@@ -56,8 +57,8 @@ export function getSyncConfig(): SyncConfig {
 
   const passcode = localStorage.getItem(SYNC_STORAGE_KEYS.PASSCODE) || ''
   const autoSyncRaw = localStorage.getItem(SYNC_STORAGE_KEYS.AUTO_SYNC)
-  // 默认自动静默同步开启（只要未被用户显式关闭为 'false'，默认即为 true）
-  const autoSync = autoSyncRaw !== 'false'
+  // 策略升级为手动触发/按需换机优先：默认 autoSync 为 false，避免无效请求耗尽 Cloudflare KV 写入配额
+  const autoSync = autoSyncRaw === 'true'
   const lastSyncTime = localStorage.getItem(SYNC_STORAGE_KEYS.LAST_SYNC) || ''
   let lastStats: SyncStats | null = null
   try {
@@ -105,7 +106,7 @@ function getSyncApiBase(): string {
  * 2. 在浏览器端使用口令进行 AES-256-GCM 加密
  * 3. 将密文 POST 上传至云端
  */
-export async function pushCloudBackup(passcode: string): Promise<{ ok: boolean; updatedAt: string; stats?: SyncStats }> {
+export async function pushCloudBackup(passcode: string, force = false): Promise<{ ok: boolean; updatedAt: string; stats?: SyncStats; alreadyUpToDate?: boolean }> {
   const cleanPasscode = passcode.trim()
   const check = validatePasscode(cleanPasscode)
   if (!check.valid) {
@@ -115,11 +116,26 @@ export async function pushCloudBackup(passcode: string): Promise<{ ok: boolean; 
   // 1. 提取所有本地私有数据
   const payload = await localDB.exportAllUserData()
 
-  // 2. 本地端到端高强度加密
-  const encryptedPackage = await encryptPayload(payload, cleanPasscode)
+  // 2. 指纹比对：比对本地数据哈希，若未强制且数据无任何变动，直接返回无需重复向云端写入
+  const payloadStr = JSON.stringify(payload)
   const codeHash = await hashPasscode(cleanPasscode)
+  const currentFingerprint = `${codeHash}:${payloadStr.length}:${await hashPasscode(payloadStr)}`
+  const lastFingerprint = typeof window !== 'undefined' ? localStorage.getItem(SYNC_STORAGE_KEYS.LAST_HASH) : null
+  const lastSyncTime = typeof window !== 'undefined' ? (localStorage.getItem(SYNC_STORAGE_KEYS.LAST_SYNC) || '') : ''
 
-  // 3. 上传密文包
+  if (!force && lastFingerprint && lastFingerprint === currentFingerprint && lastSyncTime) {
+    return {
+      ok: true,
+      updatedAt: lastSyncTime,
+      stats: (getSyncConfig().lastStats as SyncStats) || undefined,
+      alreadyUpToDate: true
+    }
+  }
+
+  // 3. 本地端到端高强度加密
+  const encryptedPackage = await encryptPayload(payload, cleanPasscode)
+
+  // 4. 上传密文包
   const apiBase = getSyncApiBase()
   const res = await fetch(`${apiBase}/api/sync/push`, {
     method: 'POST',
@@ -140,17 +156,21 @@ export async function pushCloudBackup(passcode: string): Promise<{ ok: boolean; 
   await res.json()
   const nowDisplay = new Date().toLocaleString()
 
-  // 保存最新状态
+  // 保存最新状态与指纹
   saveSyncConfig({
     passcode: cleanPasscode,
     lastSyncTime: nowDisplay,
     lastStats: encryptedPackage.dataStats
   })
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(SYNC_STORAGE_KEYS.LAST_HASH, currentFingerprint)
+  }
 
   return {
     ok: true,
     updatedAt: nowDisplay,
-    stats: encryptedPackage.dataStats
+    stats: encryptedPackage.dataStats,
+    alreadyUpToDate: false
   }
 }
 
@@ -197,12 +217,17 @@ export async function pullCloudBackup(passcode: string): Promise<{ ok: boolean; 
   await localDB.importAllUserData(decryptedData)
 
   const nowDisplay = new Date().toLocaleString()
+  const payloadStr = JSON.stringify(decryptedData)
+  const currentFingerprint = `${codeHash}:${payloadStr.length}:${await hashPasscode(payloadStr)}`
+
   saveSyncConfig({
     passcode: cleanPasscode,
-    autoSync: true,
     lastSyncTime: nowDisplay,
     lastStats: result.payload.dataStats
   })
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(SYNC_STORAGE_KEYS.LAST_HASH, currentFingerprint)
+  }
 
   return {
     ok: true,

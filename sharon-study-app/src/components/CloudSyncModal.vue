@@ -36,7 +36,6 @@ const emit = defineEmits<{
 
 const passcode = ref('')
 const showPasscode = ref(false)
-const autoSyncEnabled = ref(true)
 const lastSyncTime = ref('')
 const lastStats = ref<SyncStats | null>(null)
 const isPushing = ref(false)
@@ -53,20 +52,12 @@ onMounted(() => {
     passcode.value = generateRandomPasscode()
     saveSyncConfig({ passcode: passcode.value })
   }
-  autoSyncEnabled.value = cfg.autoSync
   lastSyncTime.value = cfg.lastSyncTime
   lastStats.value = cfg.lastStats || null
 })
 
 const handlePasscodeChange = () => {
   saveSyncConfig({ passcode: passcode.value.trim() })
-}
-
-const handleAutoSyncChange = () => {
-  saveSyncConfig({ autoSync: autoSyncEnabled.value })
-  ElMessage.success(
-    autoSyncEnabled.value ? '已开启后台自动静默同步 (每小时)' : '已关闭后台自动同步'
-  )
 }
 
 const handleGenerateNewCode = async () => {
@@ -90,13 +81,13 @@ const handleCopyCode = async () => {
   if (!passcode.value.trim()) return
   try {
     await navigator.clipboard.writeText(passcode.value.trim())
-    ElMessage.success('口令已复制！在另一台设备输入即可一键同步。')
+    ElMessage.success('口令已复制！在另一台设备输入即可一键恢复。')
   } catch {
     ElMessage.info('口令为：' + passcode.value)
   }
 }
 
-const handlePush = async () => {
+const handlePush = async (force = false) => {
   const check = validatePasscode(passcode.value)
   if (!check.valid) {
     ElMessage.warning(check.message)
@@ -104,10 +95,14 @@ const handlePush = async () => {
   }
   isPushing.value = true
   try {
-    const res = await pushCloudBackup(passcode.value)
+    const res = await pushCloudBackup(passcode.value, force)
     lastSyncTime.value = res.updatedAt
     lastStats.value = res.stats || null
-    ElMessage.success('🎉 备份成功！数据已通过 AES-256 加密安全同步到云端。')
+    if (res.alreadyUpToDate) {
+      ElMessage.info('💡 当前云端已是最新备份（数据无变动，未消耗额外云端请求）')
+    } else {
+      ElMessage.success('🎉 备份成功！数据已加密上传，在另一台设备输入此 Code 即可恢复。')
+    }
   } catch (err: any) {
     ElMessage.error(err.message || '上传备份失败，请检查网络或口令')
   } finally {
@@ -199,7 +194,7 @@ const handleFileImport = async (e: Event) => {
   <el-dialog
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
-    title="云端数据同步"
+    title="换机与多端云同步 (端到端加密)"
     width="480px"
     destroy-on-close
     class="cloud-sync-dialog"
@@ -211,7 +206,7 @@ const handleFileImport = async (e: Event) => {
         <div class="passcode-label-row">
           <label class="passcode-label">
             <el-icon class="label-icon"><Key /></el-icon>
-            <span>专属同步口令 (Passcode)</span>
+            <span>专属换机与同步 Code</span>
           </label>
           <span class="passcode-badge">端到端加密</span>
         </div>
@@ -261,10 +256,10 @@ const handleFileImport = async (e: Event) => {
           size="large"
           class="sync-btn push-btn"
           :loading="isPushing"
-          @click="handlePush"
+          @click="handlePush(false)"
           :icon="Upload"
         >
-          备份到云端
+          🚀 备份数据到云端
         </el-button>
         <el-button
           type="success"
@@ -275,18 +270,22 @@ const handleFileImport = async (e: Event) => {
           @click="handlePull"
           :icon="Download"
         >
-          从云端恢复
+          📥 从云端拉取恢复
         </el-button>
       </div>
 
-      <!-- 自动静默同步与上次时间 -->
-      <div class="auto-sync-bar">
-        <el-checkbox v-model="autoSyncEnabled" @change="handleAutoSyncChange">
-          <span class="auto-sync-text">后台自动静默同步 (每小时)</span>
-        </el-checkbox>
-        <span v-if="lastSyncTime" class="last-sync-time">
-          上次: {{ lastSyncTime.slice(5) }}
-        </span>
+      <!-- 换机指南提示卡片 -->
+      <div class="migration-guide-tip">
+        <span class="guide-icon">💡</span>
+        <div class="guide-text">
+          <b>换机与多端使用说明：</b>在旧设备点击<b>「备份数据到云端」</b>；新设备首次进入时选择<b>「已有数据？输入 Code 恢复」</b>，输入上方 Code 即可秒级漫游！
+        </div>
+      </div>
+
+      <!-- 上次同步状态条 -->
+      <div v-if="lastSyncTime" class="sync-status-bar">
+        <span class="status-dot"></span>
+        <span class="status-text">上次备份时间：{{ lastSyncTime }}</span>
       </div>
     </div>
 
@@ -472,22 +471,43 @@ const handleFileImport = async (e: Event) => {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.auto-sync-bar {
+.migration-guide-tip {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2px 2px 0;
-}
-
-.auto-sync-text {
-  font-size: 12.5px;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  line-height: 1.5;
   color: var(--text-color, #334155);
 }
 
-.last-sync-time {
+.guide-icon {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.guide-text b {
+  color: #4f46e5;
+}
+
+.sync-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11.5px;
   color: #10b981;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  padding-left: 2px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
 }
 
 /* 详情折叠切换按钮 */

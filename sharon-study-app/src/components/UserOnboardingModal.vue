@@ -5,7 +5,6 @@ import { ElMessage } from 'element-plus'
 import {
   generateRandomPasscode,
   saveSyncConfig,
-  pushCloudBackup,
   pullCloudBackup,
   validatePasscode
 } from '../utils/cloudSync'
@@ -122,17 +121,14 @@ const handleFinishNewUser = async () => {
       custom_quote: '自律给我自由，每一天都在变得更好'
     })
 
-    // 默认开启后台自动静默同步
+    // 保存专属换机与同步 Code
     saveSyncConfig({
       passcode: cleanCode,
-      autoSync: true
+      autoSync: false
     })
 
-    // 首次静默同步上云
-    pushCloudBackup(cleanCode).catch(() => {})
-
     userProfile.showOnboardingModal = false
-    ElMessage.success(`欢迎，${trimmedName}同学！已为你开启自动同步 🚀`)
+    ElMessage.success(`欢迎，${trimmedName}同学！专属自律学习空间已开启 🚀`)
   } finally {
     isSubmitting.value = false
   }

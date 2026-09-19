@@ -1,0 +1,77 @@
+{
+  "id": "study-brain-pwa",
+  "name": "智学大脑 - 个人自律学习助手",
+  "short_name": "智学大脑",
+  "description": "个人自律学习助手，高考倒计时、9科学科中心、错题靶向、单词复习与云端端到端加密同步",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "学科中心",
+      "short_name": "学科",
+      "description": "9科学科考点与靶向复习",
+      "url": "./#/subjects",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "学习计划",
+      "short_name": "计划",
+      "description": "每日学习清单与任务规划",
+      "url": "./#/study-plan",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "番茄专注",
+      "short_name": "专注",
+      "description": "专注计时，高效沉浸自习",
+      "url": "./#/timer",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "单词卡",
+      "short_name": "背词",
+      "description": "英语高频词汇记忆复习",
+      "url": "./#/word-card",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

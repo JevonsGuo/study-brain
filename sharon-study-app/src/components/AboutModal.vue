@@ -26,7 +26,12 @@ const appConfig = useAppConfigStore()
 const appVersionStore = useAppVersionStore()
 const isLocal = isLocalEnv()
 const copied = ref(false)
+const showPwaGuide = ref(false)
 const contactEmail = "Jevons@GYFolk.com"
+
+const isStandalone = typeof window !== 'undefined' && (
+  window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true
+)
 
 const copyEmail = async () => {
   try {
@@ -131,6 +136,45 @@ const sendMail = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- 类 App 原生化运行模式与添加到桌面指引 -->
+      <div class="about-pwa-card">
+        <div class="pwa-header-row">
+          <div class="pwa-title-left">
+            <span class="pwa-icon-badge">📲</span>
+            <span class="pwa-title-text">类 App 原生化运行模式</span>
+            <span class="pwa-status-badge" :class="{ active: isStandalone }">
+              {{ isStandalone ? '已作为 App 运行' : 'PWA 就绪' }}
+            </span>
+          </div>
+          <button
+            type="button"
+            class="pwa-guide-btn"
+            @click="showPwaGuide = !showPwaGuide"
+          >
+            {{ showPwaGuide ? '收起指引' : '添加到桌面 / 独立运行' }}
+          </button>
+        </div>
+        <p class="pwa-card-desc">
+          支持免浏览器全屏独立运行、离线秒开与多任务卡片。在手机或电脑将本页面添加到桌面，即可获得 100% 沉浸原生 App 体验。
+        </p>
+        <transition name="pwa-expand">
+          <div v-if="showPwaGuide" class="pwa-guide-content">
+            <div class="pwa-guide-step">
+              <span class="guide-tag ios">🍎 iPhone / iPad</span>
+              <span>在 Safari 点击底部分享按钮 ➔ 选择<b>「添加到主屏幕 ➕」</b></span>
+            </div>
+            <div class="pwa-guide-step">
+              <span class="guide-tag android">🤖 安卓 / 鸿蒙</span>
+              <span>在浏览器菜单中选择<b>「添加到桌面」</b>或等待底部自动弹出安装</span>
+            </div>
+            <div class="pwa-guide-step">
+              <span class="guide-tag desktop">💻 PC / Mac</span>
+              <span>在 Chrome / Edge 地址栏右侧点击<b>「安装应用」</b>图标</span>
+            </div>
+          </div>
+        </transition>
       </div>
 
       <!-- 核心技术架构与数据安全说明 -->
@@ -338,6 +382,136 @@ const sendMail = () => {
   border-color: #3b82f6;
   color: #2563eb;
   background: rgba(59, 130, 246, 0.06);
+}
+
+/* PWA 类 App 运行卡片 */
+.about-pwa-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pwa-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pwa-title-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pwa-icon-badge {
+  font-size: 15px;
+}
+
+.pwa-title-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.pwa-status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+.pwa-status-badge.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.pwa-guide-btn {
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pwa-guide-btn:hover {
+  background: #4338ca;
+}
+
+.pwa-card-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-sub, #64748b);
+  line-height: 1.5;
+}
+
+.pwa-guide-content {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-main, #1e293b);
+  margin-top: 2px;
+}
+
+:global(.dark) .pwa-guide-content {
+  background: rgba(0, 0, 0, 0.3);
+  color: #cbd5e1;
+}
+
+.pwa-guide-step {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.guide-tag {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.guide-tag.ios {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+}
+
+.guide-tag.android {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.guide-tag.desktop {
+  background: rgba(139, 92, 246, 0.12);
+  color: #7c3aed;
+}
+
+.pwa-expand-enter-active,
+.pwa-expand-leave-active {
+  transition: all 0.2s ease-out;
+}
+
+.pwa-expand-enter-from,
+.pwa-expand-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 /* 隐私与技术说明 */

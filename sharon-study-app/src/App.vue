@@ -10,10 +10,10 @@ import UserProfileEditModal from './components/UserProfileEditModal.vue'
 import DataConsoleModal from './components/DataConsoleModal.vue'
 import AboutModal from './components/AboutModal.vue'
 import AppVersionModal from './components/AppVersionModal.vue'
+import PwaInstallPrompt from './components/PwaInstallPrompt.vue'
 import { useAppVersionStore } from './stores/appVersion'
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
 import { Edit, Star, Sunny, Moon, Menu as MenuIcon, Close, VideoPause, Connection, InfoFilled } from '@element-plus/icons-vue'
-import { getSyncConfig, pushCloudBackup } from './utils/cloudSync'
 
 const router = useRouter()
 const route = useRoute()
@@ -202,38 +202,7 @@ onMounted(() => {
   }
   applyTheme(isDark.value)
 
-  // 端到端加密后台定时自动云端备份机制（默认开启，每小时静默上云）
-  let lastSilentSyncTimestamp = 0
-  const runSilentSync = async () => {
-    const syncCfg = getSyncConfig()
-    if (syncCfg.autoSync && syncCfg.passcode) {
-      const now = Date.now()
-      // 防抖/节流：两次静默同步间隔不低于 60 秒
-      if (now - lastSilentSyncTimestamp < 60 * 1000) return
-      lastSilentSyncTimestamp = now
-      try {
-        await pushCloudBackup(syncCfg.passcode)
-      } catch {
-        // 静默运行，不打扰沉浸自习
-      }
-    }
-  }
-
-  // 启动 8 秒后首次静默同步，之后每小时定时执行
-  setTimeout(runSilentSync, 8 * 1000)
-  setInterval(runSilentSync, 60 * 60 * 1000)
-
-  // 用户切回网页或从休眠唤醒时，若已满 1 小时自动静默补录
-  if (typeof document !== 'undefined') {
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        const now = Date.now()
-        if (now - lastSilentSyncTimestamp >= 60 * 60 * 1000) {
-          runSilentSync()
-        }
-      }
-    })
-  }
+  // 采用按需换机与手动触发同步策略，已移除后台无脑轮询定时器，杜绝 KV 写入额度浪费
 
   // 平板设备 (Pad 769px ~ 1024px) 人体工学自适应：自动折叠侧边栏至 Rail 模式
   const handlePadResize = () => {
@@ -729,6 +698,7 @@ const toggleCollapse = () => {
     <!-- 坚果云云端备份弹窗 -->
     <CloudSyncModal v-model="showCloudModal" />
     <AboutModal v-model="showAboutModal" />
+    <PwaInstallPrompt />
 
     <!-- 前端新版本发布升级提示弹窗 -->
     <AppVersionModal />
